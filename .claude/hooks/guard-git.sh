@@ -95,6 +95,22 @@ const branchIn = dir => {
 const hasShort = (args, letter) => args.some(a => /^-[A-Za-z]+$/.test(a) && a.includes(letter));
 const ATTRIBUTION = /co-authored-by|generated with/i;
 
+/* `env FOO=1 gh …`, `command gh …`, `exec gh …` all run gh. */
+const stripPrefix = argv => {
+  let i = 0;
+  for (;;) {
+    if (argv[i] === 'env' || argv[i] === 'command' || argv[i] === 'exec' || argv[i] === 'nohup') i++;
+    else if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(argv[i] ?? '')) i++;
+    else break;
+  }
+  return argv.slice(i);
+};
+
+/* A merge hidden inside a nested shell string (`bash -c "gh pr merge …"`, `eval …`) cannot be
+   parsed reliably, so it is refused outright: run the merge as its own command. */
+const NESTED_MERGE = /(?:\b(?:bash|sh|zsh)\s+-c|\beval\b|\bxargs\b)[^\n]*gh\s+(?:pr\s+merge|api\b[^\n]*pulls\/\d+\/merge)/;
+if (NESTED_MERGE.test(command)) block('a PR merge nested in `bash -c` / `eval` / `xargs` cannot be checked. Run `gh pr merge <n>` as its own command.');
+
 for (const argv of simpleCommands(command)) {
   const git = gitCall(argv);
   if (git) {
@@ -136,18 +152,39 @@ for (const argv of simpleCommands(command)) {
   }
 
   /* Merging is gated on the PR's required checks (typecheck, zero-warning lint, format,
-     guards, unit, e2e, build). `--admin` would bypass branch protection, so it is refused. */
-  if (path.basename(argv[0]) === 'gh' && argv[1] === 'pr' && argv[2] === 'merge') {
-    const rest = argv.slice(3);
+     guards, unit, e2e, build). Branch protection (enforce_admins) is the real gate; this is
+     the second layer, so it must check the SAME PR in the SAME repo the merge acts on. */
+  const ghArgv = stripPrefix(argv);
+  if (path.basename(ghArgv[0] ?? '') === 'gh' && ghArgv[1] === 'pr' && ghArgv[2] === 'merge') {
+    const rest = ghArgv.slice(3);
     if (rest.includes('--admin')) block('`gh pr merge --admin` bypasses branch protection. Wait for the required checks instead.');
-    const target = rest.filter(a => !a.startsWith('-'))[0];
+    // Flags of `gh pr merge` that take a value; their values are not the PR selector.
+    const VALUED = new Set(['-b', '--body', '-F', '--body-file', '-t', '--subject', '-A', '--author-email', '--match-head-commit', '-R', '--repo']);
+    let selector;
+    let repo;
+    for (let i = 0; i < rest.length; i++) {
+      const a = rest[i];
+      if (a.startsWith('--') && a.includes('=')) {
+        const [flag, value] = [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)];
+        if (flag === '--repo') repo = value;
+        continue;
+      }
+      if (VALUED.has(a)) {
+        if (a === '-R' || a === '--repo') repo = rest[i + 1];
+        i++;
+        continue;
+      }
+      if (a.startsWith('-')) continue;
+      if (selector !== undefined) block('`gh pr merge` got more than one PR argument; name exactly one PR.');
+      selector = a;
+    }
     let buckets;
     try {
-      const out = execFileSync('gh', ['pr', 'checks', ...(target ? [target] : []), '--required', '--json', 'name,bucket'], {
-        cwd,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore']
-      });
+      const out = execFileSync(
+        'gh',
+        ['pr', 'checks', ...(selector ? [selector] : []), ...(repo ? ['--repo', repo] : []), '--required', '--json', 'name,bucket'],
+        { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+      );
       buckets = JSON.parse(out);
     } catch {
       block('could not read the PR\'s required checks (`gh pr checks --required`). Merge only after confirming they all pass.');
@@ -157,6 +194,9 @@ for (const argv of simpleCommands(command)) {
     if (failing.length) block(`required checks not green: ${failing.map(c => `${c.name} (${c.bucket})`).join(', ')}. Fix them before merging.`);
     continue;
   }
+  /* The REST merge endpoint skips everything above. */
+  if (path.basename(ghArgv[0] ?? '') === 'gh' && ghArgv[1] === 'api' && ghArgv.some(a => /pulls\/\d+\/merge\b/.test(a)))
+    block('merging through `gh api …/pulls/N/merge` skips the checks gate. Use `gh pr merge <n>` after CI is green.');
 
   if (path.basename(argv[0]) === 'rm') {
     const flags = argv.slice(1).filter(a => a.startsWith('-'));
