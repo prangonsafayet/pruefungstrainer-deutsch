@@ -112,6 +112,17 @@ licence, no paid service, no telemetry. A new dependency must pass `npm run audi
 add a dependency for a few lines; hand-roll only when the library costs more than the code,
 and say why in a one-line comment.
 
+## Errors
+
+Every failure the learner can act on reaches them as a toast or Alert with a next action —
+never a raw message or stack. I/O boundaries (storage, import, sync, recorder, speech) return
+or classify into an `AppError` (`@shared/lib/appError.ts`: `code`, learner `message`,
+`recoverable`, `cause`) or a `Result`; the cause goes to `logger` (`@shared/lib/logger.ts`,
+local only, redacted — never log answers, passwords, tokens or emails, never pass it an object
+you have not reduced to an error). Lint refuses an empty catch and a catch that neither
+rethrows, returns, nor calls `logger.*` / `toAppError` (`local/no-swallowed-catch`), plus
+floating and misused promises. Render crashes land in the route's `ErrorBoundary`.
+
 ## React traps that cost real time
 
 - `speechSynthesis.getVoices()` returns a fresh array every call; reading it during render

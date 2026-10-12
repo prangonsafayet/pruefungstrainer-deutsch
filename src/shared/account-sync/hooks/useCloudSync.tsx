@@ -16,6 +16,8 @@ import {
   type SignUpOutcome
 } from '@shared/account-sync/lib/signUpOutcome.ts';
 import { isSyncConfigured, PROGRESS_TABLE, supabase } from '@shared/account-sync/lib/supabaseClient.ts';
+import { classifySyncError } from '@shared/account-sync/lib/syncError.ts';
+import { logger } from '@shared/lib/logger.ts';
 import { normalizeDatabase } from '@shared/progress-store/lib/progressDb.ts';
 import { type ProgressDatabase } from '@shared/types/progress.ts';
 
@@ -87,10 +89,10 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
   const push = useCallback(
     async (db: ProgressDatabase): Promise<void> => {
       if (!supabase || !user) return;
-      const { error } = await supabase
+      const { error, status } = await supabase
         .from(PROGRESS_TABLE)
         .upsert({ user_id: user.id, data: db, updated_at: new Date().toISOString() });
-      if (error) throw new Error(error.message);
+      if (error) throw Object.assign(new Error(error.message), { code: error.code, status });
 
       pushedAtRef.current = db._updatedAt ?? null;
       const now = new Date();
@@ -103,18 +105,23 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     [user]
   );
 
+  /* The failure toast's Retry outlives the render that made it, so it calls through a ref. */
+  const fullSyncRef = useRef<(options?: { readonly announce?: boolean }) => Promise<void>>(() =>
+    Promise.resolve()
+  );
+
   const fullSync = useCallback(
     async ({ announce = false }: { readonly announce?: boolean } = {}): Promise<void> => {
       if (!supabase || !user) return;
       setSyncing(true);
       setStatus('Syncing…');
       try {
-        const { data, error } = await supabase
+        const { data, error, status } = await supabase
           .from(PROGRESS_TABLE)
           .select('data, updated_at')
           .eq('user_id', user.id)
           .maybeSingle();
-        if (error) throw new Error(error.message);
+        if (error) throw Object.assign(new Error(error.message), { code: error.code, status });
 
         /* The stored row is JSON written by whichever build last synced, so it is coerced
            into a full document before it is merged rather than trusted field by field. */
@@ -129,18 +136,42 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
           });
         }
       } catch (error) {
-        const message = `Sync failed: ${errorMessage(error)} — your data is still safe locally.`;
-        setStatus(message);
-        setChip({ text: 'offline', title: message });
-        toast.error('Could not reach the cloud database', {
-          description: 'Your progress is still saved in this browser and will sync next time.'
-        });
+        const failure = classifySyncError(error, navigator.onLine);
+        logger.warn('sync', 'Sync failed', failure);
+        setStatus(failure.message);
+        setChip({ text: 'offline', title: failure.message });
+        /* Offline is a state, not an error: the header badge says it, and coming back online
+           retries by itself. Everything else gets a toast with a way to try again. */
+        if (failure.code !== 'sync-offline' || announce) {
+          toast.error(failure.code === 'sync-offline' ? "You're offline" : 'Could not sync your progress', {
+            id: 'sync-failed',
+            description: failure.message,
+            action: { label: 'Retry', onClick: () => void fullSyncRef.current({ announce: true }) }
+          });
+        }
       } finally {
         setSyncing(false);
       }
     },
     [user, dbRef, replaceLocal, push]
   );
+  useEffect(() => {
+    fullSyncRef.current = fullSync;
+  }, [fullSync]);
+
+  /* Back online after a failed sync (the chip the header's offline badge reads): try again
+     without being asked. */
+  const failed = user !== null && chip?.text === 'offline';
+  useEffect(() => {
+    if (!failed) return undefined;
+    const retry = (): void => {
+      void fullSyncRef.current();
+    };
+    window.addEventListener('online', retry);
+    return () => {
+      window.removeEventListener('online', retry);
+    };
+  }, [failed]);
 
   /**
    * The one operation the union-only merge cannot express. Emptying the local document and
@@ -155,6 +186,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       if (error) throw new Error(error.message);
       return true;
     } catch (error) {
+      logger.warn('sync', 'Could not delete the cloud copy', error);
       setStatus(`Could not delete the cloud copy: ${errorMessage(error)}`);
       return false;
     }
@@ -215,8 +247,12 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       stripCallbackParams();
       if (!error) return;
 
+      logger.warn('auth', 'OAuth code exchange failed', error);
       toast.error('Sign-in could not be completed', { description: error.message });
-    })();
+    })().catch((error: unknown) => {
+      logger.error('auth', 'OAuth callback crashed', error);
+      toast.error('Sign-in could not be completed', { description: 'Try signing in again.' });
+    });
   }, []);
 
   /*
@@ -229,9 +265,14 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     if (!supabase) return undefined;
     let alive = true;
 
-    void supabase.auth.getSession().then(({ data }) => {
-      if (alive) setUser(data.session?.user ?? null);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (alive) setUser(data.session?.user ?? null);
+      })
+      .catch((error: unknown) => {
+        logger.warn('auth', 'Could not read the session', error);
+      });
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       const next = session?.user ?? null;
 
@@ -275,7 +316,8 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
         void fullSync();
         return;
       }
-      push(dbRef.current).catch(() => {
+      push(dbRef.current).catch((error: unknown) => {
+        logger.warn('sync', 'Debounced push failed', classifySyncError(error, navigator.onLine));
         setChip({
           text: 'offline',
           title: 'Could not reach the database — data kept locally. It will sync next time.'
@@ -307,6 +349,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       });
       if (error) throw new Error(error.message);
     } catch (error) {
+      logger.warn('auth', `OAuth sign-in with ${provider} did not start`, error);
       const message = errorMessage(error);
       const notEnabled = /provider is not enabled|Unsupported provider/i.test(message);
       setStatus(
@@ -341,6 +384,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       toast.success('Signed in', { description: 'Your progress is syncing now.' });
       return true;
     } catch (error) {
+      logger.info('auth', 'Password sign-in failed', error);
       const message = errorMessage(error);
       /* Supabase deliberately does not say which half was wrong; do not guess for it. */
       const friendly = /invalid login credentials/i.test(message)
@@ -397,6 +441,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
 
       return outcome;
     } catch (error) {
+      logger.warn('auth', 'Sign-up failed', error);
       const message = errorMessage(error);
       setStatus(message);
       toast.error('Could not create the account', { description: message });
@@ -429,6 +474,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       toast.success('Confirmation email re-sent', { description: `Check the inbox for ${email}.` });
       return true;
     } catch (error) {
+      logger.warn('auth', 'Could not re-send the confirmation', error);
       const message = errorMessage(error);
       if (isRateLimited(message)) {
         const wait = retryAfterSeconds(message);
@@ -460,6 +506,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       setStatus('✓ If that email has an account, a reset link is on its way.');
       toast.success('Password reset sent', { description: `Check the inbox for ${email}.` });
     } catch (error) {
+      logger.warn('auth', 'Could not send the reset link', error);
       const message = errorMessage(error);
       setStatus(message);
       toast.error('Could not send the reset link', { description: message });
@@ -475,6 +522,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       if (error) throw new Error(error.message);
       toast.success('Signed out', { description: 'Your progress stays in this browser.' });
     } catch (error) {
+      logger.warn('auth', 'Sign-out failed', error);
       toast.error('Could not sign out', { description: errorMessage(error) });
     }
     setUser(null);

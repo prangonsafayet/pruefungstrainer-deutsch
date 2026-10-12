@@ -38,11 +38,35 @@ functions are spelled out per trainer (the two trainer-id lint exemptions).
 
 ## Storage keys are user data
 
-Six keys are live and must never be renamed or removed: `telcTrainerV1`, `telcTrainerRunV1`,
-`telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`, `telcTrainerAuth`, `telcTrainerTheme`. The baseline is
+Seven localStorage keys are live and must never be renamed or removed: `telcTrainerV1`,
+`telcTrainerRunV1`, `telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`, `telcTrainerAuth`,
+`telcTrainerTheme` and `telcTrainerRecoveryV1`. Two sessionStorage keys are in the baseline too
+(per tab, gone when it closes): `telcTrainerSessionLogV1` (the diagnostics log) and
+`telcTrainerChunkReloadAt` (the stale-chunk reload guard). The baseline is
 `.claude/hooks/storage-keys.baseline`; `npm run check:storage-keys` (CI, pre-push and the
 PostToolUse hook) fails if any disappears. New keys are allowed — add them with
 `npm run check:storage-keys -- --update`.
+
+## Damaged and unwritable storage
+
+- `loadDatabase` returns `{ db, damaged }`. Stored text that is not a JSON object is copied byte
+  for byte to `telcTrainerRecoveryV1` (most recent damage wins), then — only if that copy was
+  written — the main key is replaced with a fresh document so the notice shows once. The
+  provider toasts "could not be read" with a "Download the damaged data" action. If the copy
+  could not be written (`setAside: false`), `persistDatabase` refuses every write until
+  `releaseDamaged()` — called by the notice's "Download" or "Discard it and start fresh" — so the
+  original is never replaced before the learner chooses. Never let a damaged document be
+  silently overwritten again.
+- `writeLocal` returns a `Result` and tells `subscribeToStorageFailures` listeners; the
+  provider toasts "Storage is full" / "not being saved" with an "Export a backup" action that
+  exports the in-memory document. A failed write lands in an in-memory fallback that `readLocal`
+  reads **first** — localStorage still holds the pre-failure value.
+- Import goes through `readBackup` (`Result`): not JSON, not an export, or a slice field of the
+  wrong type — named (`"b1.attempts" should be a list, but it is text`) — refuses the whole file
+  (`null` is accepted for a map field). A JSON parse failure carries no cause: V8's message
+  quotes the file, and the log must never hold it.
+  Stricter than `normalizeDatabase` on purpose: a stored document is repaired, a chosen file is
+  refused.
 
 ## Answer map
 

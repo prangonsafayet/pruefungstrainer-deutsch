@@ -11,7 +11,14 @@ import { appDefines, LAYER_ALIASES } from './vite.config.ts';
  *           supplies the document; anything that needs a genuine browser (layout, audio,
  *           pointer behaviour) belongs in the Playwright suite instead.
  */
+/* No `.env` loading in tests. A developer's `.env` (Supabase configured) used to switch sync
+   on under Vitest, so the auth paths ran and were covered locally but not in CI, which has
+   no `.env` — the same commit measured 81.7% lines on a laptop and 80.6% in CI. Every
+   environment now runs the suites exactly as CI does. */
+const NO_DOTENV = { envDir: false } as const;
+
 export default defineConfig({
+  ...NO_DOTENV,
   resolve: { alias: LAYER_ALIASES },
   define: appDefines(''),
   test: {
@@ -25,10 +32,11 @@ export default defineConfig({
       include: ['src/**/lib/**/*.{ts,tsx}', 'src/**/hooks/**/*.{ts,tsx}', 'src/**/use*.tsx'],
       exclude: ['src/content/**', 'src/shared/ui/**', 'src/**/types/**'],
       reporter: ['text-summary', 'html'],
-      thresholds: { lines: 81, functions: 83, branches: 64, statements: 80 }
+      thresholds: { lines: 82, functions: 83, branches: 65, statements: 80 }
     },
     projects: [
       {
+        ...NO_DOTENV,
         resolve: { alias: LAYER_ALIASES },
         test: {
           name: 'logic',
@@ -43,6 +51,7 @@ export default defineConfig({
         }
       },
       {
+        ...NO_DOTENV,
         resolve: { alias: LAYER_ALIASES },
         define: appDefines(''),
         test: {

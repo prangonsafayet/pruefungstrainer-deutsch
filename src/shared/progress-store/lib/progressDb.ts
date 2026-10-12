@@ -2,12 +2,21 @@ import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { DEFAULT_PLAYS_ALLOWED } from '@shared/config/examConditions.ts';
 import { defaultLevelSettings } from '@shared/config/singleLevelExam.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
-import { readLocalJson, writeLocal } from '@shared/lib/storage.ts';
+import { appError, err, type Result } from '@shared/lib/appError.ts';
+import { logger } from '@shared/lib/logger.ts';
+import { readLocal, writeLocal } from '@shared/lib/storage.ts';
 import { type ProgressDatabase } from '@shared/types/progress.ts';
 import { type LevelTrainerSettings, type TrainerDoc, type TrainerId } from '@shared/types/trainer.ts';
 
 /** localStorage key. Stable since v1 — do not rename without a migration. */
 export const PROGRESS_STORAGE_KEY = 'telcTrainerV1';
+
+/**
+ * Where a stored document that could not be read is set aside, byte for byte, before the
+ * trainer starts fresh — the first write would otherwise overwrite it. A protected key like
+ * the one above: never rename or remove it. Holds the most recent damaged copy.
+ */
+export const PROGRESS_RECOVERY_KEY = 'telcTrainerRecoveryV1';
 
 /**
  * A trainer's default exam conditions: the writing time its own paper allows and the play
@@ -132,10 +141,63 @@ export const normalizeDatabase = (raw: unknown): ProgressDatabase => {
   };
 };
 
-export const loadDatabase = (): ProgressDatabase => normalizeDatabase(readLocalJson(PROGRESS_STORAGE_KEY));
+/**
+ * Set when the damaged stored text could not be copied aside: until the learner downloads
+ * it or chooses to discard it, `telcTrainerV1` is the only copy, so nothing may write over it.
+ */
+let holdingDamaged = false;
 
-export const persistDatabase = (db: ProgressDatabase): void => {
-  writeLocal(PROGRESS_STORAGE_KEY, JSON.stringify(db));
+/** The learner has downloaded or discarded the damaged text: writes may replace it now. */
+export const releaseDamaged = (): void => {
+  holdingDamaged = false;
+};
+
+export const persistDatabase = (db: ProgressDatabase): Result<void> => {
+  if (holdingDamaged) return err(appError('storage-corrupt'));
+  return writeLocal(PROGRESS_STORAGE_KEY, JSON.stringify(db));
+};
+
+export interface LoadedProgress {
+  readonly db: ProgressDatabase;
+  /** The stored text when it could not be read as a document. */
+  readonly damaged: string | null;
+  /** Whether `damaged` was copied to `PROGRESS_RECOVERY_KEY`. When false, the original under
+      `PROGRESS_STORAGE_KEY` is the only copy, and writes are held until `releaseDamaged`. */
+  readonly setAside: boolean;
+}
+
+/** The stored text as a document, or null when it is not JSON or not an object at all. */
+const parseStored = (raw: string): object | null => {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * The stored document. Text that is not a document — truncated JSON, a hand edit gone wrong,
+ * an array — used to load as an empty document that the next write saved over the original,
+ * so the learner lost everything without a word. It is now copied to the recovery key first
+ * and reported, so the app can say so and offer the copy for download.
+ */
+export const loadDatabase = (): LoadedProgress => {
+  const raw = readLocal(PROGRESS_STORAGE_KEY);
+  holdingDamaged = false;
+  if (raw === null) return { db: normalizeDatabase(null), damaged: null, setAside: false };
+  const parsed = parseStored(raw);
+  if (parsed !== null) return { db: normalizeDatabase(parsed), damaged: null, setAside: false };
+
+  logger.error('progress', `Stored progress is not a document (${String(raw.length)} chars); set aside`);
+  const fresh = normalizeDatabase(null);
+  /* Only once the copy is safe is the damaged text replaced — so the notice is shown once,
+     not on every load. If the copy could not be written (storage full), the original is the
+     only copy: every write is held in memory until the learner downloads or discards it. */
+  const setAside = writeLocal(PROGRESS_RECOVERY_KEY, raw).ok;
+  if (setAside) persistDatabase(fresh);
+  else holdingDamaged = true;
+  return { db: fresh, damaged: raw, setAside };
 };
 
 /** Stamps the change so cloud sync can tell which side is newer. */

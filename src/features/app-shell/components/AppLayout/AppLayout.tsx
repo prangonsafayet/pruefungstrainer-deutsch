@@ -101,7 +101,7 @@ const AppLayout = () => {
           tabIndex={-1}
           className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-6 outline-none sm:px-6 sm:pt-8"
         >
-          <ErrorBoundary resetKey={pathname}>
+          <ErrorBoundary resetKey={pathname} homeHref={home}>
             {/* Re-keying on the path restarts the entrance animation for each screen. Not in an
                 exam: a finished transform animation still leaves a transform, which would make
                 this div — not the viewport — the containing block of the docked exam toolbar. */}

@@ -12,7 +12,8 @@ Two layers, both required, because they catch different things.
 
 ## Vitest — `tests/`
 
-One command, two projects (`vitest.config.ts`):
+One command, two projects (`vitest.config.ts`). Neither loads `.env` (`envDir: false`), so a
+local Supabase config cannot change what runs or what is covered:
 
 | Project  | Where           | Environment | For                                                     |
 | -------- | --------------- | ----------- | ------------------------------------------------------- |
@@ -66,8 +67,15 @@ its old path.
 | `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                     |
 | `unit/meterTone`             | a results bar is green at or above its pass line, amber/red below, and a dashboard bar stays primary                                                                                                                     |
 | `unit/productionChecks`      | the `_headers` parser, the CSP inline-script hashing (source `index.html` vs `public/_headers`) and the bundle budget                                                                                                    |
+| `unit/appError`              | `toAppError` classifies quota, stale chunks (all three browser wordings) and dead networks; `tryCatch` never throws or rejects                                                                                           |
+| `unit/logger`                | redaction (email, JWT, Supabase key, bearer, `code=`/`password=`), the 100-entry bound, the sessionStorage mirror, and that an arbitrary object (answers) is never serialised                                            |
+| `unit/storage`               | quota and blocked writes return a typed failure and notify listeners; a failed write is read back from memory, not the stale disk value                                                                                  |
+| `unit/staleChunk`            | the reload-once guard on a fake storage and clock: one reload per window, none in an exam sitting, none for a future timestamp                                                                                           |
+| `unit/syncError`             | offline, RLS / dead session, rate limit and generic sync failures map to the right learner message                                                                                                                       |
+| `render/errorHandling`       | damaged progress on boot (notice + download, app usable), a full quota (toast exporting the live document), Copy diagnostics, the play budget with no speech synthesis, a blocked microphone                             |
+| `render/globalErrors`        | window `error` / `unhandledrejection` reach the log; `vite:preloadError` reloads once and lets the second one through; no reload without sessionStorage                                                                  |
 | `render/copyToClipboard`     | a rejected or missing clipboard ends in "Copy failed" and a toast, never an unhandled rejection                                                                                                                          |
-| `render/errorBoundary`       | the crash fallback, "Try again", and the reset when the route key changes                                                                                                                                                |
+| `render/errorBoundary`       | the crash fallback (never the raw message), "Try again", the reset on route change, the stale-chunk Reload (once, never in an exam), and a failed content load retried afresh                                            |
 | `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                                                                                               |
 | `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                                                                                              |
 | `render/contentInjection`    | authored HTML is injected, never shown as text                                                                                                                                                                           |
@@ -127,6 +135,8 @@ moderate/minor printed. `e2e/keyboardOnly.spec.js` (chromium) reaches, answers a
 Lesen Teil per format and drives a flashcard and a quiz with keys only. Radix radio groups
 select on the roving-focus tick, so an arrow must be held (`keyboard.down`, wait for focus,
 `up`) — an instant `press` releases before the tick.
+`e2e/errorHandling.spec.js` 404s a lazy chunk after first load (one reload, then the fallback —
+never a loop; none during an exam sitting) and boots on damaged `telcTrainerV1`.
 `e2e/csp.spec.js` is not in the main config: `npm run test:csp` runs it against the built site
 served with its real `_headers` (see the tooling-ci rule).
 react-day-picker marks month navigation with `aria-disabled` but day cells with both

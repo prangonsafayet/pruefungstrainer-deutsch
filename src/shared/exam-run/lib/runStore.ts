@@ -122,6 +122,8 @@ export const parseRuns = (value: unknown): RunsByTrainer => {
 };
 
 export const createRunStore = (storageKey: string): ExamRunStore => {
+  /* After a failed write this reads this tab's in-memory copy (see storage.ts); a run open in
+     two tabs at once is not reconciled across them. */
   const read = (): RunsByTrainer => parseRuns(readLocalJson(storageKey));
 
   /* Drops the key entirely once no trainer has a run left, so an aborted attempt leaves

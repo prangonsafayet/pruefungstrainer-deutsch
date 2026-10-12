@@ -25,6 +25,11 @@ right area; see `.claude/rules/memory.md`.
   `telcTrainerLevelRunV1` for another paper. Protected keys (never rename or remove):
   `telcTrainerV1`, `telcTrainerRunV1`, `telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`,
   `telcTrainerAuth`, `telcTrainerTheme`.
+- 2026-10-13: corrupt `telcTrainerV1` loaded as an empty document and the first write saved it
+  over the original → `loadDatabase` copies it to `telcTrainerRecoveryV1` (protected) first and
+  only then replaces it; never let a load path default-and-overwrite user data.
+- 2026-10-13: after a quota failure `readLocal` returned the stale localStorage value → the
+  in-memory fallback is read first; a failed write is still the latest value.
 
 ## Lint and config
 
@@ -51,6 +56,10 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-12: `npx shadcn add sheet` also added `cn` (an unrelated npm package) and the `radix-ui`
   umbrella to `package.json` → uninstall both and add the single `@radix-ui/react-<x>` package.
 
+- 2026-10-13: a swallowed `catch` hid every storage/sync/mic failure → `local/no-swallowed-catch`
+  (rethrow, return, or `logger.*`/`toAppError`) plus `no-empty` `allowEmptyCatch: false`; a
+  local rule, because `no-restricted-syntax` cannot look into the block and replaces, not merges.
+
 ## Types
 
 - `in` narrowing on a base interface failed to compile → `in` narrows a union only.
@@ -66,6 +75,15 @@ right area; see `.claude/rules/memory.md`.
   impossible day over; a parsed calendar day must format back to the string it came from.
 
 ## Tests
+
+- 2026-10-13: CI coverage 1 pt below local with all tests green → Vitest loaded the local `.env`
+  (Supabase configured) and covered the auth paths; `envDir: false` in `vitest.config.ts`, and
+  thresholds follow the lower (CI) measurement. Not Node 24 vs 26 — identical there.
+- 2026-10-13: a test that a failed `use()` promise shows the boundary passed the wrong way →
+  React re-renders once on error before committing it; once a rejected promise is evicted, that
+  retry refetches. Make the stub reject until restored.
+- 2026-10-13: happy-dom's `location.reload` cannot be spied in place → swap `window.location` via
+  `defineProperty` for a copy with a `vi.fn()` reload, restore after.
 
 - Reduced-motion suite passed without emulating → `page.emulateMedia`, and assert the emulation.
 - Contrast/chart suite seeded nothing → assert the seeded state arrived.
@@ -141,6 +159,11 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-13: knip flagged exports reserved for issue #18 → tag them `@public` with the reason
   in JSDoc; knip skips them, and the `deadcode` CI job is blocking.
 
+- 2026-10-13: a play was spent before speech started, so with no German voice every click ate
+  the budget → `speakScript` returns a `Result`; consume only once audio actually starts.
+- 2026-10-13: `use()` cached a rejected content promise, so "Try again" re-threw forever →
+  evict the promise on rejection.
+
 ## Hooks and tooling
 
 - 2026-10-12: a broken `guard-git.sh` blocked every Bash call → hooks fail open (exit 0 on their
@@ -156,6 +179,10 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-12: a scripted import rewrite missed `typeof import('…')` type positions and
   template-literal `vi.importActual(\`@content/${id}/…\`)`paths → after a mass move, grep`src/ tests/ e2e/` for every old path, not just import declarations.
 - `git checkout -- file` after a plant reverted real work → `cp` a backup before planting.
+- 2026-10-13: `git stash push -- .` to measure a baseline left untracked new files in the tree
+  (a mixed state) → measure a baseline in `git worktree add --detach <scratch> <sha>` with a
+  symlinked `node_modules` (render tests pass there; the second-React trap is only under
+  `.claude/worktrees/`). `git mv` stages — `git restore --staged` when told not to stage.
 
 ## Agents and process
 

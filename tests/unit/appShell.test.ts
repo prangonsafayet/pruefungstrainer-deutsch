@@ -5,7 +5,7 @@ import { addDays } from '@shared/lib/format.ts';
 import { useExamCountdown } from '@features/app-shell/components/ExamCountdownBadge/useExamCountdown.tsx';
 import { examCountdown } from '@features/app-shell/components/ExamCountdownBadge/examCountdown.ts';
 import { NAV_ENTRIES, splitTabBar, TAB_BAR_SLOTS } from '@features/app-shell/lib/navEntries.ts';
-import { isExamRunPath } from '@features/app-shell/components/AppLayout/examMode.ts';
+import { isExamRunPath } from '@shared/exam-run/lib/examMode.ts';
 import { isSyncOffline } from '@features/app-shell/components/AppLayout/syncStatus.ts';
 
 const TODAY = '2026-10-12';

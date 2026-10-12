@@ -134,6 +134,11 @@ written twice — move it to `src/shared/components`; otherwise rename so the fi
   `lib/runFormats.ts` and one `<format>RunFormat.ts` per paper, `hooks/useStartAttempt.tsx`,
   `types/run.ts`, `types/examFormat.ts`, `config/run.ts`. Read by mock-exam, dashboard and
   settings.
+- Error handling (flat `shared/lib/`): `appError.ts` (the `AppError` shape, `toAppError`,
+  `Result`, `tryCatch`), `logger.ts` (local-only, redacted ring buffer), `globalErrors.ts`
+  (window `error` / `unhandledrejection` / `vite:preloadError`, and the boundaries' `onError`),
+  `staleChunk.ts` (the reload-once guard). `components/ErrorBoundary` wraps the app root and
+  every route (in the layout, reset by the path); `components/ErrorFallback` is what it shows.
 - `shared/writing-feedback/lib/` — the writing rubric, error report, Leitpunkte and weakness
   profile (no screen yet; covered by unit tests).
 - `shared/study-schedule/` — below.
@@ -154,8 +159,9 @@ derived on render and **never persisted**; its inputs (`settings.examDate`, `lea
 The chrome around every screen: `components/AppLayout/AppLayout.tsx` (the router's layout
 route: skip link, `header`, `main#main`, footer; with its own `useAppLayout.tsx`,
 `useHeaderHeight.tsx`, `usePageFocus.tsx` — focus to the new page's `<h1>` and
-`document.title` on navigation, never on first load — `examMode.ts` — the runner route is
-distraction-free: no nav, switcher, countdown or account menu — and `syncStatus.ts`),
+`document.title` on navigation, never on first load — and `syncStatus.ts`; the runner route
+is distraction-free — no nav, switcher, countdown or account menu — as decided by
+`@shared/exam-run/lib/examMode.ts`, which the stale-chunk reload guard reads too),
 `MainNav` (the pill row, ≥ 640px), `BottomTabBar` (phones: ≤ 5 slots, daily tabs first, the
 rest behind a "More" menu), both reading `lib/navEntries.ts`, `TrainerSwitcher`,
 `ExamCountdownBadge` (with `useExamCountdown.tsx`

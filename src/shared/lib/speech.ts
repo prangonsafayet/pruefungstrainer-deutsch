@@ -4,6 +4,8 @@ import { type AudioScript, type DualLevelExam } from '@shared/types/exam.ts';
 import { type Settings } from '@shared/types/progress.ts';
 import { type TrainerPaper } from '@shared/types/trainer.ts';
 
+import { appError, err, ok, type Result } from './appError.ts';
+import { logger } from './logger.ts';
 import { listeningRate } from './paper.ts';
 
 type VoiceListener = () => void;
@@ -21,7 +23,8 @@ const refreshVoices = (): void => {
   let next: SpeechSynthesisVoice[];
   try {
     next = speechSynthesis.getVoices().filter(voice => voice.lang.toLowerCase().startsWith('de'));
-  } catch {
+  } catch (error) {
+    logger.warn('speech', 'Could not list voices', error);
     next = [];
   }
   const unchanged =
@@ -62,36 +65,40 @@ let speaking = false;
 export const isSpeaking = (): boolean => speaking;
 
 export const stopSpeech = (): void => {
-  try {
-    speechSynthesis.cancel();
-  } catch {
-    /* Not supported — nothing to cancel. */
-  }
   speaking = false;
+  /* Not supported — nothing to cancel. */
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) speechSynthesis.cancel();
 };
 
 const TURN_GAP_MS = 350;
 
-/** Reads a monologue or a dialogue aloud, alternating pitch between speakers. */
+/**
+ * Reads a monologue or a dialogue aloud, alternating pitch between speakers. Fails — without
+ * starting, and before a caller spends a play — when the browser has no speech synthesis or
+ * no German voice; the learner is told why and what still works.
+ */
 export const speakScript = (
   script: AudioScript,
   rate: number,
   voiceName: string,
   onDone?: () => void
-): void => {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-    toast.error('This browser has no speech synthesis', {
-      description: 'The listening audio needs it. You can still read the transcripts in the review.'
-    });
-    onDone?.();
-    return;
-  }
-  if (germanVoices.length === 0) {
-    toast.error('No German voice installed', {
-      description: 'Chrome and Edge ship one; otherwise install a German language pack, then reload.'
-    });
-    onDone?.();
-    return;
+): Result<void> => {
+  const blocked =
+    typeof window === 'undefined' || !('speechSynthesis' in window)
+      ? appError('tts-unsupported')
+      : germanVoices.length === 0
+        ? appError('tts-no-voice')
+        : null;
+  if (blocked) {
+    logger.warn('speech', 'Listening audio cannot play', blocked);
+    toast.error(
+      blocked.code === 'tts-no-voice' ? 'No German voice installed' : 'This browser has no speech synthesis',
+      {
+        id: 'tts-unavailable',
+        description: blocked.message
+      }
+    );
+    return err(blocked);
   }
 
   stopSpeech();
@@ -116,11 +123,15 @@ export const speakScript = (
     utterance.rate = rate;
     utterance.pitch = speakers.length > 1 ? (speakers.indexOf(turn.speaker) % 2 === 0 ? 1.05 : 0.85) : 1;
     utterance.onend = () => setTimeout(speakNext, TURN_GAP_MS);
-    utterance.onerror = () => setTimeout(speakNext, 100);
+    utterance.onerror = event => {
+      logger.warn('speech', `Utterance failed: ${event.error}`);
+      setTimeout(speakNext, 100);
+    };
     speechSynthesis.speak(utterance);
   };
 
   speakNext();
+  return ok(undefined);
 };
 
 /** Resolves the audio script for a listening item key such as `h2.3`, `h4` or `h5`. */

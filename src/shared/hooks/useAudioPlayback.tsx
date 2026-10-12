@@ -48,11 +48,17 @@ export const useAudioPlayback = ({
     }
     if (playsLeft <= 0) return;
 
-    onConsumePlay(itemKey);
+    /* A play is spent only once audio actually starts: without a German voice nothing can
+       play, and the budget used to run out on clicks that produced silence. */
     setPlaying(true);
-    speakScript(script, rate, voiceName, () => {
+    const started = speakScript(script, rate, voiceName, () => {
       setPlaying(false);
     });
+    if (!started.ok) {
+      setPlaying(false);
+      return;
+    }
+    onConsumePlay(itemKey);
   }, [playing, playsLeft, onConsumePlay, itemKey, script, rate, voiceName]);
 
   return { playing, canPlay: playsLeft > 0, toggle };

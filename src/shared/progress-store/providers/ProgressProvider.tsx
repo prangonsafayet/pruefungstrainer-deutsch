@@ -9,6 +9,7 @@ import {
   type RefObject
 } from 'react';
 
+import { useProgressNotices } from '@shared/progress-store/hooks/useProgressNotices.tsx';
 import {
   loadDatabase,
   normalizeDatabase,
@@ -37,7 +38,9 @@ export const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 /** Single source of truth for attempts, learn-plan state and settings. */
 export const ProgressProvider = ({ children }: { readonly children: ReactNode }) => {
-  const [db, setDb] = useState<ProgressDatabase>(loadDatabase);
+  /* Read once: whether the stored copy was damaged is a fact about this load. */
+  const [loaded] = useState(loadDatabase);
+  const [db, setDb] = useState<ProgressDatabase>(loaded.db);
 
   /* A stable handle on the current document for callbacks that must not close over a
      stale render — cloud sync in particular. Kept in sync after commit, and also written
@@ -46,6 +49,8 @@ export const ProgressProvider = ({ children }: { readonly children: ReactNode })
   useEffect(() => {
     dbRef.current = db;
   }, [db]);
+
+  useProgressNotices(loaded, dbRef);
 
   const update = useCallback((recipe: ProgressRecipe) => {
     setDb(current => {

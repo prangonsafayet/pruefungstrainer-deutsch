@@ -12,3 +12,4 @@ One dated line per lesson. Read before reviewing; append for every new data-loss
 - 2026-10-12: Key-presence enumeration passes with a rule deleted — enumerate values with a positive control.
 - 2026-10-12: zod rejected for `normalizeDatabase` — it must pass unknown keys through and keep identity.
 - 2026-10-12: Older build with a newer `_updatedAt` and a stale copy of an unknown slice (e.g. `dtz`) overwrites it wholesale via the newer-side spread; attempts/ticks heal on the new device's next union, its slice settings do not.
+- 2026-10-13: Recovery-copy write failing on quota leaves the damaged original on disk only until the first `update`; a smaller fresh doc then fits and overwrites it — the copy lives only in tab memory. Test the write AFTER a failed set-aside, not just the load.

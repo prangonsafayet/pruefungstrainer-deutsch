@@ -1,6 +1,7 @@
 import { use } from 'react';
 
 import { TRAINERS } from '@shared/config/trainers.ts';
+import { logger } from '@shared/lib/logger.ts';
 import { type TrainerContent, type TrainerId } from '@shared/types/trainer.ts';
 
 /*
@@ -16,6 +17,12 @@ const contentPromise = (trainer: TrainerId): Promise<TrainerContent> => {
   if (cached) return cached;
   const promise = TRAINERS[trainer].loadContent();
   contentPromises.set(trainer, promise);
+  /* A failed load is forgotten, so the boundary's "Try again" asks for the chunk afresh
+     instead of re-throwing the cached rejection. `use()` still sees the rejection itself. */
+  promise.catch((error: unknown) => {
+    logger.warn('content', `Content for ${trainer} failed to load`, error);
+    contentPromises.delete(trainer);
+  });
   return promise;
 };
 

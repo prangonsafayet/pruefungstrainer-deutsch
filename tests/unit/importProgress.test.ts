@@ -4,7 +4,8 @@ import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 import { type DualLevelAttempt, type ProgressDatabase } from '@shared/types/progress.ts';
 import { type LevelTrainerDoc } from '@shared/types/trainer.ts';
-import { describeImport, planImport } from '@shared/progress-store/lib/importProgress.ts';
+import { getLogEntries, logger } from '@shared/lib/logger.ts';
+import { describeImport, planImport, readBackup } from '@shared/progress-store/lib/importProgress.ts';
 import { normalizeDatabase } from '@shared/progress-store/lib/progressDb.ts';
 
 /*
@@ -166,5 +167,78 @@ describe('describeImport', () => {
 
     expect(plan.keeps).toEqual([]);
     expect(describeImport(plan)).not.toMatch(/not in the file/);
+  });
+});
+
+describe('readBackup', () => {
+  const firstDocKey = docKeys[0];
+  if (firstDocKey === undefined) throw new Error('a trainer keeps its own document');
+
+  const failure = (text: string): { code: string; message: string } | null => {
+    const result = readBackup(text, stored());
+    return result.ok ? null : { code: result.error.code, message: result.error.message };
+  };
+
+  it('plans a real export', () => {
+    const whole = stored();
+    const result = readBackup(JSON.stringify(whole), whole);
+    expect(result.ok ? result.value.replaces : null).toEqual(TRAINER_ORDER);
+  });
+
+  it('says the file is not JSON', () => {
+    expect(failure('{"attempts": [')?.code).toBe('import-not-json');
+    expect(failure('')?.code).toBe('import-not-json');
+  });
+
+  it('says the JSON is not a trainer backup', () => {
+    for (const text of ['[]', '7', 'null', '"progress"', '{}', '{"unrelated":true}']) {
+      expect(failure(text)?.code).toBe('import-not-export');
+    }
+  });
+
+  it('names the damaged root field and what it is', () => {
+    const bad = failure(JSON.stringify({ ...(preBranchFile() as object), attempts: 'none' }));
+    expect(bad?.code).toBe('import-bad-field');
+    expect(bad?.message).toContain('"attempts" should be a list, but it is text');
+    expect(bad?.message).toContain('Nothing was changed');
+  });
+
+  it('names a damaged field inside a trainer slice', () => {
+    const bad = failure(JSON.stringify({ [firstDocKey]: { ...levelDoc(), learnDone: 'done' } }));
+    expect(bad?.message).toContain(`"${firstDocKey}.learnDone" should be a group of entries, but it is text`);
+  });
+
+  it('names a trainer slice that is not an object at all', () => {
+    const bad = failure(JSON.stringify({ [firstDocKey]: [1, 2] }));
+    expect(bad?.message).toContain(`"${firstDocKey}" should be a group of entries, but it is a list`);
+  });
+
+  it('leaves a slice the file does not mention alone, even if malformed elsewhere', () => {
+    /* `weakness` is not a slice field; normalizeDatabase repairs it. */
+    expect(readBackup(JSON.stringify({ ...(preBranchFile() as object), weakness: 3 }), stored()).ok).toBe(
+      true
+    );
+  });
+
+  it('accepts null for a map field — an old hand-edited export — and reads it as empty', () => {
+    const result = readBackup(
+      JSON.stringify({ [firstDocKey]: { ...levelDoc(), learnDone: null, srs: null } }),
+      stored()
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.database[firstDocKey]?.learnDone).toEqual({});
+    expect(readBackup(JSON.stringify({ ...(preBranchFile() as object), learnDone: null }), stored()).ok).toBe(
+      true
+    );
+  });
+
+  it('keeps the file text out of the failure (the log must never quote a backup)', () => {
+    const result = readBackup('{"answers": {"w.text": "Liebe Anna, ich', stored());
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect('cause' in result.error).toBe(false);
+      logger.warn('import', 'Backup refused', result.error);
+    }
+    expect(getLogEntries().at(-1)?.message).toBe('Backup refused — [import-not-json]');
   });
 });

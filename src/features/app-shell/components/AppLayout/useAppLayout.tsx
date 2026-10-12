@@ -3,13 +3,13 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useCloudSync } from '@shared/account-sync/hooks/useCloudSync.tsx';
+import { isExamRunPath } from '@shared/exam-run/lib/examMode.ts';
 import { stopSpeech } from '@shared/lib/speech.ts';
 import { useProgress } from '@shared/progress-store/hooks/useProgress.tsx';
 import { useTrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
 
 import { useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.tsx';
 
-import { isExamRunPath } from './examMode.ts';
 import { isSyncOffline } from './syncStatus.ts';
 import { useHeaderHeight } from './useHeaderHeight.tsx';
 import { usePageFocus } from './usePageFocus.tsx';

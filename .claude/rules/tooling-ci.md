@@ -42,9 +42,13 @@ tag with its reason, never a blanket ignore).
 
 - `npm run test:coverage` runs every vitest suite with v8 coverage over libs and hooks
   (`src/**/lib/**`, `src/**/hooks/**`, `src/**/use*.tsx`; content, `shared/ui` and types
-  excluded). Thresholds in `vitest.config.ts` sit just under the measured numbers (2026-10-13:
-  lines 81.69%, functions 83.88%, branches 64.13%, statements 80.19% → 81/83/64/80). Raise
-  them when coverage rises; never lower them to land a change.
+  excluded). **Thresholds follow the CI measurement — the lower one.** Vitest runs with
+  `envDir: false`, so a developer's `.env` (Supabase configured) no longer switches the auth
+  paths on locally: that once made one commit measure 81.7% lines on a laptop and 80.6% in CI.
+  Set each threshold to floor(min(local, CI) − 0.5): measured 2026-10-13 on Node 24 and 26,
+  lines 82.6%, functions 83.65%, branches 66.01%, statements 80.99% → 82/83/65/80. Raise them
+  when coverage rises; never lower them to land a change. A ±0.1 pt run-to-run wobble is
+  normal (timing-dependent paths), which is what the headroom is for.
 - `npm run check:bundle` (after `build`) prints the chunk table and fails when the entry chunk
   passes `ENTRY_BASELINE_BYTES` + 10% or any `content-<id>` chunk passes 160 kB gzip. Raise the
   baseline in the commit that explains the growth. A date-fns `parse` import once cost 7 kB

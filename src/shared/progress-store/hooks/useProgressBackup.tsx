@@ -2,28 +2,20 @@ import { useCallback } from 'react';
 
 import { toast } from 'sonner';
 
-import { describeImport, planImport, type ImportPlan } from '@shared/progress-store/lib/importProgress.ts';
+import { toAppError, tryCatchAsync } from '@shared/lib/appError.ts';
+import { downloadText } from '@shared/lib/download.ts';
+import { logger } from '@shared/lib/logger.ts';
+import { describeImport, readBackup } from '@shared/progress-store/lib/importProgress.ts';
 import { stamp } from '@shared/progress-store/lib/progressDb.ts';
 import { useConfirm } from '@shared/providers/useConfirm.tsx';
-import { type ProgressDatabase } from '@shared/types/progress.ts';
 
 import { useProgress } from './useProgress.tsx';
+import { BACKUP_FILENAME } from './useProgressNotices.tsx';
 
 export interface ProgressBackup {
   readonly exportToFile: () => void;
   readonly importFromFile: () => void;
 }
-
-const EXPORT_FILENAME = 'telc-trainer-progress.json';
-
-/** The file's plan, or null if it is not JSON, or not a trainer export. */
-const readPlan = async (file: File, current: ProgressDatabase): Promise<ImportPlan | null> => {
-  try {
-    return planImport(current, JSON.parse(await file.text()));
-  } catch {
-    return null;
-  }
-};
 
 /**
  * Export and import of the whole progress document, for backup or moving between
@@ -38,13 +30,7 @@ export const useProgressBackup = (): ProgressBackup => {
   const confirm = useConfirm();
 
   const exportToFile = useCallback(() => {
-    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = EXPORT_FILENAME;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadText(BACKUP_FILENAME, JSON.stringify(db, null, 2));
     toast.success('Progress exported.');
   }, [db]);
 
@@ -58,13 +44,16 @@ export const useProgressBackup = (): ProgressBackup => {
         const file = input.files?.[0];
         if (!file) return;
 
+        const text = await tryCatchAsync(() => file.text());
         /* Read against the live document, not a render's closure: what the file leaves alone
            has to be this browser's current progress. */
-        const plan = await readPlan(file, dbRef.current);
-        if (!plan) {
-          toast.error('Invalid file — that JSON is not a trainer export.');
+        const read = text.ok ? readBackup(text.value, dbRef.current) : text;
+        if (!read.ok) {
+          logger.warn('import', 'Backup refused', read.error);
+          toast.error('Nothing was imported', { description: read.error.message });
           return;
         }
+        const plan = read.value;
 
         /* Asked before anything is written: an import replaces stored work, cannot be
            undone, and — once signed in — reaches the cloud and every other device. */
@@ -78,7 +67,10 @@ export const useProgressBackup = (): ProgressBackup => {
 
         replaceLocal(stamp(plan.database));
         toast.success('Progress imported.');
-      })();
+      })().catch((error: unknown) => {
+        logger.error('import', 'Import failed', toAppError(error));
+        toast.error('Nothing was imported', { description: toAppError(error).message });
+      });
     });
 
     input.click();

@@ -8,6 +8,8 @@ import {
 } from '@shared/config/languageTool.ts';
 import { type LtMatch, type LtResult } from '@shared/types/languageTool.ts';
 
+import { logger } from './logger.ts';
+
 export const isLanguageToolConfigured = (): boolean => isDynamicFeedbackEnabled();
 
 /* Same text, same answer. The generator checks one sentence per distractor, so the same
@@ -54,10 +56,14 @@ export const checkText = async (
     });
     if (response.status === 429) return { kind: 'unavailable', reason: 'rate-limited' };
     if (response.status === 413) return { kind: 'unavailable', reason: 'too-long' };
-    if (!response.ok) return { kind: 'unavailable', reason: 'error' };
+    if (!response.ok) {
+      logger.warn('languagetool', `Check failed with HTTP ${String(response.status)}`);
+      return { kind: 'unavailable', reason: 'error' };
+    }
     return remember(key, { kind: 'ok', matches: parseMatches(await response.json()) });
-  } catch {
+  } catch (error) {
     /* A timeout and a dead server are the same thing to a learner: no feedback this time. */
+    logger.info('languagetool', 'Check unavailable', error);
     return { kind: 'unavailable', reason: 'offline' };
   }
 };

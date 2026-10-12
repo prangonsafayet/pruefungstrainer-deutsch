@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { toast } from 'sonner';
 
+import { appError, type AppError } from '@shared/lib/appError.ts';
+import { logger } from '@shared/lib/logger.ts';
+
 export type RecorderStatus = 'idle' | 'recording' | 'done' | 'unavailable';
 
 export interface RecorderState {
@@ -16,6 +19,18 @@ interface RecorderOptions {
   /** Called with a blob URL once a recording finishes. */
   readonly onRecorded: (url: string) => void;
 }
+
+/** What `getUserMedia` / `MediaRecorder` threw, as something the learner can act on. */
+export const micError = (error: unknown): AppError => {
+  const name = error instanceof Error || error instanceof DOMException ? error.name : '';
+  if (name === 'NotAllowedError' || name === 'SecurityError') return appError('mic-denied', { cause: error });
+  if (name === 'NotFoundError' || name === 'OverconstrainedError')
+    return appError('mic-missing', { cause: error });
+  if (name === 'NotSupportedError') return appError('mic-unsupported', { cause: error });
+  return appError('mic-failed', { cause: error });
+};
+
+const UNSUPPORTED = appError('mic-unsupported').message;
 
 /**
  * Microphone capture for the speaking module. Recordings stay in memory as blob URLs:
@@ -66,11 +81,13 @@ export const useRecorder = ({ onRecorded }: RecorderOptions): RecorderState => {
       activeRef.current = { stream, recorder };
       setStatus('recording');
       setMessage('recording…');
-    } catch {
+    } catch (error) {
+      const failure = micError(error);
+      logger.warn('recorder', 'Recording could not start', failure);
       setStatus('unavailable');
-      setMessage('Microphone not available — practice out loud and self-rate.');
-      toast.error('Microphone unavailable', {
-        description: 'Allow microphone access in your browser, or just speak out loud and rate yourself.'
+      setMessage('Microphone not available — practise out loud and rate yourself.');
+      toast.error(failure.code === 'mic-denied' ? 'Microphone access is blocked' : 'Microphone unavailable', {
+        description: failure.message
       });
     }
   }, [onRecorded]);
@@ -80,5 +97,6 @@ export const useRecorder = ({ onRecorded }: RecorderOptions): RecorderState => {
     if (recorder && recorder.state !== 'inactive') recorder.stop();
   }, []);
 
-  return { status, message, supported, start, stop };
+  /* A browser without recording says so up front, not only through a disabled button. */
+  return { status, message: supported ? message : UNSUPPORTED, supported, start, stop };
 };

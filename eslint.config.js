@@ -366,6 +366,52 @@ const NO_RAW_COLOURS = {
   rules: { 'local/no-raw-colours': live({ enforced: ENFORCED.rawColours }) ? 'error' : 'off' }
 };
 
+/* A catch block must do something with what it caught: rethrow, return a value (a fallback
+   or a typed failure), or record it through `logger` / `toAppError`. A local rule rather than a
+   `no-restricted-syntax` selector, which could not look into the block and would fall into the
+   replace-not-merge trap. Calls and returns inside a nested function do not count. */
+const FUNCTION_NODES = new Set(['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']);
+const HANDLING_CALLS = new Set(['toAppError']);
+const noSwallowedCatch = {
+  meta: {
+    type: 'problem',
+    messages: {
+      swallowed:
+        'This catch swallows the error. Rethrow it, return a fallback or a typed failure, or record it with logger.* / toAppError() (see src/shared/lib/appError.ts).'
+    }
+  },
+  create: context => {
+    const handled = new WeakSet();
+    /* The catch clause whose block holds `node`, unless a function boundary comes first. */
+    const enclosingCatch = node => {
+      for (let current = node.parent; current; current = current.parent) {
+        if (FUNCTION_NODES.has(current.type)) return null;
+        if (current.type === 'CatchClause') return current;
+      }
+      return null;
+    };
+    const mark = node => {
+      const clause = enclosingCatch(node);
+      if (clause) handled.add(clause);
+    };
+    const isHandlingCall = ({ callee }) =>
+      (callee.type === 'Identifier' && HANDLING_CALLS.has(callee.name)) ||
+      (callee.type === 'MemberExpression' &&
+        callee.object.type === 'Identifier' &&
+        callee.object.name === 'logger');
+    return {
+      ThrowStatement: mark,
+      ReturnStatement: mark,
+      CallExpression: node => {
+        if (isHandlingCall(node)) mark(node);
+      },
+      'CatchClause:exit': node => {
+        if (!handled.has(node)) context.report({ node, messageId: 'swallowed' });
+      }
+    };
+  }
+};
+
 /* Component files default-export their component, so imports and lazy() routes are
    uniform. Defined inline: the rule is three lines and not worth a package. The raw-colour
    rule rides in the same local plugin, registered by reference in both entries that use it
@@ -385,6 +431,7 @@ const componentDefaultExport = {
       })
     },
     'no-raw-colours': noRawColours,
+    'no-swallowed-catch': noSwallowedCatch,
     'no-classes': {
       meta: {
         type: 'problem',
@@ -644,6 +691,18 @@ export default tseslint.config(
     plugins: { local: componentDefaultExport },
     rules: { 'local/no-classes': 'error' }
   },
+  {
+    /* Errors are handled, never dropped: no empty catch, and no catch that neither rethrows,
+       returns nor records what it caught. Floating and misused promises are refused by
+       `strictTypeChecked` (`no-floating-promises`, `no-misused-promises`) in app-source. */
+    name: 'no-swallowed-errors',
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { local: componentDefaultExport },
+    rules: {
+      'no-empty': ['error', { allowEmptyCatch: false }],
+      'local/no-swallowed-catch': 'error'
+    }
+  },
 
   /* Tooling, tests and E2E specs run in Node and are not part of the app tsconfig.
      Extensions are listed explicitly: a directory pattern that names no extension counts
@@ -665,7 +724,7 @@ export default tseslint.config(
     },
     rules: {
       'no-console': 'off',
-      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-empty': ['error', { allowEmptyCatch: false }],
       'no-undef': 'off'
     }
   },

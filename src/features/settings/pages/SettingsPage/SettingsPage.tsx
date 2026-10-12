@@ -4,6 +4,7 @@ import { TRAINER_ORDER } from '@shared/config/trainers.ts';
 
 import AudioSettingsCard from '@features/settings/components/AudioSettingsCard/AudioSettingsCard.tsx';
 import DeleteProgressCard from '@features/settings/components/DeleteProgressCard/DeleteProgressCard.tsx';
+import DiagnosticsCard from '@features/settings/components/DiagnosticsCard/DiagnosticsCard.tsx';
 import ExamConditionsCard from '@features/settings/components/ExamConditionsCard/ExamConditionsCard.tsx';
 import ProgressBackupCard from '@features/settings/components/ProgressBackupCard/ProgressBackupCard.tsx';
 import SettingsSection from '@features/settings/components/SettingsSection/SettingsSection.tsx';
@@ -11,8 +12,9 @@ import TrainerExamDateCard from '@features/settings/components/TrainerExamDateCa
 
 /**
  * Five groups, in the order they matter: when you sit the exam, how strictly a mock exam
- * runs, what it sounds like, where the results are kept, and what to do with them. Grouping
- * by what a setting is for is what keeps the destructive action out of a row of dropdowns.
+ * runs, what it sounds like, where the results are kept, and what to do with them — then,
+ * last, help for when something breaks. Grouping by what a setting is for is what keeps the
+ * destructive action out of a row of dropdowns.
  */
 const SettingsPage = () => (
   <>
@@ -60,6 +62,13 @@ const SettingsPage = () => (
         <ProgressBackupCard />
         <DeleteProgressCard />
       </div>
+    </SettingsSection>
+
+    <SettingsSection
+      title="Something not working?"
+      lead="Copy a short technical summary to paste into a bug report. It stays on this device until you paste it."
+    >
+      <DiagnosticsCard />
     </SettingsSection>
   </>
 );

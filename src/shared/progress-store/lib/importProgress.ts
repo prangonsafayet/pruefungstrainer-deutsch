@@ -10,6 +10,7 @@
  */
 
 import { TRAINER_ORDER, TRAINERS } from '@shared/config/trainers.ts';
+import { appError, err, ok, type Result } from '@shared/lib/appError.ts';
 import { type ProgressDatabase } from '@shared/types/progress.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
 
@@ -73,6 +74,94 @@ export const planImport = (current: ProgressDatabase, parsed: unknown): ImportPl
   if (replaces.length === 0) return null;
 
   return { database: normalizeDatabase(next), replaces, keeps };
+};
+
+const isPlainObject = (value: unknown): boolean =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** What each slice field has to be, and how to say it to a learner. */
+/* `null` passes for a map: older hand-edited exports wrote `learnDone: null`, which
+   `normalizeDatabase` reads as an empty map — refusing the whole file over it would be harsh. */
+const isMapOrNull = (value: unknown): boolean => value === null || isPlainObject(value);
+
+const SLICE_SHAPES = [
+  ['attempts', 'list', (value: unknown) => Array.isArray(value)],
+  ['learnDone', 'map', isMapOrNull],
+  ['srs', 'map', isMapOrNull],
+  ['activity', 'map', isMapOrNull],
+  ['settings', 'map', isMapOrNull]
+] as const;
+
+const kindOf = (value: unknown): string =>
+  value === null
+    ? 'empty (null)'
+    : Array.isArray(value)
+      ? 'a list'
+      : typeof value === 'string'
+        ? 'text'
+        : `a ${typeof value}`;
+
+/** The first field of a slice the file carries that has the wrong shape, as a sentence. */
+const findBadField = (slice: Partial<Record<string, unknown>>, prefix: string): string | null => {
+  for (const [field, want, matches] of SLICE_SHAPES) {
+    if (!(field in slice)) continue;
+    const value = slice[field];
+    if (!matches(value)) {
+      return `"${prefix}${field}" should be ${want === 'list' ? 'a list' : 'a group of entries'}, but it is ${kindOf(value)}.`;
+    }
+  }
+  return null;
+};
+
+/**
+ * A backup file's text, checked and planned — or the reason it cannot be imported, in words
+ * a learner can act on. Stricter than `normalizeDatabase` on purpose: a stored document is
+ * repaired so the app keeps working, but a file the learner chose is refused rather than
+ * silently imported with a damaged field emptied out over their real progress.
+ */
+export const readBackup = (text: string, current: ProgressDatabase): Result<ImportPlan> => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    /* No cause: a JSON SyntaxError quotes the file's own text, which must not reach the log. */
+    return err(appError('import-not-json'));
+  }
+  if (!isPlainObject(parsed)) return err(appError('import-not-export'));
+  const file = parsed as Partial<Record<string, unknown>>;
+
+  for (const trainer of TRAINER_ORDER) {
+    if (!mentions(file, trainer)) continue;
+    const docKey = TRAINERS[trainer].docKey;
+    if (docKey === null) {
+      const bad = findBadField(file, '');
+      if (bad)
+        return err(
+          appError('import-bad-field', {
+            message: `That backup cannot be imported: ${bad} Nothing was changed.`
+          })
+        );
+      continue;
+    }
+    const slice = file[docKey];
+    if (!isPlainObject(slice)) {
+      return err(
+        appError('import-bad-field', {
+          message: `That backup cannot be imported: "${docKey}" should be a group of entries, but it is ${kindOf(slice)}. Nothing was changed.`
+        })
+      );
+    }
+    const bad = findBadField(slice as Partial<Record<string, unknown>>, `${docKey}.`);
+    if (bad)
+      return err(
+        appError('import-bad-field', {
+          message: `That backup cannot be imported: ${bad} Nothing was changed.`
+        })
+      );
+  }
+
+  const plan = planImport(current, parsed);
+  return plan ? ok(plan) : err(appError('import-not-export'));
 };
 
 const listNames = (trainers: readonly TrainerId[]): string =>
