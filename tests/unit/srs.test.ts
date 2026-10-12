@@ -4,7 +4,7 @@ import { addDays } from '@shared/lib/format.ts';
 import { isDue, masteryOf, reviewItem, streakLength } from '@shared/lib/srs.ts';
 import { type SrsEntry } from '@shared/types';
 
-import { bumpActivity } from '@features/progress/lib/progressDb.ts';
+import { bumpActivity } from '@features/progress-store/lib/progressDb.ts';
 
 /*
  * The spaced-repetition engine and the daily streak are both pure functions of an explicit
@@ -49,7 +49,7 @@ describe('reviewItem', () => {
 
   it('produces a due date that survives a spring-forward DST boundary', () => {
     /* addDays builds the date from its parts, so the hour lost to DST cannot turn "+1 day"
-       into "same day, 23:00" (see .claude/docs/pitfalls.md). */
+       into "same day, 23:00" (see .claude/rules/dates-timers.md). */
     const before: SrsEntry = { box: 0, due: '2026-03-28', seen: 0, correct: 0, wrong: 0 };
     const after = reviewItem(before, true, '2026-03-28');
     expect(after.due).toBe('2026-03-29');

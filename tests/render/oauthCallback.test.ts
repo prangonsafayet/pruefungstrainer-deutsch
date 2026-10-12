@@ -30,7 +30,7 @@ vi.mock('sonner', () => ({
 let exchangeError: { readonly message: string } | null = null;
 let exchanges = 0;
 
-vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
+vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
   isSyncConfigured: true,
   PROGRESS_TABLE: 'progress',
   syncDiagnostics: {},
@@ -50,7 +50,7 @@ vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
   }
 }));
 
-const { useCloudSync } = await import('@features/auth/hooks/useCloudSync.ts');
+const { useCloudSync } = await import('@features/account-sync/hooks/useCloudSync.ts');
 
 const DB: ProgressDatabase = {
   attempts: [],

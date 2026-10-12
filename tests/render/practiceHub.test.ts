@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { SINGLE_LEVEL_TRAINERS, TRAINERS } from '@shared/config/trainers.ts';
 import { type SrsMap } from '@shared/types';
-import { usePracticeStore } from '@features/practice/lib/practiceStore.ts';
-import { PROGRESS_STORAGE_KEY } from '@features/progress';
+import { usePracticeStore } from '@features/vocab-practice/lib/practiceStore.ts';
+import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
 
 import { bySelector, captureErrors, click, findByText, mount, selectTab } from './harness.ts';
 

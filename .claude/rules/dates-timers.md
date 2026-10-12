@@ -2,10 +2,10 @@
 paths:
   - 'src/shared/lib/format.ts'
   - 'src/shared/lib/srs.ts'
-  - 'src/features/plan/**'
+  - 'src/features/study-schedule/**'
   - 'src/shared/config/schedule.ts'
   - 'src/shared/types/schedule.ts'
-  - 'src/features/exam/hooks/**'
+  - 'src/features/mock-exam/hooks/**'
   - 'src/**/*{Date,Today,Countdown,Schedule,Timer,Clock}*'
   - 'tests/unit/{schedule,format,srs,distribute}*'
 ---

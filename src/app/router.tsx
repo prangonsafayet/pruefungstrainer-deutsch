@@ -15,16 +15,16 @@ import NotFoundPage from './routes/NotFoundPage.tsx';
  * The dashboard is the landing page and ships in the main bundle; every other screen
  * loads on demand, so a first visit does not pay for the exam runner or the guide.
  */
-const LearnPage = lazy(() => import('@features/learn/routes/LearnPage.tsx'));
-const GuidePage = lazy(() => import('@features/guide/routes/GuidePage.tsx'));
-const HistoryPage = lazy(() => import('@features/history/routes/HistoryPage.tsx'));
+const LearnPage = lazy(() => import('@features/curriculum/routes/LearnPage.tsx'));
+const GuidePage = lazy(() => import('@features/exam-guide/routes/GuidePage.tsx'));
+const HistoryPage = lazy(() => import('@features/attempt-history/routes/HistoryPage.tsx'));
 const SettingsPage = lazy(() => import('@features/settings/routes/SettingsPage.tsx'));
-const PracticePage = lazy(() => import('@features/practice/routes/PracticePage.tsx'));
+const PracticePage = lazy(() => import('@features/vocab-practice/routes/PracticePage.tsx'));
 
-/* One exam feature serves every trainer; the screens take the trainer as a prop. */
-const RunnerPage = lazy(() => import('@features/exam/routes/RunnerPage.tsx'));
-const ResultsPage = lazy(() => import('@features/exam/routes/ResultsPage.tsx'));
-const ReviewPage = lazy(() => import('@features/exam/routes/ReviewPage.tsx'));
+/* One mock-exam feature serves every trainer; the screens take the trainer as a prop. */
+const RunnerPage = lazy(() => import('@features/mock-exam/routes/RunnerPage.tsx'));
+const ResultsPage = lazy(() => import('@features/mock-exam/routes/ResultsPage.tsx'));
+const ReviewPage = lazy(() => import('@features/mock-exam/routes/ReviewPage.tsx'));
 
 /** The guide screen, mounted only for a trainer whose descriptor ships one. */
 const guideRoutes = (trainer: TrainerId): readonly ReactElement[] =>

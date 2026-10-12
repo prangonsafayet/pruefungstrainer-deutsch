@@ -2,7 +2,7 @@ import { PlayCircle } from 'lucide-react';
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui';
 
-import { type ExamRun } from '@features/exam';
+import { type ExamRun } from '@features/mock-exam';
 
 interface ResumeRunNoticeProps {
   readonly run: ExamRun;

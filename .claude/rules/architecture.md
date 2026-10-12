@@ -24,7 +24,7 @@ per-trainer fact may live. A `no-restricted-syntax` rule refuses a trainer id an
 `src/` as a value (`mode === 'b1'`), an object key (`{ b1: … }`) or a property read
 (`db.b1`). Type-level uses are not matched, so the unions that DEFINE the ids and
 `ProgressDatabase`'s fields still declare theirs. Exempt: the registry, `src/content/**`,
-`progress/lib/progressDb.ts` and `auth/lib/mergeProgress.ts`. `eslint.config.js` names no id —
+`progress-store/lib/progressDb.ts` and `account-sync/lib/mergeProgress.ts`. `eslint.config.js` names no id —
 `scripts/trainerRegistry.mjs` reads them from the registry (as text, because the eslint
 config, `vite.config.ts`, `tests/render/routes.test.ts` and `e2e/singleLevelTrainers.spec.js`
 cannot resolve the layer aliases); `tests/unit/trainerRegistry.test.js` checks that parse.
@@ -33,9 +33,9 @@ Every screen, route, hook and nav item is generated from `TRAINER_ORDER`.
 Adding a trainer on an existing paper is seven edits plus two tests; a new paper is much
 larger. The measured lists live in the `new-trainer` skill — use it, do not re-derive them.
 
-`features/exam` runs every mock exam of every trainer: one run-state machine, runner shell,
+`features/mock-exam` runs every mock exam of every trainer: one run-state machine, runner shell,
 results and review screen, driven by a format descriptor per paper (see the exam-formats
-rule). `features/practice` drills every trainer's vocabulary bank.
+rule). `features/vocab-practice` drills every trainer's vocabulary bank.
 
 ## Dependency rules are ESLint rules
 
@@ -47,11 +47,13 @@ rule). `features/practice` drills every trainer's vocabulary bank.
 - Primitives come from `@shared/ui`, never from a file inside it.
 - Relative imports climb at most one level; `../../` must use an alias.
 - **A feature barrel must not re-export a component or route** (feature-barrels-export-no-ui;
-  currently in the TODO(redesign) block — `features/auth/index.ts` still exports
+  currently in the TODO(redesign) block — `features/account-sync/index.ts` still exports
   `AccountMenu` and `SyncPanel`). UI two features need lives in `src/shared/components`.
-- **Shared if used twice:** `npm run check:architecture` fails when two features own a
-  component file with the same name — that is one component written twice; move it to
-  `src/shared/components`.
+- **One name, one component:** `npm run check:architecture` fails when two `.tsx` files
+  anywhere under `src/` share a basename. Across features that is usually one component
+  written twice — move it to `src/shared/components`. Otherwise rename so the file says what
+  it is: a format renderer carries its paper (`DualLevelLesenModule`), a generic word gets a
+  role (`ScoreMeter`, `SyncSignInCard`).
 
 These patterns are `no-restricted-imports` / `no-restricted-syntax`, and both are
 _configured, not accumulated_: when two flat-config entries set the same rule for a file, the
@@ -62,8 +64,8 @@ violation (both `a` and `a/b` forms for a `/**` pattern) and delete the plant.
 ## Barrels and routes
 
 Route components are not exported from feature barrels: the router deep-imports them
-(`@features/exam/routes/RunnerPage.tsx`). Exporting them once produced an import cycle that
-hung the settings route on a permanent skeleton. Only `auth`, `exam`, `plan` and `progress`
+(`@features/mock-exam/routes/RunnerPage.tsx`). Exporting them once produced an import cycle that
+hung the settings route on a permanent skeleton. Only `account-sync`, `mock-exam`, `study-schedule` and `progress-store`
 have a barrel, because only they are read by another feature; a feature nobody imports needs
 no door. If two features need the same thing, it belongs in `src/shared` — that is why the
 confirm dialog, the speech layer and the score-history chart live there.
@@ -75,15 +77,15 @@ confirm dialog, the speech layer and the score-history chart live there.
 | Screen                    | `features/<f>/routes/`                     | `DashboardPage.tsx`            |
 | Feature-private component | `features/<f>/components/<group>/`         | `ExamCard.tsx`                 |
 | Feature logic             | `features/<f>/hooks/`, `features/<f>/lib/` | `useExamRun.ts`, `runStore.ts` |
-| Cross-feature component   | `shared/components/<group>/`               | `data-display/Meter.tsx`       |
+| Cross-feature component   | `shared/components/<group>/`               | `data-display/ScoreMeter.tsx`  |
 | Design-system primitive   | `shared/ui/` (shadcn CLI writes here)      | `button.tsx`                   |
 | Domain type               | `shared/types/`                            | `exam.ts`, `progress.ts`       |
 | Shared constant           | `shared/config/`                           | `exam.ts`, `appInfo.ts`        |
 | Exam or study content     | `content/trainers/<id>/`                   | `a2b1/exams/exam07.ts`         |
 
-## The `plan` feature
+## The `study-schedule` feature
 
-Owns the adaptive schedule; dashboard, learn and settings read it through `@features/plan`.
+Owns the adaptive schedule; dashboard, curriculum and settings read it through `@features/study-schedule`.
 `lib/buildSchedule.ts` is a pure function of (exam date, today, finished lessons, taken exams)
 and reads no clock. `lib/distribute.ts` holds the bucketing helpers, `lib/describeSchedule.ts`
 every user-facing string about the plan. `hooks/useTrainerSchedule.ts` / `hooks/useToday.ts`

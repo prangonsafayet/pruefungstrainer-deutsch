@@ -6,15 +6,15 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { SKILL_MAX } from '@shared/config/exam.ts';
 import { SINGLE_LEVEL_SECTION_MAX } from '@shared/config/singleLevelExam.ts';
 
-import { MAX_CRITERION_SCORE } from '@features/exam/config/run.ts';
-import { useSelfRating, type SelfRatingState } from '@features/exam/hooks/useSelfRating.ts';
-import { DUAL_LEVEL_FORMAT } from '@features/exam/lib/formats/dual-level/index.ts';
-import { SINGLE_LEVEL_FORMAT } from '@features/exam/lib/formats/single-level/index.ts';
-import { type RatingSpec } from '@features/exam/types/examFormat.ts';
+import { MAX_CRITERION_SCORE } from '@features/mock-exam/config/run.ts';
+import { useSelfRating, type SelfRatingState } from '@features/mock-exam/hooks/useSelfRating.ts';
+import { DUAL_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/dual-level/index.ts';
+import { SINGLE_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/single-level/index.ts';
+import { type RatingSpec } from '@features/mock-exam/types/examFormat.ts';
 
 /*
  * Schreiben and Sprechen are not marked by the app — the candidate marks them, and this hook
- * turns those 0–5 sliders into the module's score. It is the only thing in the exam feature
+ * turns those 0–5 sliders into the module's score. It is the only thing in the mock-exam feature
  * with no direct coverage, and it decides two of the five module marks: 60 of 240 on the
  * A2·B1 paper, 120 of 300 on the single-level one. `gradeFullExam`'s tests cover the maxima
  * only indirectly, so nothing here would have caught a wrong `scale`.

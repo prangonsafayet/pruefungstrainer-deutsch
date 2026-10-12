@@ -21,7 +21,7 @@ import {
   buildWeakAreas,
   metersHeading
 } from '@features/dashboard/lib/dashboardModel.ts';
-import type { TrainerSlice } from '@features/progress';
+import type { TrainerSlice } from '@features/progress-store';
 import type {
   DualLevelAttempt,
   SingleLevelAttempt,

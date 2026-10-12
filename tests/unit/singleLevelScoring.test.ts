@@ -9,7 +9,7 @@ import {
   scoreHoeren,
   scoreLesen,
   scoreSprachbausteine
-} from '@features/exam/lib/formats/single-level/scoring.ts';
+} from '@features/mock-exam/lib/formats/single-level/scoring.ts';
 
 /*
  * `scoring.ts` marks all twenty authored B1/B2 papers and nothing checked it before this

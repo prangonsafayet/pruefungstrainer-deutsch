@@ -35,7 +35,7 @@ const REMOTE_ROW: ProgressDatabase = {
   _updatedAt: '2026-01-01T00:00:00.000Z'
 };
 
-vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
+vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
   isSyncConfigured: true,
   PROGRESS_TABLE: 'progress',
   syncDiagnostics: {},
@@ -66,7 +66,7 @@ vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
 }));
 
 /* Imported after the mock is declared; `vi.mock` is hoisted, so the hook sees the fake. */
-const { useCloudSync } = await import('@features/auth/hooks/useCloudSync.ts');
+const { useCloudSync } = await import('@features/account-sync/hooks/useCloudSync.ts');
 
 const dbRef: { current: ProgressDatabase } = { current: REMOTE_ROW };
 

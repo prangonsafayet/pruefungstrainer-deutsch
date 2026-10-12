@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { recordWeaknesses, topWeaknesses } from '@features/feedback/lib/weaknessProfile.ts';
+import { recordWeaknesses, topWeaknesses } from '@features/writing-feedback/lib/weaknessProfile.ts';
 import { type ErrorReportEntry, type WeaknessCategory, type WeaknessProfile } from '@shared/types';
 
 /*

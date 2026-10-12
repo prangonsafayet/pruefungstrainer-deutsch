@@ -29,17 +29,17 @@ names. `npm run lint:todo` lists everything still in the TODO(redesign) block.
 
 `react/no-multi-comp` plus the local `component-default-export` rule. Types may be named
 exports from the same file; hooks, libs, config and providers stay named exports. Barrels
-re-export defaults by name (`export { default as Teil } from './exam-ui/layout/Teil.tsx';`).
+re-export defaults by name (`export { default as TeilSection } from './exam-ui/layout/TeilSection.tsx';`).
 `src/shared/ui` is exempt from both. Group components by area:
 `features/<f>/components/<group>/`, `shared/components/{actions,data-display,layout,exam-ui}/`.
 
 ## Shared exam machinery
 
 Everything every exam format renders lives in `shared/components/exam-ui/` — inputs
-(`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`Teil`, `QuestionItem`,
-`QuestionText`, `ReadingText`, `Callout`), gaps (`InlineGapSelect`, `GapFillText`),
+(`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`TeilSection`, `QuestionItem`,
+`QuestionText`, `ReadingText`, `ExamCallout`), gaps (`InlineGapSelect`, `GapFillText`),
 `OptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
-`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `Transcript` — consumed through
+`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript` — consumed through
 `@shared/components`. Module renderers keep no private copy.
 
 ## Design system

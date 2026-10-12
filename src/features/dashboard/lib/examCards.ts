@@ -9,7 +9,7 @@ import { difficultyTone, gradeTone } from '@shared/lib/examBadges.ts';
 import { moduleMinutes } from '@shared/lib/paper.ts';
 import { type DualLevelExam, type ExamDifficulty, type ExamPaper, type SingleLevelExam } from '@shared/types';
 
-import { type TrainerSlice } from '@features/progress';
+import { type TrainerSlice } from '@features/progress-store';
 
 import { type ExamCardModel, type ExamModuleChoice } from '../types/dashboard.ts';
 

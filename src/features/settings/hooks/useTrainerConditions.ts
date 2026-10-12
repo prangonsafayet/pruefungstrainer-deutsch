@@ -10,7 +10,7 @@ import {
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { type TrainerExamSettings, type TrainerId } from '@shared/types';
 
-import { useTrainerSlice, type TrainerSlice } from '@features/progress';
+import { useTrainerSlice, type TrainerSlice } from '@features/progress-store';
 
 export interface TrainerConditions {
   readonly name: string;

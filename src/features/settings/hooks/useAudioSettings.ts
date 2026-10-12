@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useGermanVoices } from '@shared/hooks/useGermanVoices.ts';
 import { speakScript } from '@shared/lib/speech.ts';
 
-import { useProgress } from '@features/progress';
+import { useProgress } from '@features/progress-store';
 
 import { AUTO_VOICE, VOICE_TEST_SCRIPT } from '../config/audio.ts';
 

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { TRAINER_CONTENT } from '@content/trainers/index.ts';
 
-import { buildScheduleFrom, splitWorkDays } from '@features/plan/lib/buildSchedule.ts';
-import { trainerScheduleSource } from '@features/plan/lib/trainerSource.ts';
+import { buildScheduleFrom, splitWorkDays } from '@features/study-schedule/lib/buildSchedule.ts';
+import { trainerScheduleSource } from '@features/study-schedule/lib/trainerSource.ts';
 import {
   MAX_EXAMS_PER_DAY,
   MAX_PREP_DAYS,

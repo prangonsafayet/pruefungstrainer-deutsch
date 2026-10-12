@@ -5,8 +5,8 @@ import { useTrainerContent } from '@shared/hooks/useTrainerContent.ts';
 import { buildScoreChart } from '@shared/lib/scoreChart.ts';
 import { type ScoreChartModel, type TrainerId } from '@shared/types';
 
-import { describeMockLead, examSlotLabel, useToday, useTrainerSchedule } from '@features/plan';
-import { useTrainerSlice } from '@features/progress';
+import { useTrainerSlice } from '@features/progress-store';
+import { describeMockLead, examSlotLabel, useToday, useTrainerSchedule } from '@features/study-schedule';
 
 import {
   buildMastery,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterBank } from '@features/practice/lib/referenceSearch.ts';
+import { filterBank } from '@features/vocab-practice/lib/referenceSearch.ts';
 import { CASE_BADGE, CASE_LABELS } from '@shared/config/studyCategories.ts';
 import { type GermanCase, type VocabBank } from '@shared/types';
 

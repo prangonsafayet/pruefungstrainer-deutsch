@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { mergeProgress } from '@features/auth/lib/mergeProgress.ts';
-import { EMPTY_DATABASE, normalizeDatabase } from '@features/progress/lib/progressDb.ts';
+import { mergeProgress } from '@features/account-sync/lib/mergeProgress.ts';
+import { EMPTY_DATABASE, normalizeDatabase } from '@features/progress-store/lib/progressDb.ts';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import {
   type DualLevelAttempt,

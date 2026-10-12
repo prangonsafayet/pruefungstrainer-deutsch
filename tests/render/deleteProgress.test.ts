@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
-import { type ExamRun } from '@features/exam';
-import { runFormatFor } from '@features/exam';
-import { PROGRESS_STORAGE_KEY } from '@features/progress';
+import { type ExamRun } from '@features/mock-exam';
+import { runFormatFor } from '@features/mock-exam';
+import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
 import { type TrainerId } from '@shared/types';
 
 import { bySelector, click, mount, seedProgress } from './harness.ts';

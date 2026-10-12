@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildErrorReport } from '@features/feedback/lib/errorReport.ts';
+import { buildErrorReport } from '@features/writing-feedback/lib/errorReport.ts';
 import { type LtMatch } from '@shared/types';
 
 /*

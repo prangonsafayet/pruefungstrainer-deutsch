@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { EMPTY_DATABASE, emptyTrainerDoc, normalizeDatabase } from '@features/progress/lib/progressDb.ts';
+import {
+  EMPTY_DATABASE,
+  emptyTrainerDoc,
+  normalizeDatabase
+} from '@features/progress-store/lib/progressDb.ts';
 import { defaultExamDate } from '@shared/config/exam.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 

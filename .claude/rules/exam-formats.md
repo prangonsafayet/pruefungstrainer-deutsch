@@ -1,6 +1,6 @@
 ---
 paths:
-  - 'src/features/exam/**'
+  - 'src/features/mock-exam/**'
   - 'src/shared/config/*Exam*.ts'
   - 'src/shared/config/exam.ts'
   - 'src/shared/config/examConditions.ts'
@@ -12,12 +12,13 @@ paths:
 
 # Exam formats
 
-`features/exam` runs every mock exam of every trainer through a **format descriptor** in
-`features/exam/lib/formats/`: `DUAL_LEVEL_FORMAT` (A2·B1) and `SINGLE_LEVEL_FORMAT` (telc B1 and
+`features/mock-exam` runs every mock exam of every trainer through a **format descriptor** in
+`features/mock-exam/lib/formats/`: `DUAL_LEVEL_FORMAT` (A2·B1) and `SINGLE_LEVEL_FORMAT` (telc B1 and
 B2), with a third for the **DTZ** paper being added. A descriptor owns its module list and
 timing, briefing copy, marking rules, self-rating scale and module renderers
 (`components/modules/<format>/`). Only a format's own `lib/formats/<format>/index.ts` may import
-its renderers (`exam-modules-through-format`) — the twins share basenames.
+its renderers (`exam-modules-through-format`); each renderer carries its paper in its name
+(`DualLevelLesenModule`, `SingleLevelLesenModule`).
 
 `useExamBinding` binds a trainer to its paper and stored attempts, so the runner, results and
 review screens narrow once and render generic views. Shared rendering lives in

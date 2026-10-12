@@ -4,7 +4,7 @@ import { TRAINERS } from '@shared/config/trainers.ts';
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.ts';
 import { type ExamPaper, type LearnDay, type Schedule, type TrainerId } from '@shared/types';
 
-import { describeClamp, slotHeading, slotKindLabel, useTrainerSchedule } from '@features/plan';
+import { describeClamp, slotHeading, slotKindLabel, useTrainerSchedule } from '@features/study-schedule';
 
 export interface TodayPlan {
   /** "Today · Di, 26. Aug" */

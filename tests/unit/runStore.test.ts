@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createRunStore, parseRun } from '@features/exam/lib/runStore.ts';
-import { type ExamRun } from '@features/exam/types/run.ts';
+import { createRunStore, parseRun } from '@features/mock-exam/lib/runStore.ts';
+import { type ExamRun } from '@features/mock-exam/types/run.ts';
 import { readLocal, removeLocal, writeLocal } from '@shared/lib/storage.ts';
 import { type ExamModule } from '@shared/types';
 

@@ -12,7 +12,7 @@ import { countMastery, streakLength, type MasteryCounts } from '@shared/lib/srs.
 import { idsFor } from '@shared/lib/studyItems.ts';
 import { type ExamModule, type SrsMap, type TrainerId, type VocabBank } from '@shared/types';
 
-import { type TrainerSlice } from '@features/progress';
+import { type TrainerSlice } from '@features/progress-store';
 
 import {
   type MasteryModel,

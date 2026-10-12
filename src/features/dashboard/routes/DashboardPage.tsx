@@ -1,15 +1,15 @@
-import { Meter, PageTitle, ScoreHistoryChart, SectionTitle } from '@shared/components';
+import { ScoreMeter, PageTitle, ScoreHistoryChart, SectionTitle } from '@shared/components';
 import { type TrainerId } from '@shared/types';
 import { Card, CardContent } from '@shared/ui';
 
-import { useAccountIdentity } from '@features/auth';
+import { useAccountIdentity } from '@features/account-sync';
 
+import DashboardStatTile from '../components/DashboardStatTile.tsx';
 import ExamCard from '../components/ExamCard.tsx';
 import LocalOnlyNotice from '../components/LocalOnlyNotice.tsx';
 import MasteryCard from '../components/MasteryCard.tsx';
 import ResumeRunNotice from '../components/ResumeRunNotice.tsx';
 import SchedulePhaseNotice from '../components/SchedulePhaseNotice.tsx';
-import StatTile from '../components/StatTile.tsx';
 import TodayPlanCard from '../components/TodayPlanCard.tsx';
 import WeakAreasCard from '../components/WeakAreasCard.tsx';
 import { useDashboardStats } from '../hooks/useDashboardStats.ts';
@@ -79,7 +79,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
 
       <div className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {stats.tiles.map(tile => (
-          <StatTile key={tile.kind} tile={tile} />
+          <DashboardStatTile key={tile.kind} tile={tile} />
         ))}
       </div>
 
@@ -93,7 +93,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
       <Card>
         <CardContent className="grid gap-5 sm:grid-cols-2">
           {stats.meters.map(meter => (
-            <Meter
+            <ScoreMeter
               key={meter.key}
               label={meter.label}
               value={meter.value}

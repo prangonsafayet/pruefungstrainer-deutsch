@@ -9,7 +9,7 @@ import {
   scoreHoeren,
   scoreLesen,
   scoreSprachbausteine
-} from '@features/exam/lib/formats/dual-level/scoring.ts';
+} from '@features/mock-exam/lib/formats/dual-level/scoring.ts';
 
 /*
  * `scoring.ts` marks all fifteen authored A2·B1 papers. The sibling single-level suite

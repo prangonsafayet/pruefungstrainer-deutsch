@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 import { type DualLevelAttempt, type LevelTrainerDoc, type ProgressDatabase } from '@shared/types';
-import { describeImport, planImport } from '@features/progress/lib/importProgress.ts';
-import { normalizeDatabase } from '@features/progress/lib/progressDb.ts';
+import { describeImport, planImport } from '@features/progress-store/lib/importProgress.ts';
+import { normalizeDatabase } from '@features/progress-store/lib/progressDb.ts';
 
 /*
  * Importing a backup exported by the pre-B1/B2 app used to empty both trainer documents —

@@ -15,15 +15,15 @@ list is wrong, fix this file in the same PR.
 
 ## A trainer on an existing paper — seven edits
 
-| Edit                                                                           | Why it cannot be derived                                                                         |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `content/trainers/<id>/` — the content folder                                  | it is the content                                                                                |
-| one entry in `TRAINERS` (`shared/config/trainers.ts`)                          | it is the registry                                                                               |
-| `TrainerId`, and `SingleLevelTrainerId` if it sets that paper                  | widening either to `string` loses the exhaustiveness the design rests on                         |
-| a field on `ProgressDatabase` (`shared/types/progress.ts`)                     | the persisted document's own shape                                                               |
-| `EMPTY_DATABASE` + `normalizeDatabase` (`features/progress/lib/progressDb.ts`) | `exactOptionalPropertyTypes`: an unopened trainer is an ABSENT key, so defaulting is per trainer |
-| `mergeProgress` (`features/auth/lib/mergeProgress.ts`)                         | it rebuilds the document field by field on purpose; this is where two trainers were once wiped   |
-| `TRAINER_CONTENT` (`src/content/trainers/index.ts`)                            | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
+| Edit                                                                                 | Why it cannot be derived                                                                         |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `content/trainers/<id>/` — the content folder                                        | it is the content                                                                                |
+| one entry in `TRAINERS` (`shared/config/trainers.ts`)                                | it is the registry                                                                               |
+| `TrainerId`, and `SingleLevelTrainerId` if it sets that paper                        | widening either to `string` loses the exhaustiveness the design rests on                         |
+| a field on `ProgressDatabase` (`shared/types/progress.ts`)                           | the persisted document's own shape                                                               |
+| `EMPTY_DATABASE` + `normalizeDatabase` (`features/progress-store/lib/progressDb.ts`) | `exactOptionalPropertyTypes`: an unopened trainer is an ABSENT key, so defaulting is per trainer |
+| `mergeProgress` (`features/account-sync/lib/mergeProgress.ts`)                       | it rebuilds the document field by field on purpose; this is where two trainers were once wiped   |
+| `TRAINER_CONTENT` (`src/content/trainers/index.ts`)                                  | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
 
 ## Two tests
 
@@ -41,9 +41,9 @@ list all read the registry through `scripts/trainerRegistry.mjs`.
 
 - another `ExamFormatId` (`shared/types/trainer.ts`) and the exam type
   (`shared/types/<paper>Exam.ts`, e.g. `dtzExam.ts`)
-- a whole `features/exam/lib/formats/<new>/` mirroring `single-level/` (run format, scoring,
+- a whole `features/mock-exam/lib/formats/<new>/` mirroring `single-level/` (run format, scoring,
   summary, review, briefing copy, self-rating scale)
-- the module renderers under `features/exam/components/modules/<new>/`, imported only by that
+- the module renderers under `features/mock-exam/components/modules/<new>/`, imported only by that
   format's `index.ts`
 - an `eslint.config.js` exemption for that folder if its renderers share basenames
 - an entry in `RUN_FORMATS`, a `TrainerSlice` variant, a `ProgressDatabase` attempt type

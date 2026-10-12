@@ -4,9 +4,13 @@ import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { useExamRun, type ExamRunController } from '@features/exam/hooks/useExamRun.ts';
-import { createRunStore } from '@features/exam/lib/runStore.ts';
-import { type ExamFormat, type RunSettings, type StoredAttempt } from '@features/exam/types/examFormat.ts';
+import { useExamRun, type ExamRunController } from '@features/mock-exam/hooks/useExamRun.ts';
+import { createRunStore } from '@features/mock-exam/lib/runStore.ts';
+import {
+  type ExamFormat,
+  type RunSettings,
+  type StoredAttempt
+} from '@features/mock-exam/types/examFormat.ts';
 import { type ExamPaper } from '@shared/types';
 
 import { captureErrors, settle } from './harness.ts';

@@ -1,12 +1,12 @@
 ---
 paths:
-  - 'src/features/progress/**'
-  - 'src/features/auth/**'
+  - 'src/features/progress-store/**'
+  - 'src/features/account-sync/**'
   - 'src/shared/types/progress.ts'
   - 'src/shared/types/trainer.ts'
   - 'src/shared/lib/storage.ts'
   - 'src/shared/lib/answers.ts'
-  - 'src/features/exam/lib/runStore.ts'
+  - 'src/features/mock-exam/lib/runStore.ts'
   - 'supabase-setup.sql'
 ---
 
@@ -16,7 +16,7 @@ Any change here gets a `persistence-guardian` review before commit.
 
 ## The persisted document
 
-`mergeProgress` (`features/auth/lib/mergeProgress.ts`) rebuilds the whole progress document
+`mergeProgress` (`features/account-sync/lib/mergeProgress.ts`) rebuilds the whole progress document
 field by field when cloud sync reconciles local and remote — it does not spread one side over
 the other. Adding a field to `ProgressDatabase` is three edits, not one: `normalizeDatabase`
 defaults it, `mergeProgress` merges it, and a test asserts the merge survives. The B1/B2 slices

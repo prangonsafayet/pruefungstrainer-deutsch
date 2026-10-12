@@ -9,7 +9,7 @@
  * field on `ProgressDatabase` with matching cases in `EMPTY_DATABASE`, `normalizeDatabase`
  * and `mergeProgress`. Plus two more places, both measured rather than assumed by planting a
  * fourth trainer: `src/content/trainers/index.ts` and one `vi.mock` in
- * `tests/unit/contentChunks.test.ts`. `.claude/docs/architecture.md` states the whole list
+ * `tests/unit/contentChunks.test.ts`. `.claude/skills/new-trainer/SKILL.md` states the whole list
  * and why each entry is irreducible.
  *
  * No screen, route, hook or nav item needs to learn about it, because everything else in
@@ -18,7 +18,7 @@
  * out of this file.
  *
  * A trainer that sets a *new* paper costs much more: another `ExamFormatId`, a whole
- * `features/exam/lib/formats/<new>/`, five module renderers, a `TrainerSlice` variant, an
+ * `features/mock-exam/lib/formats/<new>/`, five module renderers, a `TrainerSlice` variant, an
  * attempt type and seven format-keyed records in `@shared/config/examConditions.ts`.
  */
 

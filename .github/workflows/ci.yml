@@ -87,7 +87,7 @@ jobs:
     name: End-to-end tests
     runs-on: ubuntu-latest
     # Obviously-fake Supabase configuration. Without it CI has no .env, so
-    # `isSyncConfigured` in src/features/auth/lib/supabaseClient.ts is false and SyncPanel
+    # `isSyncConfigured` in src/features/account-sync/lib/supabaseClient.ts is false and SyncPanel
     # renders the "Cloud sync — not active" diagnostics card instead of the sign-in card
     # that e2e/auth.spec.js and e2e/signup.spec.js assert on. These values exist only to
     # satisfy that client-side validation: the specs stub every `**/auth/v1/*` request, so

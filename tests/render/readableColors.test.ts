@@ -12,7 +12,7 @@ import { createElement, act, type ReactElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { CountdownRing, Meter } from '@shared/components';
+import { CountdownRing, ScoreMeter } from '@shared/components';
 import { Badge, Button } from '@shared/ui';
 
 const render = async (element: ReactElement): Promise<HTMLElement> => {
@@ -41,7 +41,7 @@ describe('readable ink on the domain colours', () => {
 
   it('a mid-range Meter bar uses the readable amber, not the surface amber', async () => {
     const container = await render(
-      createElement(Meter, {
+      createElement(ScoreMeter, {
         label: 'Lesen',
         value: 38,
         of: 75,

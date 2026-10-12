@@ -8,8 +8,8 @@ import { APP_NAME, TRAINERS, trainerFromPath, trainerHome } from '@shared/config
 import { stopSpeech } from '@shared/lib/speech.ts';
 import { Badge } from '@shared/ui';
 
-import { AccountMenu, SyncContext, useCloudSync } from '@features/auth';
-import { useProgress, useTrainerSlice } from '@features/progress';
+import { AccountMenu, SyncContext, useCloudSync } from '@features/account-sync';
+import { useProgress, useTrainerSlice } from '@features/progress-store';
 
 import AppFooter from './AppFooter.tsx';
 import ExamCountdownBadge from './ExamCountdownBadge.tsx';

@@ -118,7 +118,7 @@ screen.
 
 **Components are visual; logic is in hooks and utils.** The exam state machine
 lives in `useExamRun`; each paper's own score derivation and review construction
-live in its format descriptor (`features/exam/lib/formats/{dual-level,single-
+live in its format descriptor (`features/mock-exam/lib/formats/{dual-level,single-
 level}/summary.ts` and `review.ts`). A component that renders a screen reads a
 hook and maps over data.
 

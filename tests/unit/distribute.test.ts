@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { chunkBySize, chunkEvenly, interleaveFillers } from '@features/plan/lib/distribute.ts';
+import { chunkBySize, chunkEvenly, interleaveFillers } from '@features/study-schedule/lib/distribute.ts';
 
 describe('chunkEvenly', () => {
   it('front-loads the remainder so the compression is felt early', () => {

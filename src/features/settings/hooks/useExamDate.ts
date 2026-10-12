@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { MAX_PREP_DAYS, MIN_PREP_DAYS } from '@shared/config/schedule.ts';
 import { addDays, daysBetween, parseIsoDate, toIsoDate } from '@shared/lib/format.ts';
 
-import { describePlanShape, useToday } from '@features/plan';
+import { describePlanShape, useToday } from '@features/study-schedule';
 
 /** How far "+30 days" jumps — a comfortable default runway. */
 const DEFAULT_JUMP_DAYS = 30;

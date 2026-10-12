@@ -9,7 +9,7 @@ import { captureErrors, mount } from './harness.ts';
  *
  * The list is generated from `TRAINER_ORDER`, the way the router itself is, so a fourth
  * trainer gets the same coverage without editing this file — which is what the extensibility
- * claim in architecture.md says, and used not to be true here. */
+ * claim in .claude/rules/architecture.md says, and used not to be true here. */
 
 /** One entry per screen, appended to each trainer's route namespace. */
 const SCREENS = [

@@ -6,7 +6,7 @@ import { ErrorBoundary } from '@shared/components';
 import { ConfirmProvider } from '@shared/providers/ConfirmProvider.tsx';
 import { Toaster } from '@shared/ui';
 
-import { ProgressProvider } from '@features/progress';
+import { ProgressProvider } from '@features/progress-store';
 
 /**
  * Composition root. Order matters: the error boundary is outermost so a crash anywhere

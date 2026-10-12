@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { type AttemptMode, type TrainerId } from '@shared/types';
 
-import { runFormatFor, useStartAttempt, type ExamRun } from '@features/exam';
+import { runFormatFor, useStartAttempt, type ExamRun } from '@features/mock-exam';
 
 export interface ResumableRun {
   readonly run: ExamRun | null;

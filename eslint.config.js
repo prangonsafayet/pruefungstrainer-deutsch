@@ -52,7 +52,7 @@ const FEATURES_AND_APP = {
 };
 
 /* `@shared/components` is listed as well as `@shared/components/**`: the `/**` form does
-   not match the bare barrel, so `import { Teil } from '@shared/components'` slipped through
+   not match the bare barrel, so `import { TeilSection } from '@shared/components'` slipped through
    this rule while every path under it was refused. Proven with a planted import. */
 const APPLICATION_CODE = {
   group: ['@features/**', '@app/**', '@shared/components', '@shared/components/**'],
@@ -105,13 +105,13 @@ const FEATURE_SELF_ALIAS = fs.readdirSync('src/features').map(name => ({
   )
 }));
 
-/* The ten module renderers come in twin pairs with identical basenames
-   (`modules/dual-level/LesenModule.tsx` and `modules/single-level/LesenModule.tsx`), told
-   apart only by their format folder. Only a format's own descriptor may import them —
-   everything else (a screen, another format, another feature) goes through the format
-   object instead, which is exactly what stops the twins being mixed up. */
+/* The ten module renderers come in twin pairs, one per paper
+   (`modules/dual-level/DualLevelLesenModule.tsx` and
+   `modules/single-level/SingleLevelLesenModule.tsx`). Only a format's own descriptor may
+   import them — everything else (a screen, another format, another feature) goes through the
+   format object instead, which is exactly what stops the twins being mixed up. */
 const MODULE_RENDERERS = {
-  group: ['@features/exam/components/modules/**', '**/exam/components/modules/**'],
+  group: ['@features/mock-exam/components/modules/**', '**/mock-exam/components/modules/**'],
   message:
     "Import a module renderer only from its own format's lib/formats/<format>/index.ts. Reaching into components/modules/ anywhere else bypasses the format descriptor and risks mixing up the dual-level and single-level twins."
 };
@@ -122,11 +122,11 @@ const MODULE_RENDERERS = {
    is repeated alongside the new module-renderer restriction. */
 const EXAM_MODULES_THROUGH_FORMAT = {
   name: 'exam-modules-through-format',
-  files: ['src/features/exam/**/*.{ts,tsx}'],
-  ignores: ['src/features/exam/lib/formats/*/index.ts'],
+  files: ['src/features/mock-exam/**/*.{ts,tsx}'],
+  ignores: ['src/features/mock-exam/lib/formats/*/index.ts'],
   rules: restrict(
     {
-      group: ['@features/*/*/**', '!@features/exam/**'],
+      group: ['@features/*/*/**', '!@features/mock-exam/**'],
       message:
         "Import another feature only through its public surface: '@features/<name>'. Reaching into its folders couples you to its internals."
     },
@@ -163,7 +163,7 @@ const SHARED_UI_STAYS_GENERIC = {
 
    Four exempt places. The registry itself and the content folders are keyed by trainer by
    definition. The other two are the persisted document's own plumbing —
-   `progress/lib/progressDb.ts` and `auth/lib/mergeProgress.ts` — which the new-trainer skill
+   `progress-store/lib/progressDb.ts` and `account-sync/lib/mergeProgress.ts` — which the new-trainer skill
    (.claude/skills/new-trainer) measured as irreducible: `exactOptionalPropertyTypes` means a trainer nobody has opened
    must be an ABSENT key rather than an explicit undefined, so the merge is spelled out per
    trainer instead of looped. Widening this rule is what surfaced them; they are exempted by
@@ -215,8 +215,8 @@ const NO_TRAINER_ID_LITERALS = {
   ignores: [
     'src/shared/config/trainers.ts',
     'src/content/**',
-    'src/features/progress/lib/progressDb.ts',
-    'src/features/auth/lib/mergeProgress.ts'
+    'src/features/progress-store/lib/progressDb.ts',
+    'src/features/account-sync/lib/mergeProgress.ts'
   ],
   rules: syntax(TRAINER_ID_SYNTAX)
 };
@@ -253,15 +253,15 @@ const live = ban => ban.enforced || REDESIGN_TODO;
 /* TODO(redesign): enable. These stay false until the tree is clean; the counts are from the
    run that introduced them. Flip to true once `npm run lint:todo` reports none for that ban. */
 const ENFORCED = {
-  /* 2 files: features/practice/routes/PracticePage.tsx, shared/components/data-display/Meter.tsx. */
+  /* 2 files: features/vocab-practice/routes/PracticePage.tsx, shared/components/data-display/ScoreMeter.tsx. */
   componentHooks: false,
   componentIo: true,
   componentClock: true,
   componentStateLibs: true,
-  /* 2 exports in features/auth/index.ts: AccountMenu (read by the app shell) and SyncPanel
+  /* 2 exports in features/account-sync/index.ts: AccountMenu (read by the app shell) and SyncPanel
      (read by features/settings). */
   barrelComponents: false,
-  /* 11 literals: shared/components/Logo.tsx 6, features/auth/components/icons/GoogleIcon.tsx 4
+  /* 11 literals: shared/components/Logo.tsx 6, features/account-sync/components/icons/GoogleIcon.tsx 4
      (brand colours — likely an eslint-disable with a reason, not a token), shared/ui/alert-dialog.tsx 1. */
   rawColours: false
 };

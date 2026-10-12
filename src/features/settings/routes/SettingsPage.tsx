@@ -1,7 +1,7 @@
 import { PageTitle } from '@shared/components';
 import { TRAINER_ORDER } from '@shared/config/trainers.ts';
 
-import { SyncPanel } from '@features/auth';
+import { SyncPanel } from '@features/account-sync';
 
 import AudioSettingsCard from '../components/AudioSettingsCard.tsx';
 import DeleteProgressCard from '../components/DeleteProgressCard.tsx';

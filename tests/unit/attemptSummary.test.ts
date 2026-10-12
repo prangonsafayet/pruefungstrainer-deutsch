@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { type DualLevelAttempt, type SingleLevelAttempt } from '@shared/types';
 
-import { summarizeAttempt as summarizeDualLevel } from '@features/exam/lib/formats/dual-level/summary.ts';
-import { summarizeAttempt as summarizeSingleLevel } from '@features/exam/lib/formats/single-level/summary.ts';
+import { summarizeAttempt as summarizeDualLevel } from '@features/mock-exam/lib/formats/dual-level/summary.ts';
+import { summarizeAttempt as summarizeSingleLevel } from '@features/mock-exam/lib/formats/single-level/summary.ts';
 
 /*
  * The results screen marks a pass line on every score bar, and the bar primitive used to

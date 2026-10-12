@@ -28,7 +28,7 @@ in by the redesign_.
 - TS/TSX: the `local/no-raw-colours` ESLint rule flags Tailwind palette classes
   (`bg-red-500`, `text-white`), arbitrary colours (`bg-[#fff]`), colour functions and bare hex
   values (inline styles). It is in the TODO(redesign) block: 11 literals remain in
-  `shared/components/Logo.tsx` (6), `features/auth/components/icons/GoogleIcon.tsx` (4, brand
+  `shared/components/Logo.tsx` (6), `features/account-sync/components/icons/GoogleIcon.tsx` (4, brand
   colours — an `eslint-disable-next-line` with a reason is acceptable there) and
   `shared/ui/alert-dialog.tsx` (1). Use semantic utilities (`bg-primary`,
   `text-muted-foreground`) or `var(--token)`.

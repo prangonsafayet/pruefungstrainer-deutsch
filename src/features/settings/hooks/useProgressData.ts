@@ -5,9 +5,9 @@ import { toast } from 'sonner';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { useConfirm } from '@shared/providers/useConfirm.ts';
 
-import { useSync } from '@features/auth';
-import { clearAllRuns } from '@features/exam';
-import { EMPTY_DATABASE, stamp, useProgress, useProgressBackup } from '@features/progress';
+import { useSync } from '@features/account-sync';
+import { clearAllRuns } from '@features/mock-exam';
+import { EMPTY_DATABASE, stamp, useProgress, useProgressBackup } from '@features/progress-store';
 
 import { describeDelete } from '../lib/describeDelete.ts';
 

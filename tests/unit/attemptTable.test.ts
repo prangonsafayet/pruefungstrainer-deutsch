@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildAttemptTable } from '@features/history/lib/attemptRows.ts';
+import { buildAttemptTable } from '@features/attempt-history/lib/attemptRows.ts';
 import { type DualLevelAttempt, type ScoredAttempts, type SingleLevelAttempt } from '@shared/types';
 
 /*
