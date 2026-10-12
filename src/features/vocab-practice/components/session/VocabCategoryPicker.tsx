@@ -7,16 +7,16 @@ import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@shared
 
 import { type PracticeCategory } from '@features/vocab-practice/lib/practiceStore.ts';
 
-import MasteryLine from './MasteryLine.tsx';
+import VocabMasteryLine from './VocabMasteryLine.tsx';
 
-interface CategoryPickerProps {
+interface VocabCategoryPickerProps {
   readonly mastery: Readonly<Record<StudyCategory, MasteryCounts>>;
   readonly onFlashcards: (category: PracticeCategory) => void;
   readonly onQuiz: (category: PracticeCategory) => void;
 }
 
 /** The practice hub's entry point: pick a category, then flashcards or a quiz. */
-const CategoryPicker = ({ mastery, onFlashcards, onQuiz }: CategoryPickerProps) => (
+const VocabCategoryPicker = ({ mastery, onFlashcards, onQuiz }: VocabCategoryPickerProps) => (
   <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {STUDY_CATEGORIES.map(category => {
       const meta = CATEGORY_META[category];
@@ -31,7 +31,7 @@ const CategoryPicker = ({ mastery, onFlashcards, onQuiz }: CategoryPickerProps) 
             <p className="text-sm text-muted-foreground">{meta.description}</p>
           </CardHeader>
           <CardContent className="mt-auto space-y-3">
-            <MasteryLine counts={counts} />
+            <VocabMasteryLine counts={counts} />
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -92,4 +92,4 @@ const CategoryPicker = ({ mastery, onFlashcards, onQuiz }: CategoryPickerProps) 
   </div>
 );
 
-export default CategoryPicker;
+export default VocabCategoryPicker;

@@ -1,6 +1,6 @@
 import {
   LetterSelect,
-  OptionCards,
+  MatchingOptionCards,
   MultipleChoice,
   MultilineText,
   QuestionItem,
@@ -21,7 +21,7 @@ const DualLevelLesenModule = ({ exam, answers, setAnswer }: A2b1ModuleProps) => 
   return (
     <>
       <TeilSection title="Teil 1 — Anzeigen zuordnen" chip="5 Items" anweisung={lesen.teil1.anweisung}>
-        <OptionCards items={lesen.teil1.ads} />
+        <MatchingOptionCards items={lesen.teil1.ads} />
         {lesen.teil1.situations.map((situation, index) => (
           <QuestionItem key={index}>
             <QuestionText>
@@ -65,7 +65,7 @@ const DualLevelLesenModule = ({ exam, answers, setAnswer }: A2b1ModuleProps) => 
       </TeilSection>
 
       <TeilSection title="Teil 3 — Überschriften zuordnen" chip="5 Items" anweisung={lesen.teil3.anweisung}>
-        <OptionCards items={lesen.teil3.headlines} />
+        <MatchingOptionCards items={lesen.teil3.headlines} />
         {lesen.teil3.messages.map((message, index) => (
           <QuestionItem key={index}>
             <QuestionText>Nachricht {index + 1}</QuestionText>

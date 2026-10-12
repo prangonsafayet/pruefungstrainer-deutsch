@@ -253,7 +253,7 @@ const live = ban => ban.enforced || REDESIGN_TODO;
 /* TODO(redesign): enable. These stay false until the tree is clean; the counts are from the
    run that introduced them. Flip to true once `npm run lint:todo` reports none for that ban. */
 const ENFORCED = {
-  /* 2 files: features/vocab-practice/routes/PracticePage.tsx, shared/components/data-display/ScoreMeter.tsx. */
+  /* 2 files: features/vocab-practice/routes/VocabPracticePage.tsx, shared/components/data-display/ScoreMeter.tsx. */
   componentHooks: false,
   componentIo: true,
   componentClock: true,
@@ -261,7 +261,7 @@ const ENFORCED = {
   /* 2 exports in features/account-sync/index.ts: AccountMenu (read by the app shell) and SyncPanel
      (read by features/settings). */
   barrelComponents: false,
-  /* 11 literals: shared/components/Logo.tsx 6, features/account-sync/components/icons/GoogleIcon.tsx 4
+  /* 11 literals: shared/components/AppLogo.tsx 6, features/account-sync/components/icons/GoogleIcon.tsx 4
      (brand colours — likely an eslint-disable with a reason, not a token), shared/ui/alert-dialog.tsx 1. */
   rawColours: false
 };

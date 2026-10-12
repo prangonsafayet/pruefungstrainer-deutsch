@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { CloudOff } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
-import { ErrorBoundary, Logo, ThemeToggle } from '@shared/components';
+import { ErrorBoundary, AppLogo, ThemeToggle } from '@shared/components';
 import { APP_NAME, TRAINERS, trainerFromPath, trainerHome } from '@shared/config/trainers.ts';
 import { stopSpeech } from '@shared/lib/speech.ts';
 import { Badge } from '@shared/ui';
@@ -48,7 +48,7 @@ const AppLayout = () => {
               className="group flex items-center gap-2.5 leading-tight"
               aria-label={`${APP_NAME} — dashboard`}
             >
-              <Logo className="size-9 shrink-0 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105" />
+              <AppLogo className="size-9 shrink-0 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105" />
               <span>
                 <span className="block text-base font-bold tracking-tight">{APP_NAME}</span>
                 <span className="hidden text-xs text-muted-foreground sm:block">

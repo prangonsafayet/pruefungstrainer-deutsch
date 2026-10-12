@@ -9,12 +9,12 @@ import { useProgressBackup } from '@features/progress-store';
 import AttemptTable from '../components/AttemptTable.tsx';
 import { useAttemptHistory } from '../hooks/useAttemptHistory.ts';
 
-interface HistoryPageProps {
+interface AttemptHistoryPageProps {
   readonly trainer: TrainerId;
 }
 
 /** Every stored attempt of one trainer, newest first, plus the backup controls. */
-const HistoryPage = ({ trainer }: HistoryPageProps) => {
+const AttemptHistoryPage = ({ trainer }: AttemptHistoryPageProps) => {
   const history = useAttemptHistory(trainer);
   const backup = useProgressBackup();
 
@@ -46,4 +46,4 @@ const HistoryPage = ({ trainer }: HistoryPageProps) => {
   );
 };
 
-export default HistoryPage;
+export default AttemptHistoryPage;

@@ -4,12 +4,12 @@ import { Button, Card, CardContent, Progress } from '@shared/ui';
 
 import { type MasteryModel } from '../types/dashboard.ts';
 
-interface MasteryCardProps {
+interface VocabMasteryCardProps {
   readonly mastery: MasteryModel;
 }
 
 /** How far through its vocabulary and grammar bank a trainer is, with a way in. */
-const MasteryCard = ({ mastery }: MasteryCardProps) => (
+const VocabMasteryCard = ({ mastery }: VocabMasteryCardProps) => (
   <Card>
     <CardContent className="space-y-4">
       <div className="flex items-baseline justify-between text-sm">
@@ -42,4 +42,4 @@ const MasteryCard = ({ mastery }: MasteryCardProps) => (
   </Card>
 );
 
-export default MasteryCard;
+export default VocabMasteryCard;

@@ -19,7 +19,7 @@ import {
 
 import { type ExamCardModel } from '../types/dashboard.ts';
 
-interface ExamCardProps {
+interface DashboardExamCardProps {
   readonly card: ExamCardModel;
   readonly onStart: (examId: number, mode: AttemptMode) => void;
 }
@@ -32,7 +32,7 @@ const scheduleTone = (label: string): BadgeVariant => {
 };
 
 /** One Modelltest of any trainer: how it went, where the plan puts it, and how to start it. */
-const ExamCard = ({ card, onStart }: ExamCardProps) => (
+const DashboardExamCard = ({ card, onStart }: DashboardExamCardProps) => (
   <Card className="card-hover relative gap-4 overflow-hidden">
     <span aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: card.accent }} />
     <CardHeader>
@@ -102,4 +102,4 @@ const ExamCard = ({ card, onStart }: ExamCardProps) => (
   </Card>
 );
 
-export default ExamCard;
+export default DashboardExamCard;

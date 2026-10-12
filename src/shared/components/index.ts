@@ -1,5 +1,5 @@
 export { default as ErrorBoundary } from './ErrorBoundary.tsx';
-export { default as Logo } from './Logo.tsx';
+export { default as AppLogo } from './AppLogo.tsx';
 export { default as MultilineText } from './MultilineText.tsx';
 export { default as RouteFallback } from './RouteFallback.tsx';
 export { default as ThemeToggle } from './ThemeToggle.tsx';
@@ -16,7 +16,7 @@ export { default as CountdownRing } from './exam-ui/CountdownRing.tsx';
 export { default as CriteriaRatingPanel } from './exam-ui/CriteriaRatingPanel.tsx';
 export { default as ExamModuleToolbar } from './exam-ui/ExamModuleToolbar.tsx';
 export { default as ModuleBriefingCard } from './exam-ui/ModuleBriefingCard.tsx';
-export { default as OptionCards } from './exam-ui/OptionCards.tsx';
+export { default as MatchingOptionCards } from './exam-ui/MatchingOptionCards.tsx';
 export { default as PunkteGrid } from './exam-ui/PunkteGrid.tsx';
 export { default as RecorderControls } from './exam-ui/RecorderControls.tsx';
 export { default as RedemittelList } from './exam-ui/RedemittelList.tsx';

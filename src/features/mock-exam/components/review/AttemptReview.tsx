@@ -8,7 +8,7 @@ import { fmtDate } from '@shared/lib/format.ts';
 import { type AttemptMode, type ExamPaper, type TrainerId } from '@shared/types';
 import { Button, Card, CardContent } from '@shared/ui';
 
-import ReviewRowCard from '@features/mock-exam/components/review/ReviewRowCard.tsx';
+import AttemptReviewRowCard from '@features/mock-exam/components/review/AttemptReviewRowCard.tsx';
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
 import {
   type ExamFormat,
@@ -66,7 +66,7 @@ const AttemptReview = <
             </Card>
           ))}
           {section.rows.map(row => (
-            <ReviewRowCard key={row.id} row={row} />
+            <AttemptReviewRowCard key={row.id} row={row} />
           ))}
         </section>
       ))}

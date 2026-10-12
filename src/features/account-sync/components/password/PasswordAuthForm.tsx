@@ -5,8 +5,8 @@ import { Button, Input, Label, Tabs, TabsContent, TabsList, TabsTrigger } from '
 import { usePasswordAuth, type AuthMode } from '@features/account-sync/hooks/usePasswordAuth.ts';
 import { MIN_PASSWORD_LENGTH } from '@features/account-sync/lib/passwordPolicy.ts';
 
+import PasswordStrengthMeter from './PasswordStrengthMeter.tsx';
 import SignUpNotice from './SignUpNotice.tsx';
-import StrengthMeter from './StrengthMeter.tsx';
 
 /** Email + password sign-in and sign-up, as two tabs over one form. */
 const PasswordAuthForm = () => {
@@ -76,7 +76,9 @@ const PasswordAuthForm = () => {
 
           {isSignUp ? (
             <>
-              {auth.password.length > 0 ? <StrengthMeter strength={auth.passwordCheck.strength} /> : null}
+              {auth.password.length > 0 ? (
+                <PasswordStrengthMeter strength={auth.passwordCheck.strength} />
+              ) : null}
               <div className="space-y-1.5">
                 <Label htmlFor={`${mode}-confirm`}>Repeat password</Label>
                 <Input

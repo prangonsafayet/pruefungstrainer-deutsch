@@ -6,7 +6,7 @@ import { type TrainerId } from '@shared/types';
 
 import { useHashScroll } from '../hooks/useHashScroll.ts';
 
-interface GuidePageProps {
+interface ExamGuidePageProps {
   readonly trainer: TrainerId;
 }
 
@@ -15,7 +15,7 @@ interface GuidePageProps {
  * container. A trainer with no guide has no Guide route, so the redirect is only a
  * safeguard for a hand-typed URL.
  */
-const GuidePage = ({ trainer }: GuidePageProps) => {
+const ExamGuidePage = ({ trainer }: ExamGuidePageProps) => {
   useHashScroll();
   const guide = useTrainerContent(trainer).guide;
 
@@ -29,4 +29,4 @@ const GuidePage = ({ trainer }: GuidePageProps) => {
   );
 };
 
-export default GuidePage;
+export default ExamGuidePage;

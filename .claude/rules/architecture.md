@@ -64,7 +64,7 @@ violation (both `a` and `a/b` forms for a `/**` pattern) and delete the plant.
 ## Barrels and routes
 
 Route components are not exported from feature barrels: the router deep-imports them
-(`@features/mock-exam/routes/RunnerPage.tsx`). Exporting them once produced an import cycle that
+(`@features/mock-exam/routes/MockExamRunnerPage.tsx`). Exporting them once produced an import cycle that
 hung the settings route on a permanent skeleton. Only `account-sync`, `mock-exam`, `study-schedule` and `progress-store`
 have a barrel, because only they are read by another feature; a feature nobody imports needs
 no door. If two features need the same thing, it belongs in `src/shared` — that is why the
@@ -75,7 +75,7 @@ confirm dialog, the speech layer and the score-history chart live there.
 | Kind                      | Location                                   | Example                        |
 | ------------------------- | ------------------------------------------ | ------------------------------ |
 | Screen                    | `features/<f>/routes/`                     | `DashboardPage.tsx`            |
-| Feature-private component | `features/<f>/components/<group>/`         | `ExamCard.tsx`                 |
+| Feature-private component | `features/<f>/components/<group>/`         | `DashboardExamCard.tsx`        |
 | Feature logic             | `features/<f>/hooks/`, `features/<f>/lib/` | `useExamRun.ts`, `runStore.ts` |
 | Cross-feature component   | `shared/components/<group>/`               | `data-display/ScoreMeter.tsx`  |
 | Design-system primitive   | `shared/ui/` (shadcn CLI writes here)      | `button.tsx`                   |

@@ -9,12 +9,12 @@ import { useExamBinding } from '@features/mock-exam/hooks/useExamBinding.ts';
 import { isAttemptMode } from '@features/mock-exam/lib/attemptMode.ts';
 import { withBinding } from '@features/mock-exam/lib/examBinding.ts';
 
-interface RunnerPageProps {
+interface MockExamRunnerPageProps {
   readonly trainer: TrainerId;
 }
 
 /** Drives one attempt: briefing → module → optional self-scoring → results. */
-const RunnerPage = ({ trainer }: RunnerPageProps) => {
+const MockExamRunnerPage = ({ trainer }: MockExamRunnerPageProps) => {
   const { examId, mode } = useParams<{ examId: string; mode: string }>();
   const binding = useExamBinding(trainer);
   const home = trainerHome(trainer);
@@ -27,4 +27,4 @@ const RunnerPage = ({ trainer }: RunnerPageProps) => {
   });
 };
 
-export default RunnerPage;
+export default MockExamRunnerPage;

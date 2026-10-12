@@ -20,12 +20,12 @@ import LearnSlotSection from '../components/LearnSlotSection.tsx';
 import { useLearnPlan } from '../hooks/useLearnPlan.ts';
 import { useScheduledLearn } from '../hooks/useScheduledLearn.ts';
 
-interface LearnPageProps {
+interface CurriculumPageProps {
   readonly trainer: TrainerId;
 }
 
 /** One trainer's curriculum, re-paced around its own exam date. */
-const LearnPage = ({ trainer }: LearnPageProps) => {
+const CurriculumPage = ({ trainer }: CurriculumPageProps) => {
   const plan = useLearnPlan(trainer);
   const scheduled = useScheduledLearn(trainer);
   const curriculum = useTrainerContent(trainer).curriculum;
@@ -155,4 +155,4 @@ const LearnPage = ({ trainer }: LearnPageProps) => {
   );
 };
 
-export default LearnPage;
+export default CurriculumPage;

@@ -4,13 +4,13 @@ import { Card, CardContent } from '@shared/ui';
 
 import { useAccountIdentity } from '@features/account-sync';
 
+import DashboardExamCard from '../components/DashboardExamCard.tsx';
 import DashboardStatTile from '../components/DashboardStatTile.tsx';
-import ExamCard from '../components/ExamCard.tsx';
 import LocalOnlyNotice from '../components/LocalOnlyNotice.tsx';
-import MasteryCard from '../components/MasteryCard.tsx';
 import ResumeRunNotice from '../components/ResumeRunNotice.tsx';
 import SchedulePhaseNotice from '../components/SchedulePhaseNotice.tsx';
 import TodayPlanCard from '../components/TodayPlanCard.tsx';
+import VocabMasteryCard from '../components/VocabMasteryCard.tsx';
 import WeakAreasCard from '../components/WeakAreasCard.tsx';
 import { useDashboardStats } from '../hooks/useDashboardStats.ts';
 import { useResumableRun } from '../hooks/useResumableRun.ts';
@@ -108,7 +108,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
       {stats.mastery ? (
         <>
           <SectionTitle>Vocabulary &amp; grammar mastery</SectionTitle>
-          <MasteryCard mastery={stats.mastery} />
+          <VocabMasteryCard mastery={stats.mastery} />
         </>
       ) : null}
 
@@ -119,7 +119,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
       <SectionTitle>Mock exams</SectionTitle>
       <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.examCards.map(card => (
-          <ExamCard key={card.id} card={card} onStart={resumable.start} />
+          <DashboardExamCard key={card.id} card={card} onStart={resumable.start} />
         ))}
         {stats.examCards.length === 0 ? (
           <p className="text-sm text-muted-foreground">The Modelltests for this trainer are on their way.</p>

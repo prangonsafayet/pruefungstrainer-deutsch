@@ -11,12 +11,12 @@ import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui';
 
 import EmptyBankNotice from '../components/EmptyBankNotice.tsx';
 import ReferenceTables from '../components/reference/ReferenceTables.tsx';
-import CategoryPicker from '../components/session/CategoryPicker.tsx';
-import FlashcardSession from '../components/session/FlashcardSession.tsx';
-import QuizSession from '../components/session/QuizSession.tsx';
+import VocabCategoryPicker from '../components/session/VocabCategoryPicker.tsx';
+import VocabFlashcardSession from '../components/session/VocabFlashcardSession.tsx';
+import VocabQuizSession from '../components/session/VocabQuizSession.tsx';
 import { usePractice } from '../hooks/usePractice.ts';
 
-interface PracticePageProps {
+interface VocabPracticePageProps {
   readonly trainer: TrainerId;
 }
 
@@ -28,7 +28,7 @@ const isCategory = (value: string | null): value is StudyCategory =>
  * over whatever bank its descriptor offers. A trainer whose bank is empty gets the same
  * screen with its empty state — there is no second implementation.
  */
-const PracticePage = ({ trainer }: PracticePageProps) => {
+const VocabPracticePage = ({ trainer }: VocabPracticePageProps) => {
   const practice = usePractice(trainer);
   const [params] = useSearchParams();
   const { name, short, basePath } = TRAINERS[trainer];
@@ -64,7 +64,7 @@ const PracticePage = ({ trainer }: PracticePageProps) => {
         </div>
 
         {session.kind === 'flashcards' ? (
-          <FlashcardSession
+          <VocabFlashcardSession
             session={session}
             done={practice.sessionDone}
             onFlip={practice.flip}
@@ -75,7 +75,7 @@ const PracticePage = ({ trainer }: PracticePageProps) => {
             onClose={practice.endSession}
           />
         ) : (
-          <QuizSession
+          <VocabQuizSession
             session={session}
             done={practice.sessionDone}
             onChoose={practice.chooseOption}
@@ -120,7 +120,7 @@ const PracticePage = ({ trainer }: PracticePageProps) => {
           <TabsTrigger value="tables">Reference tables</TabsTrigger>
         </TabsList>
         <TabsContent value="practice">
-          <CategoryPicker
+          <VocabCategoryPicker
             mastery={practice.categoryMastery}
             onFlashcards={practice.startFlashcards}
             onQuiz={practice.startQuiz}
@@ -134,4 +134,4 @@ const PracticePage = ({ trainer }: PracticePageProps) => {
   );
 };
 
-export default PracticePage;
+export default VocabPracticePage;

@@ -5,12 +5,12 @@ import { cn } from '@shared/lib/cn.ts';
 
 import { type ReviewRow } from '@features/mock-exam/types/examFormat.ts';
 
-interface ReviewRowCardProps {
+interface AttemptReviewRowCardProps {
   readonly row: ReviewRow;
 }
 
 /** One reviewed item, green when it was right and red when it was not. */
-const ReviewRowCard = ({ row }: ReviewRowCardProps) => {
+const AttemptReviewRowCard = ({ row }: AttemptReviewRowCardProps) => {
   const { correct } = row;
 
   return (
@@ -55,4 +55,4 @@ const ReviewRowCard = ({ row }: ReviewRowCardProps) => {
   );
 };
 
-export default ReviewRowCard;
+export default AttemptReviewRowCard;

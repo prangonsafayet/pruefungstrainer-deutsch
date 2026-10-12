@@ -1,12 +1,12 @@
 import { type MasteryCounts } from '@shared/lib/srs.ts';
 import { Progress } from '@shared/ui';
 
-interface MasteryLineProps {
+interface VocabMasteryLineProps {
   readonly counts: MasteryCounts;
 }
 
 /** A category's mastered/learning counts over a thin progress bar. */
-const MasteryLine = ({ counts }: MasteryLineProps) => {
+const VocabMasteryLine = ({ counts }: VocabMasteryLineProps) => {
   const percent = counts.total > 0 ? (counts.mastered / counts.total) * 100 : 0;
   return (
     <div className="space-y-1">
@@ -21,4 +21,4 @@ const MasteryLine = ({ counts }: MasteryLineProps) => {
   );
 };
 
-export default MasteryLine;
+export default VocabMasteryLine;

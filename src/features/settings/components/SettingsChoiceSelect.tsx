@@ -1,7 +1,7 @@
 import { type SettingChoice } from '@shared/config/examConditions.ts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui';
 
-interface ChoiceSelectProps {
+interface SettingsChoiceSelectProps {
   /** Id the field's own label points at. */
   readonly id: string;
   readonly value: number;
@@ -13,7 +13,7 @@ interface ChoiceSelectProps {
  * A select over one numeric setting's choices. Every exam-condition and audio setting is
  * this shape, so the number-to-string conversion Radix needs is done once, here.
  */
-const ChoiceSelect = ({ id, value, choices, onChange }: ChoiceSelectProps) => (
+const SettingsChoiceSelect = ({ id, value, choices, onChange }: SettingsChoiceSelectProps) => (
   <Select
     value={String(value)}
     onValueChange={next => {
@@ -33,4 +33,4 @@ const ChoiceSelect = ({ id, value, choices, onChange }: ChoiceSelectProps) => (
   </Select>
 );
 
-export default ChoiceSelect;
+export default SettingsChoiceSelect;

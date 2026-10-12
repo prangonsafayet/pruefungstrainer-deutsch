@@ -2,7 +2,7 @@ import { type TrainerId } from '@shared/types';
 
 import { useTrainerConditions } from '../hooks/useTrainerConditions.ts';
 
-import ChoiceSelect from './ChoiceSelect.tsx';
+import SettingsChoiceSelect from './SettingsChoiceSelect.tsx';
 import SettingsField from './SettingsField.tsx';
 
 interface TrainerConditionsRowProps {
@@ -27,7 +27,7 @@ const TrainerConditionsRow = ({ trainer }: TrainerConditionsRowProps) => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <SettingsField label="Writing time" htmlFor={writingId} hint={writingHint}>
-          <ChoiceSelect
+          <SettingsChoiceSelect
             id={writingId}
             value={settings.writingMinutes}
             choices={writingChoices}
@@ -38,7 +38,7 @@ const TrainerConditionsRow = ({ trainer }: TrainerConditionsRowProps) => {
         </SettingsField>
 
         <SettingsField label="Audio plays per item" htmlFor={playsId} hint={playsHint}>
-          <ChoiceSelect
+          <SettingsChoiceSelect
             id={playsId}
             value={settings.playsAllowed}
             choices={playsChoices}

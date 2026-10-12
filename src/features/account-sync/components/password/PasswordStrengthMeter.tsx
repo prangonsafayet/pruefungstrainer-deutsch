@@ -10,12 +10,12 @@ const STRENGTH_COLORS = [
   'bg-[color:var(--success)]'
 ] as const;
 
-interface StrengthMeterProps {
+interface PasswordStrengthMeterProps {
   readonly strength: number;
 }
 
 /** Four segments that fill and recolour as the password gets stronger. */
-const StrengthMeter = ({ strength }: StrengthMeterProps) => (
+const PasswordStrengthMeter = ({ strength }: PasswordStrengthMeterProps) => (
   <div className="space-y-1">
     <div className="flex gap-1" aria-hidden>
       {[1, 2, 3, 4].map(step => (
@@ -32,4 +32,4 @@ const StrengthMeter = ({ strength }: StrengthMeterProps) => (
   </div>
 );
 
-export default StrengthMeter;
+export default PasswordStrengthMeter;

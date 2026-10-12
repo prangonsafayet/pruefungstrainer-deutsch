@@ -7,7 +7,7 @@ import { type FlashcardSession as FlashcardSessionState } from '@features/vocab-
 import PracticeSessionSummary from './PracticeSessionSummary.tsx';
 import VocabFlashcard from './VocabFlashcard.tsx';
 
-interface FlashcardSessionProps {
+interface VocabFlashcardSessionProps {
   readonly session: FlashcardSessionState;
   readonly done: boolean;
   readonly onFlip: () => void;
@@ -17,7 +17,14 @@ interface FlashcardSessionProps {
 }
 
 /** The flashcard run: progress, the flipping card, and honest self-grading. */
-const FlashcardSession = ({ session, done, onFlip, onGrade, onRestart, onClose }: FlashcardSessionProps) => {
+const VocabFlashcardSession = ({
+  session,
+  done,
+  onFlip,
+  onGrade,
+  onRestart,
+  onClose
+}: VocabFlashcardSessionProps) => {
   if (done) {
     return (
       <PracticeSessionSummary
@@ -80,4 +87,4 @@ const FlashcardSession = ({ session, done, onFlip, onGrade, onRestart, onClose }
   );
 };
 
-export default FlashcardSession;
+export default VocabFlashcardSession;

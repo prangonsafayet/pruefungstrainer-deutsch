@@ -205,15 +205,15 @@ the tag, the release notes, the version in the footer and the deployed build in 
 Enforced by `check-file` rules in `eslint.config.js`, so a wrong name fails lint
 rather than surviving review:
 
-| Thing                        | Convention             | Example                               |
-| ---------------------------- | ---------------------- | ------------------------------------- |
-| Component / route module     | `PascalCase.tsx`       | `ExamCard.tsx`, `DashboardPage.tsx`   |
-| Hook                         | `useThing.ts`          | `useExamRun.ts`, `useCountUp.ts`      |
-| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`    |
-| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`           |
-| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH` |
-| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`            |
-| Everything else              | `camelCase`            |                                       |
+| Thing                        | Convention             | Example                                      |
+| ---------------------------- | ---------------------- | -------------------------------------------- |
+| Component / route module     | `PascalCase.tsx`       | `DashboardExamCard.tsx`, `DashboardPage.tsx` |
+| Hook                         | `useThing.ts`          | `useExamRun.ts`, `useCountUp.ts`             |
+| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`           |
+| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`                  |
+| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH`        |
+| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`                   |
+| Everything else              | `camelCase`            |                                              |
 
 One exemption: `src/shared/ui/` stays kebab-case because the shadcn CLI
 writes files there, and renaming them would break `npx shadcn add`.

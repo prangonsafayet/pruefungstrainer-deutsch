@@ -38,7 +38,7 @@ re-export defaults by name (`export { default as TeilSection } from './exam-ui/l
 Everything every exam format renders lives in `shared/components/exam-ui/` — inputs
 (`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`TeilSection`, `QuestionItem`,
 `QuestionText`, `ReadingText`, `ExamCallout`), gaps (`InlineGapSelect`, `GapFillText`),
-`OptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
+`MatchingOptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
 `CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript` — consumed through
 `@shared/components`. Module renderers keep no private copy.
 
@@ -49,14 +49,14 @@ Primitives from `@shared/ui` only; no raw `<button>`, `<input>`, `<select>`, `<t
 
 ## Naming (`check-file` + `@typescript-eslint/naming-convention`)
 
-| Thing                        | Convention             | Example             |
-| ---------------------------- | ---------------------- | ------------------- |
-| Component / route module     | `PascalCase.tsx`       | `ExamCard.tsx`      |
-| Hook                         | `useThing.ts`          | `useExamRun.ts`     |
-| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts` |
-| Folder                       | `kebab-case`           | `exam-ui/`          |
-| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`      |
-| Type / interface             | `PascalCase`           | `SignUpOutcome`     |
+| Thing                        | Convention             | Example                 |
+| ---------------------------- | ---------------------- | ----------------------- |
+| Component / route module     | `PascalCase.tsx`       | `DashboardExamCard.tsx` |
+| Hook                         | `useThing.ts`          | `useExamRun.ts`         |
+| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`     |
+| Folder                       | `kebab-case`           | `exam-ui/`              |
+| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`          |
+| Type / interface             | `PascalCase`           | `SignUpOutcome`         |
 
 PascalCase is allowed where a value is a component or namespace import; `snake_case` /
 `UPPER_CASE` in type properties mirroring external contracts (Supabase columns, `VITE_` vars).

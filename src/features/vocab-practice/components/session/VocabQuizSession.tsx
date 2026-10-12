@@ -8,7 +8,7 @@ import { type QuizSession as QuizSessionState } from '@features/vocab-practice/l
 
 import PracticeSessionSummary from './PracticeSessionSummary.tsx';
 
-interface QuizSessionProps {
+interface VocabQuizSessionProps {
   readonly session: QuizSessionState;
   readonly done: boolean;
   readonly onChoose: (option: number) => void;
@@ -18,7 +18,7 @@ interface QuizSessionProps {
 }
 
 /** The quiz run: one question at a time with instant feedback and an explanation. */
-const QuizSession = ({ session, done, onChoose, onNext, onRestart, onClose }: QuizSessionProps) => {
+const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose }: VocabQuizSessionProps) => {
   if (done) {
     return (
       <PracticeSessionSummary
@@ -111,4 +111,4 @@ const QuizSession = ({ session, done, onChoose, onNext, onRestart, onClose }: Qu
   );
 };
 
-export default QuizSession;
+export default VocabQuizSession;

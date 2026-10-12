@@ -2,7 +2,7 @@ import {
   LetterSelect,
   MultipleChoice,
   MultilineText,
-  OptionCards,
+  MatchingOptionCards,
   QuestionItem,
   QuestionText,
   ReadingText,
@@ -22,7 +22,7 @@ const SingleLevelLesenModule = ({ exam, answers, setAnswer }: SingleLevelModuleP
         chip="5 Items · je 5 Punkte"
         anweisung={lesen.teil1.anweisung}
       >
-        <OptionCards items={lesen.teil1.headlines} />
+        <MatchingOptionCards items={lesen.teil1.headlines} />
         {lesen.teil1.texts.map((text, index) => (
           <QuestionItem key={index}>
             <QuestionText>Text {index + 1}</QuestionText>
@@ -73,7 +73,7 @@ const SingleLevelLesenModule = ({ exam, answers, setAnswer }: SingleLevelModuleP
         chip="10 Items · je 2,5 Punkte"
         anweisung={lesen.teil3.anweisung}
       >
-        <OptionCards items={lesen.teil3.ads} />
+        <MatchingOptionCards items={lesen.teil3.ads} />
         {lesen.teil3.situations.map((situation, index) => (
           <QuestionItem key={index}>
             <QuestionText>
