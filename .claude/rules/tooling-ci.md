@@ -98,7 +98,13 @@ inside `$(…)`. Never wire a hook before `bash -n` and `npm run test:hooks` pas
 - `main` requires the four CI checks (Static analysis = typecheck + zero-warning lint + format +
   guards; Unit tests; End-to-end tests; Production build) and **enforce_admins is on** (since
   2026-10-12) — nobody, admins included, merges past a red check.
-- `.claude/hooks/guard-git.sh` is a second layer, not the boundary. Merges are an **allowlist**:
+- **The merge boundary is GitHub branch protection, server-side.** `.claude/hooks/guard-git.sh`
+  is accident prevention for Claude sessions, **not a security control**: a client-side hook
+  that reads shell text can always be sidestepped (a script file, `python -c`, curl to the REST
+  API, a renamed binary). Security reviews of it (2026-10-12, four rounds) were accepted on that
+  basis — do not keep extending its parser. It stays fail-open on its own errors, because a
+  fail-closed bug once blocked every Bash call.
+- Within that scope, `guard-git.sh` is a second layer, not the boundary. Merges are an **allowlist**:
   only the literal standalone `gh pr merge <n> --squash [--delete-branch]` passes, and only when
   `gh pr checks <n> --required` is all green (run in the project dir with `GH_REPO` unset). Any
   other gh command carrying a merge word, and any gh+merge inside `bash -c`/`eval`/`xargs`/`$(…)`/

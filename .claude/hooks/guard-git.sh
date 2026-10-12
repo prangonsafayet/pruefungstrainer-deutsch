@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# ACCIDENT PREVENTION, NOT A SECURITY CONTROL. This hook reads shell text, so a determined
+# caller can always route around it (a script file, python -c, curl to the REST API). The real
+# boundary for main is GitHub branch protection (required checks + enforce_admins), enforced
+# server-side. Keep this hook simple and fail-open; do not grow its parser to chase bypasses.
+#
 # PreToolUse(Bash) guard for this repo's git and filesystem rules. Exit 2 blocks the command
 # and shows stderr to Claude; exit 0 lets it run. Every rule here is a non-negotiable from
 # CLAUDE.md or a lesson that cost real time (docs/lessons.local.md):
