@@ -32,6 +32,21 @@ describe('ISO date handling', () => {
     expect(parseIsoDate(undefined)).toBeNull();
     expect(parseIsoDate('2026-9-12')).toBeNull();
   });
+
+  /* Regression: the parts were handed to `new Date(y, m, d)`, which rolls an impossible day
+     over into the next month — '2026-02-31' came back as 3 March instead of null. */
+  it.each(['2026-02-31', '2025-02-29', '2026-04-31', '2026-13-01', '2026-00-10', '2026-01-00', '2026-1-5'])(
+    'rejects the impossible or malformed calendar day %s',
+    iso => {
+      expect(parseIsoDate(iso)).toBeNull();
+      expect(addDays(iso, 1)).toBeNull();
+      expect(daysBetween(iso, '2026-03-01')).toBeNull();
+    }
+  );
+
+  it('still accepts a real leap day', () => {
+    expect(toIsoDate(parseIsoDate('2028-02-29') as Date)).toBe('2028-02-29');
+  });
 });
 
 /* `fmtDate` is the module's only formatter and used to be the one export that did NOT go

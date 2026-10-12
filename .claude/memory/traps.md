@@ -62,6 +62,8 @@ right area; see `.claude/rules/memory.md`.
   through a helper that declares what may really be there.
 - 2026-10-12: binary format ternaries silently treat a third paper as dual-level → exhaustive
   switches over the format id.
+- 2026-10-13: `parseIsoDate('2026-02-31')` returned 3 March → `new Date(y, m, d)` rolls an
+  impossible day over; a parsed calendar day must format back to the string it came from.
 
 ## Tests
 
@@ -78,6 +80,11 @@ right area; see `.claude/rules/memory.md`.
 - Hardcoded exam date → `seedProgress({ daysUntilExam })`.
 - Render suite fails in a worktree (`useCallback` of null) → render tests run in the main checkout.
 - `.ts` suite cannot import `vite.config.ts` (TS6307) → build logic in `scripts/*.mjs`, tested from JS.
+- 2026-10-13: headless Chromium on macOS never settles `getUserMedia`, even with
+  `--use-fake-device-for-media-stream` → stub it with a Web Audio
+  `createMediaStreamDestination().stream`; MediaRecorder and blob playback stay real.
+- 2026-10-13: a `page.route` stub does not hide a CSP violation → the renderer checks CSP before
+  the request reaches the network layer, so stub backends freely in `e2e/csp.spec.js`.
 
 ## Dates, timers, React
 
@@ -126,6 +133,13 @@ right area; see `.claude/rules/memory.md`.
 - `VITE_*` change had no effect → inlined at build time; rebuild.
 - 2026-10-12: og-image.png showed only the top-left of the card → `qlmanage` zooms non-square SVGs;
   `npm run images` renders it with `npx playwright screenshot` — look at the PNG after.
+- 2026-10-13: date-fns `parse` added ~7 kB gzip to an eagerly preloaded chunk → for a fixed
+  `yyyy-MM-dd` shape use the regex + `lightFormat` round-trip; `npm run check:bundle` shows it.
+- 2026-10-13: `style-src-elem 'self'` broke every page → sonner and Radix's scroll lock
+  (`react-style-singleton`) inject runtime `<style>` elements; `style-src` needs
+  `'unsafe-inline'`, and a hash in the same directive would silently disable it.
+- 2026-10-13: knip flagged exports reserved for issue #18 → tag them `@public` with the reason
+  in JSDoc; knip skips them, and the `deadcode` CI job is blocking.
 
 ## Hooks and tooling
 

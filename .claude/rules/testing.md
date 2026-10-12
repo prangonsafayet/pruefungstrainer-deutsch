@@ -21,6 +21,7 @@ One command, two projects (`vitest.config.ts`):
 
 ```bash
 npm run test:unit    # both projects
+npm run test:coverage # both projects + the lib/hook coverage gate (CI runs this)
 npm run test:logic   # just the pure logic
 npm run test:render  # just the mounted pages
 npm run test:watch   # vitest in watch mode
@@ -63,6 +64,10 @@ its old path.
 | `unit/trainerRegistry`       | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                                                                                                    |
 | `unit/timerAnnouncements`    | the spoken exam clock: exactly 10/5/1 minutes on fake timers, never between, never the threshold a module starts on                                                                                                      |
 | `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                     |
+| `unit/meterTone`             | a results bar is green at or above its pass line, amber/red below, and a dashboard bar stays primary                                                                                                                     |
+| `unit/productionChecks`      | the `_headers` parser, the CSP inline-script hashing (source `index.html` vs `public/_headers`) and the bundle budget                                                                                                    |
+| `render/copyToClipboard`     | a rejected or missing clipboard ends in "Copy failed" and a toast, never an unhandled rejection                                                                                                                          |
+| `render/errorBoundary`       | the crash fallback, "Try again", and the reset when the route key changes                                                                                                                                                |
 | `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                                                                                               |
 | `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                                                                                              |
 | `render/contentInjection`    | authored HTML is injected, never shown as text                                                                                                                                                                           |
@@ -122,6 +127,8 @@ moderate/minor printed. `e2e/keyboardOnly.spec.js` (chromium) reaches, answers a
 Lesen Teil per format and drives a flashcard and a quiz with keys only. Radix radio groups
 select on the roving-focus tick, so an arrow must be held (`keyboard.down`, wait for focus,
 `up`) — an instant `press` releases before the tick.
+`e2e/csp.spec.js` is not in the main config: `npm run test:csp` runs it against the built site
+served with its real `_headers` (see the tooling-ci rule).
 react-day-picker marks month navigation with `aria-disabled` but day cells with both
 `data-disabled` and a real `disabled` — assert the right one. For interactive checks use the
 **Playwright MCP** instead of a throwaway spec.

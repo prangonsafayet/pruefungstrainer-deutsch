@@ -40,8 +40,11 @@ cat dist/robots.txt dist/sitemap.xml
 directory (`dist`) and the catch-all rewrite to `index.html`. That rewrite is not
 optional — without it, reloading a deep route (a trainer's history or an attempt review)
 returns 404.
-`public/_redirects` and `public/_headers` carry the same rules for a
-drag-and-dropped `dist`.
+`public/_redirects` carries the same rewrite for a drag-and-dropped `dist`.
+`public/_headers` is the only source of response headers (CSP, HSTS, caching) for both
+routes. Before deploying: `npm run check:bundle`, `npm run check:csp` and `npm run test:csp`
+after the build; after deploying, `curl -sI` the preview for `content-security-policy` and
+check the browser console for CSP errors (see the tooling-ci rule).
 
 Environment variables must be set under **Site configuration → Environment
 variables**, then a **new deploy triggered**:

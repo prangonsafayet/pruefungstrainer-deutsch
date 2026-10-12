@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
    here. The dev server is started automatically. */
 export default defineConfig({
   testDir: './e2e',
+  /* Runs against the built site with its real headers: playwright.csp.config.ts. */
+  testIgnore: 'csp.spec.js',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react';
+import { Check, Copy, X } from 'lucide-react';
 
 import { useCopyToClipboard } from '@shared/hooks/useCopyToClipboard.tsx';
 import { Button } from '@shared/ui/button.tsx';
@@ -8,9 +8,9 @@ interface CopyTextButtonProps {
   readonly label?: string;
 }
 
-/** Copies text to the clipboard with a short "copied" confirmation. */
+/** Copies text to the clipboard with a short "copied" (or "copy failed") confirmation. */
 const CopyTextButton = ({ text, label = 'Copy prompt' }: CopyTextButtonProps) => {
-  const { copied, copy } = useCopyToClipboard();
+  const { status, copy } = useCopyToClipboard();
   return (
     <Button
       variant="outline"
@@ -20,8 +20,8 @@ const CopyTextButton = ({ text, label = 'Copy prompt' }: CopyTextButtonProps) =>
         copy(text);
       }}
     >
-      {copied ? <Check /> : <Copy />}
-      {copied ? 'Copied' : label}
+      {status === 'copied' ? <Check /> : status === 'failed' ? <X /> : <Copy />}
+      {status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : label}
     </Button>
   );
 };

@@ -637,11 +637,10 @@ export default tseslint.config(
     rules: { 'react-refresh/only-export-components': 'off' }
   },
   {
-    /* Every function is an arrow (below), and classes are how a method sneaks back in. The one
-       class React still requires is an error boundary. */
+    /* Every function is an arrow (below), and classes are how a method sneaks back in. Error
+       boundaries come from react-error-boundary, so no exemption is left. */
     name: 'no-classes',
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/shared/components/ErrorBoundary/ErrorBoundary.tsx'],
     plugins: { local: componentDefaultExport },
     rules: { 'local/no-classes': 'error' }
   },

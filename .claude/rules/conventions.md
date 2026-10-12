@@ -78,8 +78,8 @@ Primitives from `src/shared/ui` only, imported by file (`@shared/ui/card.tsx`); 
 PascalCase is allowed where a value is a component or namespace import; `snake_case` /
 `UPPER_CASE` in type properties mirroring external contracts (Supabase columns, `VITE_` vars).
 Every function is an arrow (`prefer-arrow-functions` + `func-style`, at error for `src/`,
-`tests/`, `e2e/`, `scripts/` and root configs). Classes are refused in `src/` (`local/no-classes`)
-except the one React still requires, `ErrorBoundary`. Hooks are `.tsx` like components — a
+`tests/`, `e2e/`, `scripts/` and root configs). Classes are refused in `src/` (`local/no-classes`),
+with no exemption: error boundaries come from `react-error-boundary`. Hooks are `.tsx` like components — a
 `use*.ts` file fails lint (`check-file/filename-blocklist`) and `check:architecture`; a generic
 arrow in a `.tsx` file needs `<T,>`. Non-hook logic (lib, model, config, types) stays `.ts`.
 

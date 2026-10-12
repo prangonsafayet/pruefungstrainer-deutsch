@@ -10,6 +10,9 @@ dist/
 .netlify/
 !.env.example
 
+# Vitest coverage report (npm run test:coverage)
+coverage/
+
 # Playwright
 test-results/
 playwright-report/

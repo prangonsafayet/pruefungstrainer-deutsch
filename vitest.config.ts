@@ -16,6 +16,17 @@ export default defineConfig({
   define: appDefines(''),
   test: {
     restoreMocks: true,
+    /* `npm run test:coverage`: the logic layer only — libs and hooks, where behaviour lives.
+       Components are visual (lint-enforced) and proven by the render and e2e suites. The
+       thresholds sit just under the measured numbers, so coverage can only ratchet up: raise
+       them when it does. */
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/lib/**/*.{ts,tsx}', 'src/**/hooks/**/*.{ts,tsx}', 'src/**/use*.tsx'],
+      exclude: ['src/content/**', 'src/shared/ui/**', 'src/**/types/**'],
+      reporter: ['text-summary', 'html'],
+      thresholds: { lines: 81, functions: 83, branches: 64, statements: 80 }
+    },
     projects: [
       {
         resolve: { alias: LAYER_ALIASES },

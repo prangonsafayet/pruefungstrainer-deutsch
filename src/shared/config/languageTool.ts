@@ -51,6 +51,11 @@ export const LANGUAGE_TOOL_MAX_CHARS = 20_000;
 /** Identical text is checked once; the generator re-checks the same sentences constantly. */
 export const LANGUAGE_TOOL_CACHE_ENTRIES = 500;
 
-/** Concurrency and backoff, so a burst of generated items cannot stampede the server. */
+/**
+ * Concurrency and backoff, so a burst of generated items cannot stampede the server.
+ * @public Reserved for the generated-practice pipeline of issue #18; knip skips `@public`
+ * exports until that work lands.
+ */
 export const LANGUAGE_TOOL_MAX_CONCURRENT = 4;
+/** @public Backoff for the same issue #18 pipeline; see above. */
 export const LANGUAGE_TOOL_RETRY_DELAYS_MS = [400, 1_200, 3_000] as const;

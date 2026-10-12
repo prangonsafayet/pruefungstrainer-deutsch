@@ -16,13 +16,16 @@ paths:
 
 ## Pipeline order
 
-| Where                       | Runs                                                                                                                  |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| pre-commit (husky)          | `lint-staged`: ESLint `--max-warnings 0 --fix` + Prettier on staged files                                             |
-| pre-push (husky)            | `typecheck` → `lint --max-warnings=0` → `format:check` → `validate` → `test:unit` → `guards:offline` (whole codebase) |
-| CI `static`                 | `typecheck` → `lint -- --max-warnings=0` → `format:check` → `guards`                                                  |
-| CI `unit` / `e2e` / `build` | `validate` + `test:unit` / Playwright on Chromium / production build with no secrets                                  |
-| CI `audit`, `deadcode`      | `npm audit --audit-level=high` (dev advisories) and `knip:ci` — both `continue-on-error` until their findings clear   |
+| Where              | Runs                                                                                                                  |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| pre-commit (husky) | `lint-staged`: ESLint `--max-warnings 0 --fix` + Prettier on staged files                                             |
+| pre-push (husky)   | `typecheck` → `lint --max-warnings=0` → `format:check` → `validate` → `test:unit` → `guards:offline` (whole codebase) |
+| CI `static`        | `typecheck` → `lint -- --max-warnings=0` → `format:check` → `guards`                                                  |
+| CI `unit`          | `validate` → `test:coverage` (every vitest suite + the coverage gate)                                                 |
+| CI `e2e`           | Playwright on Chromium → `build` → `test:csp` (the build served with its real `_headers`)                             |
+| CI `build`         | production build with no secrets → `check:bundle` → `check:csp`                                                       |
+| CI `deadcode`      | `knip:ci` — blocking                                                                                                  |
+| CI `audit`         | `npm audit --audit-level=high` (dev advisories) — `continue-on-error` until they have a fix                           |
 
 `npm run guards` = `guards:offline` (`check:architecture` — barrels, `routes/`, folder per
 component, `pages/` per feature, `.tsx` hooks, feature isolation, unique names — → `check:css` → `check:storage-keys`
@@ -32,7 +35,62 @@ the offline variant so a push never depends on the registry. `npm test` stays ty
 
 Other scripts: `lint:strict` (zero warnings), `lint:todo` (turns on every rule in the
 TODO(redesign) block), `audit:all` (report only), `knip` (dead code; config in `knip.json`,
-`src/shared/ui/**` ignored as vendored).
+`src/shared/ui/**` ignored as vendored; an export kept for planned work gets a `@public` JSDoc
+tag with its reason, never a blanket ignore).
+
+## Coverage and bundle budgets
+
+- `npm run test:coverage` runs every vitest suite with v8 coverage over libs and hooks
+  (`src/**/lib/**`, `src/**/hooks/**`, `src/**/use*.tsx`; content, `shared/ui` and types
+  excluded). Thresholds in `vitest.config.ts` sit just under the measured numbers (2026-10-13:
+  lines 81.69%, functions 83.88%, branches 64.13%, statements 80.19% → 81/83/64/80). Raise
+  them when coverage rises; never lower them to land a change.
+- `npm run check:bundle` (after `build`) prints the chunk table and fails when the entry chunk
+  passes `ENTRY_BASELINE_BYTES` + 10% or any `content-<id>` chunk passes 160 kB gzip. Raise the
+  baseline in the commit that explains the growth. A date-fns `parse` import once cost 7 kB
+  gzip in an eagerly preloaded chunk — the table is how that shows up.
+
+## Content Security Policy and response headers
+
+`public/_headers` is the only source of response headers (`netlify.toml` sets none — two
+sources would set a header twice). The `/*` block carries the CSP, HSTS (2 years, preload),
+`nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`
+(`microphone=(self)` for the Sprechen recorder, camera/geolocation/payment/usb off) and
+`Cross-Origin-Opener-Policy: same-origin` (sign-in is a full-page PKCE redirect, never a
+popup). `/assets/*` is immutable; `/` and `/index.html` are `no-cache`.
+
+| Directive     | Allows                                                                            | Why                                                                                                     |
+| ------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `script-src`  | `'self'` + one `'sha256-…'`                                                       | the pre-paint theme script in `index.html`; no `unsafe-inline`                                          |
+| `style-src`   | `'self' 'unsafe-inline'`                                                          | sonner and Radix's scroll lock (`react-style-singleton`) inject `<style>` elements with runtime content |
+| `img-src`     | `'self' data: blob:` + `*.googleusercontent.com`, `avatars.githubusercontent.com` | OAuth provider avatars in the account menu                                                              |
+| `connect-src` | `'self'` + `https://*.supabase.co`, `https://api.languagetool.org`                | auth + sync REST (no realtime, so no `wss:`), writing feedback                                          |
+| `media-src`   | `'self' blob:`                                                                    | playback of the recorder's blob URL                                                                     |
+
+Also: `font-src 'self'` (fonts are self-hosted), `worker-src` and `manifest-src 'self'`,
+`object-src 'none'`, `base-uri` and `form-action 'self'`, `frame-ancestors 'none'`,
+`upgrade-insecure-requests`.
+
+A tighter `style-src-elem 'self'; style-src-attr 'unsafe-inline'` was tested (2026-10-13) and
+blocks those injected `<style>` elements on every page; a hash cannot cover them because their
+content changes at runtime.
+
+- **Add an origin** to the one directive that needs it, in `public/_headers`, then
+  `npm run build && npm run test:csp`. A Supabase custom domain or a self-hosted
+  `VITE_LANGUAGETOOL_URL` must be added to `connect-src` by hand, or sync / feedback is blocked.
+- **Inline script changed** (anything inside `<script>` in `index.html`): `check:csp` (run
+  after `npm run build`) fails and prints the new `'sha256-…'` to paste into `script-src`. CI
+  runs it after the build. JSON-LD data blocks are not executed and need no hash.
+- `npm run test:csp` (`playwright.csp.config.ts`, `e2e/csp.spec.js`) serves `dist/` through
+  `scripts/serve-dist-with-headers.mjs` (a dependency-free `_headers` + SPA-fallback server;
+  `vite preview` ignores `_headers`) and fails on any `securitypolicyviolation` across every
+  trainer screen in both themes, the OAuth hand-off and password sign-in, a provider avatar,
+  Hören playback and a Sprechen recording played back from its blob URL (`getUserMedia` is
+  stubbed with a Web Audio stream: headless Chromium on macOS never settles it). It needs a fresh
+  `npm run build`. The main Playwright config ignores this spec.
+- After a deploy, confirm on the deploy preview with `curl -sI <url>` (look for
+  `content-security-policy`, `strict-transport-security`, `permissions-policy`) and a browser
+  console free of CSP errors.
 
 ## ESLint traps
 

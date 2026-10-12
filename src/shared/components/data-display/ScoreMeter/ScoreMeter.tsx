@@ -3,6 +3,7 @@ import { useId } from 'react';
 import { cn } from '@shared/lib/cn.ts';
 import { Progress } from '@shared/ui/progress.tsx';
 
+import { meterTone } from './meterTone.ts';
 import { useFillIn } from './useFillIn.tsx';
 
 interface ScoreMeterProps {
@@ -10,7 +11,7 @@ interface ScoreMeterProps {
   readonly value: number | null | undefined;
   /** Points a perfect score on this bar is worth — a paper fact, so never defaulted. */
   readonly of: number;
-  /** Tint the bar amber/red below the B1/A2 thresholds instead of always using primary. */
+  /** A status bar: green at or above its pass line, amber/red below it (see `meterTone`). */
   readonly colorByScore?: boolean;
   /** Where the pass line of this paper sits, as a percentage of `of`. */
   readonly thresholdPercent: number;
@@ -27,12 +28,7 @@ const ScoreMeter = ({
   thresholdLabel
 }: ScoreMeterProps) => {
   const pct = value == null ? 0 : Math.round((value / of) * 100);
-  const tone =
-    !colorByScore || pct >= thresholdPercent
-      ? 'bg-primary'
-      : pct >= 40
-        ? 'bg-warning-foreground'
-        : 'bg-destructive';
+  const tone = meterTone(pct, thresholdPercent, colorByScore);
 
   /* Start empty and fill on the next frame so the bar animates in. */
   const shown = useFillIn(pct);

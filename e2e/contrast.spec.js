@@ -109,6 +109,13 @@ const PAIRS = [
   {
     id: 'meter — passing bar on its track',
     surface: 'bg-card',
+    html: '<span class="block h-2 w-40 bg-secondary"><span data-probe class="block h-2 w-20 bg-success"></span></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'meter — dashboard bar (no status) on its track',
+    surface: 'bg-card',
     html: '<span class="block h-2 w-40 bg-secondary"><span data-probe class="block h-2 w-20 bg-primary"></span></span>',
     prop: 'backgroundColor',
     need: 3
