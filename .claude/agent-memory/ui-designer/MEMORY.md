@@ -22,3 +22,9 @@ One dated line per lesson. Read before designing; append after a retry.
 - 2026-10-12: `Button`/`Badge` carry `shrink-0` + nowrap: a long label overflows a 390px card until it gets `max-w-full whitespace-normal`.
 - 2026-10-12: Render-test `findByText(/^Open/)` missed "<Icon/> Open …" — JSX text after an icon starts with a space; never anchor `^`.
 - 2026-10-12: MCP screenshots right after navigate show the Suspense skeleton; for a screen matrix use a node Playwright script (wait for `main h1` + networkidle).
+- 2026-10-12: (6) A finished `animate-fade-up` leaves `transform: matrix(1,0,0,1,0,0)` — the route wrapper became the containing block and the phone's `fixed` exam toolbar landed at page end; no route animation in exam mode.
+- 2026-10-12: `overflow-hidden` on a card makes it the scroll container of a `sticky` child (split pane pinned 161px into the section) — use `overflow-clip`.
+- 2026-10-12: Radix radio arrow-select fires on a roving-focus setTimeout while the arrow is still down — Playwright `press` releases first; hold with `keyboard.down`, wait for focus, `up`.
+- 2026-10-12: Heading text + `sr-only` span → Chromium accessible name gets a stray space ("Nr. 21 , incorrect"); put one exact `aria-label` on the container.
+- 2026-10-12: `getByRole(..., { name: 'Modelltest 1' })` also matches 10–15; a `.catch(() => false)` in a Tab loop hid the strict-mode error — use `exact: true`, never swallow locator errors.
+- 2026-10-12: Lazy route keeps the old screen up after the URL changes — scripts must wait for the new screen's control, not the URL.

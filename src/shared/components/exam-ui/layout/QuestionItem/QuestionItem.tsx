@@ -8,7 +8,11 @@ interface QuestionItemProps {
 }
 
 const QuestionItem = ({ children, className }: QuestionItemProps) => (
-  <div className={cn('space-y-2 border-t py-4 first:border-t-0', className)}>{children}</div>
+  <div
+    className={cn('space-y-3 border-t border-border py-5 first:border-t-0 first:pt-0 last:pb-0', className)}
+  >
+    {children}
+  </div>
 );
 
 export default QuestionItem;

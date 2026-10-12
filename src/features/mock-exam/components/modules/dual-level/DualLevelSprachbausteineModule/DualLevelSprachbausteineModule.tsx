@@ -39,13 +39,13 @@ const DualLevelSprachbausteineModule = ({ exam, answers, setAnswer }: A2b1Module
         chip="6 Items"
         anweisung={sprachbausteine.teil2.anweisung}
       >
-        <div className="mb-4 flex flex-wrap gap-2">
+        <ul aria-label="Wörter" className="mb-4 flex flex-wrap gap-2">
           {sprachbausteine.teil2.wordBank.map((word, index) => (
-            <span key={index} className="rounded-md border bg-background px-2 py-1 text-sm">
-              <span className="text-muted-foreground">{LETTERS[index]})</span> {word}
-            </span>
+            <li key={index} className="rounded-full bg-muted px-3 py-1">
+              <span className="font-heading font-bold text-muted-foreground">{LETTERS[index]})</span> {word}
+            </li>
           ))}
-        </div>
+        </ul>
         <GapFillText
           text={sprachbausteine.teil2.text}
           renderGap={(gapIndex, label) => (
@@ -73,6 +73,7 @@ const DualLevelSprachbausteineModule = ({ exam, answers, setAnswer }: A2b1Module
             </QuestionText>
             <MultipleChoice
               name={itemKey('s3.', index)}
+              label={item.prompt}
               options={item.options}
               value={numberAnswer(answers, itemKey('s3.', index))}
               onChange={value => {

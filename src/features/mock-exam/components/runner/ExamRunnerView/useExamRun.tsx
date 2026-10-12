@@ -26,6 +26,14 @@ export interface ExamRunController {
   readonly secondsRemaining: number;
   readonly totalSeconds: number;
   readonly recordings: RecordingMap;
+  /** How many marked items the open module has (0 for a self-rated one), and how many are answered. */
+  readonly itemsTotal: number;
+  readonly itemsAnswered: number;
+  /**
+   * The module whose time ran out while it was open — set as the clock hits zero, cleared when
+   * the next module begins. The runner says it out loud; nothing else depends on it.
+   */
+  readonly timeUp: ExamModule | null;
   readonly setAnswer: (key: string, value: AnswerValue) => void;
   readonly consumePlay: (key: string) => void;
   readonly setRecording: (part: SpeakingPart, url: string) => void;
@@ -93,6 +101,7 @@ export const useExamRun = <
   });
   const [recordings, setRecordings] = useState<RecordingMap>({});
   const [, forceTick] = useState(0);
+  const [timeUp, setTimeUp] = useState<ExamModule | null>(null);
   const finishedRef = useRef(false);
 
   /* The live run, readable outside render. Every transition writes here first, so a
@@ -201,6 +210,10 @@ export const useExamRun = <
     });
   }, [finish, write, format]);
 
+  /* Counting the blanks of an empty answer sheet gives the module's item count. */
+  const itemsTotal = useMemo(() => format.scoring.countUnanswered(exam, module, {}), [format, exam, module]);
+  const itemsAnswered = itemsTotal - format.scoring.countUnanswered(exam, module, run.answers);
+
   const requestSubmit = useCallback(
     () => format.scoring.countUnanswered(exam, module, run.answers),
     [format, exam, module, run.answers]
@@ -226,6 +239,7 @@ export const useExamRun = <
   );
 
   const beginModule = useCallback(() => {
+    setTimeUp(null);
     patch(current => ({
       ...current,
       phase: 'module',
@@ -260,8 +274,12 @@ export const useExamRun = <
       forceTick(tick => tick + 1);
       const live = runRef.current;
       const open = currentModule(live);
-      if (secondsLeft(live) <= 0 && (!open || !UNTIMED_MODULES.includes(open))) {
+      if (secondsLeft(live) <= 0 && open && UNTIMED_MODULES.includes(open)) {
+        /* A guideline clock: nothing is submitted, but the candidate hears that it is over. */
+        setTimeUp(open);
+      } else if (secondsLeft(live) <= 0) {
         clearInterval(interval);
+        setTimeUp(open ?? null);
         toast.warning('⏱ Time is up — the module was submitted automatically.');
         submitRef.current();
       }
@@ -281,6 +299,9 @@ export const useExamRun = <
       secondsRemaining,
       totalSeconds: minutes * SECONDS_PER_MINUTE,
       recordings,
+      itemsTotal,
+      itemsAnswered,
+      timeUp,
       setAnswer,
       consumePlay,
       setRecording,
@@ -291,6 +312,9 @@ export const useExamRun = <
       abort
     }),
     [
+      itemsTotal,
+      itemsAnswered,
+      timeUp,
       run,
       module,
       minutes,

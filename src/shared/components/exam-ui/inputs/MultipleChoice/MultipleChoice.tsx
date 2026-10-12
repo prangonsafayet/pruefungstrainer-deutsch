@@ -1,6 +1,6 @@
+import ChoiceOption from '@shared/components/exam-ui/inputs/ChoiceOption/ChoiceOption.tsx';
 import { LETTERS } from '@shared/lib/format.ts';
-import { Label } from '@shared/ui/label.tsx';
-import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group.tsx';
+import { RadioGroup } from '@shared/ui/radio-group.tsx';
 
 interface MultipleChoiceProps {
   readonly name: string;
@@ -8,26 +8,30 @@ interface MultipleChoiceProps {
   /** Index into `options`. */
   readonly value: number | undefined;
   readonly onChange: (value: number) => void;
+  /** Names the group — usually the question it answers. */
+  readonly label?: string;
 }
 
-const MultipleChoice = ({ name, options, value, onChange }: MultipleChoiceProps) => (
+/** a/b/c as one radio group of option cards: arrow keys move within it, Tab leaves it. */
+const MultipleChoice = ({ name, options, value, onChange, label }: MultipleChoiceProps) => (
   <RadioGroup
     className="gap-2"
+    aria-label={label}
     value={value == null ? '' : String(value)}
     onValueChange={next => {
       onChange(Number(next));
     }}
   >
     {options.map((option, index) => (
-      <div className="flex items-start gap-2" key={index}>
-        <RadioGroupItem value={String(index)} id={`${name}-${String(index)}`} className="mt-1" />
-        <Label
-          htmlFor={`${name}-${String(index)}`}
-          className="cursor-pointer items-start font-normal leading-relaxed"
-        >
-          <span className="text-muted-foreground">{LETTERS[index]})</span> {option}
-        </Label>
-      </div>
+      <ChoiceOption
+        key={index}
+        id={`${name}-${String(index)}`}
+        value={String(index)}
+        selected={value === index}
+      >
+        <span className="mr-1.5 font-heading font-bold text-muted-foreground">{LETTERS[index]})</span>
+        {option}
+      </ChoiceOption>
     ))}
   </RadioGroup>
 );

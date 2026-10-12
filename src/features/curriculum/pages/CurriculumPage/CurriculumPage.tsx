@@ -40,12 +40,16 @@ const CurriculumPage = ({ trainer }: CurriculumPageProps) => {
       complete={complete}
       cheatsheets={plan.cheatsheets}
       basePath={plan.basePath}
+      aiPromptLang={plan.aiPromptLang}
       isTaskDone={index => plan.isTaskDone(day.day, index)}
       onToggleTask={(index, done) => {
         plan.toggleTask(day.day, index, done);
       }}
       onOpenCheatsheet={id => {
         panel.open(id, day.day);
+      }}
+      onStartModule={(exam, module) => {
+        plan.startModule(exam, module, { resumeIfSame: true });
       }}
     />
   );

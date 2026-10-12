@@ -7,17 +7,17 @@ interface ListeningTranscriptProps {
 
 /** Collapsed by default — transcripts must stay hidden until the review screen. */
 const ListeningTranscript = ({ audio }: ListeningTranscriptProps) => (
-  <Accordion type="single" collapsible className="mt-2">
+  <Accordion type="single" collapsible className="mt-2" lang="en">
     <AccordionItem value="transcript" className="border-b-0">
-      <AccordionTrigger className="py-2 text-xs text-muted-foreground">Transcript</AccordionTrigger>
+      <AccordionTrigger className="py-2 text-sm text-muted-foreground">Transcript</AccordionTrigger>
       <AccordionContent className="pb-2">
-        <div className="rounded-md bg-muted p-3 text-sm leading-relaxed">
+        <div lang="de" className="space-y-1 rounded-xl bg-muted p-4 leading-relaxed">
           {typeof audio === 'string'
             ? audio
             : audio.map((turn, index) => (
-                <div key={index}>
+                <p key={index}>
                   <b>{turn.speaker}:</b> {turn.text}
-                </div>
+                </p>
               ))}
         </div>
       </AccordionContent>

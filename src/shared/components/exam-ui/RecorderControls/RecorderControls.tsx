@@ -10,36 +10,38 @@ interface RecorderControlsProps {
   readonly onRecorded: (part: SpeakingPart, url: string) => void;
 }
 
+/** Record / stop for one speaking Teil. English chrome inside a German Teil, so it says so. */
 const RecorderControls = ({ part, recordingUrl, onRecorded }: RecorderControlsProps) => {
   const recorder = useRecorder({
     onRecorded: url => {
       onRecorded(part, url);
     }
   });
+  const recording = recorder.status === 'recording';
 
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-3 border-t pt-4">
+    <div lang="en" className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-5">
       <Button
-        variant="outline"
-        size="sm"
+        variant={recording ? 'outline' : 'secondary'}
         onClick={() => void recorder.start()}
-        disabled={!recorder.supported || recorder.status === 'recording'}
+        disabled={!recorder.supported || recording}
         title={recorder.supported ? undefined : 'Recording is not supported in this browser'}
       >
-        <Mic /> Record
+        <Mic aria-hidden /> Record
       </Button>
-      <Button variant="outline" size="sm" onClick={recorder.stop} disabled={recorder.status !== 'recording'}>
-        <Square /> Stop
+      <Button variant="outline" onClick={recorder.stop} disabled={!recording}>
+        <Square aria-hidden /> Stop
       </Button>
-      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        {recorder.status === 'recording' ? (
-          <Circle className="size-2.5 animate-pulse fill-destructive text-destructive" />
+      <span role="status" className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        {recording ? (
+          <Circle aria-hidden className="size-2.5 animate-pulse fill-destructive text-destructive" />
         ) : null}
         {recorder.message}
       </span>
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- the learner's own
-          microphone recording; there is no transcript to caption it with. */}
-      {recordingUrl ? <audio controls src={recordingUrl} className="h-8" /> : null}
+      {recordingUrl ? (
+        // eslint-disable-next-line jsx-a11y/media-has-caption -- the learner's own microphone recording; there is no transcript to caption it with.
+        <audio controls src={recordingUrl} className="h-10 max-w-full" aria-label="Your recording" />
+      ) : null}
     </div>
   );
 };

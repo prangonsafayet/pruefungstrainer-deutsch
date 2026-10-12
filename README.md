@@ -69,30 +69,38 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 
 ## Screens
 
-<img src="docs/screenshots/dashboard.png" alt="Dashboard — today's plan, skill progress, score history and the mock exams">
+<img src="docs/screenshots/dashboard.png" alt="The A2·B1 dashboard on a desktop: the B1 pass rule in three tiles, a warning that progress is saved only in this browser, and today's lesson from the study plan">
 
 <table>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/learn-plan.png" alt="The study plan, grouped into dated days from today"></td>
+    <td colspan="2"><img src="docs/screenshots/learn-plan.png" alt="The Learn tab: today's dated lesson with checkboxes and Go-to links on the left, and the Theme vocabulary cheatsheet open in a side panel on the right with a Back to Day 2 button"></td>
   </tr>
   <tr>
-    <td colspan="2"><strong>The plan</strong> — the curriculum laid out as dated days from today, re-paced whenever the exam date changes. Finished days drop out; days that no longer fit become optional extra material.</td>
+    <td colspan="2"><strong>The plan</strong> — the curriculum laid out as dated days from today, re-paced whenever the exam date changes. Each task links to where it is done, and cheatsheets open beside the plan.</td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/runner.png" alt="Exam runner with a sticky countdown"></td>
-    <td width="50%"><img src="docs/screenshots/results.png" alt="Results screen with the official grade"></td>
+    <td width="50%"><img src="docs/screenshots/runner.png" alt="The B1 Lesen module on a wide screen: a sticky bar with the countdown ring, 5 of 20 answered and a Submit button; below, the reading text on the left and its multiple-choice questions on the right, the chosen option outlined and marked Selected"></td>
+    <td width="50%"><img src="docs/screenshots/results.png" alt="DTZ results for a full sitting: Zertifikat B1 in large green type, the three part results with their B1 and A2 lines in German, and score bars per part"></td>
   </tr>
   <tr>
-    <td><strong>Exam runner</strong> — per-module countdown that auto-submits, limited audio plays, and a briefing before each module.</td>
-    <td><strong>Results</strong> — the official grade, per-skill breakdown against the B1 threshold, and time used per module.</td>
+    <td><strong>Exam runner</strong> — on a tablet in landscape or a desktop, the text sits beside its questions. Answers are large option cards in real radio groups, and the timer is spoken only at 10, 5 and 1 minutes.</td>
+    <td><strong>Results</strong> — the verdict, announced once to a screen reader. The DTZ shows its certificate and the three part results it is judged on.</td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/review.png" alt="Answer review with correct answers and transcripts"></td>
-    <td><img src="docs/screenshots/dashboard-dark.png" alt="The dashboard in dark mode"></td>
+    <td><img src="docs/screenshots/review.png" alt="Answer review: each item labelled Correct or Incorrect in words, with the given and the correct answer, and a listening transcript expanded"></td>
+    <td><img src="docs/screenshots/dashboard-dark.png" alt="The A2·B1 dashboard in the warm dark theme"></td>
   </tr>
   <tr>
-    <td><strong>Review</strong> — every item marked, with the listening transcripts revealed only now.</td>
+    <td><strong>Review</strong> — every item says in words whether it was correct; listening transcripts are revealed only now.</td>
     <td><strong>Dark mode</strong> — follows the system, with a toggle, and no flash on load.</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/mobile-dashboard.png" alt="The dashboard on a phone, with the bottom tab bar for Dashboard, Learn, Practice, History and More"></td>
+    <td><img src="docs/screenshots/mobile-runner.png" alt="The DTZ Lesen module on a phone: the directory text above its question, the chosen answer card marked Selected, and the timer, progress and Submit button docked at the bottom within thumb reach"></td>
+  </tr>
+  <tr>
+    <td><strong>On a phone</strong> — a bottom tab bar for the daily screens; nothing scrolls sideways at 360px.</td>
+    <td><strong>Exam on a phone</strong> — the text stays above its items, and the timer, progress and Submit sit at the bottom, within thumb reach.</td>
   </tr>
 </table>
 

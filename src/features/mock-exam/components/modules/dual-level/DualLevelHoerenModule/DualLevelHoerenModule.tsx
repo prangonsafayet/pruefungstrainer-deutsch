@@ -39,10 +39,10 @@ const DualLevelHoerenModule = ({
   return (
     <>
       <ExamCallout className="flex items-start gap-2">
-        <Headphones className="mt-0.5 size-4 shrink-0" />
+        <Headphones aria-hidden className="mt-0.5 size-4 shrink-0" />
         <span>
-          Each audio can be played <b>{settings.playsAllowed}×</b>. Read the items first, then press play.
-          Transcripts appear in the review after submitting.
+          Each recording can be played <b>{settings.playsAllowed}×</b>. Read the items first, then press Play.
+          Transcripts appear in the review after you submit.
         </span>
       </ExamCallout>
 
@@ -55,6 +55,7 @@ const DualLevelHoerenModule = ({
             </QuestionText>
             <RichtigFalsch
               name={itemKey('h1.', index)}
+              label={item.statement}
               value={booleanAnswer(answers, itemKey('h1.', index))}
               onChange={value => {
                 setAnswer(itemKey('h1.', index), value);
@@ -73,6 +74,7 @@ const DualLevelHoerenModule = ({
             </QuestionText>
             <MultipleChoice
               name={itemKey('h2.', index)}
+              label={item.frage}
               options={item.options}
               value={numberAnswer(answers, itemKey('h2.', index))}
               onChange={value => {
@@ -92,6 +94,7 @@ const DualLevelHoerenModule = ({
             </QuestionText>
             <RichtigFalsch
               name={itemKey('h3.', index)}
+              label={item.statement}
               value={booleanAnswer(answers, itemKey('h3.', index))}
               onChange={value => {
                 setAnswer(itemKey('h3.', index), value);
@@ -110,6 +113,7 @@ const DualLevelHoerenModule = ({
             </QuestionText>
             <MultipleChoice
               name={itemKey('h4.', index)}
+              label={question.frage}
               options={question.options}
               value={numberAnswer(answers, itemKey('h4.', index))}
               onChange={value => {
@@ -133,7 +137,7 @@ const DualLevelHoerenModule = ({
               <div key={index} className="my-2 flex flex-wrap items-center gap-2">
                 <span>{before}</span>
                 <Input
-                  className="w-48"
+                  className="w-48 bg-card"
                   autoComplete="off"
                   aria-label={gap.label.replace('____', '…')}
                   value={textAnswer(answers, itemKey('h5.', index))}

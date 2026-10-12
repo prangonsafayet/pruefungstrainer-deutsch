@@ -1,3 +1,6 @@
+import { Check } from 'lucide-react';
+
+import { MAX_CRITERION_SCORE } from '@shared/exam-run/config/run.ts';
 import { Button } from '@shared/ui/button.tsx';
 import { Card, CardContent } from '@shared/ui/card.tsx';
 import { Separator } from '@shared/ui/separator.tsx';
@@ -23,39 +26,47 @@ const CriteriaRatingPanel = ({
   onConfirm
 }: CriteriaRatingPanelProps) => (
   <Card>
-    <CardContent className="space-y-5">
-      {criteria.map(([name, hint], index) => (
-        <div key={name} className="grid items-center gap-3 sm:grid-cols-[1fr_auto]">
-          <div>
-            <b className="text-sm">{name}</b>
-            <div className="text-xs text-muted-foreground">{hint}</div>
+    <CardContent className="space-y-6">
+      {criteria.map(([name, hint], index) => {
+        const value = values[index] ?? 0;
+        return (
+          <div key={name} className="grid items-center gap-3 sm:grid-cols-[1fr_16rem]">
+            <div>
+              <p className="font-heading font-bold">{name}</p>
+              <p className="text-sm text-muted-foreground">{hint}</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <Slider
+                min={0}
+                max={MAX_CRITERION_SCORE}
+                step={1}
+                aria-label={name}
+                aria-valuetext={`${String(value)} of ${String(MAX_CRITERION_SCORE)}`}
+                className="py-3"
+                value={[value]}
+                onValueChange={([next]) => {
+                  setValue(index, next ?? 0);
+                }}
+              />
+              <span aria-hidden className="w-10 text-right font-heading font-extrabold tabular-nums">
+                {value}/{MAX_CRITERION_SCORE}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-3 sm:w-56">
-            <Slider
-              min={0}
-              max={5}
-              step={1}
-              aria-label={name}
-              value={[values[index] ?? 0]}
-              onValueChange={([next]) => {
-                setValue(index, next ?? 0);
-              }}
-            />
-            <span className="w-5 text-right font-semibold tabular-nums">{values[index]}</span>
-          </div>
-        </div>
-      ))}
+        );
+      })}
       <Separator />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm">
-          Module score: <b className="text-lg tabular-nums">{total}</b>/{max}
+          Module score: <b className="font-heading text-xl tabular-nums">{total}</b>/{max}
         </p>
         <Button
+          size="lg"
           onClick={() => {
             onConfirm(total);
           }}
         >
-          Confirm score ▸
+          <Check aria-hidden /> Confirm score
         </Button>
       </div>
     </CardContent>

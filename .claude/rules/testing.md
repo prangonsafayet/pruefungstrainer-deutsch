@@ -61,6 +61,7 @@ its old path.
 | `unit/referenceSearch`       | the five reference-table filters, which search a different set of fields per table                                                                                                                                       |
 | `unit/siteMeta`              | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt                                                                                                                            |
 | `unit/trainerRegistry`       | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                                                                                                    |
+| `unit/timerAnnouncements`    | the spoken exam clock: exactly 10/5/1 minutes on fake timers, never between, never the threshold a module starts on                                                                                                      |
 | `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                     |
 | `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                                                                                               |
 | `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                                                                                              |
@@ -75,6 +76,7 @@ its old path.
 | `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                                                                                        |
 | `render/dtzExamFlow`         | a full DTZ sitting through the mounted app, X in Lesen Teil 2, ending on a certificate; the missing Sprachbausteine route goes home                                                                                      |
 | `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                                                                                          |
+| `render/startAttempt`        | a curriculum Go link asks before replacing a run in progress — both choices — and resumes the very same module without asking                                                                                            |
 | `render/appShell`            | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown, puts the skip link first, scrolls to the top and moves focus to the new `<h1>` (and the tab title) on navigation |
 
 **No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
@@ -114,6 +116,12 @@ no-overflow check runs at 360, 768, 1024 and 1280.
 (every non-root trainer). `e2e/dtzTrainer.spec.js` covers the DTZ end to end and stubs
 `speechSynthesis` with one German voice so Hören takes the real playback path.
 `e2e/contrast.spec.js` and `e2e/reducedMotion.spec.js`: see the ui-design-system rule.
+`e2e/a11y.spec.js` runs axe (WCAG 2.2 AA tags) over every route of every trainer, a runner,
+results and review per format, light and dark, on chromium + mobile: zero serious/critical,
+moderate/minor printed. `e2e/keyboardOnly.spec.js` (chromium) reaches, answers and submits a
+Lesen Teil per format and drives a flashcard and a quiz with keys only. Radix radio groups
+select on the roving-focus tick, so an arrow must be held (`keyboard.down`, wait for focus,
+`up`) — an instant `press` releases before the tick.
 react-day-picker marks month navigation with `aria-disabled` but day cells with both
 `data-disabled` and a real `disabled` — assert the right one. For interactive checks use the
 **Playwright MCP** instead of a throwaway spec.

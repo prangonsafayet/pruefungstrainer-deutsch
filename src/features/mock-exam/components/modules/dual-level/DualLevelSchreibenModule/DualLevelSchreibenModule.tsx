@@ -1,9 +1,8 @@
 import TeilSection from '@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx';
+import WritingField from '@shared/components/exam-ui/WritingField/WritingField.tsx';
 import MultilineText from '@shared/components/MultilineText/MultilineText.tsx';
 import { textAnswer, WRITING_ANSWER_KEY } from '@shared/lib/answers.ts';
-import { cn } from '@shared/lib/cn.ts';
 import { describeWordCount } from '@shared/lib/writingFeedback.ts';
-import { Textarea } from '@shared/ui/textarea.tsx';
 
 import { type A2b1ModuleProps } from '@features/mock-exam/types/moduleProps.ts';
 
@@ -14,10 +13,10 @@ const DualLevelSchreibenModule = ({ exam, paper, answers, setAnswer }: A2b1Modul
 
   return (
     <TeilSection title={paper.writingTitle} chip="60 Punkte" anweisung={schreiben.anweisung}>
-      <p className="mb-4">{schreiben.situation}</p>
+      <p className="mb-4 max-w-3xl leading-relaxed">{schreiben.situation}</p>
 
-      <div className="my-4 overflow-hidden rounded-lg border">
-        <div className="border-b bg-muted/60 px-4 py-2 text-sm text-muted-foreground">
+      <div className="my-4 max-w-3xl overflow-hidden rounded-xl bg-muted">
+        <div className="border-b border-border px-4 py-2.5 text-sm text-muted-foreground">
           Von: {schreiben.incomingEmail.von} · Betreff:{' '}
           <b className="text-foreground">{schreiben.incomingEmail.betreff}</b>
         </div>
@@ -26,31 +25,23 @@ const DualLevelSchreibenModule = ({ exam, paper, answers, setAnswer }: A2b1Modul
         </div>
       </div>
 
-      <p className="mb-2 font-semibold">Schreiben Sie zu diesen Punkten:</p>
-      <ol className="mb-4 list-decimal space-y-1 pl-5">
+      <p className="mb-2 font-heading font-bold">Schreiben Sie zu diesen Punkten:</p>
+      <ol className="mb-5 list-decimal space-y-1 pl-5 leading-relaxed">
         {schreiben.points.map((point, index) => (
           <li key={index}>{point}</li>
         ))}
       </ol>
 
-      <Textarea
-        className="min-h-64 leading-relaxed"
+      <WritingField
+        label="Ihre E-Mail"
         placeholder={paper.writingPlaceholder}
-        aria-label="Ihre E-Mail"
-        spellCheck={false}
         value={text}
-        onChange={event => {
-          setAnswer(WRITING_ANSWER_KEY, event.target.value);
+        onChange={next => {
+          setAnswer(WRITING_ANSWER_KEY, next);
         }}
+        countText={`${String(count)} Wörter — ${hint}`}
+        inRange={inRange}
       />
-      <div
-        className={cn(
-          'mt-2 text-right text-sm',
-          inRange ? 'text-[color:var(--success-foreground)]' : 'text-muted-foreground'
-        )}
-      >
-        {count} Wörter — {hint}
-      </div>
     </TeilSection>
   );
 };

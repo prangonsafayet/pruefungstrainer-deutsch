@@ -40,12 +40,16 @@ const LearnSlotSection = ({ group, plan, onOpenCheatsheet }: LearnSlotSectionPro
           complete={plan.isDayComplete(day.day)}
           cheatsheets={plan.cheatsheets}
           basePath={plan.basePath}
+          aiPromptLang={plan.aiPromptLang}
           isTaskDone={index => plan.isTaskDone(day.day, index)}
           onToggleTask={(index, done) => {
             plan.toggleTask(day.day, index, done);
           }}
           onOpenCheatsheet={id => {
             onOpenCheatsheet(id, day.day);
+          }}
+          onStartModule={(exam, module) => {
+            plan.startModule(exam, module, { resumeIfSame: true });
           }}
         />
       ))}

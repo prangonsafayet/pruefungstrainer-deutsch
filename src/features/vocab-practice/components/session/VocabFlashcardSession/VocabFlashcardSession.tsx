@@ -43,7 +43,12 @@ const VocabFlashcardSession = ({
   return (
     <div className="space-y-5">
       <div className="mx-auto flex max-w-xl items-center gap-3">
-        <Progress value={(session.index / session.cards.length) * 100} className="h-1.5" />
+        <Progress
+          value={(session.index / session.cards.length) * 100}
+          className="h-1.5"
+          aria-label="Flashcard progress"
+          aria-valuetext={`Card ${String(session.index + 1)} of ${String(session.cards.length)}`}
+        />
         <span className="shrink-0 text-sm tabular-nums text-muted-foreground">
           {session.index + 1}/{session.cards.length}
         </span>

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import CopyTextButton from '@shared/components/actions/CopyTextButton/CopyTextButton.tsx';
 import { cn } from '@shared/lib/cn.ts';
 import { learnTaskKey, learnTaskTarget, learnTaskText } from '@shared/lib/learnProgress.ts';
-import { type Cheatsheet, type LearnDay } from '@shared/types/learn.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AiPromptLang, type Cheatsheet, type LearnDay } from '@shared/types/learn.ts';
 import { Badge } from '@shared/ui/badge.tsx';
 import { Button } from '@shared/ui/button.tsx';
 import { Card, CardContent, CardHeader } from '@shared/ui/card.tsx';
@@ -21,9 +22,13 @@ interface LearnDayCardProps {
   readonly cheatsheets: Readonly<Record<string, Cheatsheet>>;
   /** The trainer's route namespace, for the task links. */
   readonly basePath: string;
+  /** The plan's prompt language; a prompt may override it. */
+  readonly aiPromptLang: AiPromptLang;
   readonly isTaskDone: (taskIndex: number) => boolean;
   readonly onToggleTask: (taskIndex: number, done: boolean) => void;
   readonly onOpenCheatsheet: (id: string) => void;
+  /** Follows a module link through the start hook, which asks before replacing a run. */
+  readonly onStartModule: (exam: number, module: ExamModule) => void;
 }
 
 const GO_CLASS =
@@ -35,9 +40,11 @@ const LearnDayCard = ({
   complete,
   cheatsheets,
   basePath,
+  aiPromptLang,
   isTaskDone,
   onToggleTask,
-  onOpenCheatsheet
+  onOpenCheatsheet,
+  onStartModule
 }: LearnDayCardProps) => (
   <Card
     className={cn(
@@ -91,7 +98,15 @@ const LearnDayCard = ({
                 </Label>
                 {target?.kind === 'link' ? (
                   <Button asChild variant="secondary" size="sm" className={GO_CLASS}>
-                    <Link to={target.to}>
+                    <Link
+                      to={target.to}
+                      onClick={event => {
+                        const { start } = target;
+                        if (!start) return;
+                        event.preventDefault();
+                        onStartModule(start.exam, start.module);
+                      }}
+                    >
                       Go to {target.label} <ArrowRight aria-hidden />
                     </Link>
                   </Button>
@@ -141,7 +156,12 @@ const LearnDayCard = ({
           <div className="flex items-center gap-1.5 font-heading font-bold">
             <Sparkles className="size-4 shrink-0" aria-hidden /> AI practice — {prompt.t}
           </div>
-          <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{prompt.p}</p>
+          <p
+            lang={prompt.lang ?? aiPromptLang}
+            className="mt-1 whitespace-pre-line text-sm text-muted-foreground"
+          >
+            {prompt.p}
+          </p>
           <CopyTextButton text={prompt.p} />
         </div>
       ))}

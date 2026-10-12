@@ -50,8 +50,10 @@ thing, with its extension: `@shared/ui/button.tsx`, `@shared/types/exam.ts`,
 ## Shared exam machinery
 
 Everything every exam format renders lives in `shared/components/exam-ui/` — inputs
-(`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`TeilSection`, `QuestionItem`,
-`QuestionText`, `ReadingText`, `ExamCallout`), gaps (`InlineGapSelect`, `GapFillText`),
+(`RichtigFalsch`, `MultipleChoice` — both radio groups of `ChoiceOption` cards — and
+`LetterSelect`, whose `label` is required), layout (`TeilSection`, `QuestionItem`,
+`QuestionText`, `ReadingText`, `ExamCallout`, `SplitTeil` — shared material beside its items
+from 1024px), `WritingField`, gaps (`InlineGapSelect`, `GapFillText`),
 `MatchingOptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
 `CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript`, `WritingTaskBrief` — each imported
 from its own file. Module renderers keep no private copy.

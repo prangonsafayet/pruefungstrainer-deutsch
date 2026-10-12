@@ -13,9 +13,13 @@ import { type TrainerId } from '@shared/types/trainer.ts';
 import { Button } from '@shared/ui/button.tsx';
 
 import SelfRatingCard from '@features/mock-exam/components/rating/SelfRatingCard/SelfRatingCard.tsx';
+import { withTrainer } from '@features/mock-exam/lib/withTrainer.ts';
 import { type ExamStore } from '@features/mock-exam/types/examBinding.ts';
 
+import { timeUpMessage } from './timerAnnouncements.ts';
 import { useExamRun } from './useExamRun.tsx';
+import { useHeadingFocus } from './useHeadingFocus.tsx';
+import { useTimerAnnouncements } from './useTimerAnnouncements.tsx';
 
 interface ExamRunnerViewProps<
   TExam extends ExamPaper,
@@ -50,18 +54,32 @@ const ExamRunnerView = <
     settings: store.settings,
     saveAttempt: store.saveAttempt
   });
+  const moduleShort = format.moduleShort(run.module);
+  const guidelineOnly = UNTIMED_MODULES.includes(run.module);
+  const politeTimer = useTimerAnnouncements(run.secondsRemaining, run.run.phase === 'module');
+  useHeadingFocus(`${run.run.phase}-${String(run.run.index)}`);
+
+  /* Submitting is final, and on a phone the button sits under the thumb: it always asks. */
   const handleSubmit = useCallback(async () => {
     const missing = run.requestSubmit();
-    if (missing > 0) {
-      const ok = await confirm({
-        title: `${String(missing)} item${missing === 1 ? '' : 's'} still unanswered`,
-        description: 'In the real exam a blank is a guaranteed zero — a guess costs nothing. Submit anyway?',
-        confirmText: 'Submit anyway'
-      });
-      if (!ok) return;
-    }
-    run.submit();
-  }, [run, confirm]);
+    const ok = await confirm(
+      missing > 0
+        ? {
+            title: `${String(missing)} item${missing === 1 ? '' : 's'} still unanswered`,
+            description:
+              'In the real exam a blank is a guaranteed zero — a guess costs nothing. Submit anyway?',
+            confirmText: 'Submit anyway',
+            cancelText: 'Keep working'
+          }
+        : {
+            title: `Submit ${moduleShort}?`,
+            description: 'You cannot change your answers after this.',
+            confirmText: 'Submit now',
+            cancelText: 'Keep working'
+          }
+    );
+    if (ok) run.submit();
+  }, [run, confirm, moduleShort]);
 
   const handleAbort = useCallback(async () => {
     const ok = await confirm({
@@ -74,72 +92,98 @@ const ExamRunnerView = <
   }, [run, confirm]);
 
   const step = run.run.mode === 'full' ? { index: run.run.index + 1, total: run.run.queue.length } : null;
-  const label = format.examLabel(exam);
-
-  if (run.run.phase === 'brief') {
-    return (
-      <ModuleBriefingCard
-        kicker={`${label}${step ? ` · Module ${String(step.index)} of ${String(step.total)}` : ' · Single-module practice'}`}
-        title={format.moduleName(run.module)}
-        briefing={format.briefing(run.module, exam)}
-        minutes={run.minutes}
-        guidelineOnly={UNTIMED_MODULES.includes(run.module)}
-        startLabel={`Start ${format.moduleShort(run.module)}`}
-        onBegin={run.beginModule}
-        onAbort={() => void handleAbort()}
-      />
-    );
-  }
-
-  if (run.run.phase === 'rating' && (run.module === 'schreiben' || run.module === 'sprechen')) {
-    return (
-      <SelfRatingCard
-        key={run.module}
-        format={format}
-        module={run.module}
-        exam={exam}
-        answers={run.run.answers}
-        recordings={run.recordings}
-        onConfirm={run.confirmRating}
-      />
-    );
-  }
-
+  const kicker = `${withTrainer(format.examLabel(exam), TRAINERS[trainer].short)}${
+    step ? ` · Module ${String(step.index)} of ${String(step.total)}` : ' · Single-module practice'
+  }`;
   const ModuleComponent = format.moduleComponents[run.module];
-  /* A paper without this module (the DTZ has no Sprachbausteine) has no renderer for it, and
-     the module ultimately comes out of localStorage: rendering `undefined` as a component is
-     a blank screen with a stack trace, so a run naming one goes home instead. */
-  if (!ModuleComponent) return <Navigate to={trainerHome(trainer)} replace />;
+
+  const screen = (() => {
+    if (run.run.phase === 'brief') {
+      return (
+        <ModuleBriefingCard
+          kicker={kicker}
+          title={format.moduleName(run.module)}
+          briefing={format.briefing(run.module, exam)}
+          minutes={run.minutes}
+          guidelineOnly={guidelineOnly}
+          startLabel={`Start ${moduleShort}`}
+          onBegin={run.beginModule}
+          onAbort={() => void handleAbort()}
+        />
+      );
+    }
+
+    if (run.run.phase === 'rating' && (run.module === 'schreiben' || run.module === 'sprechen')) {
+      return (
+        <SelfRatingCard
+          key={run.module}
+          format={format}
+          module={run.module}
+          exam={exam}
+          answers={run.run.answers}
+          recordings={run.recordings}
+          onConfirm={run.confirmRating}
+        />
+      );
+    }
+
+    /* A paper without this module (the DTZ has no Sprachbausteine) has no renderer for it, and
+       the module ultimately comes out of localStorage: rendering `undefined` as a component is
+       a blank screen with a stack trace, so a run naming one goes home instead. */
+    if (!ModuleComponent) return <Navigate to={trainerHome(trainer)} replace />;
+
+    return (
+      <>
+        <h1 className="mb-4 flex flex-col-reverse gap-0.5">
+          <span className="text-2xl font-extrabold sm:text-3xl">{format.moduleName(run.module)}</span>
+          <span className="sr-only"> · </span>
+          <span className="text-sm font-semibold text-muted-foreground">{kicker}</span>
+        </h1>
+
+        <ExamModuleToolbar
+          secondsRemaining={run.secondsRemaining}
+          totalSeconds={run.totalSeconds}
+          guidelineOnly={guidelineOnly}
+          answered={run.itemsAnswered}
+          total={run.itemsTotal}
+          submitLabel={`Submit ${moduleShort}`}
+          onSubmit={() => void handleSubmit()}
+        />
+
+        <ModuleComponent
+          exam={exam}
+          paper={TRAINERS[trainer].paper}
+          answers={run.run.answers}
+          setAnswer={run.setAnswer}
+          settings={store.settings}
+          plays={run.run.plays}
+          onConsumePlay={run.consumePlay}
+          recordings={run.recordings}
+          onRecorded={run.setRecording}
+        />
+
+        <div className="mt-8 flex justify-center border-t border-border pt-6 sm:justify-start">
+          <Button variant="ghost" onClick={() => void handleAbort()}>
+            Abort attempt
+          </Button>
+        </div>
+      </>
+    );
+  })();
 
   return (
     <>
-      <ExamModuleToolbar
-        title={format.moduleName(run.module)}
-        subtitle={`${label}${step ? ` · module ${String(step.index)}/${String(step.total)}` : ''}`}
-        secondsRemaining={run.secondsRemaining}
-        totalSeconds={run.totalSeconds}
-      />
-
-      <ModuleComponent
-        exam={exam}
-        paper={TRAINERS[trainer].paper}
-        answers={run.run.answers}
-        setAnswer={run.setAnswer}
-        settings={store.settings}
-        plays={run.run.plays}
-        onConsumePlay={run.consumePlay}
-        recordings={run.recordings}
-        onRecorded={run.setRecording}
-      />
-
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button size="lg" onClick={() => void handleSubmit()}>
-          Submit {format.moduleShort(run.module)} ✓
-        </Button>
-        <Button variant="ghost" size="lg" onClick={() => void handleAbort()}>
-          Abort attempt
-        </Button>
+      {/* Spoken clock: polite at 10, 5 and 1 minutes, assertive at zero — never every second.
+          Both regions outlive the phase switch at time-up, so the warning is still heard. */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {politeTimer}
       </div>
+      <div className="sr-only" aria-live="assertive" aria-atomic="true">
+        {run.timeUp
+          ? timeUpMessage(format.moduleShort(run.timeUp), UNTIMED_MODULES.includes(run.timeUp))
+          : ''}
+      </div>
+      {screen}
     </>
   );
 };

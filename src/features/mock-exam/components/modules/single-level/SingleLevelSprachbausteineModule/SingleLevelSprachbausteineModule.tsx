@@ -36,13 +36,16 @@ const SingleLevelSprachbausteineModule = ({ exam, answers, setAnswer }: SingleLe
         chip="10 Items · je 1,5 Punkte"
         anweisung={sprachbausteine.teil2.anweisung}
       >
-        <div className="mb-4 flex flex-wrap gap-2">
+        <ul aria-label="Wörter" className="mb-4 flex flex-wrap gap-2">
           {sprachbausteine.teil2.wordBank.map((word, index) => (
-            <span key={index} className="rounded-md border bg-background px-2 py-1 text-sm">
-              <span className="text-muted-foreground">{LETTERS[index] ?? String(index + 1)})</span> {word}
-            </span>
+            <li key={index} className="rounded-full bg-muted px-3 py-1">
+              <span className="font-heading font-bold text-muted-foreground">
+                {LETTERS[index] ?? String(index + 1)})
+              </span>{' '}
+              {word}
+            </li>
           ))}
-        </div>
+        </ul>
         <GapFillText
           text={sprachbausteine.teil2.text}
           renderGap={(gapIndex, label) => (

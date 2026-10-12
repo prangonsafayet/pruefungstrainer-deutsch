@@ -144,8 +144,11 @@ const rateAllTop = async page => {
 
 const submit = async (page, module) => {
   await page.getByRole('button', { name: new RegExp(`^Submit ${module}`) }).click();
-  const anyway = page.getByRole('button', { name: /Submit anyway/ });
-  if (await anyway.isVisible().catch(() => false)) await anyway.click();
+  /* Submitting always asks: "Submit anyway" past blanks, "Submit now" when all is answered. */
+  await page
+    .getByRole('alertdialog')
+    .getByRole('button', { name: /^Submit (anyway|now)$/ })
+    .click();
 };
 
 const dashboardHeading = page => page.getByRole('heading', { name: /^Dashboard/, level: 1 });
@@ -235,14 +238,20 @@ test.describe('DTZ practice runs', () => {
       page.getByRole('combobox', { name: `Anzeige für Aufgabe ${26 + xIndex}`, exact: true })
     ).toHaveText('X');
 
-    /* Everything is answered, so no blank warning appears. */
+    /* Everything is answered, so the confirmation is the plain one, not the blank warning. */
     await page.getByRole('button', { name: /^Submit Lesen/ }).click();
+    await expect(page.getByRole('alertdialog')).not.toContainText('unanswered');
+    await page.getByRole('button', { name: 'Submit now' }).click();
     await expect(page.getByText(/time used/)).toBeVisible();
     await expect(page.getByText('/25', { exact: true }).first()).toBeVisible();
     await expect(page.locator('main')).toContainText(/25\s*\/25/);
 
     await page.getByRole('link', { name: /Review answers/ }).click();
-    await expect(page.getByText(/^Teil \d · Nr\. \d+$/)).toHaveCount(25);
+    /* Each row names itself and says, in words, whether it was right. */
+    await expect(
+      page.getByRole('article', { name: /^Teil \d · Nr\. \d+, (correct|incorrect)$/ })
+    ).toHaveCount(25);
+    await expect(page.getByRole('article', { name: /, correct$/ })).toHaveCount(25);
     await expect(page.getByText('Your answer: X) keine passende Anzeige')).toBeVisible();
 
     expect(errors).toEqual([]);
@@ -254,13 +263,13 @@ test.describe('DTZ practice runs', () => {
     await page.getByRole('button', { name: /^Start Hören/ }).click();
 
     /* The DTZ default is two plays per text — this trainer's choice. One play leaves one. */
-    const firstPlay = page.getByRole('button', { name: 'Anhören' }).first();
+    const firstPlay = page.getByRole('button', { name: 'Play' }).first();
     await firstPlay.click();
-    await expect(page.getByText('1× left').first()).toBeVisible();
+    await expect(page.getByText(/\b1 play left$/).first()).toBeVisible();
     expect(await page.evaluate(() => window.__spoken.length)).toBeGreaterThan(0);
 
     await answerHoeren(page);
-    await page.getByRole('button', { name: /^Submit Hören/ }).click();
+    await submit(page, 'Hören');
     await expect(page.getByText(/time used/)).toBeVisible();
     await expect(page.locator('main')).toContainText(/20\s*\/20/);
 

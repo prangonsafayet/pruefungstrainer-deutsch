@@ -76,7 +76,8 @@ export const bySelector = (selector: string): readonly Element[] => [...document
 
 /** First element matching `selector` whose text matches. Defaults to buttons. */
 export const findByText = (pattern: RegExp, selector = 'button'): HTMLElement | undefined =>
-  bySelector(selector).find(element => pattern.test(element.textContent ?? '')) as HTMLElement | undefined;
+  bySelector(selector).find(element => pattern.test((element.textContent ?? '').trim())) as
+    HTMLElement | undefined;
 
 export const click = async (element: Element | undefined): Promise<void> => {
   if (!element) throw new Error('click() got nothing to click');

@@ -8,7 +8,12 @@ interface ExamCalloutProps {
 }
 
 const ExamCallout = ({ children, className }: ExamCalloutProps) => (
-  <div className={cn('mb-4 rounded-lg border-l-4 border-primary bg-accent/40 p-3 text-sm', className)}>
+  <div
+    className={cn(
+      'mb-6 rounded-xl border-l-4 border-primary bg-accent p-4 text-sm leading-relaxed text-accent-foreground [&_b]:text-foreground',
+      className
+    )}
+  >
     {children}
   </div>
 );

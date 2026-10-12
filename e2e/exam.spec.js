@@ -28,7 +28,8 @@ test('an exam survives a mid-module reload with its clock and answers', async ({
   await expect(page.getByText('Teil 1 — Anzeigen zuordnen')).toBeVisible();
   await expect(page.getByRole('radio').first()).toBeChecked();
   const after = await timer.textContent();
-  const secs = t => t.split(':').reduce((m, s) => m * 60 + +s, 0);
+  /* The timer reads "44:59 left"; only the clock part is arithmetic. */
+  const secs = t => (t.match(/\d+:\d\d/)?.[0] ?? '').split(':').reduce((m, s) => m * 60 + +s, 0);
   /* The clock keeps running across the reload rather than resetting to 45:00. */
   expect(secs(after)).toBeLessThanOrEqual(secs(before));
   expect(secs(before) - secs(after)).toBeLessThan(30);

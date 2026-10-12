@@ -45,6 +45,7 @@ const SingleLevelHoerenModule = ({
       </QuestionText>
       <RichtigFalsch
         name={key}
+        label={statement}
         value={booleanAnswer(answers, key)}
         onChange={value => {
           setAnswer(key, value);
@@ -56,10 +57,10 @@ const SingleLevelHoerenModule = ({
   return (
     <>
       <ExamCallout className="flex items-start gap-2">
-        <Headphones className="mt-0.5 size-4 shrink-0" />
+        <Headphones aria-hidden className="mt-0.5 size-4 shrink-0" />
         <span>
-          Each audio can be played <b>{settings.playsAllowed}×</b> — in the real exam you hear everything only
-          once. Read the statements first, then press play. Transcripts appear in the review.
+          Each recording can be played <b>{settings.playsAllowed}×</b> — in the real exam you hear everything
+          only once. Read the statements first, then press Play. Transcripts appear in the review.
         </span>
       </ExamCallout>
 

@@ -168,7 +168,8 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
         },
         {
           text: 'Practice scanning: give yourself 60 seconds per ad-matching situation.',
-          target: { kind: 'module', exam: 1, module: 'lesen', teil: '1' }
+          /* Modelltest 3 is an early-A2 paper, so the first full mock (Modelltest 1) stays unseen. */
+          target: { kind: 'module', exam: 3, module: 'lesen', teil: '1' }
         }
       ],
       cheats: ['vocab'],

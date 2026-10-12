@@ -58,7 +58,8 @@ describe('a task target', () => {
     ).toEqual({
       kind: 'link',
       to: '/dtz/exam/4/hoeren',
-      label: 'Hören Teil 1 · Modelltest 4'
+      label: 'Hören Teil 1 · Modelltest 4',
+      start: { exam: 4, module: 'hoeren' }
     });
     expect(resolveTaskTarget({ kind: 'module', exam: 1, module: 'lesen' }, '', sheets)).toMatchObject({
       to: '/exam/1/lesen',

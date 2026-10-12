@@ -50,6 +50,7 @@ const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose 
           value={(session.index / session.questions.length) * 100}
           className="h-1.5"
           aria-label="Quiz progress"
+          aria-valuetext={`Question ${String(session.index + 1)} of ${String(session.questions.length)}`}
         />
         <span className="shrink-0 text-sm tabular-nums text-muted-foreground">
           {session.index + 1}/{session.questions.length}

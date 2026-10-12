@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { cn } from '@shared/lib/cn.ts';
 import { Progress } from '@shared/ui/progress.tsx';
 
@@ -34,11 +36,14 @@ const ScoreMeter = ({
 
   /* Start empty and fill on the next frame so the bar animates in. */
   const shown = useFillIn(pct);
+  const id = useId();
 
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between text-sm">
-        <span className="font-medium">{label}</span>
+        <span id={id} className="font-medium">
+          {label}
+        </span>
         <span className="tabular-nums text-muted-foreground">
           {value == null ? '—' : `${String(value)}/${String(of)}`}
         </span>
@@ -46,6 +51,13 @@ const ScoreMeter = ({
       <div className="relative">
         <Progress
           value={shown}
+          aria-labelledby={id}
+          /* The bar animates in, so its value in words is the score, not the frame. */
+          aria-valuetext={
+            value == null
+              ? 'not taken'
+              : `${String(value)} of ${String(of)} points (${String(pct)}%); ${thresholdLabel}`
+          }
           indicatorClassName={cn(
             tone,
             'transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]'

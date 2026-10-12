@@ -20,7 +20,7 @@ const InlineGapSelect = ({ label, options, value, onChange }: InlineGapSelectPro
     <SelectTrigger
       size="sm"
       aria-label={`Lücke ${label}`}
-      className="mx-1 inline-flex h-7 max-w-52 bg-background align-baseline"
+      className="mx-1 my-0.5 inline-flex h-9 max-w-[min(13rem,100%)] bg-card align-middle"
     >
       <SelectValue placeholder={`[${label}]`} />
     </SelectTrigger>

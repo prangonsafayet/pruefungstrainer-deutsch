@@ -10,7 +10,7 @@ interface GapFillTextProps {
 
 /** A Sprachbausteine text with its gaps rendered as real inputs, never injected HTML. */
 const GapFillText = ({ text, renderGap }: GapFillTextProps) => (
-  <div className="rounded-lg border bg-muted/40 p-4 text-base leading-loose">
+  <div className="max-w-3xl rounded-xl bg-muted p-4 text-base leading-[2.6] hyphens-auto sm:p-5">
     {splitGapText(text).map((segment, index) =>
       segment.kind === 'gap' ? (
         <Fragment key={index}>{renderGap(segment.gapIndex, segment.label)}</Fragment>

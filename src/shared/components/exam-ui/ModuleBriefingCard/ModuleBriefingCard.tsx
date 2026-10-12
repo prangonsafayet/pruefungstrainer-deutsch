@@ -1,8 +1,7 @@
-import { Timer } from 'lucide-react';
+import { Play, Timer } from 'lucide-react';
 
-import { Badge } from '@shared/ui/badge.tsx';
 import { Button } from '@shared/ui/button.tsx';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card.tsx';
+import { Card, CardContent } from '@shared/ui/card.tsx';
 
 interface ModuleBriefingCardProps {
   /** "Modelltest 3 · B1 · Module 2 of 5" — whatever identifies the sitting. */
@@ -20,7 +19,11 @@ interface ModuleBriefingCardProps {
   readonly onAbort: () => void;
 }
 
-/** The "what to do" screen shown before each exam module starts — shared by all trainers. */
+/**
+ * The "what to do" screen shown before each exam module starts — shared by all trainers. The
+ * module name is the screen's `<h1>`; the kicker rides inside it after a separator a screen
+ * reader hears, so the tab title reads "Leseverstehen · Modelltest 3 · B1 · Module 1 of 5".
+ */
 const ModuleBriefingCard = ({
   kicker,
   title,
@@ -31,29 +34,29 @@ const ModuleBriefingCard = ({
   onBegin,
   onAbort
 }: ModuleBriefingCardProps) => (
-  <Card className="animate-pop-in relative mx-auto max-w-2xl overflow-hidden text-center shadow-md">
-    <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-primary" />
-    <CardHeader className="items-center">
-      <CardDescription>{kicker}</CardDescription>
-      <CardTitle className="text-2xl">{title}</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-5">
-      <p className="text-left text-sm leading-relaxed text-muted-foreground">
+  <Card className="animate-pop-in relative mx-auto max-w-2xl overflow-hidden shadow-lift">
+    <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-primary" />
+    <CardContent className="space-y-6 pt-2 text-center">
+      <h1 className="flex flex-col-reverse gap-1">
+        <span className="text-3xl font-extrabold sm:text-4xl">{title}</span>
+        <span className="sr-only"> · </span>
+        <span className="text-sm font-semibold text-muted-foreground">{kicker}</span>
+      </h1>
+      <p className="mx-auto max-w-prose text-left leading-relaxed text-muted-foreground">
         <b className="text-foreground">What to do:</b> {briefing}
       </p>
-      <Badge variant="secondary" className="gap-1.5 py-1">
-        <Timer className="size-3" /> {minutes} minutes
-        {guidelineOnly ? ' (guideline)' : ' — auto-submits when time runs out'}
-      </Badge>
+      <p className="mx-auto flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-semibold">
+        <Timer className="size-4 shrink-0 text-primary" aria-hidden />
+        <span>
+          {minutes} minutes
+          {guidelineOnly ? ' (guideline)' : ' — auto-submits when time runs out'}
+        </span>
+      </p>
       <div className="flex flex-col items-center gap-2">
-        <Button
-          size="lg"
-          className="px-8 shadow-sm transition-transform hover:scale-[1.03]"
-          onClick={onBegin}
-        >
-          {startLabel} ▸
+        <Button size="lg" className="w-full px-8 sm:w-auto" onClick={onBegin}>
+          <Play aria-hidden /> {startLabel}
         </Button>
-        <Button variant="ghost" size="sm" onClick={onAbort}>
+        <Button variant="ghost" onClick={onAbort}>
           Abort attempt
         </Button>
       </div>

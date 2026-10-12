@@ -3,6 +3,7 @@ import MultipleChoice from '@shared/components/exam-ui/inputs/MultipleChoice/Mul
 import QuestionItem from '@shared/components/exam-ui/layout/QuestionItem/QuestionItem.tsx';
 import QuestionText from '@shared/components/exam-ui/layout/QuestionText/QuestionText.tsx';
 import ReadingText from '@shared/components/exam-ui/layout/ReadingText/ReadingText.tsx';
+import SplitTeil from '@shared/components/exam-ui/layout/SplitTeil/SplitTeil.tsx';
 import TeilSection from '@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx';
 import MatchingOptionCards from '@shared/components/exam-ui/MatchingOptionCards/MatchingOptionCards.tsx';
 import MultilineText from '@shared/components/MultilineText/MultilineText.tsx';
@@ -20,25 +21,27 @@ const SingleLevelLesenModule = ({ exam, answers, setAnswer }: SingleLevelModuleP
         chip="5 Items · je 5 Punkte"
         anweisung={lesen.teil1.anweisung}
       >
-        <MatchingOptionCards items={lesen.teil1.headlines} />
-        {lesen.teil1.texts.map((text, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>Text {index + 1}</QuestionText>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              <MultilineText text={text} />
-            </p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              Überschrift:
+        <SplitTeil
+          materialLabel="Überschriften"
+          material={<MatchingOptionCards items={lesen.teil1.headlines} />}
+        >
+          {lesen.teil1.texts.map((text, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>Text {index + 1}</QuestionText>
+              <p className="leading-relaxed text-muted-foreground">
+                <MultilineText text={text} />
+              </p>
               <LetterSelect
                 count={lesen.teil1.headlines.length}
+                label={`Überschrift für Text ${String(index + 1)}`}
                 value={numberAnswer(answers, itemKey('l1.', index))}
                 onChange={value => {
                   setAnswer(itemKey('l1.', index), value);
                 }}
               />
-            </div>
-          </QuestionItem>
-        ))}
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
 
       <TeilSection
@@ -46,24 +49,31 @@ const SingleLevelLesenModule = ({ exam, answers, setAnswer }: SingleLevelModuleP
         chip="5 Items · je 5 Punkte"
         anweisung={lesen.teil2.anweisung}
       >
-        <ReadingText title={lesen.teil2.titel}>
-          <MultilineText text={lesen.teil2.text} />
-        </ReadingText>
-        {lesen.teil2.questions.map((question, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>
-              {index + 1}. {question.frage}
-            </QuestionText>
-            <MultipleChoice
-              name={itemKey('l2.', index)}
-              options={question.options}
-              value={numberAnswer(answers, itemKey('l2.', index))}
-              onChange={value => {
-                setAnswer(itemKey('l2.', index), value);
-              }}
-            />
-          </QuestionItem>
-        ))}
+        <SplitTeil
+          materialLabel="Text"
+          material={
+            <ReadingText title={lesen.teil2.titel}>
+              <MultilineText text={lesen.teil2.text} />
+            </ReadingText>
+          }
+        >
+          {lesen.teil2.questions.map((question, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>
+                {index + 1}. {question.frage}
+              </QuestionText>
+              <MultipleChoice
+                name={itemKey('l2.', index)}
+                label={question.frage}
+                options={question.options}
+                value={numberAnswer(answers, itemKey('l2.', index))}
+                onChange={value => {
+                  setAnswer(itemKey('l2.', index), value);
+                }}
+              />
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
 
       <TeilSection
@@ -71,24 +81,23 @@ const SingleLevelLesenModule = ({ exam, answers, setAnswer }: SingleLevelModuleP
         chip="10 Items · je 2,5 Punkte"
         anweisung={lesen.teil3.anweisung}
       >
-        <MatchingOptionCards items={lesen.teil3.ads} />
-        {lesen.teil3.situations.map((situation, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>
-              {index + 1}. {situation}
-            </QuestionText>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              Anzeige:
+        <SplitTeil materialLabel="Anzeigen" material={<MatchingOptionCards items={lesen.teil3.ads} />}>
+          {lesen.teil3.situations.map((situation, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>
+                {index + 1}. {situation}
+              </QuestionText>
               <LetterSelect
                 count={lesen.teil3.ads.length}
+                label={`Anzeige für Situation ${String(index + 1)}`}
                 value={numberAnswer(answers, itemKey('l3.', index))}
                 onChange={value => {
                   setAnswer(itemKey('l3.', index), value);
                 }}
               />
-            </div>
-          </QuestionItem>
-        ))}
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
     </>
   );

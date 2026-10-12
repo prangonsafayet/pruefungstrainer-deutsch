@@ -4,6 +4,7 @@ import RichtigFalsch from '@shared/components/exam-ui/inputs/RichtigFalsch/Richt
 import QuestionItem from '@shared/components/exam-ui/layout/QuestionItem/QuestionItem.tsx';
 import QuestionText from '@shared/components/exam-ui/layout/QuestionText/QuestionText.tsx';
 import ReadingText from '@shared/components/exam-ui/layout/ReadingText/ReadingText.tsx';
+import SplitTeil from '@shared/components/exam-ui/layout/SplitTeil/SplitTeil.tsx';
 import TeilSection from '@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx';
 import MatchingOptionCards from '@shared/components/exam-ui/MatchingOptionCards/MatchingOptionCards.tsx';
 import MultilineText from '@shared/components/MultilineText/MultilineText.tsx';
@@ -19,89 +20,102 @@ const DualLevelLesenModule = ({ exam, answers, setAnswer }: A2b1ModuleProps) => 
   return (
     <>
       <TeilSection title="Teil 1 — Anzeigen zuordnen" chip="5 Items" anweisung={lesen.teil1.anweisung}>
-        <MatchingOptionCards items={lesen.teil1.ads} />
-        {lesen.teil1.situations.map((situation, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>
-              {index + 1}. {situation}
-            </QuestionText>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              Anzeige:
+        <SplitTeil materialLabel="Anzeigen" material={<MatchingOptionCards items={lesen.teil1.ads} />}>
+          {lesen.teil1.situations.map((situation, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>
+                {index + 1}. {situation}
+              </QuestionText>
               <LetterSelect
                 count={lesen.teil1.ads.length}
+                label={`Anzeige für Situation ${String(index + 1)}`}
                 value={numberAnswer(answers, itemKey('l1.', index))}
                 onChange={value => {
                   setAnswer(itemKey('l1.', index), value);
                 }}
               />
-            </div>
-          </QuestionItem>
-        ))}
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
 
       <TeilSection title="Teil 2 — Texte lesen" chip="5 Items" anweisung={lesen.teil2.anweisung}>
-        {lesen.teil2.texts.map((text, index) => (
-          <ReadingText key={index} title={`Text ${TEXT_LABELS[index] ?? ''}: ${text.titel}`}>
-            <MultilineText text={text.text} />
-          </ReadingText>
-        ))}
-        {lesen.teil2.questions.map((question, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>
-              {index + 1}. (Text {TEXT_LABELS[question.textIndex] ?? ''}) {question.frage}
-            </QuestionText>
-            <MultipleChoice
-              name={itemKey('l2.', index)}
-              options={question.options}
-              value={numberAnswer(answers, itemKey('l2.', index))}
-              onChange={value => {
-                setAnswer(itemKey('l2.', index), value);
-              }}
-            />
-          </QuestionItem>
-        ))}
+        <SplitTeil
+          materialLabel="Texte A und B"
+          material={lesen.teil2.texts.map((text, index) => (
+            <ReadingText key={index} title={`Text ${TEXT_LABELS[index] ?? ''}: ${text.titel}`}>
+              <MultilineText text={text.text} />
+            </ReadingText>
+          ))}
+        >
+          {lesen.teil2.questions.map((question, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>
+                {index + 1}. (Text {TEXT_LABELS[question.textIndex] ?? ''}) {question.frage}
+              </QuestionText>
+              <MultipleChoice
+                name={itemKey('l2.', index)}
+                label={question.frage}
+                options={question.options}
+                value={numberAnswer(answers, itemKey('l2.', index))}
+                onChange={value => {
+                  setAnswer(itemKey('l2.', index), value);
+                }}
+              />
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
 
       <TeilSection title="Teil 3 — Überschriften zuordnen" chip="5 Items" anweisung={lesen.teil3.anweisung}>
-        <MatchingOptionCards items={lesen.teil3.headlines} />
-        {lesen.teil3.messages.map((message, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>Nachricht {index + 1}</QuestionText>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              <MultilineText text={message} />
-            </p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              Überschrift:
+        <SplitTeil
+          materialLabel="Überschriften"
+          material={<MatchingOptionCards items={lesen.teil3.headlines} />}
+        >
+          {lesen.teil3.messages.map((message, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>Nachricht {index + 1}</QuestionText>
+              <p className="leading-relaxed text-muted-foreground">
+                <MultilineText text={message} />
+              </p>
               <LetterSelect
                 count={lesen.teil3.headlines.length}
+                label={`Überschrift für Nachricht ${String(index + 1)}`}
                 value={numberAnswer(answers, itemKey('l3.', index))}
                 onChange={value => {
                   setAnswer(itemKey('l3.', index), value);
                 }}
               />
-            </div>
-          </QuestionItem>
-        ))}
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
 
       <TeilSection title="Teil 4 — Richtig oder falsch?" chip="5 Items" anweisung={lesen.teil4.anweisung}>
-        <ReadingText title={lesen.teil4.titel}>
-          <MultilineText text={lesen.teil4.text} />
-        </ReadingText>
-        {lesen.teil4.statements.map((statement, index) => (
-          <QuestionItem key={index}>
-            <QuestionText>
-              {index + 1}. {statement.text}
-            </QuestionText>
-            <RichtigFalsch
-              name={itemKey('l4.', index)}
-              value={booleanAnswer(answers, itemKey('l4.', index))}
-              onChange={value => {
-                setAnswer(itemKey('l4.', index), value);
-              }}
-            />
-          </QuestionItem>
-        ))}
+        <SplitTeil
+          materialLabel="Text"
+          material={
+            <ReadingText title={lesen.teil4.titel}>
+              <MultilineText text={lesen.teil4.text} />
+            </ReadingText>
+          }
+        >
+          {lesen.teil4.statements.map((statement, index) => (
+            <QuestionItem key={index}>
+              <QuestionText>
+                {index + 1}. {statement.text}
+              </QuestionText>
+              <RichtigFalsch
+                name={itemKey('l4.', index)}
+                label={statement.text}
+                value={booleanAnswer(answers, itemKey('l4.', index))}
+                onChange={value => {
+                  setAnswer(itemKey('l4.', index), value);
+                }}
+              />
+            </QuestionItem>
+          ))}
+        </SplitTeil>
       </TeilSection>
     </>
   );

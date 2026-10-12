@@ -1,6 +1,5 @@
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
 import { LETTERS } from '@shared/lib/format.ts';
-import { optional } from '@shared/lib/optionalProps.ts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select.tsx';
 
 interface LetterSelectProps {
@@ -8,8 +7,8 @@ interface LetterSelectProps {
   readonly value: number | undefined;
   readonly onChange: (value: number) => void;
   readonly placeholder?: string;
-  /** The control's accessible name, when no visible label is tied to it. */
-  readonly label?: string;
+  /** The control's accessible name — required: a bare letter box says nothing on its own. */
+  readonly label: string;
   /**
    * Offers an extra "no match" option (value `NO_MATCH_ANSWER`, -1) after the letters,
    * labelled with this text — DTZ Lesen Teil 2's X.
@@ -32,7 +31,7 @@ const LetterSelect = ({
       onChange(Number(next));
     }}
   >
-    <SelectTrigger size="sm" className="w-20" {...optional('aria-label', label)}>
+    <SelectTrigger className="w-24 bg-card font-heading font-bold" aria-label={label}>
       <SelectValue placeholder={placeholder} />
     </SelectTrigger>
     <SelectContent>

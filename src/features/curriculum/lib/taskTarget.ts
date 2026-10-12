@@ -2,11 +2,18 @@
 
 import { MODULE_META } from '@shared/config/exam.ts';
 import { CATEGORY_META } from '@shared/config/studyCategories.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
 import { type Cheatsheet, type LearnTaskTarget } from '@shared/types/learn.ts';
 
 export type ResolvedTaskTarget =
   /** A route in this trainer, opened with a router link. */
-  | { readonly kind: 'link'; readonly to: string; readonly label: string }
+  | {
+      readonly kind: 'link';
+      readonly to: string;
+      readonly label: string;
+      /** Set for a module: following the link starts (or resumes) a run, so it goes through the start hook. */
+      readonly start?: { readonly exam: number; readonly module: ExamModule };
+    }
   /** One of this trainer's cheatsheets, opened beside the plan rather than navigated to. */
   | { readonly kind: 'cheatsheet'; readonly id: string; readonly label: string };
 
@@ -25,7 +32,8 @@ export const resolveTaskTarget = (
       return {
         kind: 'link',
         to: `${basePath}/exam/${String(target.exam)}/${target.module}`,
-        label: `${MODULE_META[target.module].short}${teil} · Modelltest ${String(target.exam)}`
+        label: `${MODULE_META[target.module].short}${teil} · Modelltest ${String(target.exam)}`,
+        start: { exam: target.exam, module: target.module }
       };
     }
     case 'practice':

@@ -13,7 +13,7 @@ const SingleLevelSprechenModule = ({ exam, paper, recordings, onRecorded }: Sing
   return (
     <>
       <ExamCallout className="flex items-start gap-2">
-        <Mic className="mt-0.5 size-4 shrink-0" />
+        <Mic aria-hidden className="mt-0.5 size-4 shrink-0" />
         <span>
           Speak OUT LOUD — ideally record yourself (allow the microphone) and listen back.{' '}
           {paper.prepNote.lead}

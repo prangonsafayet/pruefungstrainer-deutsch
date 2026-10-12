@@ -32,7 +32,9 @@ const AppLayout = () => {
         className={cn(
           'flex min-h-dvh flex-col',
           /* Room for the fixed tab bar, so the footer never sits underneath it. */
-          !examMode && 'max-sm:pb-[calc(4.25rem+env(safe-area-inset-bottom))]'
+          !examMode && 'max-sm:pb-[calc(4.25rem+env(safe-area-inset-bottom))]',
+          /* …and in an exam, room for the module toolbar docked at the bottom. */
+          examMode && 'max-sm:pb-[calc(5.5rem+env(safe-area-inset-bottom))]'
         )}
       >
         <a
@@ -100,8 +102,10 @@ const AppLayout = () => {
           className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-6 outline-none sm:px-6 sm:pt-8"
         >
           <ErrorBoundary resetKey={pathname}>
-            {/* Re-keying on the path restarts the entrance animation for each screen. */}
-            <div key={pathname} className="animate-fade-up">
+            {/* Re-keying on the path restarts the entrance animation for each screen. Not in an
+                exam: a finished transform animation still leaves a transform, which would make
+                this div — not the viewport — the containing block of the docked exam toolbar. */}
+            <div key={pathname} className={cn(!examMode && 'animate-fade-up')}>
               <Outlet />
             </div>
           </ErrorBoundary>

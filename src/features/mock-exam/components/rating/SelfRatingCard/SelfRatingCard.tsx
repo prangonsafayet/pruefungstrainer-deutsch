@@ -1,3 +1,5 @@
+import { Lightbulb } from 'lucide-react';
+
 import CriteriaRatingPanel from '@shared/components/exam-ui/CriteriaRatingPanel/CriteriaRatingPanel.tsx';
 import MultilineText from '@shared/components/MultilineText/MultilineText.tsx';
 import { SPEAKING_PARTS } from '@shared/exam-run/config/run.ts';
@@ -45,9 +47,9 @@ const SelfRatingCard = <
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-3xl font-extrabold sm:text-4xl">
           {format.moduleShort(module)} — self-scoring (max {max})
-        </h2>
+        </h1>
         <p className="mt-1 text-muted-foreground">
           Compare honestly with the sample, then move the sliders. 0 = not at all · 5 = fully.{' '}
           {format.rating[module].stepPoints
@@ -62,17 +64,21 @@ const SelfRatingCard = <
             <CardTitle>Your text</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-lg border bg-muted/40 p-4 leading-relaxed">
+            <div lang="de" className="rounded-xl bg-muted p-4 leading-relaxed">
               <MultilineText text={writtenText || '(empty)'} />
             </div>
             <div>
-              <h3 className="mb-2 font-semibold">Sample answer (Musterlösung)</h3>
-              <div className="rounded-lg border-l-4 border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_8%,transparent)] p-4 leading-relaxed">
+              <h3 className="mb-2 font-bold">Sample answer (Musterlösung)</h3>
+              <div
+                lang="de"
+                className="rounded-xl border-l-4 border-success bg-[color-mix(in_oklab,var(--success)_8%,var(--card))] p-4 leading-relaxed"
+              >
                 <MultilineText text={sample.musterloesung} />
               </div>
             </div>
             <div className="text-sm text-muted-foreground">
-              💡 {sample.tipps}
+              <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
+              {sample.tipps}
               <ul className="mt-1 list-disc pl-5">
                 {sample.points.map((point, index) => (
                   <li key={index}>{point}</li>
@@ -94,7 +100,12 @@ const SelfRatingCard = <
                   <span>Teil {index + 1}:</span>
                   {/* eslint-disable-next-line jsx-a11y/media-has-caption -- the learner's
                       own recording; there is no transcript to caption it with. */}
-                  <audio controls src={url} className="h-8" />
+                  <audio
+                    controls
+                    src={url}
+                    className="h-10 max-w-full"
+                    aria-label={`Your recording, Teil ${String(index + 1)}`}
+                  />
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground" key={part}>
@@ -102,7 +113,10 @@ const SelfRatingCard = <
                 </p>
               );
             })}
-            <p className="pt-2 text-sm text-muted-foreground">💡 {format.speakingHint}</p>
+            <p className="pt-2 text-sm text-muted-foreground">
+              <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
+              {format.speakingHint}
+            </p>
           </CardContent>
         </Card>
       )}

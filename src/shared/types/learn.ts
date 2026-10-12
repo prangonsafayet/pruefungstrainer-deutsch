@@ -8,7 +8,12 @@ export interface LearnAiPrompt {
   readonly t: string;
   /** The prompt body, offered as copy-to-clipboard. Plain text. */
   readonly p: string;
+  /** This prompt's language, where it differs from the plan's `aiPromptLang`. */
+  readonly lang?: AiPromptLang;
 }
+
+/** The language an AI prompt is written in — said on the page so a screen reader voices it right. */
+export type AiPromptLang = 'en' | 'de';
 
 /**
  * Where a curriculum task is done, when the task names one place. Rendered as a "Go to …"
@@ -67,6 +72,8 @@ export interface Cheatsheet {
 }
 
 export interface LearnPlan {
+  /** The language its AI prompts are written in; English when absent (the UI's own). */
+  readonly aiPromptLang?: AiPromptLang;
   /** Authored HTML (bolds a few phrases), injected rather than rendered as text. */
   readonly intro: string;
   readonly cheatsheets: Readonly<Record<string, Cheatsheet>>;

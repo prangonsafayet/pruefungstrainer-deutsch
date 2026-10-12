@@ -5,6 +5,8 @@ import { type LearnPlan } from '@shared/types/learn.ts';
    confident pass when the runway leaves room. `intro` and every `cheatsheets[].html`
    are authored HTML and are injected; all other strings are plain text. */
 export const B2_CURRICULUM: LearnPlan = {
+  /* The prompts address the AI in German; two that interview in English say so themselves. */
+  aiPromptLang: 'de',
   intro: `This plan adapts to your <b>B2 exam date</b> — set it in Settings and the days re-pace themselves.
   Each day = vocabulary in the practice hub + one grammar or exam focus + an <b>AI practice session</b>: copy the prompt into Claude (or any AI chat) and it becomes your tutor, discussion partner or examiner.
   Days 1–14 are the <b>core curriculum</b> and are always scheduled; days 15–28 sharpen argumentation, the mündliche Prüfung and the remaining Modelltests when your date leaves room.`,

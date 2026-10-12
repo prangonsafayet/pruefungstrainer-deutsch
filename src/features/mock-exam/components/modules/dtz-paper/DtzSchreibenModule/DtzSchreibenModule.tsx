@@ -1,4 +1,6 @@
+import ChoiceOption from '@shared/components/exam-ui/inputs/ChoiceOption/ChoiceOption.tsx';
 import TeilSection from '@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx';
+import WritingField from '@shared/components/exam-ui/WritingField/WritingField.tsx';
 import WritingTaskBrief from '@shared/components/exam-ui/WritingTaskBrief/WritingTaskBrief.tsx';
 import {
   itemKey,
@@ -7,11 +9,8 @@ import {
   WRITING_ANSWER_KEY,
   WRITING_TASK_KEY
 } from '@shared/lib/answers.ts';
-import { cn } from '@shared/lib/cn.ts';
 import { LETTERS, wordCount } from '@shared/lib/format.ts';
-import { Label } from '@shared/ui/label.tsx';
-import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group.tsx';
-import { Textarea } from '@shared/ui/textarea.tsx';
+import { RadioGroup } from '@shared/ui/radio-group.tsx';
 
 import { type DtzModuleProps } from '@features/mock-exam/types/moduleProps.ts';
 
@@ -25,47 +24,43 @@ const DtzSchreibenModule = ({ exam, paper, answers, setAnswer }: DtzModuleProps)
   if (!task) return null;
 
   return (
-    <div lang="de">
-      <TeilSection title={paper.writingTitle} chip="20 Punkte" anweisung={schreiben.anweisung}>
-        <RadioGroup
-          aria-label="Aufgabe wählen"
-          className="mb-4 grid gap-2 sm:grid-cols-2"
-          value={String(chosen)}
-          onValueChange={next => {
-            setAnswer(WRITING_TASK_KEY, Number(next));
-          }}
-        >
-          {schreiben.tasks.map((candidate, index) => (
-            <div
-              key={index}
-              className={cn(
-                'flex items-start gap-2 rounded-lg border p-3 transition-colors',
-                chosen === index && 'border-primary bg-accent/40'
-              )}
-            >
-              <RadioGroupItem value={String(index)} id={itemKey('w.task-', index)} className="mt-1" />
-              <Label htmlFor={itemKey('w.task-', index)} className="cursor-pointer font-normal">
-                <b>Aufgabe {(LETTERS[index] ?? String(index + 1)).toUpperCase()}:</b> {candidate.titel}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
+    <TeilSection title={paper.writingTitle} chip="20 Punkte" anweisung={schreiben.anweisung}>
+      <RadioGroup
+        aria-label="Aufgabe wählen"
+        className="mb-5 gap-2 sm:grid-cols-2"
+        value={String(chosen)}
+        onValueChange={next => {
+          setAnswer(WRITING_TASK_KEY, Number(next));
+        }}
+      >
+        {schreiben.tasks.map((candidate, index) => (
+          <ChoiceOption
+            key={index}
+            id={itemKey('w.task-', index)}
+            value={String(index)}
+            selected={chosen === index}
+          >
+            {/* The authored titles already name their task ("Aufgabe A: …"); only a bare one gets the prefix. */}
+            {candidate.titel.startsWith('Aufgabe')
+              ? candidate.titel
+              : `Aufgabe ${(LETTERS[index] ?? String(index + 1)).toUpperCase()}: ${candidate.titel}`}
+          </ChoiceOption>
+        ))}
+      </RadioGroup>
 
-        <WritingTaskBrief task={task} />
+      <WritingTaskBrief task={task} />
 
-        <Textarea
-          className="min-h-64 leading-relaxed"
-          placeholder={paper.writingPlaceholder}
-          aria-label="Ihr Text"
-          spellCheck={false}
-          value={text}
-          onChange={event => {
-            setAnswer(WRITING_ANSWER_KEY, event.target.value);
-          }}
-        />
-        <div className="mt-2 text-right text-sm text-muted-foreground">{wordCount(text)} Wörter</div>
-      </TeilSection>
-    </div>
+      <WritingField
+        label="Ihr Text"
+        placeholder={paper.writingPlaceholder}
+        value={text}
+        onChange={next => {
+          setAnswer(WRITING_ANSWER_KEY, next);
+        }}
+        countText={`${String(wordCount(text))} Wörter`}
+        inRange={false}
+      />
+    </TeilSection>
   );
 };
 

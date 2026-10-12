@@ -41,7 +41,7 @@ const storedAttempts = (key: string): readonly DtzAttempt[] => {
 /** Submits the open module, confirming past any blanks. */
 const submit = async (module: string): Promise<void> => {
   await click(findByText(new RegExp(`^Submit ${module}`)));
-  const anyway = findByText(/Submit anyway/);
+  const anyway = findByText(/^Submit (anyway|now)$/);
   if (anyway) await click(anyway);
 };
 

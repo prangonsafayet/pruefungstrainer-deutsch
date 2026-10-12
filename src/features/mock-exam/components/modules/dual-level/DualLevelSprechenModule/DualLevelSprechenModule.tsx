@@ -14,7 +14,7 @@ const DualLevelSprechenModule = ({ exam, paper, recordings, onRecorded }: A2b1Mo
   return (
     <>
       <ExamCallout className="flex items-start gap-2">
-        <Mic className="mt-0.5 size-4 shrink-0" />
+        <Mic aria-hidden className="mt-0.5 size-4 shrink-0" />
         <span>
           Speak OUT LOUD — ideally record yourself (allow the microphone) and listen back.{' '}
           {paper.prepNote.lead}
@@ -34,10 +34,12 @@ const DualLevelSprechenModule = ({ exam, paper, recordings, onRecorded }: A2b1Mo
       </TeilSection>
 
       <TeilSection title="Teil 2 — Über ein Thema sprechen" chip={paper.sprechenChips[1] ?? ''}>
-        <p className="mb-2 font-semibold">Thema: {sprechen.teil2.thema}</p>
-        <p className="mb-4 text-sm italic text-muted-foreground">
+        <p className="mb-2 font-heading font-bold">Thema: {sprechen.teil2.thema}</p>
+        <p className="mb-4 italic text-muted-foreground">
           {sprechen.teil2.anweisung}{' '}
-          <b className="not-italic text-foreground">Read the task twice before you start!</b>
+          <b lang="en" className="not-italic text-foreground">
+            Read the task twice before you start!
+          </b>
         </p>
         <ol className="my-4 list-decimal space-y-1 pl-5">
           {sprechen.teil2.leitfragen.map((question, index) => (
@@ -49,9 +51,10 @@ const DualLevelSprechenModule = ({ exam, paper, recordings, onRecorded }: A2b1Mo
       </TeilSection>
 
       <TeilSection title="Teil 3 — Gemeinsam planen" chip={paper.sprechenChips[2] ?? ''}>
-        <p className="mb-2 font-semibold">{sprechen.teil3.aufgabe}</p>
-        <p className="mb-4 text-sm italic text-muted-foreground">
-          {sprechen.teil3.anweisung} (Solo training: speak both roles, or grab a partner.)
+        <p className="mb-2 font-heading font-bold">{sprechen.teil3.aufgabe}</p>
+        <p className="mb-4 italic text-muted-foreground">
+          {sprechen.teil3.anweisung}{' '}
+          <span lang="en">(Solo training: speak both roles, or grab a partner.)</span>
         </p>
         <PunkteGrid items={sprechen.teil3.punkte} />
         <RedemittelList items={sprechen.teil3.redemittel} />

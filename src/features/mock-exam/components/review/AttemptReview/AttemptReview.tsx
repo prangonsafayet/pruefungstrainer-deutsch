@@ -51,7 +51,7 @@ const AttemptReview = <
   return (
     <>
       <PageTitle
-        lead={`${fmtDate(attempt.date)} · Green = correct, red = wrong. Learn every red item before the next test.`}
+        lead={`${fmtDate(attempt.date)} · Every item says whether it was correct. Learn each incorrect one before your next test.`}
       >
         Review — {format.examLabel(exam)}
       </PageTitle>
@@ -66,9 +66,11 @@ const AttemptReview = <
               </CardContent>
             </Card>
           ))}
-          {section.rows.map(row => (
-            <AttemptReviewRowCard key={row.id} row={row} />
-          ))}
+          <ul className="space-y-2">
+            {section.rows.map(row => (
+              <AttemptReviewRowCard key={row.id} row={row} />
+            ))}
+          </ul>
         </section>
       ))}
 
@@ -81,13 +83,16 @@ const AttemptReview = <
             <CardContent className="space-y-4">
               <div>
                 <h3 className="mb-2 font-semibold">Your text</h3>
-                <div className="rounded-lg border bg-muted/40 p-4 leading-relaxed">
+                <div lang="de" className="rounded-xl bg-muted p-4 leading-relaxed">
                   <MultilineText text={writtenText || '(empty)'} />
                 </div>
               </div>
               <div>
                 <h3 className="mb-2 font-semibold">Musterlösung</h3>
-                <div className="rounded-lg border-l-4 border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_8%,transparent)] p-4 leading-relaxed">
+                <div
+                  lang="de"
+                  className="rounded-xl border-l-4 border-success bg-[color-mix(in_oklab,var(--success)_8%,var(--card))] p-4 leading-relaxed"
+                >
                   <MultilineText text={sample.musterloesung} />
                 </div>
               </div>
@@ -110,7 +115,7 @@ const AttemptReview = <
       <div className="mt-6 flex flex-wrap gap-2">
         <Button asChild variant="outline">
           <Link to={`${base}/results/${String(attempt.id)}`}>
-            <ArrowLeft /> Back to results
+            <ArrowLeft aria-hidden /> Back to results
           </Link>
         </Button>
         <Button
@@ -118,11 +123,11 @@ const AttemptReview = <
             onRetry(attempt.examId, attempt.mode);
           }}
         >
-          <RotateCcw /> Retry this exam
+          <RotateCcw aria-hidden /> Retry this exam
         </Button>
         <Button asChild variant="ghost">
           <Link to={base || '/'}>
-            <Home /> Dashboard
+            <Home aria-hidden /> Dashboard
           </Link>
         </Button>
       </div>

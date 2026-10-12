@@ -6,6 +6,8 @@ import { type LearnPlan } from '@shared/types/learn.ts';
    always scheduled; days 15–28 deepen towards a confident pass when the runway leaves
    room. */
 export const B1_CURRICULUM: LearnPlan = {
+  /* The prompts address the AI in German; two that interview in English say so themselves. */
+  aiPromptLang: 'de',
   intro: `This plan adapts to your <b>B1 exam date</b> — set it in Settings and the days re-pace themselves.
   Each day = vocabulary in the practice hub + one grammar or skill focus + an <b>AI practice session</b>: copy the prompt into Claude (or any AI chat) and it becomes your tutor, examiner or speaking partner.
   Days 1–14 are the <b>core curriculum</b> and are always scheduled; days 15–28 deepen everything — Genitiv, Konjunktiv II, Passiv, oral fluency — when your date leaves room.`,
@@ -271,6 +273,7 @@ export const B1_CURRICULUM: LearnPlan = {
       ai: [
         {
           t: 'Weak-point analysis',
+          lang: 'en',
           p: 'Interview me in English about my first 9 days of telc B1 prep: which module felt hardest (Lesen, Sprachbausteine, Hören), which grammar topic keeps costing points. Then build a concrete 30-minute daily micro-plan for the next week targeting my two weakest areas. Danach: 10 schnelle deutsche Quizfragen genau zu diesen Schwächen, mit sofortiger Korrektur.'
         }
       ]

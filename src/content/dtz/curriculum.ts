@@ -10,6 +10,8 @@ import { type LearnPlan } from '@shared/types/learn.ts';
    Hören text is played, minutes per Teil inside Hören/Lesen, a Schreiben word count, or
    preparation time before Sprechen — the source does not give them. */
 export const DTZ_CURRICULUM: LearnPlan = {
+  /* The prompts address the AI in German; two that interview in English say so themselves. */
+  aiPromptLang: 'de',
   intro: `This plan adapts to your <b>DTZ exam date</b> — set it in Settings and the days re-pace themselves.
   Each day = vocabulary in the practice hub + one grammar or skill focus + an <b>AI practice session</b>: copy the prompt into Claude (or any AI chat) and it becomes your tutor, examiner or speaking partner.
   The DTZ ends in a <b>Zertifikat A2 or B1</b>, built from three results: Hören + Lesen, Schreiben and Sprechen. Sprechen is the gate, so it appears in the plan from day 12 onwards and again and again.
@@ -337,6 +339,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       ai: [
         {
           t: 'Weak-point analysis',
+          lang: 'en',
           p: 'Interview me in English about my first 9 days of Vorbereitung auf den Deutsch-Test für Zuwanderer: which part felt hardest (Hören, Lesen, Schreiben, Sprechen), which grammar topic keeps costing points. Then build a concrete 30-minute daily micro-plan for the next week targeting my two weakest areas. Danach: 10 schnelle deutsche Quizfragen genau zu diesen Schwächen, mit sofortiger Korrektur.'
         }
       ]
