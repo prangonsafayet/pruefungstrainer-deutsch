@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { addDays } from '@shared/lib/format.ts';
 import { isDue, masteryOf, reviewItem, streakLength } from '@shared/lib/srs.ts';
-import { type SrsEntry } from '@shared/types';
+import { type SrsEntry } from '@shared/types/vocab.ts';
 
-import { bumpActivity } from '@features/progress-store/lib/progressDb.ts';
+import { bumpActivity } from '@shared/progress-store/lib/progressDb.ts';
 
 /*
  * The spaced-repetition engine and the daily streak are both pure functions of an explicit

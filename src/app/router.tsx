@@ -2,28 +2,38 @@ import { lazy, Suspense, type ReactElement } from 'react';
 
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { RouteFallback } from '@shared/components';
+import RouteFallback from '@shared/components/RouteFallback/RouteFallback.tsx';
 import { hasGuide, ROOT_TRAINER, TRAINER_ORDER, trainerHome } from '@shared/config/trainers.ts';
-import { type TrainerId } from '@shared/types';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
-import AppLayout from '@features/app-shell/components/AppLayout.tsx';
-import NotFoundPage from '@features/app-shell/routes/NotFoundPage.tsx';
-import DashboardPage from '@features/dashboard/routes/DashboardPage.tsx';
+import AppLayout from '@features/app-shell/components/AppLayout/AppLayout.tsx';
+import NotFoundPage from '@features/app-shell/pages/NotFoundPage/NotFoundPage.tsx';
+import DashboardPage from '@features/dashboard/pages/DashboardPage/DashboardPage.tsx';
 
 /**
  * The dashboard is the landing page and ships in the main bundle; every other screen
  * loads on demand, so a first visit does not pay for the exam runner or the guide.
  */
-const CurriculumPage = lazy(() => import('@features/curriculum/routes/CurriculumPage.tsx'));
-const ExamGuidePage = lazy(() => import('@features/exam-guide/routes/ExamGuidePage.tsx'));
-const AttemptHistoryPage = lazy(() => import('@features/attempt-history/routes/AttemptHistoryPage.tsx'));
-const SettingsPage = lazy(() => import('@features/settings/routes/SettingsPage.tsx'));
-const VocabPracticePage = lazy(() => import('@features/vocab-practice/routes/VocabPracticePage.tsx'));
+const CurriculumPage = lazy(() => import('@features/curriculum/pages/CurriculumPage/CurriculumPage.tsx'));
+const ExamGuidePage = lazy(() => import('@features/exam-guide/pages/ExamGuidePage/ExamGuidePage.tsx'));
+const AttemptHistoryPage = lazy(
+  () => import('@features/attempt-history/pages/AttemptHistoryPage/AttemptHistoryPage.tsx')
+);
+const SettingsPage = lazy(() => import('@features/settings/pages/SettingsPage/SettingsPage.tsx'));
+const VocabPracticePage = lazy(
+  () => import('@features/vocab-practice/pages/VocabPracticePage/VocabPracticePage.tsx')
+);
 
 /* One mock-exam feature serves every trainer; the screens take the trainer as a prop. */
-const MockExamRunnerPage = lazy(() => import('@features/mock-exam/routes/MockExamRunnerPage.tsx'));
-const MockExamResultsPage = lazy(() => import('@features/mock-exam/routes/MockExamResultsPage.tsx'));
-const MockExamReviewPage = lazy(() => import('@features/mock-exam/routes/MockExamReviewPage.tsx'));
+const MockExamRunnerPage = lazy(
+  () => import('@features/mock-exam/pages/MockExamRunnerPage/MockExamRunnerPage.tsx')
+);
+const MockExamResultsPage = lazy(
+  () => import('@features/mock-exam/pages/MockExamResultsPage/MockExamResultsPage.tsx')
+);
+const MockExamReviewPage = lazy(
+  () => import('@features/mock-exam/pages/MockExamReviewPage/MockExamReviewPage.tsx')
+);
 
 /** The guide screen, mounted only for a trainer whose descriptor ships one. */
 const guideRoutes = (trainer: TrainerId): readonly ReactElement[] =>

@@ -37,6 +37,17 @@ right area; see `.claude/rules/memory.md`.
   record of functions.
 - 2026-10-12: the DTZ format id is `'dtz-paper'` → the trainer-id lint ban forbids the literal
   `'dtz'` outside the registry.
+- 2026-10-12: structure rules → no `index.*` barrels or folder imports (import the file, with
+  its extension); every component/page in `Name/Name.tsx` with what only it uses; screens in
+  `pages/`; hooks are `.tsx`; a feature imports only itself + `@shared` + `@content`, so code two
+  features use moves to `src/shared/<domain>/`. Enforced by lint (`NO_BARRELS`,
+  `feature-isolation-*`, `check-file`) and `npm run check:architecture` — do not re-litigate.
+- 2026-10-12: a bare-folder ban (`@shared/ui`) that must allow `@shared/ui/button.tsx` → use a
+  `regex` pattern; a gitignore `group` on the folder also matches its children.
+- 2026-10-12: stale `no-unsafe-assignment` in the editor after mass moves, CLI clean → the IDE
+  cached the `project` program; config now uses `projectService` — restart the ESLint server.
+- 2026-10-12: `npx shadcn add` wrote into a literal `@shared/ui/` folder → the CLI reads paths
+  from the ROOT `tsconfig.json` only; it also emits `import { cn } from "cn"` — fix by hand.
 
 ## Types
 
@@ -116,6 +127,8 @@ right area; see `.claude/rules/memory.md`.
 - Pre-push typechecks the working tree, not the pushed commit → push explicit SHAs when others
   are mid-edit, and say so.
 - `git mv` + reformat lost rename history → move in one commit, reformat in the next.
+- 2026-10-12: a scripted import rewrite missed `typeof import('…')` type positions and
+  template-literal `vi.importActual(\`@content/${id}/…\`)`paths → after a mass move, grep`src/ tests/ e2e/` for every old path, not just import declarations.
 - `git checkout -- file` after a plant reverted real work → `cp` a backup before planting.
 
 ## Agents and process

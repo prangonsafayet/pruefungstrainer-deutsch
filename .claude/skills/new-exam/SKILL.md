@@ -14,7 +14,7 @@ Adding a Modelltest touches three places in one trainer's folder,
 
 ## 1. Decide the trainer, level and theme
 
-Read `src/content/<id>/exams/index.ts` for what exists, then that trainer's `guide.ts`
+Read `src/content/<id>/exams/allExams.ts` for what exists, then that trainer's `guide.ts`
 and two neighbouring exams. Each trainer has its own data contract:
 
 | Trainer | Type (source of truth)                                     |
@@ -37,7 +37,7 @@ note-sheet gaps, speakable TTS dialogue, original texts only). Then have
 
 ## 3. Register it
 
-Add the import and array entry in `src/content/<id>/exams/index.ts`, keeping it sorted
+Add the import and array entry in `src/content/<id>/exams/allExams.ts`, keeping it sorted
 by `id`. The dashboard, history, runner and plan read from there; nothing else changes.
 
 ## 4. Validate

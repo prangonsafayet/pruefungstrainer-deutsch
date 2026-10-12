@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { runFormatFor } from '@features/mock-exam/lib/formats/runFormats.ts';
-import { createRunStore, parseRun } from '@features/mock-exam/lib/runStore.ts';
-import { type ExamRun } from '@features/mock-exam/types/run.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { createRunStore, parseRun } from '@shared/exam-run/lib/runStore.ts';
+import { type ExamRun } from '@shared/exam-run/types/run.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 import { readLocal, removeLocal, writeLocal } from '@shared/lib/storage.ts';
-import { type ExamModule } from '@shared/types';
+import { type ExamModule } from '@shared/types/exam.ts';
 
 import { installMemoryStorage } from '../support/memoryStorage.ts';
 

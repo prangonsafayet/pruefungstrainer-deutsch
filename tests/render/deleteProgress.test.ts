@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
-import { type ExamRun } from '@features/mock-exam';
-import { runFormatFor } from '@features/mock-exam';
-import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
-import { type TrainerId } from '@shared/types';
+import { type ExamRun } from '@shared/exam-run/types/run.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
 import { bySelector, click, mount, seedProgress } from './harness.ts';
 

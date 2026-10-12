@@ -5,7 +5,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TRAINER_ORDER, TRAINERS, trainerHome } from '@shared/config/trainers.ts';
-import { type ActiveTrainer, useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.ts';
+import { type ActiveTrainer, useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.tsx';
 
 import { click, mount, seedProgress, settle } from './harness.ts';
 

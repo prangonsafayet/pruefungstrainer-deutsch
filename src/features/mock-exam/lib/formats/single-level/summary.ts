@@ -7,14 +7,14 @@ import {
   SINGLE_LEVEL_WRITTEN_MAX,
   SINGLE_LEVEL_WRITTEN_PASS
 } from '@shared/config/singleLevelExam.ts';
-import { type ExamModule, type SingleLevelAttempt } from '@shared/types';
-
 import {
   type AttemptGrade,
   type AttemptSummary,
   type ModuleTimeEntry,
   type ScoreBar
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
 
 const SECTION_LABELS: Readonly<Record<ExamModule, string>> = {
   lesen: 'Lesen',

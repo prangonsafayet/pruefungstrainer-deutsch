@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { mount, seedProgress } from './harness.ts';
 

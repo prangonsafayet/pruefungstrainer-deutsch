@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildAttemptTable } from '@features/attempt-history/lib/attemptRows.ts';
-import {
-  type DtzAttempt,
-  type DualLevelAttempt,
-  type ScoredAttempts,
-  type SingleLevelAttempt
-} from '@shared/types';
+import { buildAttemptTable } from '@features/attempt-history/pages/AttemptHistoryPage/attemptRows.ts';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
+import { type ScoredAttempts } from '@shared/types/scoreChart.ts';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
 
 /*
  * The attempts table lays out whatever the model hands it, so a mismatch between the header

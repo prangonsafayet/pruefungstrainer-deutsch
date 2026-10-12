@@ -5,7 +5,8 @@
  * lives on its `TrainerPaper` in `src/content/dtz/paper.ts`.
  */
 
-import { type DtzModule, type ExamModule } from '@shared/types';
+import { type DtzModule } from '@shared/types/dtzExam.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
 
 /** Module order of a full sitting: Hören, Lesen, Schreiben, Sprechen. No Sprachbausteine. */
 export const DTZ_MODULES: readonly DtzModule[] = ['hoeren', 'lesen', 'schreiben', 'sprechen'];

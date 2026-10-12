@@ -1,5 +1,6 @@
 import { learnTaskKey } from '@shared/lib/learnProgress.ts';
-import { type LearnDoneMap, type LearnPlan } from '@shared/types';
+import { type LearnPlan } from '@shared/types/learn.ts';
+import { type LearnDoneMap } from '@shared/types/progress.ts';
 
 export interface PlanSummary {
   readonly totalTasks: number;

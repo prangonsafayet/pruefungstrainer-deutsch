@@ -6,8 +6,9 @@ import { MemoryRouter } from 'react-router-dom';
 import { AppRouter } from '@app/router.tsx';
 import { addDays, toIsoDate } from '@shared/lib/format.ts';
 import { learnTaskKey } from '@shared/lib/learnProgress.ts';
-import { type LearnDoneMap } from '@shared/types';
-import { PROGRESS_STORAGE_KEY, ProgressProvider } from '@features/progress-store';
+import { type LearnDoneMap } from '@shared/types/progress.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
+import { ProgressProvider } from '@shared/progress-store/providers/ProgressProvider.tsx';
 import { ConfirmProvider } from '@shared/providers/ConfirmProvider.tsx';
 
 export interface Mounted {

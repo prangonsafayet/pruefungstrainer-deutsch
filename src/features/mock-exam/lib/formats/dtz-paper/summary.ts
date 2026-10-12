@@ -5,16 +5,16 @@ import {
   type DtzPartLine
 } from '@shared/config/dtzExam.ts';
 import { PASS_PERCENT, PASS_RULES, passLineLabel } from '@shared/config/examConditions.ts';
-import { DTZ_HOEREN_LESEN_LINE, dtzHoerenLesen, dtzModuleLine } from '@shared/lib/dtzScores.ts';
-import { dtzResultTone } from '@shared/lib/examBadges.ts';
-import { type DtzAttempt, type DtzLevel, type DtzModule, type ExamModule } from '@shared/types';
-
 import {
   type AttemptGrade,
   type AttemptSummary,
   type ModuleTimeEntry,
   type ScoreBar
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { DTZ_HOEREN_LESEN_LINE, dtzHoerenLesen, dtzModuleLine } from '@shared/lib/dtzScores.ts';
+import { dtzResultTone } from '@shared/lib/examBadges.ts';
+import { type DtzAttempt, type DtzLevel, type DtzModule } from '@shared/types/dtzExam.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
 
 import { dtzLevel, gradeFullExam } from './scoring.ts';
 

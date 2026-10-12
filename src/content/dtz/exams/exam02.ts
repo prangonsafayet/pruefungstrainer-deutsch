@@ -1,4 +1,4 @@
-import { type DtzExam } from '@shared/types';
+import { type DtzExam } from '@shared/types/dtzExam.ts';
 
 const exam = {
   id: 2,

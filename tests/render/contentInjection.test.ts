@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { TRAINER_ORDER, TRAINERS } from '@shared/config/trainers.ts';
-import { type TrainerId } from '@shared/types';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
 import { click, findByText, mount } from './harness.ts';
 

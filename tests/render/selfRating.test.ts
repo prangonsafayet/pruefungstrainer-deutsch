@@ -7,12 +7,15 @@ import { DTZ_SECTION_MAX } from '@shared/config/dtzExam.ts';
 import { SKILL_MAX } from '@shared/config/exam.ts';
 import { SINGLE_LEVEL_SECTION_MAX } from '@shared/config/singleLevelExam.ts';
 
-import { MAX_CRITERION_SCORE } from '@features/mock-exam/config/run.ts';
-import { useSelfRating, type SelfRatingState } from '@features/mock-exam/hooks/useSelfRating.ts';
-import { DTZ_FORMAT } from '@features/mock-exam/lib/formats/dtz-paper/index.ts';
-import { DUAL_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/dual-level/index.ts';
-import { SINGLE_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/single-level/index.ts';
-import { type RatingSpec } from '@features/mock-exam/types/examFormat.ts';
+import { MAX_CRITERION_SCORE } from '@shared/exam-run/config/run.ts';
+import {
+  useSelfRating,
+  type SelfRatingState
+} from '@features/mock-exam/components/rating/SelfRatingCard/useSelfRating.tsx';
+import { DTZ_FORMAT } from '@features/mock-exam/lib/formats/dtz-paper/format.ts';
+import { DUAL_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/dual-level/format.ts';
+import { SINGLE_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/single-level/format.ts';
+import { type RatingSpec } from '@shared/exam-run/types/examFormat.ts';
 
 /*
  * Schreiben and Sprechen are not marked by the app — the candidate marks them, and this hook

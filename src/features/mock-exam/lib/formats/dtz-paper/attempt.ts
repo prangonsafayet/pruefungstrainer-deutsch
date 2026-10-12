@@ -1,18 +1,13 @@
 import { DTZ_MODULE_META, DTZ_PART_LINES } from '@shared/config/dtzExam.ts';
-import { numberAnswer, WRITING_TASK_KEY } from '@shared/lib/answers.ts';
-import {
-  type AnswerMap,
-  type DtzAttempt,
-  type DtzExam,
-  type DtzSectionScores,
-  type ExamModule
-} from '@shared/types';
-
 import {
   type CompletionToast,
   type FinishedRun,
   type WritingSample
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { numberAnswer, WRITING_TASK_KEY } from '@shared/lib/answers.ts';
+import { type DtzAttempt, type DtzExam, type DtzSectionScores } from '@shared/types/dtzExam.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
 
 import { gradeFullExam, scoreModule } from './scoring.ts';
 

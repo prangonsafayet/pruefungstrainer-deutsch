@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/index.ts';
+import { TRAINER_CONTENT } from '@content/trainerContent.ts';
 
-import { buildErrorReport } from '@features/writing-feedback/lib/errorReport.ts';
+import { buildErrorReport } from '@shared/writing-feedback/lib/errorReport.ts';
 import { LT_RULE_TO_WEAKNESS, WEAKNESS_CATEGORIES, WEAKNESS_TOPICS } from '@shared/config/weakness.ts';
 import { TRAINER_ORDER, TRAINERS } from '@shared/config/trainers.ts';
-import { type LtMatch } from '@shared/types';
+import { type LtMatch } from '@shared/types/languageTool.ts';
 
 /*
  * Every weakness a learner can be told about must resolve to a real cheatsheet on every

@@ -1,4 +1,4 @@
-import { type WeaknessCategory, type WeaknessTopic } from '@shared/types';
+import { type WeaknessCategory, type WeaknessTopic } from '@shared/types/feedback.ts';
 
 /**
  * What a learner can act on. Deliberately coarse: these map onto cheatsheets and drills,

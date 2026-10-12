@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { DTZ_PAPER_EXAMS } from '@content/index.ts';
+import { DTZ_PAPER_EXAMS } from '@content/trainerContent.ts';
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
 import { TRAINER_ORDER, TRAINERS } from '@shared/config/trainers.ts';
-import { type DtzAttempt, type TrainerId } from '@shared/types';
-import { runFormatFor } from '@features/mock-exam';
-import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type TrainerId } from '@shared/types/trainer.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { captureErrors, click, findByText, mount, seedProgress, waitFor } from './harness.ts';
 

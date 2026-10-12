@@ -12,7 +12,8 @@ import { castDraft } from 'immer';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { type StudyCard, type StudyCategory, type TrainerId } from '@shared/types';
+import { type TrainerId } from '@shared/types/trainer.ts';
+import { type StudyCard, type StudyCategory } from '@shared/types/vocab.ts';
 
 import { type QuizQuestion } from './quiz.ts';
 

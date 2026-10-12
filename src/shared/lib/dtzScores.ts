@@ -1,7 +1,7 @@
 /** Reading a stored DTZ attempt's scores — shared by the results, dashboard, history and chart. */
 
 import { DTZ_PART_LINES, type DtzPartLine } from '@shared/config/dtzExam.ts';
-import { type DtzModule, type DtzSectionScores } from '@shared/types';
+import { type DtzModule, type DtzSectionScores } from '@shared/types/dtzExam.ts';
 
 /** Hören + Lesen out of 45 — the one summed Teilergebnis — or null unless both were sat. */
 export const dtzHoerenLesen = (scores: DtzSectionScores): number | null =>

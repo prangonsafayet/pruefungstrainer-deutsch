@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { SINGLE_LEVEL_TRAINERS, TRAINERS } from '@shared/config/trainers.ts';
-import { type SingleLevelAttempt } from '@shared/types';
-import { runFormatFor } from '@features/mock-exam';
-import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { captureErrors, click, findByText, mount, seedProgress, waitFor } from './harness.ts';
 

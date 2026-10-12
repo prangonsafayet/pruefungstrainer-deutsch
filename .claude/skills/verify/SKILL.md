@@ -30,7 +30,9 @@ npm run test:e2e                     # Playwright, Chromium + mobile
   (`no-restricted-imports`), components-visual-only and raw-colour hits are design problems:
   move logic into a hook, shared things into `src/shared`, colours into tokens.
 - **guards** — `check:storage-keys` failing is user-data loss: stop. `check:architecture`
-  names duplicated components. `test:hooks` failing means a Claude Code hook regressed.
+  names tree violations: an `index.*` barrel, a `routes/` folder, a feature without `pages/`, a
+  component not in its own folder, a `use*.ts` hook (hooks are `.tsx`), a feature importing
+  another, or a duplicated component name. `test:hooks` failing means a Claude Code hook regressed.
 - **A rendered route with ~8 characters of text** means the Suspense fallback never cleared —
   usually an import cycle, not a slow chunk.
 - **Playwright only** failing, with vitest green, points at layout, CSS, animation or real

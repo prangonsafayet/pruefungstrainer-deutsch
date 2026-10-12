@@ -8,16 +8,17 @@ import {
   SINGLE_LEVEL_TOTAL_MAX,
   SINGLE_LEVEL_WRITTEN_PASS
 } from '@shared/config/singleLevelExam.ts';
-import { dtzHoerenLesen } from '@shared/lib/dtzScores.ts';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type ExamGrade } from '@shared/types/exam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
 import {
-  type DtzAttempt,
-  type DualLevelAttempt,
-  type ExamGrade,
   type ScoreChartGridline,
   type ScoreChartModel,
-  type ScoredAttempts,
-  type SingleLevelAttempt
-} from '@shared/types';
+  type ScoredAttempts
+} from '@shared/types/scoreChart.ts';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
+
+import { dtzHoerenLesen } from './dtzScores.ts';
 
 export const CHART_HEIGHT = 160;
 

@@ -1,4 +1,4 @@
-import { type TrainerPaper } from '@shared/types';
+import { type TrainerPaper } from '@shared/types/trainer.ts';
 
 /* How the telc Deutsch B1 sitting runs: its official timings, the briefing shown before each
    module, and the copy its module renderers need. Plain text throughout — only the guide,

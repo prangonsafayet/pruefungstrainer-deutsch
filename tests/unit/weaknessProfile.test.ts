@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { recordWeaknesses, topWeaknesses } from '@features/writing-feedback/lib/weaknessProfile.ts';
-import { type ErrorReportEntry, type WeaknessCategory, type WeaknessProfile } from '@shared/types';
+import { recordWeaknesses, topWeaknesses } from '@shared/writing-feedback/lib/weaknessProfile.ts';
+import {
+  type ErrorReportEntry,
+  type WeaknessCategory,
+  type WeaknessProfile
+} from '@shared/types/feedback.ts';
 
 /*
  * The running record of what a learner keeps getting wrong. It is persisted and synced, so

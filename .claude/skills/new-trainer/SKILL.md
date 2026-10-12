@@ -15,15 +15,15 @@ list is wrong, fix this file in the same PR.
 
 ## A trainer on an existing paper — seven edits
 
-| Edit                                                                                 | Why it cannot be derived                                                                         |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `content/<id>/` — the content folder                                                 | it is the content                                                                                |
-| one entry in `TRAINERS` (`shared/config/trainers.ts`)                                | it is the registry                                                                               |
-| `TrainerId`, and `SingleLevelTrainerId` if it sets that paper                        | widening either to `string` loses the exhaustiveness the design rests on                         |
-| a field on `ProgressDatabase` (`shared/types/progress.ts`)                           | the persisted document's own shape                                                               |
-| `EMPTY_DATABASE` + `normalizeDatabase` (`features/progress-store/lib/progressDb.ts`) | `exactOptionalPropertyTypes`: an unopened trainer is an ABSENT key, so defaulting is per trainer |
-| `mergeProgress` (`features/account-sync/lib/mergeProgress.ts`)                       | it rebuilds the document field by field on purpose; this is where two trainers were once wiped   |
-| `TRAINER_CONTENT` (`src/content/index.ts`)                                           | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
+| Edit                                                                               | Why it cannot be derived                                                                         |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `content/<id>/` — the content folder                                               | it is the content                                                                                |
+| one entry in `TRAINERS` (`shared/config/trainers.ts`)                              | it is the registry                                                                               |
+| `TrainerId`, and `SingleLevelTrainerId` if it sets that paper                      | widening either to `string` loses the exhaustiveness the design rests on                         |
+| a field on `ProgressDatabase` (`shared/types/progress.ts`)                         | the persisted document's own shape                                                               |
+| `EMPTY_DATABASE` + `normalizeDatabase` (`shared/progress-store/lib/progressDb.ts`) | `exactOptionalPropertyTypes`: an unopened trainer is an ABSENT key, so defaulting is per trainer |
+| `mergeProgress` (`shared/account-sync/lib/mergeProgress.ts`)                       | it rebuilds the document field by field on purpose; this is where two trainers were once wiped   |
+| `TRAINER_CONTENT` (`src/content/trainerContent.ts`)                                | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
 
 ## Two tests
 
@@ -44,11 +44,12 @@ Measured by adding the DTZ (`'dtz-paper'`):
 - another `ExamFormatId` (`shared/types/trainer.ts`) — never equal to a trainer id, which the
   trainer-id lint ban would then refuse everywhere — and the exam type
   (`shared/types/<paper>Exam.ts`, e.g. `dtzExam.ts`)
-- a whole `features/mock-exam/lib/formats/<new>/` mirroring `single-level/` (run format with its
-  OWN storage key, scoring, summary, review, briefing copy, self-rating scale)
-- the module renderers under `features/mock-exam/components/modules/<new>/`, named after the
-  paper (`DtzLesenModule`) and imported only by that format's `index.ts`. No `eslint.config.js`
-  edit: its `ignores` already covers every `lib/formats/*/index.ts`
+- a whole `features/mock-exam/lib/formats/<new>/` mirroring `single-level/` (`format.ts`,
+  scoring, summary, review, briefing copy, self-rating scale) plus its run format with its OWN
+  storage key, `shared/exam-run/lib/<new>RunFormat.ts`, registered in `shared/exam-run/lib/runFormats.ts`
+- the module renderers under `features/mock-exam/components/modules/<new>/<Renderer>/<Renderer>.tsx`,
+  named after the paper (`DtzLesenModule`) and imported only by that format's `format.ts`. No
+  `eslint.config.js` edit: its `ignores` already covers every `lib/formats/*/format.ts`
 - a `TrainerInfo` variant pairing the format with its document key (and a `<Paper>DocKey` type),
   a `TrainerDoc<Attempt>` field on `ProgressDatabase`, a `TrainerSlice` variant, an
   `ExamBinding` variant, a `ScoredAttempts` variant and an entry in `RUN_FORMATS`

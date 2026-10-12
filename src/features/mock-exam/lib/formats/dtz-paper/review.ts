@@ -4,12 +4,13 @@
  */
 
 import { DTZ_MODULE_META, DTZ_SECTION_MAX } from '@shared/config/dtzExam.ts';
+import { type ReviewRow, type ReviewSection } from '@shared/exam-run/types/examFormat.ts';
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
 import { LETTERS } from '@shared/lib/format.ts';
-import { type AnswerValue, type DtzAttempt, type DtzExam } from '@shared/types';
+import { type DtzAttempt, type DtzExam } from '@shared/types/dtzExam.ts';
+import { type AnswerValue } from '@shared/types/progress.ts';
 
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
-import { type ReviewRow, type ReviewSection } from '@features/mock-exam/types/examFormat.ts';
 
 import { dtzItems, type DtzItem, type DtzMarkedModule } from './items.ts';
 

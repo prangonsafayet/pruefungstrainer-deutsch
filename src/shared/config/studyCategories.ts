@@ -1,10 +1,10 @@
 /** The study categories a vocabulary bank offers, and how they are labelled. */
 
-import { type GermanCase, type StudyCategory } from '@shared/types';
+import { type GermanCase, type StudyCategory } from '@shared/types/vocab.ts';
 /* `import type` rather than the usual inline `{ type X }`: under `verbatimModuleSyntax` the
-   inline form leaves a real `import {} from '@shared/ui'` behind, and this is inert config —
+   inline form leaves a real `import {} from '@shared/ui/badge.tsx'` behind, and this is inert config —
    see the same note in `@shared/lib/examBadges.ts`. */
-import type { BadgeVariant } from '@shared/ui';
+import type { BadgeVariant } from '@shared/ui/badge.tsx';
 
 export interface CategoryMeta {
   readonly label: string;

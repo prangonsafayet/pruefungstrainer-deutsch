@@ -1,11 +1,7 @@
 import { type AuthError, type User } from '@supabase/supabase-js';
 import { describe, expect, it } from 'vitest';
 
-import {
-  interpretSignUp,
-  isRateLimited,
-  retryAfterSeconds
-} from '@features/account-sync/lib/signUpOutcome.ts';
+import { interpretSignUp, isRateLimited, retryAfterSeconds } from '@shared/account-sync/lib/signUpOutcome.ts';
 
 /* Supabase hides "this email already exists" behind a generic success response, so the
    only signal is an empty `identities` array. Both bugs this guards against were live: an

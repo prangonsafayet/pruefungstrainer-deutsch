@@ -38,8 +38,9 @@ and check `validate.cjs` too: it has previously _enforced_ one of these errors
 ## The dual-level data contract (A2·B1)
 
 Each `src/content/a2b1/exams/examNN.ts` exports one object `satisfies Exam` (see
-`src/shared/types/exam.ts`). `npm run validate` enforces the counts; run it after
-every edit. The required shape:
+`src/shared/types/exam.ts`), listed in `src/content/<id>/exams/allExams.ts` (there are no
+`index.ts` barrels; content imports nothing but `@shared/types/*`). `npm run validate`
+enforces the counts; run it after every edit. The required shape:
 
 - `lesen.teil1` — 5 situations, **8** ads, 5 answers (indices into `ads`)
 - `lesen.teil2` — 2 texts, 5 multiple-choice questions, each with `textIndex`

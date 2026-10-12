@@ -4,17 +4,14 @@
  */
 
 import { SINGLE_LEVEL_MODULE_META, SINGLE_LEVEL_SECTION_MAX } from '@shared/config/singleLevelExam.ts';
+import { type ReviewRow, type ReviewSection } from '@shared/exam-run/types/examFormat.ts';
 import { booleanAnswer, itemKey, numberAnswer } from '@shared/lib/answers.ts';
 import { LETTERS } from '@shared/lib/format.ts';
-import {
-  type AnswerMap,
-  type ExamModule,
-  type SingleLevelAttempt,
-  type SingleLevelExam
-} from '@shared/types';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
+import { type SingleLevelAttempt, type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
 
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
-import { type ReviewRow, type ReviewSection } from '@features/mock-exam/types/examFormat.ts';
 
 const letter = (index: number | undefined): string =>
   index == null ? '—' : (LETTERS[index] ?? String(index + 1));

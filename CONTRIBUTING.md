@@ -40,13 +40,15 @@ that always passes.
 Read [`CLAUDE.md`](CLAUDE.md) first if you have not — it is short and points at the detail
 under [`.claude/rules/`](.claude/rules/), one file per area. The rules that matter most:
 
-- Components are visual; logic goes in a `use*.ts` hook or a pure `lib/` util. Lint refuses
+- Components are visual; logic goes in a `use*.tsx` hook or a pure `.ts` util. Lint refuses
   effects, storage, timers, the clock and state libraries in component files.
-- Use a shadcn primitive from `@shared/ui` — no raw `<button>`,
+- Every component lives in its own folder — `components/Foo/Foo.tsx`, screens in
+  `pages/FooPage/FooPage.tsx` — together with the hooks, utils and types only it uses.
+- There are no barrels (`index.ts`): import the file, with its extension.
+- Use a shadcn primitive from `src/shared/ui` (`@shared/ui/button.tsx`) — no raw `<button>`,
   `<input>`, `<select>`, `<textarea>`, `<table>` or `<label>` in feature code.
-- Features do not import each other's internals or the app shell. If two features
-  need the same thing, it belongs in `src/shared`.
-- Primitives come from `@shared/ui`, never from a file inside it.
+- Features never import each other or the app shell. If two features need the same thing,
+  it belongs in `src/shared`.
 - Colours come from the design tokens in `src/styles/index.css` — no palette classes, hex or
   colour functions in components or stylesheets.
 - No `any`, no non-null assertions.
@@ -141,7 +143,8 @@ most easily:
 - Answer-map access without the `shared/lib/answers.ts` accessors.
 - Anything touching passwords client-side.
 - Authored HTML rendered as text, or content text injected as HTML.
-- Primitives imported from `@shared/ui/<file>` instead of `@shared/ui`.
+- A barrel or folder import (`@shared/ui`, `@features/<f>`) instead of the file, or a
+  feature importing another feature.
 
 Every pull request also gets a **Netlify deploy preview**, so a visual change can be
 clicked rather than imagined.
@@ -205,15 +208,16 @@ the tag, the release notes, the version in the footer and the deployed build in 
 Enforced by `check-file` rules in `eslint.config.js`, so a wrong name fails lint
 rather than surviving review:
 
-| Thing                        | Convention             | Example                                      |
-| ---------------------------- | ---------------------- | -------------------------------------------- |
-| Component / route module     | `PascalCase.tsx`       | `DashboardExamCard.tsx`, `DashboardPage.tsx` |
-| Hook                         | `useThing.ts`          | `useExamRun.ts`, `useCountUp.ts`             |
-| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`           |
-| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`                  |
-| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH`        |
-| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`                   |
-| Everything else              | `camelCase`            |                                              |
+| Thing                        | Convention             | Example                                   |
+| ---------------------------- | ---------------------- | ----------------------------------------- |
+| Component / page module      | `Name/Name.tsx`        | `DashboardExamCard/DashboardExamCard.tsx` |
+| Hook                         | `useThing.tsx`         | `useExamRun.tsx`, `useCountUp.tsx`        |
+| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`        |
+| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`               |
+| A component's own folder     | `PascalCase`           | `ScoreMeter/`, `DashboardPage/`           |
+| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH`     |
+| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`                |
+| Everything else              | `camelCase`            |                                           |
 
 One exemption: `src/shared/ui/` stays kebab-case because the shadcn CLI
 writes files there, and renaming them would break `npx shadcn add`.

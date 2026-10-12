@@ -1,4 +1,4 @@
-import { type LearnPlan } from '@shared/types';
+import { type LearnPlan } from '@shared/types/learn.ts';
 
 /* The DTZ 28-day curriculum: cheatsheets and the copy-paste AI tutor prompts.
    `intro` and every `cheatsheets[].html` are authored HTML and are injected; all other

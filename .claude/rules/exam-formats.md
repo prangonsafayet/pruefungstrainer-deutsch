@@ -1,6 +1,7 @@
 ---
 paths:
   - 'src/features/mock-exam/**'
+  - 'src/shared/exam-run/**'
   - 'src/shared/config/*Exam*.ts'
   - 'src/shared/config/exam.ts'
   - 'src/shared/config/examConditions.ts'
@@ -16,13 +17,15 @@ paths:
 `features/mock-exam/lib/formats/`: `DUAL_LEVEL_FORMAT` (A2·B1), `SINGLE_LEVEL_FORMAT` (telc B1 and
 B2) and `DTZ_FORMAT` (`dtz-paper/`, the DTZ). A descriptor owns its module list and
 timing, briefing copy, marking rules, self-rating scale and module renderers
-(`components/modules/<format>/`). Only a format's own `lib/formats/<format>/index.ts` may import
+(`components/modules/<format>/<Renderer>/`). Only a format's own `lib/formats/<format>/format.ts` may import
 its renderers (`exam-modules-through-format`); each renderer carries its paper in its name
 (`DualLevelLesenModule`, `SingleLevelLesenModule`).
 
 `useExamBinding` binds a trainer to its paper and stored attempts, so the runner, results and
 review screens narrow once and render generic views. Shared rendering lives in
-`shared/components/exam-ui/` via `@shared/components`.
+`shared/components/exam-ui/`, each component imported from its own file. The run store and the
+run-only half of each format (`shared/exam-run/lib/<format>RunFormat.ts`, gathered by
+`runFormats.ts`) are shared, because the dashboard and settings start and discard runs too.
 
 Anything named after one paper is named after that paper (`SINGLE_LEVEL_FORMAT`,
 `single-level/scoring.ts`); anything generic is not; nothing is named after a brand (`Telc`

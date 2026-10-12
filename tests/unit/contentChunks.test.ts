@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { type TrainerId } from '@shared/types';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
 /*
  * Whether a trainer's content loads lazily is a fact about the *module graph*, not about a
@@ -18,15 +18,15 @@ const { loaded, trackLoad } = vi.hoisted(() => {
   const loaded: string[] = [];
   const trackLoad = (id: 'a2b1' | 'b1' | 'b2' | 'dtz') => () => {
     loaded.push(id);
-    return vi.importActual(`@content/${id}/index.ts`);
+    return vi.importActual(`@content/${id}/content.ts`);
   };
   return { loaded, trackLoad };
 });
 
-vi.mock('@content/a2b1/index.ts', trackLoad('a2b1'));
-vi.mock('@content/b1/index.ts', trackLoad('b1'));
-vi.mock('@content/b2/index.ts', trackLoad('b2'));
-vi.mock('@content/dtz/index.ts', trackLoad('dtz'));
+vi.mock('@content/a2b1/content.ts', trackLoad('a2b1'));
+vi.mock('@content/b1/content.ts', trackLoad('b1'));
+vi.mock('@content/b2/content.ts', trackLoad('b2'));
+vi.mock('@content/dtz/content.ts', trackLoad('dtz'));
 
 /* A real ES module (mocked or not) evaluates its top-level body once per file run, so the
    registry is imported exactly once here — every test below shares that one import and

@@ -26,6 +26,15 @@ npm run test:render  # just the mounted pages
 npm run test:watch   # vitest in watch mode
 ```
 
+Tests live under `tests/`, never beside the code, even though a component's own hooks and
+utils sit in its folder. There are no barrels, so a suite imports (and `vi.mock`s) the file
+itself, by its full alias path and extension —
+`@shared/progress-store/lib/progressDb.ts`,
+`@features/dashboard/pages/DashboardPage/dashboardModel.ts`,
+`@shared/account-sync/hooks/useCloudSync.tsx` (hooks are `.tsx`). A `vi.mock` path that no
+longer names a file mocks nothing and fails silently: after moving a file, grep `tests/` for
+its old path.
+
 | Suite                        | Covers                                                                                                                                             |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `unit/schedule`              | the plan engine, swept across all 86 plannable runways                                                                                             |
@@ -78,7 +87,7 @@ probe for it — `typeof globalThis.localStorage` is itself what triggers the wa
 
 `mount()` in `tests/render/harness.ts` waits for `aria-busy` to clear rather than sleeping. A
 route rendering ~8 characters means the Suspense fallback never cleared — usually an import
-cycle. Content loads through `@shared/hooks/useTrainerContent.ts` (imported by file), which
+cycle. Content loads through `@shared/hooks/useTrainerContent.tsx` (imported by file), which
 suspends on `loadContent()`, so `mount()`'s wait covers it; a fixed timeout would flake.
 
 The harness exists so you do not re-learn:

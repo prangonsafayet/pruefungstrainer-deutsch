@@ -1,0 +1,152 @@
+import { Home, ListChecks, RotateCcw } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+import CountedNumber from '@shared/components/data-display/CountedNumber/CountedNumber.tsx';
+import ScoreMeter from '@shared/components/data-display/ScoreMeter/ScoreMeter.tsx';
+import { TRAINERS } from '@shared/config/trainers.ts';
+import { type ExamFormat, type RunSettings, type StoredAttempt } from '@shared/exam-run/types/examFormat.ts';
+import { cn } from '@shared/lib/cn.ts';
+import { fmtClock } from '@shared/lib/format.ts';
+import { type AttemptMode, type ExamPaper } from '@shared/types/exam.ts';
+import { type TrainerId } from '@shared/types/trainer.ts';
+import { Button } from '@shared/ui/button.tsx';
+import { Card, CardContent, CardDescription, CardHeader } from '@shared/ui/card.tsx';
+
+import { BARS_ANIMATION_DELAY, GRADE_TONE_CLASS, SCORE_COUNT_UP_MS } from './results.ts';
+
+interface AttemptResultsProps<
+  TExam extends ExamPaper,
+  TSettings extends RunSettings,
+  TAttempt extends StoredAttempt
+> {
+  readonly trainer: TrainerId;
+  readonly format: ExamFormat<TExam, TSettings, TAttempt>;
+  readonly exam: TExam;
+  readonly attempt: TAttempt;
+  readonly settings: TSettings;
+  readonly onRetry: (examId: number, mode: AttemptMode) => void;
+}
+
+/** What one finished attempt scored, and where to go next. */
+const AttemptResults = <
+  TExam extends ExamPaper,
+  TSettings extends RunSettings,
+  TAttempt extends StoredAttempt
+>({
+  trainer,
+  format,
+  exam,
+  attempt,
+  settings,
+  onRetry
+}: AttemptResultsProps<TExam, TSettings, TAttempt>) => {
+  const summary = format.scoring.summarize(attempt);
+  const base = TRAINERS[trainer].basePath;
+  const { grade } = summary;
+
+  return (
+    <>
+      <Card className="relative animate-pop-in overflow-hidden text-center shadow-md">
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-1"
+          style={{ background: summary.accentColor }}
+        />
+        <CardHeader className="items-center">
+          <CardDescription>
+            {format.examLabel(exam)} ·{' '}
+            {attempt.mode === 'full' ? 'Full exam' : `${format.moduleName(attempt.mode)} (practice)`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {grade ? (
+            <>
+              <div className={cn('text-6xl font-bold tracking-tight', GRADE_TONE_CLASS[grade.tone])}>
+                {grade.label}
+              </div>
+              <div className="text-lg tabular-nums">
+                {grade.points ? (
+                  <>
+                    <b>
+                      <CountedNumber value={grade.points.total} durationMs={SCORE_COUNT_UP_MS} />
+                    </b>{' '}
+                    / {grade.points.of} points ·{' '}
+                  </>
+                ) : null}
+                time used {fmtClock(summary.totalSeconds)}
+              </div>
+              {grade.notes.map(note => (
+                <p key={note} className="text-sm tabular-nums text-muted-foreground">
+                  {note}
+                </p>
+              ))}
+            </>
+          ) : (
+            <>
+              <div className="text-5xl font-bold tracking-tight tabular-nums">
+                {summary.headlineScore}
+                {summary.headlineSuffix ? (
+                  <span className="text-2xl font-normal text-muted-foreground">{summary.headlineSuffix}</span>
+                ) : null}
+              </div>
+              <div className="text-muted-foreground">time used {fmtClock(summary.totalSeconds)}</div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6 animate-fade-up" style={{ animationDelay: BARS_ANIMATION_DELAY }}>
+        <CardContent className="grid gap-5 sm:grid-cols-2">
+          {summary.bars.map(bar => (
+            <ScoreMeter
+              key={bar.label}
+              label={bar.label}
+              value={bar.value}
+              of={bar.of}
+              colorByScore
+              thresholdPercent={bar.thresholdPercent ?? summary.thresholdPercent}
+              thresholdLabel={bar.thresholdLabel ?? summary.thresholdLabel}
+            />
+          ))}
+        </CardContent>
+      </Card>
+
+      {summary.moduleTimes.length > 0 ? (
+        <Card className="mt-4">
+          <CardContent className="text-sm">
+            <b>Time per module:</b>{' '}
+            {summary.moduleTimes
+              .map(
+                entry =>
+                  `${format.moduleShort(entry.module)}: ${fmtClock(entry.seconds)} / ${String(format.minutes(entry.module, exam, settings))}:00`
+              )
+              .join(' · ')}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button asChild>
+          <Link to={`${base}/review/${String(attempt.id)}`}>
+            <ListChecks /> Review answers &amp; transcripts
+          </Link>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            onRetry(attempt.examId, attempt.mode);
+          }}
+        >
+          <RotateCcw /> Retry this exam
+        </Button>
+        <Button asChild variant="ghost">
+          <Link to={base || '/'}>
+            <Home /> Dashboard
+          </Link>
+        </Button>
+      </div>
+    </>
+  );
+};
+
+export default AttemptResults;

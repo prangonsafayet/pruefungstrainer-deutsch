@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { MAX_PREP_DAYS, MIN_PREP_DAYS } from '@shared/config/schedule.ts';
 import { ROOT_TRAINER, TRAINERS } from '@shared/config/trainers.ts';
 import { daysBetween } from '@shared/lib/format.ts';
-import { PROGRESS_STORAGE_KEY } from '@features/progress-store';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { blur, byLabel, click, mount, seedProgress, today, typeInto } from './harness.ts';
 

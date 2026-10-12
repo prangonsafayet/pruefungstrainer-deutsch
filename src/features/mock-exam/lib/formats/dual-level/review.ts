@@ -4,12 +4,13 @@
  */
 
 import { SKILL_MAX } from '@shared/config/exam.ts';
+import { type ReviewRow, type ReviewSection } from '@shared/exam-run/types/examFormat.ts';
 import { booleanAnswer, itemKey, numberAnswer, textAnswer } from '@shared/lib/answers.ts';
 import { LETTERS } from '@shared/lib/format.ts';
-import { type DualLevelAttempt, type DualLevelExam, type ExamModule } from '@shared/types';
+import { type DualLevelExam, type ExamModule } from '@shared/types/exam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
 
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
-import { type ReviewRow, type ReviewSection } from '@features/mock-exam/types/examFormat.ts';
 
 import { isGapCorrect } from './scoring.ts';
 

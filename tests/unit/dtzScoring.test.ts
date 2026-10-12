@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { DTZ_PAPER_EXAMS } from '@content/index.ts';
+import { DTZ_PAPER_EXAMS } from '@content/trainerContent.ts';
 import { DTZ_PART_LINES } from '@shared/config/dtzExam.ts';
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
-import { type AnswerMap, type DtzExam, type DtzLevel } from '@shared/types';
+import { type AnswerMap } from '@shared/types/progress.ts';
+import { type DtzExam, type DtzLevel } from '@shared/types/dtzExam.ts';
 
 import { buildAttempt } from '@features/mock-exam/lib/formats/dtz-paper/attempt.ts';
 import { dtzItems } from '@features/mock-exam/lib/formats/dtz-paper/items.ts';

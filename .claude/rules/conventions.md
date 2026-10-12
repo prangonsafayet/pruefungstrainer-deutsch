@@ -8,12 +8,13 @@ paths:
 ## Components are visual only — a lint rule
 
 A component renders. Anything derived, persisted, timed or networked goes in a hook
-(`use*.ts`) or a pure util in `lib/`. Trivial open/closed UI state (`useState`, `useRef`,
+(`use*.tsx`) or a pure `.ts` util — beside the component when only it uses them. Trivial open/closed UI state (`useState`, `useRef`,
 `useId`) is fine. References: `useExamRun` (the attempt state machine), `buildReviewSections`,
 `summarizeAttempt`, `useDashboardStats`.
 
-The `components-visual-only` entry in `eslint.config.js` enforces it for every `.tsx` under a
-`components/` or `routes/` folder (vendored `src/shared/ui` exempt):
+The `components-visual-only` entry in `eslint.config.js` enforces it for every `PascalCase.tsx`
+under a `components/` or `pages/` folder, at any depth (vendored `src/shared/ui` exempt; a
+`use*.tsx` hook beside the component is not a component and is not covered):
 
 | Banned in a component                                                                                                                       | Status                                 |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
@@ -25,13 +26,26 @@ The `components-visual-only` entry in `eslint.config.js` enforces it for every `
 The react-hooks ban also refuses `import * as React from 'react'` in those files — import
 names. `npm run lint:todo` lists everything still in the TODO(redesign) block.
 
-## One component per file, default-exported
+## One component per file, default-exported, in its own folder
 
 `react/no-multi-comp` plus the local `component-default-export` rule. Types may be named
-exports from the same file; hooks, libs, config and providers stay named exports. Barrels
-re-export defaults by name (`export { default as TeilSection } from './exam-ui/layout/TeilSection.tsx';`).
-`src/shared/ui` is exempt from both. Group components by area:
-`features/<f>/components/<group>/`, `shared/components/{actions,data-display,layout,exam-ui}/`.
+exports from the same file; hooks, libs, config and providers stay named exports.
+`src/shared/ui` is exempt from both.
+
+Every component and page lives in a folder named after it — `components/ScoreMeter/ScoreMeter.tsx`,
+`pages/DashboardPage/DashboardPage.tsx` — and that folder also holds the hooks, utils, types and
+constants only it uses (`AudioSettingsCard/useAudioSettings.tsx`, `AudioSettingsCard/audio.ts`).
+Screens live in `pages/`, never `routes/`. Group folders stay kebab-case and hold component
+folders: `features/<f>/components/<group>/<Name>/`,
+`shared/components/{actions,data-display,layout,exam-ui}/<Name>/`. `npm run check:architecture`
+enforces the layout.
+
+## No barrels
+
+There is no `index.ts` anywhere in `src/` and no folder import. Import the file that defines the
+thing, with its extension: `@shared/ui/button.tsx`, `@shared/types/exam.ts`,
+`@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx`. Lint (`NO_BARRELS`,
+`check-file/no-index`) and `check:architecture` refuse both.
 
 ## Shared exam machinery
 
@@ -39,28 +53,33 @@ Everything every exam format renders lives in `shared/components/exam-ui/` — i
 (`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`TeilSection`, `QuestionItem`,
 `QuestionText`, `ReadingText`, `ExamCallout`), gaps (`InlineGapSelect`, `GapFillText`),
 `MatchingOptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
-`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript`, `WritingTaskBrief` — consumed through
-`@shared/components`. Module renderers keep no private copy.
+`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript`, `WritingTaskBrief` — each imported
+from its own file. Module renderers keep no private copy.
 
 ## Design system
 
-Primitives from `@shared/ui` only; no raw `<button>`, `<input>`, `<select>`, `<textarea>`,
+Primitives from `src/shared/ui` only, imported by file (`@shared/ui/card.tsx`); no raw `<button>`, `<input>`, `<select>`, `<textarea>`,
 `<form>`, `<table>`, `<label>` (`no-raw-html-controls`). Details: the ui-design-system rule.
 
 ## Naming (`check-file` + `@typescript-eslint/naming-convention`)
 
-| Thing                        | Convention             | Example                 |
-| ---------------------------- | ---------------------- | ----------------------- |
-| Component / route module     | `PascalCase.tsx`       | `DashboardExamCard.tsx` |
-| Hook                         | `useThing.ts`          | `useExamRun.ts`         |
-| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`     |
-| Folder                       | `kebab-case`           | `exam-ui/`              |
-| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`          |
-| Type / interface             | `PascalCase`           | `SignUpOutcome`         |
+| Thing                        | Convention             | Example                                   |
+| ---------------------------- | ---------------------- | ----------------------------------------- |
+| Component / page module      | `Name/Name.tsx`        | `DashboardExamCard/DashboardExamCard.tsx` |
+| Hook                         | `useThing.tsx`         | `useExamRun.tsx`                          |
+| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`                       |
+| Folder                       | `kebab-case`           | `exam-ui/`                                |
+| A component's own folder     | `PascalCase`           | `ScoreMeter/`                             |
+| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`                            |
+| Type / interface             | `PascalCase`           | `SignUpOutcome`                           |
 
 PascalCase is allowed where a value is a component or namespace import; `snake_case` /
 `UPPER_CASE` in type properties mirroring external contracts (Supabase columns, `VITE_` vars).
-Every function is an arrow (`prefer-arrow-functions`).
+Every function is an arrow (`prefer-arrow-functions` + `func-style`, at error for `src/`,
+`tests/`, `e2e/`, `scripts/` and root configs). Classes are refused in `src/` (`local/no-classes`)
+except the one React still requires, `ErrorBoundary`. Hooks are `.tsx` like components — a
+`use*.ts` file fails lint (`check-file/filename-blocklist`) and `check:architecture`; a generic
+arrow in a `.tsx` file needs `<T,>`. Non-hook logic (lib, model, config, types) stays `.ts`.
 
 ## Types
 
@@ -75,7 +94,9 @@ guard or disable `no-unnecessary-condition`.
 
 One alias per layer — `@app/*`, `@features/*`, `@shared/*`, `@content/*` — with explicit
 `.ts`/`.tsx` extensions; no catch-all `@/`. `import-x/order` groups and alphabetises
-(`--fix`). `@shared/hooks` and `@shared/lib` have no barrel: import by file.
+(`--fix`). Import by file, never by folder. A feature imports only its own alias, `@shared/*`
+and `@content/*`; a sibling in the same folder is `./file.ts`, a sibling component folder one
+level up may be `../Other/Other.tsx`.
 
 ## Libraries over hand-rolled code
 

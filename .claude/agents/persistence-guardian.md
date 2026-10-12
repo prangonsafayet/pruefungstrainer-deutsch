@@ -18,8 +18,9 @@ Then read `.claude/rules/persistence.md`.
 ## What you check
 
 1. **Field coverage.** For every field added to or changed on `ProgressDatabase` (or a trainer
-   slice): `EMPTY_DATABASE` and `normalizeDatabase` default it, `mergeProgress` merges it with a
-   real rule, and `tests/unit/mergeProgress.test.ts` asserts the merge with the field populated
+   slice): `EMPTY_DATABASE` and `normalizeDatabase` (`src/shared/progress-store/lib/progressDb.ts`)
+   default it, `mergeProgress` (`src/shared/account-sync/lib/mergeProgress.ts`) merges it with a
+   real rule (the run store is `src/shared/exam-run/lib/runStore.ts`), and `tests/unit/mergeProgress.test.ts` asserts the merge with the field populated
    on BOTH sides (a one-sided fixture never runs the rule).
 2. **Unknown keys survive.** A newer build's field must pass through `normalizeDatabase` AND
    `mergeProgress` to the pushed payload. Follow the value to the write that persists it.

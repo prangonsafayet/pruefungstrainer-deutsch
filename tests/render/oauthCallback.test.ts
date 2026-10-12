@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
-import { type ProgressDatabase } from '@shared/types';
+import { type ProgressDatabase } from '@shared/types/progress.ts';
 
 import { settle } from './harness.ts';
 
@@ -30,7 +30,7 @@ vi.mock('sonner', () => ({
 let exchangeError: { readonly message: string } | null = null;
 let exchanges = 0;
 
-vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
+vi.mock('@shared/account-sync/lib/supabaseClient.ts', () => ({
   isSyncConfigured: true,
   PROGRESS_TABLE: 'progress',
   syncDiagnostics: {},
@@ -50,7 +50,7 @@ vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
   }
 }));
 
-const { useCloudSync } = await import('@features/account-sync/hooks/useCloudSync.ts');
+const { useCloudSync } = await import('@shared/account-sync/hooks/useCloudSync.tsx');
 
 const DB: ProgressDatabase = {
   attempts: [],

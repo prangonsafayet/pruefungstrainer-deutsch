@@ -1,4 +1,4 @@
-import { type SingleLevelExam } from '@shared/types';
+import { type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
 
 const exam = {
   id: 2,

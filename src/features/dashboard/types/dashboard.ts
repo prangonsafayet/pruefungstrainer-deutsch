@@ -8,7 +8,7 @@
  */
 
 import { type BadgeTone } from '@shared/lib/examBadges.ts';
-import { type AttemptMode } from '@shared/types';
+import { type AttemptMode } from '@shared/types/exam.ts';
 
 /** Which icon a tile wears. The component owns the icons; the model owns the numbers. */
 export type StatTileKind = 'streak' | 'due' | 'exams' | 'best' | 'last';

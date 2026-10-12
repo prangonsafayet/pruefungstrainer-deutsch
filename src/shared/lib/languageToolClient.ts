@@ -6,7 +6,7 @@ import {
   getLanguageToolBase,
   isDynamicFeedbackEnabled
 } from '@shared/config/languageTool.ts';
-import { type LtMatch, type LtResult } from '@shared/types';
+import { type LtMatch, type LtResult } from '@shared/types/languageTool.ts';
 
 export const isLanguageToolConfigured = (): boolean => isDynamicFeedbackEnabled();
 

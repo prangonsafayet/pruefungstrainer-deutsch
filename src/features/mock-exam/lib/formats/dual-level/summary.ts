@@ -1,13 +1,13 @@
 import { FULL_EXAM_MAX, SKILL_MAX } from '@shared/config/exam.ts';
 import { PASS_PERCENT, passLineLabel } from '@shared/config/examConditions.ts';
-import { type DualLevelAttempt, type ExamModule } from '@shared/types';
-
 import {
   type AttemptGrade,
   type AttemptSummary,
   type ModuleTimeEntry,
   type ScoreBar
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
 
 /** The pass rule, spelled out under the grade. */
 const PASS_RULE =

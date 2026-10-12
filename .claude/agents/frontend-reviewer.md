@@ -23,18 +23,21 @@ diff — they are merge guardrails, not style notes.
 
 ## Review checklist
 
-**Layer boundaries.** No feature importing another feature's internals, no feature importing
-`@app/**`, nothing in `src/shared` importing features, nothing in `src/content` importing
-application code. Route components are never exported from feature barrels, and a feature
-barrel exports no component at all — UI two features need lives in `src/shared/components`.
-Two features owning a same-named component is duplication (`npm run check:architecture`).
+**Layer boundaries.** No feature importing another feature at all (anything two features need
+lives in `src/shared`), no feature importing `@app/**`, nothing in `src/shared` importing
+features, nothing in `src/content` importing anything but `@shared/types`. No barrels: no
+`index.ts`, no folder import (`@shared/ui`, `@features/x`) — every import names a file with its
+extension. Every component and page sits in its own folder (`Foo/Foo.tsx`) holding the hooks,
+utils and types only it uses; screens live in `pages/`, never `routes/`; hooks are `.tsx`.
+Two features owning a same-named component is duplication. `npm run check:architecture`
+enforces the tree rules — run it.
 
 **Components visual only.** No `useEffect`/`useReducer`/`useSyncExternalStore`, storage,
 `fetch`, timers, `new Date()`/`Date.now`, zustand/immer/Supabase in a component or route file —
-it belongs in a `use*.ts` hook or a pure `lib/` util. Trivial open/closed UI state is fine.
+it belongs in a `use*.tsx` hook or a pure `.ts` util beside it. Trivial open/closed UI state is fine.
 
 **Design system.** No raw `<button>`, `<input>`, `<select>`, `<textarea>`, `<form>`, `<table>`
-or `<label>` outside `src/shared/ui`; primitives come from the `@shared/ui` barrel. No raw
+or `<label>` outside `src/shared/ui`; primitives come from their own file in `src/shared/ui` (`@shared/ui/button.tsx`). No raw
 colours: no palette classes (`bg-red-500`, `text-white`), arbitrary colours, hex or colour
 functions — tokens only (`src/styles/index.css`).
 

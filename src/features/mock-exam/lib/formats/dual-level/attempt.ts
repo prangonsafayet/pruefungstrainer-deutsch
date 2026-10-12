@@ -1,17 +1,15 @@
 import { FULL_EXAM_MAX, MODULE_META } from '@shared/config/exam.ts';
 import {
-  type DualLevelAttempt,
-  type DualLevelExam,
-  type ExamModule,
-  type SkillScores,
-  type SprachbausteineScore
-} from '@shared/types';
-
-import {
   type CompletionToast,
   type FinishedRun,
   type WritingSample
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { type DualLevelExam, type ExamModule } from '@shared/types/exam.ts';
+import {
+  type DualLevelAttempt,
+  type SkillScores,
+  type SprachbausteineScore
+} from '@shared/types/progress.ts';
 
 import { gradeFullExam, scoreHoeren, scoreLesen, scoreSprachbausteine } from './scoring.ts';
 

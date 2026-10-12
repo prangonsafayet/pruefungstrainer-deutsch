@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { SINGLE_LEVEL_ORAL_PASS, SINGLE_LEVEL_WRITTEN_PASS } from '@shared/config/singleLevelExam.ts';
-import { type AnswerMap, type SingleLevelExam, type SingleLevelSectionScores } from '@shared/types';
+import { type AnswerMap } from '@shared/types/progress.ts';
+import { type SingleLevelExam, type SingleLevelSectionScores } from '@shared/types/singleLevelExam.ts';
 
 import {
   countUnanswered,

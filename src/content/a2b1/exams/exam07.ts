@@ -1,4 +1,4 @@
-import { type DualLevelExam } from '@shared/types';
+import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 7,

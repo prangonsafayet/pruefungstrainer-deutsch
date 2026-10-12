@@ -1,14 +1,10 @@
 /** Collapsing an `ExamBinding` back to one code path. */
 
 import { unreachableFormat } from '@shared/config/examConditions.ts';
-import { type ExamPaper } from '@shared/types';
+import { type ExamFormat, type RunSettings, type StoredAttempt } from '@shared/exam-run/types/examFormat.ts';
+import { type ExamPaper } from '@shared/types/exam.ts';
 
 import { type ExamBinding, type ExamStore } from '@features/mock-exam/types/examBinding.ts';
-import {
-  type ExamFormat,
-  type RunSettings,
-  type StoredAttempt
-} from '@features/mock-exam/types/examFormat.ts';
 
 /** One trainer's paper, its Modelltests and its stored attempts, with the types lined up. */
 export interface BoundExam<

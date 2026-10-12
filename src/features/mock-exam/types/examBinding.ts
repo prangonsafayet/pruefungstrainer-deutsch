@@ -5,19 +5,12 @@
  * then render the same generic views either way.
  */
 
-import {
-  type DtzAttempt,
-  type DtzExam,
-  type DualLevelAttempt,
-  type DualLevelExam,
-  type LevelTrainerSettings,
-  type Settings,
-  type SingleLevelAttempt,
-  type SingleLevelExam,
-  type TrainerId
-} from '@shared/types';
-
-import { type ExamFormat } from './examFormat.ts';
+import { type ExamFormat } from '@shared/exam-run/types/examFormat.ts';
+import { type DtzAttempt, type DtzExam } from '@shared/types/dtzExam.ts';
+import { type DualLevelExam } from '@shared/types/exam.ts';
+import { type DualLevelAttempt, type Settings } from '@shared/types/progress.ts';
+import { type SingleLevelAttempt, type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
+import { type LevelTrainerSettings, type TrainerId } from '@shared/types/trainer.ts';
 
 export interface ExamStore<TSettings, TAttempt> {
   readonly settings: TSettings;

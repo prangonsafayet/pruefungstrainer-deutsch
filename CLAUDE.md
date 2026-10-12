@@ -25,15 +25,19 @@ npm run build        # production build into dist/
 
 ## Non-negotiables
 
-1. **Components are visual only.** Logic goes in a `use*.ts` hook or a pure `lib/` util.
-2. **Primitives come from `@shared/ui`**, never from a file inside it, and never as raw
+1. **Components are visual only.** Logic goes in a `use*.tsx` hook or a pure `.ts` util.
+2. **Every component in its own folder** (`Foo/Foo.tsx` with the hooks, utils and types only it
+   uses); screens in `features/<f>/pages/`. **No barrels** — import the file, with its
+   extension. **Features never import each other**: code two features need lives in `src/shared`.
+3. **Primitives come from `src/shared/ui`** (`@shared/ui/button.tsx`), never as raw
    `<button>` / `<input>` / `<form>` / `<table>` / `<label>`. Colours come from tokens.
-3. **No `any`, no non-null assertions.** Narrow instead.
-4. **A bug fix ships with a regression test.**
-5. **Never commit to `main`.** Issue → branch → PR → green CI → squash-merge.
-6. **No AI attribution in commits** — no `Co-Authored-By`, no "generated with" footer.
+4. **No `any`, no non-null assertions.** Narrow instead. Every function is an arrow; hooks are
+   `.tsx`.
+5. **A bug fix ships with a regression test.**
+6. **Never commit to `main`.** Issue → branch → PR → green CI → squash-merge.
+7. **No AI attribution in commits** — no `Co-Authored-By`, no "generated with" footer.
 
-All six are lint rules or hooks where they can be. Prefer a maintained library already in
+All seven are lint rules, `check:architecture` or hooks where they can be. Prefer a maintained library already in
 `package.json` to hand-rolled generic machinery; never add a dependency for a few lines.
 
 ## Task → what loads, what to use

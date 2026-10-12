@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
-import { type ProgressDatabase } from '@shared/types';
+import { type ProgressDatabase } from '@shared/types/progress.ts';
 
 import { captureErrors, settle } from './harness.ts';
 
@@ -35,7 +35,7 @@ const REMOTE_ROW: ProgressDatabase = {
   _updatedAt: '2026-01-01T00:00:00.000Z'
 };
 
-vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
+vi.mock('@shared/account-sync/lib/supabaseClient.ts', () => ({
   isSyncConfigured: true,
   PROGRESS_TABLE: 'progress',
   syncDiagnostics: {},
@@ -66,7 +66,7 @@ vi.mock('@features/account-sync/lib/supabaseClient.ts', () => ({
 }));
 
 /* Imported after the mock is declared; `vi.mock` is hoisted, so the hook sees the fake. */
-const { useCloudSync } = await import('@features/account-sync/hooks/useCloudSync.ts');
+const { useCloudSync } = await import('@shared/account-sync/hooks/useCloudSync.tsx');
 
 const dbRef: { current: ProgressDatabase } = { current: REMOTE_ROW };
 

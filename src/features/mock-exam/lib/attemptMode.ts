@@ -1,6 +1,5 @@
-import { type AttemptMode, type ExamModule } from '@shared/types';
-
-import { type ExamRunFormat } from '@features/mock-exam/types/examFormat.ts';
+import { type ExamRunFormat } from '@shared/exam-run/types/examFormat.ts';
+import { type AttemptMode, type ExamModule } from '@shared/types/exam.ts';
 
 /** A mode is valid for a format when it is a full sitting or one of that paper's modules. */
 export const isAttemptMode = (format: ExamRunFormat, value: string | undefined): value is AttemptMode =>

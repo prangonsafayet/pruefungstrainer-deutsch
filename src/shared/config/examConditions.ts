@@ -4,7 +4,7 @@
  * so a trainer offers whichever set the paper it sets does.
  */
 
-import { type ExamFormatId } from '@shared/types';
+import { type ExamFormatId } from '@shared/types/trainer.ts';
 
 import { DTZ_PART_LINES } from './dtzExam.ts';
 import { DEFAULT_SETTINGS, FULL_EXAM_MAX } from './exam.ts';

@@ -24,7 +24,8 @@ paths:
 | CI `unit` / `e2e` / `build` | `validate` + `test:unit` / Playwright on Chromium / production build with no secrets                                  |
 | CI `audit`, `deadcode`      | `npm audit --audit-level=high` (dev advisories) and `knip:ci` — both `continue-on-error` until their findings clear   |
 
-`npm run guards` = `guards:offline` (`check:architecture` → `check:css` → `check:storage-keys`
+`npm run guards` = `guards:offline` (`check:architecture` — barrels, `routes/`, folder per
+component, `pages/` per feature, `.tsx` hooks, feature isolation, unique names — → `check:css` → `check:storage-keys`
 → `test:hooks`) then `audit:prod` (`npm audit --omit=dev --audit-level=moderate`). Pre-push uses
 the offline variant so a push never depends on the registry. `npm test` stays typecheck → lint
 → validate → vitest.
@@ -35,6 +36,13 @@ TODO(redesign) block), `audit:all` (report only), `knip` (dead code; config in `
 
 ## ESLint traps
 
+- Type-aware linting uses `parserOptions.projectService` (not `project: [...]`). After a mass
+  file move, restart the editor's ESLint server — a stale program shows phantom
+  `no-unsafe-*` "error typed value" errors the CLI does not.
+- Banning a bare folder import (`@shared/ui`) while allowing files under it
+  (`@shared/ui/button.tsx`) needs a `regex` pattern: a gitignore-style `group` that matches the
+  folder also matches everything beneath it, and a `!` negation cannot re-include a child of an
+  excluded parent.
 - `no-restricted-imports` and `no-restricted-syntax` are **configured, not accumulated**: a
   later flat-config entry matching the same file replaces the earlier options. Restate every
   pattern per entry, or use a different rule key (`@typescript-eslint/no-restricted-imports`,

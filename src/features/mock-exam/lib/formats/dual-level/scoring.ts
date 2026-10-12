@@ -1,14 +1,11 @@
 import { B1_TOTAL } from '@shared/config/exam.ts';
+import { type DualLevelExam, type ExamGrade, type ExamModule, type NoteGap } from '@shared/types/exam.ts';
 import {
   type AnswerMap,
   type AnswerValue,
-  type DualLevelExam,
-  type ExamGrade,
-  type ExamModule,
-  type NoteGap,
   type SkillScores,
   type SprachbausteineScore
-} from '@shared/types';
+} from '@shared/types/progress.ts';
 
 /** Points awarded per correct item in Lesen and Hören. */
 const POINTS_PER_ITEM = 3;

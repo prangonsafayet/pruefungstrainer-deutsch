@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { mergeProgress } from '@features/account-sync/lib/mergeProgress.ts';
-import { EMPTY_DATABASE, normalizeDatabase } from '@features/progress-store/lib/progressDb.ts';
+import { mergeProgress } from '@shared/account-sync/lib/mergeProgress.ts';
+import { EMPTY_DATABASE, normalizeDatabase } from '@shared/progress-store/lib/progressDb.ts';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type DtzTrainerDoc, type LevelTrainerDoc } from '@shared/types/trainer.ts';
 import {
-  type DtzAttempt,
-  type DtzTrainerDoc,
   type DualLevelAttempt,
-  type LevelTrainerDoc,
   type ProgressDatabase,
   type WeaknessByTrainer
-} from '@shared/types';
+} from '@shared/types/progress.ts';
 
 /* Sync is the one place where two real documents meet, and anything it forgets to copy is
    gone for good. It rebuilds the document field by field, so every field needs a test —

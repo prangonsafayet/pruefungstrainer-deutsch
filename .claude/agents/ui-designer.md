@@ -23,9 +23,13 @@ and `.claude/rules/conventions.md`.
   the token blocks. `npm run check:css` and `npm run lint:todo` (the `local/no-raw-colours` rule)
   list what is left. When you add or rename a token, update the "Design tokens" section of the
   ui-design-system rule in the same change.
-- **Primitives.** `src/shared/ui` is shadcn-generated (kebab-case, vendored); extend it in the
-  same style and export from the barrel. Feature code imports `@shared/ui` only and never uses
-  raw `<button>`/`<input>`/`<select>`/`<textarea>`/`<form>`/`<table>`/`<label>`.
+- **Primitives.** `src/shared/ui` is shadcn-generated (flat kebab-case files, vendored — the one
+  exception to folder-per-component); extend it in the same style (`npx shadcn add`, then fix the
+  generated `cn` and extensionless imports). There is no barrel: code imports each primitive
+  from its file (`@shared/ui/button.tsx`) and never uses raw
+  `<button>`/`<input>`/`<select>`/`<textarea>`/`<form>`/`<table>`/`<label>`.
+- **Component folders.** Every other component lives in its own folder
+  (`components/ScoreMeter/ScoreMeter.tsx`) with the hooks (`use*.tsx`) and utils only it uses.
 - **Components stay visual.** No effects, storage, timers or clock reads in a component.
 - **Contrast.** Every ink and mark meets its WCAG minimum in both themes. A tint and a solid
   fill of one colour need opposite inks (`--*-on-tint`, `--*-on-fill`). `e2e/contrast.spec.js`

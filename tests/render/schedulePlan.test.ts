@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/index.ts';
+import { TRAINER_CONTENT } from '@content/trainerContent.ts';
 
 import { MAX_PREP_DAYS } from '@shared/config/schedule.ts';
 

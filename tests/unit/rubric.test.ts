@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/index.ts';
-import { scoreWriting } from '@features/writing-feedback/lib/rubric.ts';
+import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/trainerContent.ts';
+import { scoreWriting } from '@shared/writing-feedback/lib/rubric.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { CONNECTOR_CHECK_MIN_WORDS } from '@shared/config/writingRubric.ts';
-import { type ErrorReportEntry, type WeaknessCategory, type WritingTarget } from '@shared/types';
+import { type ErrorReportEntry, type WeaknessCategory } from '@shared/types/feedback.ts';
+import { type WritingTarget } from '@shared/types/trainer.ts';
 
 const err = (category: WeaknessCategory, offset = 0): ErrorReportEntry => ({
   offset,

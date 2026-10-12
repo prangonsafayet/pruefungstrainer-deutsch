@@ -1,4 +1,4 @@
-import { type TrainerPaper } from '@shared/types';
+import { type TrainerPaper } from '@shared/types/trainer.ts';
 
 /* How the DTZ sitting runs in this trainer. Every figure stated as the exam's own comes from
    the g.a.s.t. Übungssatz (docs/dtz-format.local.md); the source does NOT state how often a

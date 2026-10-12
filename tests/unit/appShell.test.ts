@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { TRAINER_ORDER, TRAINERS, trainerHome } from '@shared/config/trainers.ts';
 import { addDays } from '@shared/lib/format.ts';
-import { useExamCountdown } from '@features/app-shell/hooks/useExamCountdown.ts';
-import { examCountdown } from '@features/app-shell/lib/examCountdown.ts';
-import { NAV_ENTRIES } from '@features/app-shell/lib/navEntries.ts';
-import { isSyncOffline } from '@features/app-shell/lib/syncStatus.ts';
+import { useExamCountdown } from '@features/app-shell/components/ExamCountdownBadge/useExamCountdown.tsx';
+import { examCountdown } from '@features/app-shell/components/ExamCountdownBadge/examCountdown.ts';
+import { NAV_ENTRIES } from '@features/app-shell/components/MainNav/navEntries.ts';
+import { isSyncOffline } from '@features/app-shell/components/AppLayout/syncStatus.ts';
 
 const TODAY = '2026-10-12';
 

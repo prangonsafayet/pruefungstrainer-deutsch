@@ -8,7 +8,7 @@
  * persisted document typed: `TrainerId`, `SingleLevelTrainerId` if it sets that paper, and a
  * field on `ProgressDatabase` with matching cases in `EMPTY_DATABASE`, `normalizeDatabase`
  * and `mergeProgress`. Plus two more places, both measured rather than assumed by planting a
- * fourth trainer: `src/content/index.ts` and one `vi.mock` in
+ * fourth trainer: `src/content/trainerContent.ts` and one `vi.mock` in
  * `tests/unit/contentChunks.test.ts`. `.claude/skills/new-trainer/SKILL.md` states the whole list
  * and why each entry is irreducible.
  *
@@ -27,17 +27,17 @@ import { B1_PAPER } from '@content/b1/paper.ts';
 import { B2_PAPER } from '@content/b2/paper.ts';
 import { DTZ_PAPER } from '@content/dtz/paper.ts';
 
+import { type WeaknessTopic } from '@shared/types/feedback.ts';
+import { type SingleLevelTrainerId } from '@shared/types/singleLevelExam.ts';
 import {
   type DtzDocKey,
-  type SingleLevelTrainerId,
   type TrainerContent,
   type TrainerContentLoader,
   type TrainerDocKey,
   type TrainerId,
-  type TrainerPaper,
-  type VocabBank,
-  type WeaknessTopic
-} from '@shared/types';
+  type TrainerPaper
+} from '@shared/types/trainer.ts';
+import { type VocabBank } from '@shared/types/vocab.ts';
 
 import { SPRINT_LEARN_DAYS } from './schedule.ts';
 
@@ -46,15 +46,15 @@ import { SPRINT_LEARN_DAYS } from './schedule.ts';
  * that every screen needs synchronously (the settings page, the runner, the header). The
  * exams, curriculum, guide and vocabulary bank are the heavy part of a trainer (hundreds of
  * kilobytes each) and load through `loadContent` below instead, one dynamic `import()` per
- * trainer so the bundler keys a chunk on each. Do not import `@content/index.ts`
- * from this file: that barrel pulls in every trainer's full content and would put the whole
+ * trainer so the bundler keys a chunk on each. Do not import `@content/trainerContent.ts`
+ * from this file: that module pulls in every trainer's full content and would put the whole
  * eager graph right back behind the registry.
  */
 const CONTENT_LOADERS: Readonly<Record<TrainerId, TrainerContentLoader>> = {
-  a2b1: () => import('@content/a2b1/index.ts').then(m => m.A2B1_CONTENT),
-  b1: () => import('@content/b1/index.ts').then(m => m.B1_CONTENT),
-  b2: () => import('@content/b2/index.ts').then(m => m.B2_CONTENT),
-  dtz: () => import('@content/dtz/index.ts').then(m => m.DTZ_CONTENT)
+  a2b1: () => import('@content/a2b1/content.ts').then(m => m.A2B1_CONTENT),
+  b1: () => import('@content/b1/content.ts').then(m => m.B1_CONTENT),
+  b2: () => import('@content/b2/content.ts').then(m => m.B2_CONTENT),
+  dtz: () => import('@content/dtz/content.ts').then(m => m.DTZ_CONTENT)
 };
 
 /** User-facing app name. UI-level only — repo, package and storage keys keep theirs. */

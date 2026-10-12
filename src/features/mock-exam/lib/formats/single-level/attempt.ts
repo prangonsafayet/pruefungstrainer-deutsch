@@ -3,20 +3,19 @@ import {
   SINGLE_LEVEL_ORAL_MAX,
   SINGLE_LEVEL_WRITTEN_MAX
 } from '@shared/config/singleLevelExam.ts';
-import { numberAnswer, WRITING_TASK_KEY } from '@shared/lib/answers.ts';
-import {
-  type AnswerMap,
-  type ExamModule,
-  type SingleLevelAttempt,
-  type SingleLevelExam,
-  type SingleLevelSectionScores
-} from '@shared/types';
-
 import {
   type CompletionToast,
   type FinishedRun,
   type WritingSample
-} from '@features/mock-exam/types/examFormat.ts';
+} from '@shared/exam-run/types/examFormat.ts';
+import { numberAnswer, WRITING_TASK_KEY } from '@shared/lib/answers.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
+import {
+  type SingleLevelAttempt,
+  type SingleLevelExam,
+  type SingleLevelSectionScores
+} from '@shared/types/singleLevelExam.ts';
 
 import { gradeFullExam, scoreHoeren, scoreLesen, scoreSprachbausteine } from './scoring.ts';
 

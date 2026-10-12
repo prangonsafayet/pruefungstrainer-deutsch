@@ -5,14 +5,9 @@
  */
 
 import { DTZ_PART_LINES, type DtzPartLine } from '@shared/config/dtzExam.ts';
-import {
-  type AnswerMap,
-  type DtzExam,
-  type DtzLevel,
-  type DtzResult,
-  type DtzSectionScores,
-  type ExamModule
-} from '@shared/types';
+import { type DtzExam, type DtzLevel, type DtzResult, type DtzSectionScores } from '@shared/types/dtzExam.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
 
 import { dtzItems, type DtzMarkedModule } from './items.ts';
 

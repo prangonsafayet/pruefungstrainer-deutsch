@@ -1,11 +1,9 @@
-import {
-  type DtzExam,
-  type DualLevelExam,
-  type ExamModuleProps,
-  type LevelTrainerSettings,
-  type Settings,
-  type SingleLevelExam
-} from '@shared/types';
+import { type DtzExam } from '@shared/types/dtzExam.ts';
+import { type DualLevelExam } from '@shared/types/exam.ts';
+import { type ExamModuleProps } from '@shared/types/examRun.ts';
+import { type Settings } from '@shared/types/progress.ts';
+import { type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
+import { type LevelTrainerSettings } from '@shared/types/trainer.ts';
 
 /** What an A2·B1 module renderer receives. */
 export type A2b1ModuleProps = ExamModuleProps<DualLevelExam, Settings>;

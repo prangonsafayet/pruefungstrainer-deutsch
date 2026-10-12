@@ -8,7 +8,7 @@ import {
   type StudyCategory,
   type VerbEntry,
   type VocabBank
-} from '@shared/types';
+} from '@shared/types/vocab.ts';
 
 import { buildQuiz, type QuizQuestion } from '@features/vocab-practice/lib/quiz.ts';
 

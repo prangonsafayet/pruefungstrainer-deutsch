@@ -1,6 +1,7 @@
 /** The learn-plan checkbox key scheme. Persisted and synced, so it never changes. */
 
-import { type LearnDay, type LearnDoneMap } from '@shared/types';
+import { type LearnDay } from '@shared/types/learn.ts';
+import { type LearnDoneMap } from '@shared/types/progress.ts';
 
 /** Checkbox key for one task of one day: `d7t2`. */
 export const learnTaskKey = (day: number, taskIndex: number): string =>

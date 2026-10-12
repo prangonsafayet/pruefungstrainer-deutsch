@@ -20,16 +20,13 @@ import {
   buildTiles,
   buildWeakAreas,
   metersHeading
-} from '@features/dashboard/lib/dashboardModel.ts';
-import type { TrainerSlice } from '@features/progress-store';
-import type {
-  DtzAttempt,
-  DualLevelAttempt,
-  SingleLevelAttempt,
-  Settings,
-  LevelTrainerSettings,
-  VocabBank
-} from '@shared/types';
+} from '@features/dashboard/pages/DashboardPage/dashboardModel.ts';
+import type { TrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
+import type { DtzAttempt } from '@shared/types/dtzExam.ts';
+import type { DualLevelAttempt, Settings } from '@shared/types/progress.ts';
+import type { SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
+import type { LevelTrainerSettings } from '@shared/types/trainer.ts';
+import type { VocabBank } from '@shared/types/vocab.ts';
 
 /* The two papers are passed on different lines: 42 of 60 in an A2·B1 skill is 70%, while the
    single-level paper wants 60% of each section. Applying one paper's line to the other is a

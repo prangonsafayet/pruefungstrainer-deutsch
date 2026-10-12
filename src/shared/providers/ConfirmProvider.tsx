@@ -9,9 +9,9 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-  buttonVariants
-} from '@shared/ui';
+  AlertDialogTitle
+} from '@shared/ui/alert-dialog.tsx';
+import { buttonVariants } from '@shared/ui/button.tsx';
 
 import { ConfirmContext, type ConfirmOptions } from './confirmContext.ts';
 

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { type DtzAttempt, type DualLevelAttempt, type SingleLevelAttempt } from '@shared/types';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
 
 import { summarizeAttempt as summarizeDtz } from '@features/mock-exam/lib/formats/dtz-paper/summary.ts';
 import { summarizeAttempt as summarizeDualLevel } from '@features/mock-exam/lib/formats/dual-level/summary.ts';

@@ -4,7 +4,7 @@
  * and a review session cannot disagree with the stored state.
  */
 
-import { type MasteryLevel, type SrsEntry, type SrsMap } from '@shared/types';
+import { type MasteryLevel, type SrsEntry, type SrsMap } from '@shared/types/vocab.ts';
 
 import { addDays } from './format.ts';
 

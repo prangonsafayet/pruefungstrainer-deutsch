@@ -1,4 +1,4 @@
-import { type AnswerMap } from '@shared/types';
+import { type AnswerMap } from '@shared/types/progress.ts';
 
 /**
  * The flat, stringly-keyed answer scheme every trainer shares. It is persisted and must

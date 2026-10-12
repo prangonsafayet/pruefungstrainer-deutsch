@@ -5,7 +5,8 @@
  * lives on that trainer's `TrainerPaper` in `src/content/<id>/paper.ts`.
  */
 
-import { type ExamModule, type LevelTrainerSettings } from '@shared/types';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type LevelTrainerSettings } from '@shared/types/trainer.ts';
 
 import { defaultExamDate, EXAM_MODULES } from './exam.ts';
 

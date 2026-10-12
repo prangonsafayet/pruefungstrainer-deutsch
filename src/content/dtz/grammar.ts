@@ -1,4 +1,4 @@
-import { type CaseItem, type PrepVerbEntry } from '@shared/types';
+import { type CaseItem, type PrepVerbEntry } from '@shared/types/vocab.ts';
 
 /* DTZ grammar banks: Verben mit Präposition and case government (Akkusativ / Dativ /
    Genitiv), set in integration-course everyday life. Ids are persisted SRS keys — never

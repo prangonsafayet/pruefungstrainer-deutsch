@@ -9,13 +9,13 @@ import {
   SINGLE_LEVEL_POINTS,
   SINGLE_LEVEL_WRITTEN_PASS
 } from '@shared/config/singleLevelExam.ts';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
 import {
-  type AnswerMap,
-  type ExamModule,
   type SingleLevelExam,
   type SingleLevelResult,
   type SingleLevelSectionScores
-} from '@shared/types';
+} from '@shared/types/singleLevelExam.ts';
 
 export interface ModuleScore {
   readonly correct: number;

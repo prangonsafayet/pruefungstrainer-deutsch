@@ -1,6 +1,8 @@
 import { toast } from 'sonner';
 
-import { type AudioScript, type DualLevelExam, type Settings, type TrainerPaper } from '@shared/types';
+import { type AudioScript, type DualLevelExam } from '@shared/types/exam.ts';
+import { type Settings } from '@shared/types/progress.ts';
+import { type TrainerPaper } from '@shared/types/trainer.ts';
 
 import { listeningRate } from './paper.ts';
 

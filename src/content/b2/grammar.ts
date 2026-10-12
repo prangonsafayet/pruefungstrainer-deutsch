@@ -1,4 +1,4 @@
-import { type CaseItem, type PrepVerbEntry } from '@shared/types';
+import { type CaseItem, type PrepVerbEntry } from '@shared/types/vocab.ts';
 
 /* B2 grammar banks: Verben mit Präposition and case government (Akkusativ / Dativ /
    Genitiv). Ids are persisted SRS keys — never renumber existing items. */

@@ -103,12 +103,15 @@ The interesting parts, for anyone reading the code:
 **Feature-sliced architecture with enforced boundaries.** `src/app` is the
 composition root and nothing else — entry point, providers, router; the header,
 nav and layout are a feature like any other (`features/app-shell`).
-`src/features` holds vertical slices that expose a public surface through
-`index.ts`, `src/shared` holds feature-agnostic building blocks, and
-`src/content/<trainer>/` is inert data. The dependency rules are ESLint rules,
-not documentation — a feature physically cannot reach into another feature's
-internals or import `src/app`. Wiring this up surfaced two real
-import cycles, one of which was hanging a route.
+`src/features` holds vertical slices, each with its screens in `pages/`; a feature
+imports only itself and `src/shared`, never another feature, so anything two
+features need — the progress store, the study schedule, account sync, the exam-run
+machinery — lives in `src/shared`. Every component sits in its own folder with the
+hooks, utils and types only it uses (`DashboardPage/DashboardPage.tsx`,
+`DashboardPage/useDashboardStats.tsx`), and there are no barrels: every import
+names a file. `src/content/<trainer>/` is inert data. The dependency rules are
+ESLint rules and a tree check (`npm run check:architecture`), not documentation.
+Wiring this up surfaced two real import cycles, one of which was hanging a route.
 
 **Four trainers behind one registry.** telc Deutsch A2·B1, B1, B2 and the DTZ are
 peers described once in `shared/config/trainers.ts` — one descriptor per trainer
@@ -121,7 +124,7 @@ screen.
 **Components are visual; logic is in hooks and utils.** The exam state machine
 lives in `useExamRun`; each paper's own score derivation and review construction
 live in its format descriptor (`features/mock-exam/lib/formats/{dual-level,single-
-level}/summary.ts` and `review.ts`). A component that renders a screen reads a
+level,dtz-paper}/summary.ts` and `review.ts`). A component that renders a screen reads a
 hook and maps over data.
 
 **Strict TypeScript**, including `noUncheckedIndexedAccess` and

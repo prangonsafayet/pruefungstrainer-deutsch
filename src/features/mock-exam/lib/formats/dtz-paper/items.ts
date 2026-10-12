@@ -11,7 +11,8 @@
  */
 
 import { itemKey } from '@shared/lib/answers.ts';
-import { type AudioScript, type DtzExam } from '@shared/types';
+import { type DtzExam } from '@shared/types/dtzExam.ts';
+import { type AudioScript } from '@shared/types/exam.ts';
 
 /** The module an item belongs to. Only the two objectively-marked ones have items. */
 export type DtzMarkedModule = 'hoeren' | 'lesen';

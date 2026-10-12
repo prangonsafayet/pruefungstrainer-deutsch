@@ -1,6 +1,7 @@
 /** Reading a trainer's own sitting: how long a module runs, and how fast its audio reads. */
 
-import { type ExamModule, type TrainerExamSettings, type TrainerPaper } from '@shared/types';
+import { type ExamModule } from '@shared/types/exam.ts';
+import { type TrainerExamSettings, type TrainerPaper } from '@shared/types/trainer.ts';
 
 /**
  * How long one module of this trainer's sitting runs. Every paper's writing time is the one

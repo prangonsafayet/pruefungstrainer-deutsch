@@ -1,4 +1,4 @@
-import { type LearnPlan } from '@shared/types';
+import { type LearnPlan } from '@shared/types/learn.ts';
 
 /* The B2 28-day curriculum, its cheatsheets and the copy-paste AI tutor prompts.
    Days 1–14 are the core tier and are always scheduled; days 15–28 deepen towards a

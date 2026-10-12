@@ -1,4 +1,4 @@
-import { type AdjectiveEntry, type NounEntry, type VerbEntry, type VocabBank } from '@shared/types';
+import { type AdjectiveEntry, type NounEntry, type VerbEntry, type VocabBank } from '@shared/types/vocab.ts';
 
 import { DTZ_CASE_ITEMS, DTZ_PREP_VERBS } from './grammar.ts';
 

@@ -2,7 +2,7 @@
 paths:
   - 'src/shared/ui/**'
   - 'src/**/components/**'
-  - 'src/**/routes/**'
+  - 'src/**/pages/**'
   - 'src/styles/**'
   - '**/*.css'
 ---
@@ -28,20 +28,25 @@ in by the redesign_.
 - TS/TSX: the `local/no-raw-colours` ESLint rule flags Tailwind palette classes
   (`bg-red-500`, `text-white`), arbitrary colours (`bg-[#fff]`), colour functions and bare hex
   values (inline styles). It is in the TODO(redesign) block: 11 literals remain in
-  `shared/components/AppLogo.tsx` (6), `features/account-sync/components/icons/GoogleIcon.tsx` (4, brand
+  `shared/components/AppLogo/AppLogo.tsx` (6), `shared/account-sync/components/icons/GoogleIcon/GoogleIcon.tsx` (4, brand
   colours — an `eslint-disable-next-line` with a reason is acceptable there) and
   `shared/ui/alert-dialog.tsx` (1). Use semantic utilities (`bg-primary`,
   `text-muted-foreground`) or `var(--token)`.
 
 ## Primitives
 
-Import from `@shared/ui` (the barrel), never a file inside it. No raw `<button>`, `<input>`,
+Import each primitive from its own file — `@shared/ui/button.tsx`, `@shared/ui/card.tsx`; there
+is no barrel. No raw `<button>`, `<input>`,
 `<select>`, `<textarea>`, `<form>`, `<table>`, `<label>` outside `src/shared/ui` — the
 `no-raw-html-controls` rule (it shares `no-restricted-syntax` with the trainer-id rule, so it
 is subject to replace-not-merge). A missing primitive is added to `src/shared/ui` in the same
-style and exported from the barrel. `Pressable` is for a whole card or row that is itself the
-control. `src/shared/ui/*.tsx` are written by the shadcn CLI: vendored, kebab-case filenames so
-`npx shadcn add` keeps working.
+style, with `npx shadcn add <name>`: the root `tsconfig.json` carries the path map so the CLI
+writes into `src/shared/ui`. Then fix what it generates — it imports `cn` from a bare `"cn"`
+(make it `@shared/lib/cn.ts`) and siblings without an extension (`@shared/ui/toggle` →
+`@shared/ui/toggle.tsx`); typecheck and lint name both. `Pressable` is for a whole card or row that is itself the
+control. `src/shared/ui/*.tsx` are written by the shadcn CLI: vendored, flat kebab-case filenames so
+`npx shadcn add` keeps working — the one exception to folder-per-component. Every other
+component lives in its own folder (`components/ScoreMeter/ScoreMeter.tsx`).
 
 ## Accessibility and motion
 
