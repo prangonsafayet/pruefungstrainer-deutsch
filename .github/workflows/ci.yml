@@ -27,8 +27,48 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
-      - run: npm run lint
+      # Zero warnings: a warning is how a silently-skipped file announces itself ("File
+      # ignored because no matching configuration was supplied"), so it fails here.
+      - run: npm run lint -- --max-warnings=0
       - run: npm run format:check
+      # The guardrails ESLint cannot express, in one aggregate: the architecture and CSS-token
+      # checks, the persisted storage-key invariant, the Claude Code hook tests, and the
+      # production dependency audit (moderate and above fails). See package.json `guards`.
+      - run: npm run guards
+
+  audit:
+    name: Dependency audit (dev, non-blocking)
+    runs-on: ubuntu-latest
+    # Report-only. The production tree is gated in `static` via `npm run audit:prod`; this job
+    # keeps the dev-only advisories visible. The remaining ones have no usable fix: `braces` via
+    # micromatch via eslint-plugin-check-file has none upstream, and `postcss-selector-parser`
+    # via @tailwindcss/typography only "fixes" by downgrading typography to 0.5.4. Failing on
+    # them would block every PR on something no PR can change. Make it blocking once they clear.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
+  deadcode:
+    name: Dead code (knip, non-blocking)
+    runs-on: ubuntu-latest
+    # Report-only while the DTZ trainer and the redesign land: knip still lists unused
+    # dependencies, exports and types that those branches may yet consume or remove. Make it
+    # blocking (drop continue-on-error) once `npm run knip` is clean.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run knip:ci
 
   unit:
     name: Unit tests

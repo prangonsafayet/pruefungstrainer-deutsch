@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.1.0",
   "type": "module",
-  "description": "telc Deutsch trainer for the A2·B1, B1 and B2 exams — 35 full model tests, a 28-day study plan per exam, and a vocabulary bank with spaced repetition",
+  "description": "telc Deutsch trainer for the A2·B1, B1, B2 and DTZ exams — 45 full model tests, a 28-day study plan per exam, and a vocabulary bank with spaced repetition",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,8 +21,20 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:strict": "eslint . --max-warnings=0",
+    "lint:todo": "LINT_REDESIGN_TODO=1 eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check:storage-keys": "node scripts/check-storage-keys.mjs",
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "check:css": "node scripts/check-css-tokens.mjs",
+    "test:hooks": "bash scripts/test-claude-hooks.sh",
+    "audit:prod": "npm audit --omit=dev --audit-level=moderate",
+    "audit:all": "npm audit --audit-level=high || true",
+    "knip": "knip",
+    "knip:ci": "knip --no-progress",
+    "guards:offline": "npm run check:architecture && npm run check:css && npm run check:storage-keys && npm run test:hooks",
+    "guards": "npm run guards:offline && npm run audit:prod"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",
@@ -76,6 +88,7 @@
     "eslint-plugin-react-refresh": "^0.5.4",
     "globals": "^17.11.0",
     "happy-dom": "^20.11.2",
+    "knip": "^6.41.0",
     "npm-check-updates": "^23.0.2",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",

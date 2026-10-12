@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/logo.svg" alt="" width="76" height="76">
   <h1>telc Deutsch Trainer</h1>
-  <p><strong>Three telc exams — A2·B1, B1, B2 — 35 complete mock exams under real timing, marked by the official weighting.</strong></p>
+  <p><strong>Four German exams — telc A2·B1, B1, B2 and the DTZ — 45 complete mock exams under real timing, marked by the official weighting.</strong></p>
   <p>
     <a href="https://github.com/prangonsafayet/telc-a2b1-trainer/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/prangonsafayet/telc-a2b1-trainer/actions/workflows/ci.yml/badge.svg"></a>
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
@@ -19,7 +19,7 @@
 ---
 
 I built this to sit the telc Deutsch A2·B1 exam, then grew it to cover telc B1 and
-B2 as well. Practice material for these exams is thin, and the material that
+B2 as well, and now the DTZ — the Deutsch-Test für Zuwanderer A2–B1. Practice material for these exams is thin, and the material that
 exists does not simulate the thing that actually makes them hard: doing every
 module back to back, on the clock, with the listening audio playing twice and no
 more.
@@ -28,16 +28,18 @@ So this is the exam, not a quiz app. Real time limits per module, automatic
 submission when time runs out, a limited number of audio plays, and the official
 grading rule for each paper — A2·B1's four-skill dual-level paper
 (**B1 certificate = ≥42/60 in three skills plus ≥24/60 in the fourth**, 240 points)
-and telc B1/B2's shared single-level paper (**written 225 + oral 75 = 300**,
-60% needed per section).
+telc B1/B2's shared single-level paper (**written 225 + oral 75 = 300**,
+60% needed per section), and the DTZ paper, which places you at **Zertifikat A2 or B1**
+from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 
 ## What it does
 
-- **Three peer trainers, one app.** telc Deutsch A2·B1, telc B1 and telc B2 each
-  have their own exams, study plan, guide and vocabulary bank, switchable from one
-  header control. Fifteen A2·B1 Modelltests plus ten each for B1 and B2 — 35 full
-  exams in total, ramping from early A2 to upper B2, covering every module of
-  their paper: Leseverstehen, Sprachbausteine, Hörverstehen, Schreiben, Sprechen.
+- **Four peer trainers, one app.** telc Deutsch A2·B1, telc B1, telc B2 and the DTZ
+  each have their own exams, study plan, guide and vocabulary bank, switchable from
+  one header control. Fifteen A2·B1 Modelltests plus ten each for B1, B2 and DTZ — 45
+  full exams in total, from early A2 to upper B2, covering every module of their
+  paper: Leseverstehen, Sprachbausteine (where the paper has it), Hörverstehen,
+  Schreiben, Sprechen.
 - **Real exam conditions.** Per-module countdowns that auto-submit, a play budget
   per listening item, and no preparation time in the speaking module.
 - **Refresh-safe attempts.** The running exam — current module, every answer, the
@@ -62,8 +64,8 @@ and telc B1/B2's shared single-level paper (**written 225 + oral 75 = 300**,
 - **Progress that follows you.** Optional cloud sync behind Google, GitHub or
   email + password; without it everything stays local, and the app says so
   clearly rather than letting you assume otherwise.
-- Light and dark mode, keyboard-accessible throughout, and a deep-linkable URL
-  for every screen.
+- A redesigned UI built on design tokens, in light and dark mode,
+  keyboard-accessible throughout, and a deep-linkable URL for every screen.
 
 ## Screens
 
@@ -106,12 +108,13 @@ ESLint rules, not documentation — a feature physically cannot reach into anoth
 feature's internals or import the app shell. Wiring this up surfaced two real
 import cycles, one of which was hanging a route.
 
-**Three trainers behind one registry.** telc Deutsch A2·B1, B1 and B2 are peers
-described once in `shared/config/trainers.ts` — one descriptor per trainer names
-its route, its paper and where its content lives — so every screen, route and
+**Four trainers behind one registry.** telc Deutsch A2·B1, B1, B2 and the DTZ are
+peers described once in `shared/config/trainers.ts` — one descriptor per trainer
+names its route, its paper and where its content lives — so every screen, route and
 nav item is generated from that list rather than hand-duplicated per trainer. The
-two papers themselves (dual-level for A2·B1, single-level for B1/B2) are format
-descriptors that plug into one exam runner, results screen and review screen.
+papers themselves (dual-level for A2·B1, single-level for B1/B2, and the DTZ paper)
+are format descriptors that plug into one exam runner, results screen and review
+screen.
 
 **Components are visual; logic is in hooks and utils.** The exam state machine
 lives in `useExamRun`; each paper's own score derivation and review construction
@@ -126,7 +129,7 @@ Modelltest fails the build rather than the exam.
 
 **Content is split and lazy-loaded per trainer.** Each trainer's exams,
 curriculum, guide and vocabulary bank load through one dynamic `import()`, so
-visiting the A2·B1 trainer never downloads B1 or B2's content and vice versa —
+visiting one trainer never downloads another trainer's content —
 verified in a real browser via the network log, not just by chunk names in the
 build report.
 
@@ -150,6 +153,42 @@ are Supabase's business — nothing is hashed or stored in the browser.
 **Accessibility and motion.** shadcn/ui over Radix primitives throughout, no raw
 interactive elements in feature code, and every animation behind
 `prefers-reduced-motion` — an exam timer is not the place to fight the interface.
+
+## Quality gates
+
+Every gate runs in CI on each pull request; the fast, offline ones also run before a push.
+
+| Gate                            | Command                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------- |
+| Typecheck (strict)              | `npm run typecheck`                                                                    |
+| Lint, zero warnings             | `npm run lint -- --max-warnings=0`                                                     |
+| Accessibility lint              | jsx-a11y's strict preset, inside lint                                                  |
+| Architecture                    | layer boundaries and components-visual-only in lint, plus `npm run check:architecture` |
+| Design tokens                   | raw colours refused in lint and `npm run check:css`                                    |
+| Formatting                      | `npm run format:check`                                                                 |
+| Exam-data validation            | `npm run validate`                                                                     |
+| Unit and render tests           | `npm run test:unit` (Vitest, Node + happy-dom)                                         |
+| End-to-end                      | `npm run test:e2e` (Playwright)                                                        |
+| Production dependency audit     | `npm run audit:prod`                                                                   |
+| Persisted storage-key invariant | `npm run check:storage-keys`                                                           |
+| Claude Code guardrail hooks     | `npm run test:hooks`                                                                   |
+
+`npm run guards` runs the architecture, token, storage-key, hook and audit gates together.
+Two more report without blocking until their findings are cleared: the dev-dependency audit
+(`npm run audit:all`) and dead-code detection with knip (`npm run knip`).
+
+## Working with Claude Code
+
+The repo is set up for Claude Code. [`CLAUDE.md`](CLAUDE.md) stays short; the detail lives in
+path-scoped rules under `.claude/rules/` that load only when matching files are touched
+(architecture, conventions, UI and design system, persistence, exam formats, content, dates and
+timers, testing, tooling). Project agents in `.claude/agents/` author exam content, check exam
+facts, review UI and conventions, design the UI and guard persisted data, each with its own
+memory, and a shared trap ledger in `.claude/memory/` keeps lessons from being re-learned.
+Skills cover verification, auditing, adding an exam or a trainer, and shipping. Hooks block
+commits to `main`, AI attribution, whole-tree staging and lockfile edits, and re-check the
+storage keys and lint after every edit. A model-routing rule sends lookups and mechanical work
+to cheaper models and keeps the strongest one for architecture and persisted-data decisions.
 
 ## Running it
 
@@ -191,7 +230,7 @@ turns "why is sync off?" into a five-second answer.
 - In the A2·B1 dual-level paper, Sprachbausteine is tracked separately, since in
   the real exam it feeds the reading and writing subtests rather than forming its
   own 60-point skill.
-- `npm run validate` checks all 35 exam files. [`CLAUDE.md`](CLAUDE.md) documents
+- `npm run validate` checks all 45 exam files. [`CLAUDE.md`](CLAUDE.md) documents
   the architecture and conventions, [`CONTRIBUTING.md`](CONTRIBUTING.md) the
   issue → branch → PR → release workflow, [`SECURITY.md`](SECURITY.md) how auth and data
   are protected, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) how to behave here.

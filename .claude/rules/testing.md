@@ -1,3 +1,11 @@
+---
+paths:
+  - 'tests/**'
+  - 'e2e/**'
+  - 'vitest.config.ts'
+  - 'playwright.config.ts'
+---
+
 # Testing
 
 Two layers, both required, because they catch different things.
@@ -56,84 +64,55 @@ npm run test:watch   # vitest in watch mode
 | `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                  |
 | `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                    |
 
-**No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and
-pointer capture out of the box, so `tests/render/setup.ts` only adds React's act flag and
-the in-memory `Storage` from `tests/support/memoryStorage.ts` — happy-dom ships none, and
-without it every persistence assertion would pass vacuously. Anything that needs a genuine
-browser belongs in Playwright.
+**No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
+capture; `tests/render/setup.ts` only adds React's act flag and the in-memory `Storage` from
+`tests/support/memoryStorage.ts` — happy-dom ships none, and without it every persistence
+assertion passes vacuously. The **logic** project installs the same storage wherever a suite
+persists (`unit/runStore`): Node 22+ exposes `localStorage` as an experimental getter, reading
+it warns, and `@shared/lib/storage.ts` silently degrades to its fallback. Install it, never
+probe for it — `typeof globalThis.localStorage` is itself what triggers the warning.
 
-The **logic** project installs that same storage wherever a suite persists anything
-(`unit/runStore`). Node 22+ defines `localStorage` as an experimental getter that is
-unusable without `--localstorage-file`: merely reading it warns, and `@shared/lib/storage.ts`
-then silently degrades to its private fallback, so the suite tested the wrong path and every
-run printed an `ExperimentalWarning`. Install it, never probe for it — `typeof
-globalThis.localStorage` is itself what triggers the warning.
+`mount()` in `tests/render/harness.ts` waits for `aria-busy` to clear rather than sleeping. A
+route rendering ~8 characters means the Suspense fallback never cleared — usually an import
+cycle. Content loads through `@shared/hooks/useTrainerContent.ts` (imported by file), which
+suspends on `loadContent()`, so `mount()`'s wait covers it; a fixed timeout would flake.
 
-`mount()` in `tests/render/harness.ts` waits for `aria-busy` to clear rather than
-sleeping: a lazily-loaded route can outlast any fixed timeout, and a route that renders
-~8 characters means the Suspense fallback never cleared — usually an import cycle rather
-than a slow chunk. Content is now loaded the same way: `@shared/hooks/useTrainerContent.ts`
-— imported by file, because `@shared/hooks` and `@shared/lib` have no barrel — suspends on a
-trainer's `loadContent()` promise, so a route that reads exams, curriculum, guide or
-vocabulary renders behind that same Suspense boundary and `mount()`'s wait covers it too —
-nothing extra to do in a test, but a fixed-timeout wait instead of `mount()`'s polling
-would flake.
+The harness exists so you do not re-learn:
 
-Things the harness exists to stop you re-learning:
+- `seedProgress({ daysUntilExam })` writes the document **before** mounting, relative to today.
+- `typeInto()` uses the native value setter — assigning `element.value` is swallowed by React.
+- `blur()` dispatches `focusout`, which is what React's `onBlur` listens to.
+- The setup clears `document.body` after every test.
 
-- `seedProgress({ daysUntilExam })` writes the stored document **before** mounting, and
-  always relative to today. A suite that hardcodes an exam date passes now and turns
-  "past-due" a month later.
-- `typeInto()` goes through the native value setter. React tracks the previous value on
-  the node, so assigning `element.value` directly is swallowed as a no-op.
-- `blur()` dispatches `focusout`, because that is what React's `onBlur` listens to.
+**Run the render project from the main checkout, not a worktree.** A worktree under
+`.claude/worktrees/` resolves a second React and fails with
+`Cannot read properties of null (reading 'useCallback')`. Worktrees are fine for content and pure-logic work.
 
-The render setup clears `document.body` after every test: a test that fails before it
-unmounts would otherwise leave its tree behind and make the next one fail for the wrong
-reason.
-
-**Run the render project from the main checkout, not a nested worktree.** A worktree
-under `.claude/worktrees/...` resolves a second copy of React, so `tests/render/*` fails
-with `Cannot read properties of null (reading 'useCallback')` even with no other changes
-present, while the identical suite passes in the main checkout. Worktrees are fine for
-content authoring and other pure-logic work; anything that renders has to be verified
-where the app actually runs.
+In `tests/`, annotate the functions, not a record of functions: the `node-tooling` lint entry
+uses base `no-unused-vars`, which reports parameter names inside function types.
 
 ## Playwright — `e2e/`
 
-Anything happy-dom cannot judge: layout at three breakpoints, dark-mode persistence, real
-reload behaviour, popover positioning, and network-level stubbing (the sign-up specs stub
-Supabase to drive each outcome deterministically). Runs on Chromium and a Pixel 7 profile.
-
-`e2e/singleLevelTrainers.spec.js` covers the B1/B2 trainers and the trainer switcher —
-`exam.spec.js` and `smoke.spec.js` only ever visited the root (A2·B1) trainer, so this is
-where a real browser first exercised `/b1` and `/b2`. Plain JS specs cannot import the
-registry's alias paths, but they can import plain Node: it takes its trainer list from
-`scripts/trainerRegistry.mjs`, which reads the descriptors out of
-`shared/config/trainers.ts`. It no longer needs editing when the registry changes.
-
-`e2e/contrast.spec.js` measures every ink and mark in the palette against its WCAG minimum,
-in both themes, in a real browser. Colours are resolved by painting them onto a canvas and
-reading the pixel back: `getComputedStyle` returns `oklch()` and
-`color-mix(…, transparent)` here, and a tinted background has no real colour until every
-ancestor behind it has been composited. The theme is switched through the app's own storage
-key — toggling a class on `documentElement` does not switch these tokens.
-
-`e2e/reducedMotion.spec.js` asserts that nothing animates on a delay when reduced motion is
-emulated, across five routes. It emulates through `page.emulateMedia` rather than
-`test.use({ reducedMotion })`: the fixture option did not reach the media query here, so the
-suite would have passed without ever enabling the thing it tests.
-
-The **Playwright MCP** plugin is also available for interactive checks — drive the running
-app directly instead of writing a throwaway spec.
+Layout at three breakpoints, dark-mode persistence, real reloads, popover positioning, and
+network-level stubbing (sign-up specs stub Supabase). Chromium plus a Pixel 7 profile.
+`e2e/singleLevelTrainers.spec.js` takes its trainer list from `scripts/trainerRegistry.mjs`.
+`e2e/contrast.spec.js` and `e2e/reducedMotion.spec.js`: see the ui-design-system rule.
+react-day-picker marks month navigation with `aria-disabled` but day cells with both
+`data-disabled` and a real `disabled` — assert the right one. For interactive checks use the
+**Playwright MCP** instead of a throwaway spec.
 
 ## Rules
 
-- A bug fix ships with a regression test in the layer that would have caught it.
-- Appearance claims need a Playwright test or a real browser look, never a passing unit
-  test.
-- Assert on roles, not classes. The exam timer is `getByRole('timer')`; it used to be
-  `span.font-mono`, which broke the moment the footer gained a monospaced version badge.
-- Prefer a parameterised sweep to a spot check when the input is a range. The schedule
-  suite runs every runway from 5 to 90 days, which is how the review-day clumping bug and
-  the emergency-plan edge case were both found.
+- A bug fix ships with a regression test in the layer that would have caught it — and you have
+  watched it fail with the bug re-introduced.
+- Appearance claims need Playwright or a real browser, never a unit test.
+- Assert on roles, not classes (the timer is `getByRole('timer')`).
+- Prefer a parameterised sweep over a spot check when the input is a range.
+- A test that depends on an emulated environment asserts the emulation; one that needs seeded
+  state asserts the state arrived (count the bars).
+- When two cases differ only sometimes, the fixture must hit a case where they differ. A
+  "keeps what was there" test needs something already there.
+- When asserting generated copy, match a phrase only the failing branch prints, and pin the
+  number next to it. Prove a guard in a narrow range with a fixture inside that range.
+- An update queued inside a state updater runs eagerly when nothing is pending: queue one first,
+  then assert the observable consequence, not the absence of a warning.

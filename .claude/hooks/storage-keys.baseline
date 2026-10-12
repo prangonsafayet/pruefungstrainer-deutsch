@@ -1,0 +1,7 @@
+# Persisted storage keys: live user data, never rename or remove one.
+# New keys are fine — add them here (npm run check:storage-keys -- --update).
+telcTrainerAuth
+telcTrainerLevelRunV1
+telcTrainerRunV1
+telcTrainerTheme
+telcTrainerV1

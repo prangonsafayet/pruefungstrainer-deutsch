@@ -163,8 +163,8 @@ const SHARED_UI_STAYS_GENERIC = {
 
    Four exempt places. The registry itself and the content folders are keyed by trainer by
    definition. The other two are the persisted document's own plumbing —
-   `progress/lib/progressDb.ts` and `auth/lib/mergeProgress.ts` — which architecture.md
-   measured as irreducible: `exactOptionalPropertyTypes` means a trainer nobody has opened
+   `progress/lib/progressDb.ts` and `auth/lib/mergeProgress.ts` — which the new-trainer skill
+   (.claude/skills/new-trainer) measured as irreducible: `exactOptionalPropertyTypes` means a trainer nobody has opened
    must be an ABSENT key rather than an explicit undefined, so the merge is spelled out per
    trainer instead of looped. Widening this rule is what surfaced them; they are exempted by
    name rather than silenced line by line, so the count stays visible here.
@@ -191,10 +191,10 @@ const TRAINER_ID_SYNTAX = TRAINER_IDS.flatMap(id =>
 );
 
 /* Primitives come from `@shared/ui`, and until now that was prose only: CLAUDE.md and
-   conventions.md both list it as a non-negotiable, but no rule matched a JSX element name,
+   .claude/rules/conventions.md both list it as a non-negotiable, but no rule matched a JSX element name,
    so a raw `<button>` shipped in the flip card and nothing said a word. The import rules
-   next door were made real for the same reason — architecture.md: "The dependency rules
-   are ESLint rules, not conventions."
+   next door were made real for the same reason — .claude/rules/architecture.md: "Dependency
+   rules are ESLint rules."
 
    `JSXOpeningElement > JSXIdentifier` matches only the element's own name: attribute names
    hang off `JSXAttribute`, not off the opening element, so `<Input type="text" />` is fine.
@@ -240,8 +240,177 @@ const CONTENT_IS_DATA_ONLY = {
   rules: restrict(APPLICATION_CODE, UI_BY_FILE, DEEP_RELATIVE)
 };
 
+/* --- Architecture guardrails added for the redesign ---
+ *
+ * Each ban below carries an `enforced` flag. A ban whose flag is false is fully defined but
+ * switched off because the tree still violates it: those flags live together in the
+ * TODO(redesign) block, each with its violation count, so flipping one is a one-word diff.
+ * `LINT_REDESIGN_TODO=1 npx eslint .` (or `npm run lint:todo`) turns every one of them on, so
+ * the remaining work can be listed without editing this file. */
+const REDESIGN_TODO = process.env.LINT_REDESIGN_TODO === '1';
+const live = ban => ban.enforced || REDESIGN_TODO;
+
+/* TODO(redesign): enable. These stay false until the tree is clean; the counts are from the
+   run that introduced them. Flip to true once `npm run lint:todo` reports none for that ban. */
+const ENFORCED = {
+  /* 2 files: features/practice/routes/PracticePage.tsx, shared/components/data-display/Meter.tsx. */
+  componentHooks: false,
+  componentIo: true,
+  componentClock: true,
+  componentStateLibs: true,
+  /* 2 exports in features/auth/index.ts: AccountMenu (read by the app shell) and SyncPanel
+     (read by features/settings). */
+  barrelComponents: false,
+  /* 11 literals: shared/components/Logo.tsx 6, features/auth/components/icons/GoogleIcon.tsx 4
+     (brand colours — likely an eslint-disable with a reason, not a token), shared/ui/alert-dialog.tsx 1. */
+  rawColours: false
+};
+
+/* Components are visual only — enforced, not documented. A component or route file renders;
+   effects, reducers, external stores, storage, the network, timers and the clock belong in a
+   `use*.ts` hook or a pure `lib/` util. Trivial `useState` / `useRef` / `useId` stay legal.
+   The file set is every `.tsx` under a components or routes folder, minus the vendored
+   design system (see COMPONENT_FILES below).
+
+   The import and global bans use rule keys nothing else in this file sets —
+   `@typescript-eslint/no-restricted-imports`, `no-restricted-globals` and
+   `no-restricted-properties` — so they neither replace nor are replaced by the layer entries
+   above. Only `new Date()` needs `no-restricted-syntax`, and that entry restates the
+   trainer-id and raw-control selectors exactly as NO_RAW_HTML_CONTROLS does, because its files
+   are a subset of that entry's. */
+const COMPONENT_FILES = ['src/**/components/**/*.tsx', 'src/**/routes/**/*.tsx'];
+const VENDORED_UI = ['src/shared/ui/**'];
+
+const LOGIC_HOOKS = ['useEffect', 'useLayoutEffect', 'useReducer', 'useSyncExternalStore'];
+const IO_GLOBALS = [
+  'localStorage',
+  'sessionStorage',
+  'indexedDB',
+  'fetch',
+  'XMLHttpRequest',
+  'setInterval',
+  'setTimeout'
+];
+const VISUAL_ONLY =
+  'Components are visual only: move this into a use*.ts hook or a pure lib/ util and call that from the component.';
+
+const COMPONENT_BANS = {
+  componentHooks: {
+    imports: [{ name: 'react', importNames: LOGIC_HOOKS, message: VISUAL_ONLY }],
+    properties: LOGIC_HOOKS.map(property => ({ object: 'React', property, message: VISUAL_ONLY }))
+  },
+  componentIo: {
+    globals: IO_GLOBALS.map(name => ({ name, message: VISUAL_ONLY })),
+    properties: ['window', 'globalThis', 'self'].flatMap(object =>
+      IO_GLOBALS.map(property => ({ object, property, message: VISUAL_ONLY }))
+    )
+  },
+  componentClock: {
+    properties: [{ object: 'Date', property: 'now', message: VISUAL_ONLY }],
+    syntax: [
+      {
+        selector: "NewExpression[callee.name='Date']",
+        message: `${VISUAL_ONLY} Dates go through @shared/lib/format.ts (parseIsoDate, toIsoDate, daysUntil) — new Date('YYYY-MM-DD') is UTC midnight, a day early west of Greenwich.`
+      }
+    ]
+  },
+  componentStateLibs: {
+    imports: [
+      { name: 'zustand', message: VISUAL_ONLY },
+      { name: 'immer', message: VISUAL_ONLY }
+    ],
+    patterns: [{ group: ['@supabase/*', 'zustand/*'], message: VISUAL_ONLY }]
+  }
+};
+
+const liveBans = Object.entries(COMPONENT_BANS)
+  .filter(([key]) => live({ enforced: ENFORCED[key] }))
+  .map(([, ban]) => ban);
+const collect = field => liveBans.flatMap(ban => ban[field] ?? []);
+
+const COMPONENTS_VISUAL_ONLY = {
+  name: 'components-visual-only',
+  files: COMPONENT_FILES,
+  ignores: VENDORED_UI,
+  rules: {
+    '@typescript-eslint/no-restricted-imports': [
+      'error',
+      { paths: collect('imports'), patterns: collect('patterns') }
+    ],
+    'no-restricted-globals': ['error', ...collect('globals')],
+    'no-restricted-properties': ['error', ...collect('properties')],
+    /* Restated: see the block comment above. */
+    ...syntax(TRAINER_ID_SYNTAX, RAW_HTML_CONTROLS, collect('syntax'))
+  }
+};
+
+/* Features never hand each other components. A feature barrel is the one legal door between
+   features, so a component or a route leaving through it is a feature using another
+   feature's UI; shared UI belongs in src/shared/components. Barrels are `.ts`, matched by
+   NO_TRAINER_ID_LITERALS only, so this entry restates the trainer-id selectors. */
+const BARREL_COMPONENT_SELECTORS = ['ExportNamedDeclaration', 'ExportAllDeclaration'].map(node => ({
+  selector: `${node}[source.value=/\\/(components|routes)\\//]`,
+  message:
+    'A feature barrel must not re-export a component or route. If another feature needs this UI it belongs in src/shared/components; route screens are deep-imported by the router only.'
+}));
+
+const FEATURE_BARRELS_EXPORT_NO_UI = {
+  name: 'feature-barrels-export-no-ui',
+  files: ['src/features/*/index.ts'],
+  rules: syntax(
+    TRAINER_ID_SYNTAX,
+    live({ enforced: ENFORCED.barrelComponents }) ? BARREL_COMPONENT_SELECTORS : []
+  )
+};
+
+/* Colour comes from the design tokens in src/styles/index.css, never from a literal. This is a
+   local rule rather than another `no-restricted-syntax` entry so it cannot fall into the
+   replace-not-merge trap with the selectors above: it matches string literals and template
+   chunks holding a Tailwind palette class (`bg-red-500`, `text-white`), an arbitrary colour
+   (`bg-[#fff]`), a colour function (`rgb(`, `hsl(`, `oklch(`) or a bare hex value (`'#fff'`,
+   as in an inline style). `color-mix(…, var(--token) …)` is token-based and allowed. */
+const PALETTE =
+  'slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose';
+const COLOUR_UTILITY =
+  'bg|text|border|ring|fill|stroke|from|via|to|outline|decoration|divide|placeholder|caret|accent|shadow';
+const RAW_COLOUR_PATTERNS = [
+  [new RegExp(`\\b(?:${COLOUR_UTILITY})-(?:${PALETTE})-\\d{2,3}\\b`), 'a Tailwind palette colour class'],
+  [new RegExp(`\\b(?:${COLOUR_UTILITY})-(?:black|white)\\b`), 'a Tailwind black/white colour class'],
+  [/-\[#/, 'a Tailwind arbitrary colour value'],
+  [/\b(?:rgba?|hsla?|oklch|oklab|hwb)\(/, 'a raw colour function'],
+  [/(?:^|[\s:(,])#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b(?![-\w])/, 'a raw hex colour']
+];
+
+const noRawColours = {
+  meta: {
+    type: 'problem',
+    messages: {
+      raw: 'This string holds {{what}}. Use a design token instead (a semantic utility such as bg-primary / text-muted-foreground, or var(--token)); tokens live in src/styles/index.css.'
+    }
+  },
+  create: context => {
+    const check = (node, text) => {
+      if (typeof text !== 'string') return;
+      const hit = RAW_COLOUR_PATTERNS.find(([pattern]) => pattern.test(text));
+      if (hit) context.report({ node, messageId: 'raw', data: { what: hit[1] } });
+    };
+    return {
+      Literal: node => check(node, node.value),
+      TemplateElement: node => check(node, node.value.cooked)
+    };
+  }
+};
+
+const NO_RAW_COLOURS = {
+  name: 'no-raw-colours',
+  files: ['src/**/*.{ts,tsx}'],
+  rules: { 'local/no-raw-colours': live({ enforced: ENFORCED.rawColours }) ? 'error' : 'off' }
+};
+
 /* Component files default-export their component, so imports and lazy() routes are
-   uniform. Defined inline: the rule is three lines and not worth a package. */
+   uniform. Defined inline: the rule is three lines and not worth a package. The raw-colour
+   rule rides in the same local plugin, registered by reference in both entries that use it
+   (flat config refuses two different objects under one plugin name). */
 const componentDefaultExport = {
   rules: {
     'component-default-export': {
@@ -255,7 +424,8 @@ const componentDefaultExport = {
           if (!hasDefault) context.report({ node, messageId: 'missing' });
         }
       })
-    }
+    },
+    'no-raw-colours': noRawColours
   }
 };
 
@@ -301,7 +471,9 @@ export default tseslint.config(
       ...react.configs.flat.recommended.rules,
       ...react.configs.flat['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
-      ...jsxA11y.flatConfigs.recommended.rules,
+      /* strict, not recommended: it adds six stricter interaction/role rules and the tree was
+         already clean against them when it was switched on. */
+      ...jsxA11y.flatConfigs.strict.rules,
 
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
@@ -428,6 +600,10 @@ export default tseslint.config(
   CONTENT_IS_DATA_ONLY,
   NO_TRAINER_ID_LITERALS,
   NO_RAW_HTML_CONTROLS,
+  /* After the two entries above: both restate their selectors, so they must come later. */
+  FEATURE_BARRELS_EXPORT_NO_UI,
+  COMPONENTS_VISUAL_ONLY,
+  { ...NO_RAW_COLOURS, plugins: { local: componentDefaultExport } },
 
   {
     /* One component per file. The vendored shadcn files ship several per file and are

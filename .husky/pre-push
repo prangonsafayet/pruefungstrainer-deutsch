@@ -3,3 +3,6 @@
 npm run typecheck
 npm run validate
 npm run test:unit
+# Architecture, CSS-token, storage-key and hook guards — fast and offline. The network
+# audit is CI's job (`npm run guards`), so a push never depends on the registry being up.
+npm run guards:offline
