@@ -6,11 +6,9 @@ interface PageTitleProps {
 }
 
 const PageTitle = ({ children, lead }: PageTitleProps) => (
-  <div className="mb-6">
-    <h1 className="bg-gradient-to-br from-foreground to-foreground/65 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
-      {children}
-    </h1>
-    {lead ? <p className="mt-2 max-w-3xl text-muted-foreground">{lead}</p> : null}
+  <div className="mb-6 sm:mb-8">
+    <h1 className="text-3xl font-extrabold text-foreground sm:text-4xl">{children}</h1>
+    {lead ? <p className="mt-2 max-w-3xl text-muted-foreground sm:text-lg">{lead}</p> : null}
   </div>
 );
 

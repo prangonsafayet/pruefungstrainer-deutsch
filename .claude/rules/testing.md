@@ -35,47 +35,47 @@ itself, by its full alias path and extension —
 longer names a file mocks nothing and fails silently: after moving a file, grep `tests/` for
 its old path.
 
-| Suite                        | Covers                                                                                                                                             |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `unit/schedule`              | the plan engine, swept across all 86 plannable runways                                                                                             |
-| `unit/distribute`            | the bucketing helpers the engine compresses with                                                                                                   |
-| `unit/format`                | date maths, including DST and leap days                                                                                                            |
-| `unit/signUpOutcome`         | every shape Supabase's sign-up response can take                                                                                                   |
-| `unit/content`               | curriculum and exam-list shape the engine trusts                                                                                                   |
-| `unit/runStore`              | the run in progress, in both storage shapes it has had                                                                                             |
-| `unit/contentChunks`         | the module graph — importing the registry never touches any trainer's content, and resolving one trainer's `loadContent()` never touches another's |
-| `unit/singleLevelScoring`    | the telc B1/B2 marking scheme (Lesen/Sprachbausteine/Hören/Schreiben/Sprechen) against the verified official points                                |
-| `unit/dtzScoring`            | the DTZ marking: level boundaries, all 27 certificate combinations (5 B1, 11 A2), X, item numbering 1–45                                           |
-| `unit/srs`                   | the spaced-repetition engine and the daily streak, both pure functions of an explicit `today`                                                      |
-| `unit/quiz`                  | generated quiz questions are well-formed across every item shape, including its random branches                                                    |
-| `unit/weakness`              | every weakness category resolves to a real cheatsheet, or an explicit empty list, on every trainer                                                 |
-| `unit/errorReport`           | a LanguageTool match maps to the right weakness category and issue type                                                                            |
-| `unit/languageToolClient`    | the dynamic-feedback client — its feature flag and its base URL are independent switches                                                           |
-| `unit/mergeProgress`         | cloud sync's field-by-field merge plus a runtime enumeration of the document's fields, so nothing is silently dropped                              |
-| `unit/weaknessProfile`       | the running record of what a learner gets wrong — additive per session, deterministic to rank                                                      |
-| `unit/dashboardModel`        | dashboard meters, their heading and weak-area detection against each paper's own pass line, not the other paper's                                  |
-| `unit/attemptSummary`        | the pass line a results screen marks its bars at, per paper — the bar primitive used to default it to the A2·B1 paper's                            |
-| `unit/examConditions`        | which exam-condition numbers the copy may call telc's and which it must call the app's own                                                         |
-| `unit/attemptTable`          | one column header per cell in the attempts table, on both papers, and none of them unnamed                                                         |
-| `unit/progressDb`            | a fresh trainer document takes its writing time from its own paper rather than a constant                                                          |
-| `unit/referenceSearch`       | the five reference-table filters, which search a different set of fields per table                                                                 |
-| `unit/siteMeta`              | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt                                                      |
-| `unit/trainerRegistry`       | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                              |
-| `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the offline badge                          |
-| `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                         |
-| `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                        |
-| `render/contentInjection`    | authored HTML is injected, never shown as text                                                                                                     |
-| `render/authVisibility`      | the signed-out warnings appear everywhere                                                                                                          |
-| `render/examDate`            | the date window is enforced, not merely suggested                                                                                                  |
-| `render/examFlow`            | a full attempt on the dual-level paper, including a mid-module reload                                                                              |
-| `render/examFinish`          | the finish path acts on submit, not inside a state updater                                                                                         |
-| `render/examBinding`         | a trainer's paper, papers and store survive a progress write that does not touch the exam                                                          |
-| `render/selfRating`          | the ×3 self-rating maths, against each productive module's own maximum on both papers                                                              |
-| `render/schedulePlan`        | the pages re-shape with the exam date, all fallbacks included                                                                                      |
-| `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                  |
-| `render/dtzExamFlow`         | a full DTZ sitting through the mounted app, X in Lesen Teil 2, ending on a certificate; the missing Sprachbausteine route goes home                |
-| `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                    |
-| `render/appShell`            | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown and scrolls to the top on navigation        |
+| Suite                        | Covers                                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `unit/schedule`              | the plan engine, swept across all 86 plannable runways                                                                                                                                                                   |
+| `unit/distribute`            | the bucketing helpers the engine compresses with                                                                                                                                                                         |
+| `unit/format`                | date maths, including DST and leap days                                                                                                                                                                                  |
+| `unit/signUpOutcome`         | every shape Supabase's sign-up response can take                                                                                                                                                                         |
+| `unit/content`               | curriculum and exam-list shape the engine trusts                                                                                                                                                                         |
+| `unit/runStore`              | the run in progress, in both storage shapes it has had                                                                                                                                                                   |
+| `unit/contentChunks`         | the module graph — importing the registry never touches any trainer's content, and resolving one trainer's `loadContent()` never touches another's                                                                       |
+| `unit/singleLevelScoring`    | the telc B1/B2 marking scheme (Lesen/Sprachbausteine/Hören/Schreiben/Sprechen) against the verified official points                                                                                                      |
+| `unit/dtzScoring`            | the DTZ marking: level boundaries, all 27 certificate combinations (5 B1, 11 A2), X, item numbering 1–45                                                                                                                 |
+| `unit/srs`                   | the spaced-repetition engine and the daily streak, both pure functions of an explicit `today`                                                                                                                            |
+| `unit/quiz`                  | generated quiz questions are well-formed across every item shape, including its random branches                                                                                                                          |
+| `unit/weakness`              | every weakness category resolves to a real cheatsheet, or an explicit empty list, on every trainer                                                                                                                       |
+| `unit/errorReport`           | a LanguageTool match maps to the right weakness category and issue type                                                                                                                                                  |
+| `unit/languageToolClient`    | the dynamic-feedback client — its feature flag and its base URL are independent switches                                                                                                                                 |
+| `unit/mergeProgress`         | cloud sync's field-by-field merge plus a runtime enumeration of the document's fields, so nothing is silently dropped                                                                                                    |
+| `unit/weaknessProfile`       | the running record of what a learner gets wrong — additive per session, deterministic to rank                                                                                                                            |
+| `unit/dashboardModel`        | dashboard meters, their heading and weak-area detection against each paper's own pass line, not the other paper's                                                                                                        |
+| `unit/attemptSummary`        | the pass line a results screen marks its bars at, per paper — the bar primitive used to default it to the A2·B1 paper's                                                                                                  |
+| `unit/examConditions`        | which exam-condition numbers the copy may call telc's and which it must call the app's own                                                                                                                               |
+| `unit/attemptTable`          | one column header per cell in the attempts table, on both papers, and none of them unnamed                                                                                                                               |
+| `unit/progressDb`            | a fresh trainer document takes its writing time from its own paper rather than a constant                                                                                                                                |
+| `unit/referenceSearch`       | the five reference-table filters, which search a different set of fields per table                                                                                                                                       |
+| `unit/siteMeta`              | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt                                                                                                                            |
+| `unit/trainerRegistry`       | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                                                                                                    |
+| `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                     |
+| `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                                                                                               |
+| `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                                                                                              |
+| `render/contentInjection`    | authored HTML is injected, never shown as text                                                                                                                                                                           |
+| `render/authVisibility`      | the signed-out warnings appear everywhere                                                                                                                                                                                |
+| `render/examDate`            | the date window is enforced, not merely suggested                                                                                                                                                                        |
+| `render/examFlow`            | a full attempt on the dual-level paper, including a mid-module reload                                                                                                                                                    |
+| `render/examFinish`          | the finish path acts on submit, not inside a state updater                                                                                                                                                               |
+| `render/examBinding`         | a trainer's paper, papers and store survive a progress write that does not touch the exam                                                                                                                                |
+| `render/selfRating`          | the ×3 self-rating maths, against each productive module's own maximum on both papers                                                                                                                                    |
+| `render/schedulePlan`        | the pages re-shape with the exam date, all fallbacks included                                                                                                                                                            |
+| `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                                                                                        |
+| `render/dtzExamFlow`         | a full DTZ sitting through the mounted app, X in Lesen Teil 2, ending on a certificate; the missing Sprachbausteine route goes home                                                                                      |
+| `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                                                                                          |
+| `render/appShell`            | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown, puts the skip link first, scrolls to the top and moves focus to the new `<h1>` (and the tab title) on navigation |
 
 **No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
 capture; `tests/render/setup.ts` only adds React's act flag and the in-memory `Storage` from
@@ -107,7 +107,9 @@ uses base `no-unused-vars`, which reports parameter names inside function types.
 ## Playwright — `e2e/`
 
 Layout at three breakpoints, dark-mode persistence, real reloads, popover positioning, and
-network-level stubbing (sign-up specs stub Supabase). Chromium plus a Pixel 7 profile.
+network-level stubbing (sign-up specs stub Supabase). Three projects: `chromium` (desktop),
+`mobile` (Pixel 7) and `tablet` (iPad portrait 768×1024 on Chromium, touch). The smoke spec's
+no-overflow check runs at 360, 768, 1024 and 1280.
 `e2e/singleLevelTrainers.spec.js` takes its trainer list from `scripts/trainerRegistry.mjs`
 (every non-root trainer). `e2e/dtzTrainer.spec.js` covers the DTZ end to end and stubs
 `speechSynthesis` with one German voice so Hören takes the real playback path.

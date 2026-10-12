@@ -16,15 +16,15 @@ The `components-visual-only` entry in `eslint.config.js` enforces it for every `
 under a `components/` or `pages/` folder, at any depth (vendored `src/shared/ui` exempt; a
 `use*.tsx` hook beside the component is not a component and is not covered):
 
-| Banned in a component                                                                                                                       | Status                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `localStorage`, `sessionStorage`, `indexedDB`, `fetch`, `XMLHttpRequest`, `setTimeout`, `setInterval` (bare or via `window.`/`globalThis.`) | error                                  |
-| `new Date()`, `Date.now`                                                                                                                    | error                                  |
-| `zustand`, `immer`, `@supabase/*` imports                                                                                                   | error                                  |
-| `useEffect`, `useLayoutEffect`, `useReducer`, `useSyncExternalStore` (and `React.` forms)                                                   | TODO(redesign): 2 files still use them |
+| Banned in a component                                                                                                                       | Status |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `localStorage`, `sessionStorage`, `indexedDB`, `fetch`, `XMLHttpRequest`, `setTimeout`, `setInterval` (bare or via `window.`/`globalThis.`) | error  |
+| `new Date()`, `Date.now`                                                                                                                    | error  |
+| `zustand`, `immer`, `@supabase/*` imports                                                                                                   | error  |
+| `useEffect`, `useLayoutEffect`, `useReducer`, `useSyncExternalStore` (and `React.` forms)                                                   | error  |
 
 The react-hooks ban also refuses `import * as React from 'react'` in those files — import
-names. `npm run lint:todo` lists everything still in the TODO(redesign) block.
+names. `npm run lint:todo` lists anything still in the TODO(redesign) block (empty since pass 5A).
 
 ## One component per file, default-exported, in its own folder
 

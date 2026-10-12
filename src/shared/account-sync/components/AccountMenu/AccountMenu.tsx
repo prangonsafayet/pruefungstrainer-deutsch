@@ -43,8 +43,8 @@ const AccountMenu = () => {
           variant="outline"
           size="sm"
           className={cn(
-            'max-w-56 gap-1.5',
-            !identity.signedIn && 'border-[color:var(--warning)]/60 text-[color:var(--warning-foreground)]'
+            'max-w-56 shrink-0 gap-1.5 rounded-full max-sm:size-9 max-sm:px-0',
+            !identity.signedIn && 'border-warning/70 text-warning-foreground'
           )}
         >
           {identity.signedIn && identity.avatarUrl ? (
@@ -53,9 +53,10 @@ const AccountMenu = () => {
               <AvatarFallback>{identity.displayName.slice(0, 1).toUpperCase()}</AvatarFallback>
             </Avatar>
           ) : (
-            <StatusIcon className="size-3.5" />
+            <StatusIcon className="size-4" aria-hidden />
           )}
-          <span className="truncate">{identity.statusLabel}</span>
+          {/* Phones show the icon alone; the label stays as the button's accessible name. */}
+          <span className="truncate max-sm:sr-only">{identity.statusLabel}</span>
         </Button>
       </DropdownMenuTrigger>
 

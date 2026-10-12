@@ -88,6 +88,14 @@ right area; see `.claude/rules/memory.md`.
 - Filter lifted out of a component changed a heading → list what the old code derived from;
   look in a browser.
 - Token swap narrowed a union and changed a chip → a refactor diff has no unrequested visual change.
+- 2026-10-12: h1 focused on first load in dev → StrictMode double-runs mount effects; detect a
+  navigation by comparing the previous pathname, never with a first-render flag.
+- 2026-10-12: a dark-only `dark:border-border` on Card erased callers' `border-l-primary` → do not
+  colour a primitive's border per theme; dark hairlines live in the `--shadow-*` tokens.
+- 2026-10-12: `.guide-toc a` stayed underlined → `@tailwindcss/typography` outranks
+  `@layer components`; prose overrides are unlayered.
+- 2026-10-12: e2e `getByRole` missed a visible link right after a Radix menu item click → Radix
+  aria-hides the page until the menu's exit ends; wait for `getByRole('menu')` hidden.
 
 ## Exam facts and content
 

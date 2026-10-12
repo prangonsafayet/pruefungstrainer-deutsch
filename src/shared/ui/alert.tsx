@@ -5,18 +5,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@shared/lib/cn.ts';
 
 const alertVariants = cva(
-  'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border border-l-4 px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5',
+  'relative grid w-full grid-cols-[0_1fr] items-start gap-y-1 rounded-xl border-l-4 px-4 py-3.5 text-sm sm:px-5 has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5',
   {
     variants: {
       variant: {
-        default: 'border-l-primary bg-card text-card-foreground',
-        info: 'border-l-primary bg-accent/40 text-foreground',
+        default: 'border-l-primary bg-card text-card-foreground shadow-soft',
+        info: 'border-l-primary bg-accent/60 text-foreground',
         warning:
-          'border-l-[color:var(--warning)] bg-[color-mix(in_oklab,var(--warning)_8%,transparent)] text-foreground [&>svg]:text-[color:var(--warning-foreground)]',
+          'border-l-warning bg-[color-mix(in_oklab,var(--warning)_12%,transparent)] text-foreground [&>svg]:text-warning-foreground',
         success:
-          'border-l-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_8%,transparent)] text-foreground [&>svg]:text-[color:var(--success)]',
+          'border-l-success bg-[color-mix(in_oklab,var(--success)_10%,transparent)] text-foreground [&>svg]:text-success-foreground',
         destructive:
-          'border-l-destructive bg-[color-mix(in_oklab,var(--destructive)_8%,transparent)] text-foreground [&>svg]:text-destructive'
+          'border-l-destructive bg-[color-mix(in_oklab,var(--destructive)_10%,transparent)] text-foreground [&>svg]:text-destructive-on-tint'
       }
     },
     defaultVariants: { variant: 'default' }
@@ -43,7 +43,7 @@ export const AlertTitle = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'d
       <div
         ref={ref}
         data-slot="alert-title"
-        className={cn('col-start-2 min-h-4 font-medium tracking-tight', className)}
+        className={cn('col-start-2 min-h-4 font-heading font-bold', className)}
         {...props}
       />
     );

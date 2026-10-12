@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-
 import { cn } from '@shared/lib/cn.ts';
 import { Progress } from '@shared/ui/progress.tsx';
+
+import { useFillIn } from './useFillIn.tsx';
 
 interface ScoreMeterProps {
   readonly label: string;
@@ -33,15 +33,7 @@ const ScoreMeter = ({
         : 'bg-destructive';
 
   /* Start empty and fill on the next frame so the bar animates in. */
-  const [shown, setShown] = useState(0);
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      setShown(pct);
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-    };
-  }, [pct]);
+  const shown = useFillIn(pct);
 
   return (
     <div className="space-y-1.5">

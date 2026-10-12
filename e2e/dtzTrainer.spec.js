@@ -150,6 +150,21 @@ const submit = async (page, module) => {
 
 const dashboardHeading = page => page.getByRole('heading', { name: /^Dashboard/, level: 1 });
 
+/* Follows a main-nav tab on any band: phones keep the reference tabs (Exam Guide, Settings)
+   behind the tab bar's "More" menu. */
+const followNav = async (page, name) => {
+  const nav = page.getByRole('navigation', { name: 'Main' });
+  const link = nav.getByRole('link', { name });
+  if (await link.isVisible()) {
+    await link.click();
+    return;
+  }
+  await nav.getByRole('button', { name: 'More' }).click();
+  await page.getByRole('menuitem', { name }).click();
+  /* Radix hides the rest of the page from the accessibility tree until the menu has gone. */
+  await expect(page.getByRole('menu')).toBeHidden();
+};
+
 test.beforeEach(async ({ page }) => {
   await stubSpeech(page);
 });
@@ -166,7 +181,6 @@ test.describe('the DTZ dashboard and its routes', () => {
       10
     );
 
-    const nav = page.getByRole('navigation', { name: 'Main' });
     for (const [link, path, heading] of [
       ['Learn', `${BASE}/learn`, /AI-assisted learning/],
       ['Exam Guide', `${BASE}/guide`, /DTZ|Zuwanderer/],
@@ -174,7 +188,7 @@ test.describe('the DTZ dashboard and its routes', () => {
       ['History', `${BASE}/history`, /History/],
       ['Settings', '/settings', /Settings/]
     ]) {
-      await nav.getByRole('link', { name: link }).click();
+      await followNav(page, link);
       await expect(page).toHaveURL(new RegExp(`${path}$`));
       await expect(page.locator('main')).toContainText(heading);
     }

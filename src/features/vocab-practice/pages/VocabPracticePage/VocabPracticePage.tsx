@@ -1,13 +1,9 @@
-import { useEffect, useRef } from 'react';
-
 import { X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 import PageTitle from '@shared/components/layout/PageTitle/PageTitle.tsx';
-import { STUDY_CATEGORIES } from '@shared/config/studyCategories.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
-import { type StudyCategory } from '@shared/types/vocab.ts';
 import { Button } from '@shared/ui/button.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs.tsx';
 
@@ -17,14 +13,12 @@ import VocabCategoryPicker from '@features/vocab-practice/components/session/Voc
 import VocabFlashcardSession from '@features/vocab-practice/components/session/VocabFlashcardSession/VocabFlashcardSession.tsx';
 import VocabQuizSession from '@features/vocab-practice/components/session/VocabQuizSession/VocabQuizSession.tsx';
 
+import { useDeepLinkedQuiz } from './useDeepLinkedQuiz.tsx';
 import { usePractice } from './usePractice.tsx';
 
 interface VocabPracticePageProps {
   readonly trainer: TrainerId;
 }
-
-const isCategory = (value: string | null): value is StudyCategory =>
-  value !== null && (STUDY_CATEGORIES as readonly string[]).includes(value);
 
 /**
  * The practice hub of any trainer: flashcards, quiz drills and the reference tables, all
@@ -36,15 +30,8 @@ const VocabPracticePage = ({ trainer }: VocabPracticePageProps) => {
   const [params] = useSearchParams();
   const { name, short, basePath } = TRAINERS[trainer];
 
-  /* A "drill it" link lands here as ?tab=quiz&category=… and starts the session itself. */
-  const autoStarted = useRef(false);
   const wantedTab = params.get('tab');
-  const wantedCategory = params.get('category');
-  useEffect(() => {
-    if (autoStarted.current || wantedTab !== 'quiz' || !isCategory(wantedCategory)) return;
-    autoStarted.current = true;
-    practice.startQuiz(wantedCategory);
-  }, [wantedTab, wantedCategory, practice]);
+  useDeepLinkedQuiz(practice.startQuiz);
 
   const { session } = practice;
 

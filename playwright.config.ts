@@ -16,7 +16,19 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } }
+    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    /* iPad portrait on Chromium (the iPad presets default to WebKit, which CI does not
+       install): the 640–1023px band, touch and all. */
+    {
+      name: 'tablet',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 768, height: 1024 },
+        deviceScaleFactor: 2,
+        isMobile: true,
+        hasTouch: true
+      }
+    }
   ],
   webServer: {
     command: 'npm run dev -- --port 5173 --strictPort',

@@ -135,7 +135,7 @@ const CurriculumPage = ({ trainer }: CurriculumPageProps) => {
                     <AccordionTrigger className="text-base font-semibold">{sheet.title}</AccordionTrigger>
                     <AccordionContent>
                       <div
-                        className="prose prose-sm prose-stone max-w-none dark:prose-invert"
+                        className="prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ __html: sheet.html }}
                       />
                     </AccordionContent>

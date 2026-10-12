@@ -38,7 +38,9 @@ test.describe('shell', () => {
   });
 
   test('no horizontal overflow at any breakpoint', async ({ page }) => {
-    for (const width of [360, 768, 1280]) {
+    /* One width per band edge that matters: small phone, tablet portrait, tablet landscape /
+       desktop threshold, laptop. */
+    for (const width of [360, 768, 1024, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/');
       const overflow = await page.evaluate(

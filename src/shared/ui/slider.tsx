@@ -31,7 +31,7 @@ export const Slider = forwardRef<
     >
       <SliderPrimitive.Track
         data-slot="slider-track"
-        className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-secondary"
+        className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary"
       >
         <SliderPrimitive.Range data-slot="slider-range" className="absolute h-full bg-primary" />
       </SliderPrimitive.Track>
@@ -39,7 +39,7 @@ export const Slider = forwardRef<
         <SliderPrimitive.Thumb
           key={index}
           data-slot="slider-thumb"
-          className="block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm transition-[color,box-shadow] hover:ring-4 hover:ring-ring/50 focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-ring/50 disabled:pointer-events-none"
+          className="block size-5 shrink-0 rounded-full border-2 border-primary bg-card shadow-soft transition-shadow hover:ring-4 hover:ring-ring/20 focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none"
         />
       ))}
     </SliderPrimitive.Root>

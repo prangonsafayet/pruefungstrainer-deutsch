@@ -91,7 +91,8 @@ Charts get their own `--chart-1..5` in **both** themes (the old palette forgot d
 
 ## Shape, depth, space
 
-- `--radius: 1rem` (cards). Controls `--radius-md` (0.75rem); chips/pills full.
+- `--radius: 1rem` (cards, `rounded-2xl`). Controls `rounded-xl` = `--radius-xl` (0.75rem);
+  chips/pills full.
 - Shadows are warm-tinted and soft, as tokens: `--shadow-soft` (resting card),
   `--shadow-lift` (hover/raised), `--shadow-pop` (menus, dialogs). No default grey shadows.
 - Spacing: 4px base; cards `p-5 sm:p-6`; page gutter 16px mobile / 24px desktop; sections

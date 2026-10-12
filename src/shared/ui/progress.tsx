@@ -21,7 +21,10 @@ export const Progress = forwardRef<ComponentRef<typeof ProgressPrimitive.Root>, 
       >
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
-          className={cn('h-full w-full flex-1 bg-primary transition-all', indicatorClassName)}
+          className={cn(
+            'h-full w-full flex-1 rounded-full bg-primary transition-transform duration-[600ms] ease-out',
+            indicatorClassName
+          )}
           style={{ transform: `translateX(-${String(100 - (value ?? 0))}%)` }}
         />
       </ProgressPrimitive.Root>

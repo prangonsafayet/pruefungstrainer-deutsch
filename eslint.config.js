@@ -232,19 +232,15 @@ const PASCAL_OR_HOOK = `@(${PASCAL}|${HOOK})`;
 const KEBAB_OR_PASCAL = `@(+([a-z])*([a-z0-9])*(-+([a-z0-9]))|${PASCAL})`;
 const live = ban => ban.enforced || REDESIGN_TODO;
 
-/* TODO(redesign): enable. These stay false until the tree is clean; the counts are from the
-   run that introduced them. Flip to true once `npm run lint:todo` reports none for that ban. */
+/* TODO(redesign) block. A ban stays false while the tree still violates it, with its count;
+   flip it to true once `npm run lint:todo` reports none for that ban. All clear since the
+   redesign's pass 5A (GoogleIcon keeps its brand colours under a reasoned disable). */
 const ENFORCED = {
-  /* 2 files: features/vocab-practice/pages/VocabPracticePage/VocabPracticePage.tsx,
-     shared/components/data-display/ScoreMeter/ScoreMeter.tsx. */
-  componentHooks: false,
+  componentHooks: true,
   componentIo: true,
   componentClock: true,
   componentStateLibs: true,
-  /* 11 literals: shared/components/AppLogo/AppLogo.tsx 6,
-     shared/account-sync/components/icons/GoogleIcon/GoogleIcon.tsx 4
-     (brand colours — likely an eslint-disable with a reason, not a token), shared/ui/alert-dialog.tsx 1. */
-  rawColours: false
+  rawColours: true
 };
 
 /* Components are visual only — enforced, not documented. A component or page file renders;

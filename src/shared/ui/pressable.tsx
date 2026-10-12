@@ -19,7 +19,7 @@ export const Pressable = forwardRef<HTMLButtonElement, PressableProps>(
       type={type}
       data-slot="pressable"
       className={cn(
-        'block cursor-pointer text-left outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
+        'block cursor-pointer text-left outline-none focus-visible:ring-[3px] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
         className
       )}
       {...props}

@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TRAINER_ORDER, TRAINERS, trainerHome } from '@shared/config/trainers.ts';
 import { type ActiveTrainer, useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.tsx';
 
-import { click, mount, seedProgress, settle } from './harness.ts';
+import { click, mount, seedProgress, settle, waitFor } from './harness.ts';
 
 /* The shell's hooks: which trainer the header follows, how the switcher moves between them,
    and what every navigation resets. */
@@ -88,6 +88,36 @@ describe('useAppLayout', () => {
     const page = await mount('/');
 
     expect(page.text()).toContain('10 days left');
+    await page.unmount();
+  });
+
+  it('makes the skip link the first focusable element, aimed at main', async () => {
+    const page = await mount('/');
+    const first = page.container.querySelector(
+      'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    expect(first?.textContent).toBe('Skip to content');
+    expect(first?.getAttribute('href')).toBe('#main');
+    expect(page.container.querySelector('main#main')).not.toBeNull();
+    /* Initial load leaves focus alone, so Tab reaches that link first. */
+    expect(document.activeElement?.tagName).not.toBe('H1');
+    await page.unmount();
+  });
+
+  it("moves focus to the new page's heading and names the tab after it", async () => {
+    const page = await mount('/');
+    expect(document.title).toMatch(/^Dashboard.* — telc Deutsch Trainer$/);
+
+    const learn = [...page.container.querySelectorAll('nav[aria-label="Main"] a')].find(link =>
+      link.textContent.includes('Learn')
+    );
+    await click(learn);
+    expect(await waitFor(() => document.activeElement?.tagName === 'H1')).toBe(true);
+
+    const heading = document.activeElement?.textContent ?? '';
+    expect(heading).not.toMatch(/^Dashboard/);
+    expect(document.title).toBe(`${heading.replace(/\s+/g, ' ').trim()} — telc Deutsch Trainer`);
     await page.unmount();
   });
 

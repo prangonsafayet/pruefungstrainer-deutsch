@@ -119,7 +119,7 @@ written twice — move it to `src/shared/components`; otherwise rename so the fi
 | Design-system primitive       | `shared/ui/` (shadcn CLI writes here, flat)      | `button.tsx`                                  |
 | Domain type                   | `shared/types/`                                  | `exam.ts`, `progress.ts`                      |
 | Shared constant               | `shared/config/`                                 | `exam.ts`, `appInfo.ts`                       |
-| App chrome (header, nav, 404) | `features/app-shell/`                            | `components/MainNav/MainNav.tsx`              |
+| App chrome (header, nav, 404) | `features/app-shell/`                            | `components/BottomTabBar/BottomTabBar.tsx`    |
 | Exam or study content         | `content/<id>/`                                  | `a2b1/exams/exam07.ts`                        |
 
 ## Shared domains
@@ -152,8 +152,13 @@ derived on render and **never persisted**; its inputs (`settings.examDate`, `lea
 ## The `app-shell` feature
 
 The chrome around every screen: `components/AppLayout/AppLayout.tsx` (the router's layout
-route, with its own `useAppLayout.tsx`, `useHeaderHeight.tsx` and `syncStatus.ts`), `MainNav`
-(with `navEntries.ts`), `TrainerSwitcher`, `ExamCountdownBadge` (with `useExamCountdown.tsx`
+route: skip link, `header`, `main#main`, footer; with its own `useAppLayout.tsx`,
+`useHeaderHeight.tsx`, `usePageFocus.tsx` — focus to the new page's `<h1>` and
+`document.title` on navigation, never on first load — `examMode.ts` — the runner route is
+distraction-free: no nav, switcher, countdown or account menu — and `syncStatus.ts`),
+`MainNav` (the pill row, ≥ 640px), `BottomTabBar` (phones: ≤ 5 slots, daily tabs first, the
+rest behind a "More" menu), both reading `lib/navEntries.ts`, `TrainerSwitcher`,
+`ExamCountdownBadge` (with `useExamCountdown.tsx`
 over the pure `examCountdown.ts` — tone: passed → warning, 0–14 days → destructive, else
 secondary), `AppFooter`, and `pages/NotFoundPage/NotFoundPage.tsx`. `hooks/useActiveTrainer.tsx`
 (the trainer the URL is in, its home, the switch) is shared by MainNav, TrainerSwitcher and the

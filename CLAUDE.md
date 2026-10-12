@@ -16,7 +16,7 @@ Follow the memory protocol (`.claude/rules/memory.md`) before your first edit.
 npm run dev          # dev server on :5173
 npm test             # typecheck → lint → exam data → vitest (logic + render)
 npm run guards       # architecture, CSS tokens, storage keys, hook tests, prod audit
-npm run test:e2e     # Playwright (Chromium + a mobile profile)
+npm run test:e2e     # Playwright (Chromium desktop, mobile and tablet profiles)
 npm run build        # production build into dist/
 ```
 
