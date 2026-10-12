@@ -1,5 +1,6 @@
-import { MultilineText } from '@shared/components';
 import { type SingleLevelWritingTask } from '@shared/types';
+
+import MultilineText from '../MultilineText.tsx';
 
 interface WritingTaskBriefProps {
   readonly task: SingleLevelWritingTask;

@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.ts';
-import { type DualLevelExam, type SingleLevelExam, type TrainerId } from '@shared/types';
+import { type DtzExam, type DualLevelExam, type SingleLevelExam, type TrainerId } from '@shared/types';
 
+import { DTZ_FORMAT } from '@features/mock-exam/lib/formats/dtz-paper/index.ts';
 import { DUAL_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/dual-level/index.ts';
 import { SINGLE_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/single-level/index.ts';
 import { type ExamBinding } from '@features/mock-exam/types/examBinding.ts';
@@ -23,22 +24,35 @@ export const useExamBinding = (trainer: TrainerId): ExamBinding => {
   const content = useTrainerContent(trainer);
 
   return useMemo(() => {
-    if (slice.format === 'single-level') {
-      return {
-        kind: 'single-level',
-        trainer,
-        format: SINGLE_LEVEL_FORMAT,
-        papers: content.exams as readonly SingleLevelExam[],
-        store: { settings: slice.settings, attempts: slice.attempts, saveAttempt: slice.saveAttempt }
-      };
+    /* Exhaustive without a `default`: a new paper leaves a path that returns nothing, which
+       does not typecheck against `ExamBinding`. (A `never` check would read `slice`, which
+       the deliberately narrow dependency list below leaves out.) */
+    switch (slice.format) {
+      case 'single-level':
+        return {
+          kind: 'single-level',
+          trainer,
+          format: SINGLE_LEVEL_FORMAT,
+          papers: content.exams as readonly SingleLevelExam[],
+          store: { settings: slice.settings, attempts: slice.attempts, saveAttempt: slice.saveAttempt }
+        };
+      case 'dtz-paper':
+        return {
+          kind: 'dtz-paper',
+          trainer,
+          format: DTZ_FORMAT,
+          papers: content.exams as readonly DtzExam[],
+          store: { settings: slice.settings, attempts: slice.attempts, saveAttempt: slice.saveAttempt }
+        };
+      case 'dual-level':
+        return {
+          kind: 'dual-level',
+          trainer,
+          format: DUAL_LEVEL_FORMAT,
+          papers: content.exams as readonly DualLevelExam[],
+          store: { settings: slice.settings, attempts: slice.attempts, saveAttempt: slice.saveAttempt }
+        };
     }
-    return {
-      kind: 'dual-level',
-      trainer,
-      format: DUAL_LEVEL_FORMAT,
-      papers: content.exams as readonly DualLevelExam[],
-      store: { settings: slice.settings, attempts: slice.attempts, saveAttempt: slice.saveAttempt }
-    };
     /* Narrow deliberately: `slice` and `content` are new objects on every progress write,
        so depending on them rebuilt `store` — and re-rendered the runner — whenever an
        unrelated field of the document changed. These five references do not move unless

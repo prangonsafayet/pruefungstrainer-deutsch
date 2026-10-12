@@ -23,6 +23,7 @@ import {
 } from '@features/dashboard/lib/dashboardModel.ts';
 import type { TrainerSlice } from '@features/progress-store';
 import type {
+  DtzAttempt,
   DualLevelAttempt,
   SingleLevelAttempt,
   Settings,
@@ -281,5 +282,77 @@ describe('which modules the A2·B1 paper counts as skills', () => {
     for (const module of EXAM_MODULES) {
       expect(skills.includes(module)).toBe(MODULE_META[module].isSkill);
     }
+  });
+});
+
+/* The DTZ judges each part on its own line — Schreiben 15 of 20, Sprechen 75 of 100 — and
+   Hören and Lesen only through their sum. 14/20 Schreiben is A2, so weak against the B1 line;
+   15/20 is B1. */
+const dtzSlice = (scores: DtzAttempt['scores'], result?: DtzAttempt['result']): TrainerSlice => {
+  const attempt: DtzAttempt = {
+    id: 1,
+    examId: 1,
+    mode: 'full',
+    date: '2026-08-20T10:00:00.000Z',
+    times: {},
+    scores,
+    answers: {},
+    ratings: {},
+    ...(result ? { result } : {})
+  };
+  return {
+    ...base,
+    trainer: 'dtz',
+    format: 'dtz-paper',
+    settings: { ...LEVEL_SETTINGS, playsAllowed: 2 },
+    attempts: [attempt]
+  };
+};
+
+describe('the DTZ dashboard', () => {
+  const schreibenArea = (slice: TrainerSlice) =>
+    buildWeakAreas(slice, EMPTY_BANK, '/dtz').find(area => area.key === 'exam.schreiben');
+
+  it('flags Schreiben at 14/20 below its B1 line, and leaves 15/20 alone', () => {
+    expect(schreibenArea(dtzSlice({ schreiben: 14 }))?.detail).toContain('below the 75% B1 line');
+    expect(schreibenArea(dtzSlice({ schreiben: 15 }))).toBeUndefined();
+  });
+
+  it("calls the Hören line this trainer's target, never official", () => {
+    const area = buildWeakAreas(dtzSlice({ hoeren: 10 }), EMPTY_BANK, '/dtz').find(
+      entry => entry.key === 'exam.hoeren'
+    );
+    expect(area?.detail).toContain('B1 pace this trainer targets');
+  });
+
+  it('meters each of the four parts against its own line', () => {
+    const meters = buildMeters(dtzSlice({ hoeren: 15, lesen: 20, schreiben: 15, sprechen: 75 }));
+    expect(meters.map(meter => [meter.key, meter.of])).toEqual([
+      ['hoeren', 20],
+      ['lesen', 25],
+      ['schreiben', 20],
+      ['sprechen', 100]
+    ]);
+    expect(meters[2]?.thresholdPercent).toBe(75);
+    expect(meters[0]?.thresholdPercent).toBeCloseTo((33 / 45) * 100);
+    expect(metersHeading(dtzSlice({}))).toBe('Part results (best scores)');
+  });
+
+  it('shows the best Hören + Lesen of 45 as its best-score tile', () => {
+    const tile = buildTiles(dtzSlice({ hoeren: 15, lesen: 20 }, 'Zertifikat A2'), null, '2026-08-20').find(
+      entry => entry.kind === 'best'
+    );
+    expect(tile).toMatchObject({ label: 'Best Hören + Lesen', value: 35, suffix: '/45' });
+  });
+
+  it('charts Hören + Lesen out of 45 with the B1 and A2 lines, coloured by certificate', () => {
+    const slice = dtzSlice({ hoeren: 15, lesen: 20, schreiben: 15, sprechen: 75 }, 'Zertifikat B1');
+    if (slice.format !== 'dtz-paper') throw new Error('expected a DTZ slice');
+    const chart = buildScoreChart(slice);
+    expect(chart.max).toBe(45);
+    expect(chart.gridlines.map(line => line.value)).toEqual([45, 33, 20]);
+    expect(chart.bars).toEqual([
+      expect.objectContaining({ total: 35, result: 'Zertifikat B1', color: 'var(--success)' })
+    ]);
   });
 });

@@ -6,6 +6,8 @@
  */
 
 import {
+  type DtzAttempt,
+  type DtzExam,
   type DualLevelAttempt,
   type DualLevelExam,
   type LevelTrainerSettings,
@@ -26,6 +28,7 @@ export interface ExamStore<TSettings, TAttempt> {
 
 export type DualLevelFormat = ExamFormat<DualLevelExam, Settings, DualLevelAttempt>;
 export type SingleLevelFormat = ExamFormat<SingleLevelExam, LevelTrainerSettings, SingleLevelAttempt>;
+export type DtzFormat = ExamFormat<DtzExam, LevelTrainerSettings, DtzAttempt>;
 
 export type ExamBinding =
   | {
@@ -42,4 +45,11 @@ export type ExamBinding =
       readonly format: SingleLevelFormat;
       readonly papers: readonly SingleLevelExam[];
       readonly store: ExamStore<LevelTrainerSettings, SingleLevelAttempt>;
+    }
+  | {
+      readonly kind: 'dtz-paper';
+      readonly trainer: TrainerId;
+      readonly format: DtzFormat;
+      readonly papers: readonly DtzExam[];
+      readonly store: ExamStore<LevelTrainerSettings, DtzAttempt>;
     };

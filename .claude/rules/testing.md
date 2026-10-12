@@ -36,6 +36,7 @@ npm run test:watch   # vitest in watch mode
 | `unit/runStore`              | the run in progress, in both storage shapes it has had                                                                                             |
 | `unit/contentChunks`         | the module graph — importing the registry never touches any trainer's content, and resolving one trainer's `loadContent()` never touches another's |
 | `unit/singleLevelScoring`    | the telc B1/B2 marking scheme (Lesen/Sprachbausteine/Hören/Schreiben/Sprechen) against the verified official points                                |
+| `unit/dtzScoring`            | the DTZ marking: level boundaries, all 27 certificate combinations (5 B1, 11 A2), X, item numbering 1–45                                           |
 | `unit/srs`                   | the spaced-repetition engine and the daily streak, both pure functions of an explicit `today`                                                      |
 | `unit/quiz`                  | generated quiz questions are well-formed across every item shape, including its random branches                                                    |
 | `unit/weakness`              | every weakness category resolves to a real cheatsheet, or an explicit empty list, on every trainer                                                 |
@@ -62,6 +63,7 @@ npm run test:watch   # vitest in watch mode
 | `render/selfRating`          | the ×3 self-rating maths, against each productive module's own maximum on both papers                                                              |
 | `render/schedulePlan`        | the pages re-shape with the exam date, all fallbacks included                                                                                      |
 | `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                  |
+| `render/dtzExamFlow`         | a full DTZ sitting through the mounted app, X in Lesen Teil 2, ending on a certificate; the missing Sprachbausteine route goes home                |
 | `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                    |
 
 **No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
@@ -95,7 +97,9 @@ uses base `no-unused-vars`, which reports parameter names inside function types.
 
 Layout at three breakpoints, dark-mode persistence, real reloads, popover positioning, and
 network-level stubbing (sign-up specs stub Supabase). Chromium plus a Pixel 7 profile.
-`e2e/singleLevelTrainers.spec.js` takes its trainer list from `scripts/trainerRegistry.mjs`.
+`e2e/singleLevelTrainers.spec.js` takes its trainer list from `scripts/trainerRegistry.mjs`
+(every non-root trainer). `e2e/dtzTrainer.spec.js` covers the DTZ end to end and stubs
+`speechSynthesis` with one German voice so Hören takes the real playback path.
 `e2e/contrast.spec.js` and `e2e/reducedMotion.spec.js`: see the ui-design-system rule.
 react-day-picker marks month navigation with `aria-disabled` but day cells with both
 `data-disabled` and a real `disabled` — assert the right one. For interactive checks use the

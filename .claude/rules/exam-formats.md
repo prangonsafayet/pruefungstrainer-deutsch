@@ -13,8 +13,8 @@ paths:
 # Exam formats
 
 `features/mock-exam` runs every mock exam of every trainer through a **format descriptor** in
-`features/mock-exam/lib/formats/`: `DUAL_LEVEL_FORMAT` (A2·B1) and `SINGLE_LEVEL_FORMAT` (telc B1 and
-B2), with a third for the **DTZ** paper being added. A descriptor owns its module list and
+`features/mock-exam/lib/formats/`: `DUAL_LEVEL_FORMAT` (A2·B1), `SINGLE_LEVEL_FORMAT` (telc B1 and
+B2) and `DTZ_FORMAT` (`dtz-paper/`, the DTZ). A descriptor owns its module list and
 timing, briefing copy, marking rules, self-rating scale and module renderers
 (`components/modules/<format>/`). Only a format's own `lib/formats/<format>/index.ts` may import
 its renderers (`exam-modules-through-format`); each renderer carries its paper in its name
@@ -34,7 +34,9 @@ Format facts come only from `docs/dtz-format.local.md` (gitignored, cites the g.
 Übungssatz page by page). Its **Not stated** list — plays per Hören text, per-Teil minutes, a
 Schreiben word count, Sprechen preparation time — must never be presented as official. The data
 contract is the `DtzExam` type in `src/shared/types/dtzExam.ts`; read it as the source of truth.
-DTZ has no Sprachbausteine module and places a learner at A2 or B1 from three Teilergebnisse.
+DTZ has no Sprachbausteine module and places a learner at A2 or B1 from three Teilergebnisse
+(`dtzCertificate` in `dtz-paper/scoring.ts`); `moduleComponents` is partial for that reason, and
+a run naming a module the paper lacks goes home. Its runs live under `telcTrainerDtzRunV1`.
 
 ## Numbers and provenance
 

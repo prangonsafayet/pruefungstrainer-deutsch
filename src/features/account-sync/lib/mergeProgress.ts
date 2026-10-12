@@ -1,18 +1,16 @@
 import {
   type ActivityMap,
-  type DualLevelAttempt,
   type LearnDoneMap,
-  type LevelTrainerDoc,
   type ProgressDatabase,
-  type SingleLevelAttempt,
   type SrsMap,
+  type TrainerDoc,
   type WeaknessByTrainer,
   type WeaknessEntry,
   type WeaknessProfile
 } from '@shared/types';
 
 /** Attempts are immutable once written, so a union by id is always right. */
-const unionAttempts = <T extends DualLevelAttempt | SingleLevelAttempt>(
+const unionAttempts = <T extends { readonly id: number }>(
   remote: readonly T[],
   local: readonly T[]
 ): readonly T[] => {
@@ -125,11 +123,11 @@ const mergeWeakness = (
   return merged;
 };
 
-const mergeTrainerDoc = (
-  remote: LevelTrainerDoc | undefined,
-  local: LevelTrainerDoc | undefined,
+const mergeTrainerDoc = <TAttempt extends { readonly id: number }>(
+  remote: TrainerDoc<TAttempt> | undefined,
+  local: TrainerDoc<TAttempt> | undefined,
   localIsNewer: boolean
-): LevelTrainerDoc | undefined => {
+): TrainerDoc<TAttempt> | undefined => {
   if (!remote) return local;
   if (!local) return remote;
   return {
@@ -182,6 +180,7 @@ export const mergeProgress = (
      nobody has opened must be an absent key, not an explicit undefined. */
   const b1 = mergeTrainerDoc(remote.b1, local.b1, localIsNewer);
   const b2 = mergeTrainerDoc(remote.b2, local.b2, localIsNewer);
+  const dtz = mergeTrainerDoc(remote.dtz, local.dtz, localIsNewer);
 
   return {
     /* Fields this build does not know about are carried over from whichever side is newer,
@@ -201,6 +200,7 @@ export const mergeProgress = (
     weakness: mergeWeakness(remote.weakness, local.weakness),
     ...(b1 ? { b1 } : {}),
     ...(b2 ? { b2 } : {}),
+    ...(dtz ? { dtz } : {}),
     ...(updatedAt ? { _updatedAt: updatedAt } : {})
   };
 };

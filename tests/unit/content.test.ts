@@ -12,10 +12,10 @@ import { type SingleLevelTrainerId, type TrainerId } from '@shared/types';
 const TRAINERS = Object.values(TRAINER_CONTENT);
 
 /** How many Modelltests each trainer ships. A drop here is missing content, not a refactor. */
-const EXPECTED_EXAMS: Readonly<Record<TrainerId, number>> = { a2b1: 15, b1: 10, b2: 10 };
+const EXPECTED_EXAMS: Readonly<Record<TrainerId, number>> = { a2b1: 15, b1: 10, b2: 10, dtz: 10 };
 
 it('covers every registered trainer', () => {
-  expect(TRAINERS.map(content => content.trainer)).toEqual(['a2b1', 'b1', 'b2']);
+  expect(TRAINERS.map(content => content.trainer)).toEqual(['a2b1', 'b1', 'b2', 'dtz']);
 });
 
 for (const content of TRAINERS) {

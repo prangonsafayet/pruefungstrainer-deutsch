@@ -20,10 +20,11 @@ const SCREENS = [
   /* The practice hub serves every trainer, and every trainer has an authored bank, so it
      must render its reference tables rather than a missing route. */
   { path: '/practice', expect: /Reference tables/ },
-  /* The exam screens are shared by both papers, so a regression in the runner has to fail
-     on one of these whichever trainer it belongs to. */
-  { path: '/exam/1/lesen', expect: /Leseverstehen/ },
-  { path: '/exam/1/full', expect: /Leseverstehen/ }
+  /* The exam screens are shared by every paper, so a regression in the runner has to fail
+     on one of these whichever trainer it belongs to. Matched on the briefing's own chrome,
+     since the papers name their modules differently and the DTZ opens with Hören. */
+  { path: '/exam/1/lesen', expect: /Start Lesen/ },
+  { path: '/exam/1/full', expect: /Module 1 of \d/ }
 ] as const;
 
 const ROUTES = [

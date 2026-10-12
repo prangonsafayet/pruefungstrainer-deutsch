@@ -1,8 +1,8 @@
 /**
  * What it means to sit an exam, in the abstract.
  *
- * The app hosts two papers: the telc Deutsch A2·B1 Modelltest and the telc Deutsch B1/B2
- * Modelltest. They differ in their Teile, their item shapes, their timing and their
+ * The app hosts three papers: the telc Deutsch A2·B1 Modelltest, the telc Deutsch B1/B2
+ * Modelltest and the DTZ (Deutsch-Test für Zuwanderer). They differ in their Teile, their item shapes, their timing and their
  * marking — but not in what running one means: a queue of modules against a clock, answers
  * keyed by item, a self-rating for the two productive modules, and a stored attempt at the
  * end. Everything paper-specific is reached through this descriptor, which is why the
@@ -47,6 +47,11 @@ export interface RatingSpec {
   readonly criteria: readonly (readonly [string, string])[];
   /** Points per criterion point. */
   readonly scale: number;
+  /**
+   * Points per criterion point, criterion by criterion, where the criteria weigh unequally
+   * (the DTZ oral scales run to 5, 10, 15 or 20). Overrides `scale` when present.
+   */
+  readonly stepPoints?: readonly number[];
   /** The score a perfect self-rating produces. */
   readonly max: number;
 }
@@ -83,6 +88,9 @@ export interface ScoreBar {
   readonly label: string;
   readonly value: number;
   readonly of: number;
+  /** This bar's own line, where a paper's parts are judged at different shares. */
+  readonly thresholdPercent?: number;
+  readonly thresholdLabel?: string;
 }
 
 export interface ModuleTimeEntry {
@@ -94,8 +102,8 @@ export interface ModuleTimeEntry {
 export interface AttemptGrade {
   readonly label: string;
   readonly tone: 'success' | 'warning' | 'destructive';
-  readonly total: number;
-  readonly of: number;
+  /** The summed score, or null for a paper whose verdict is not a total (the DTZ). */
+  readonly points: { readonly total: number; readonly of: number } | null;
   /** The pass rule, and any part scores it is judged on. */
   readonly notes: readonly string[];
 }
@@ -173,6 +181,9 @@ export interface ExamFormat<
   readonly speakingHint: string;
   /** Why the review screen cannot show the oral module item by item. */
   readonly speakingReviewNote: string;
-  readonly moduleComponents: Readonly<Record<ExamModule, ComponentType<ExamModuleProps<TExam, TSettings>>>>;
+  /** Partial: a paper without a module (the DTZ has no Sprachbausteine) has no renderer for it. */
+  readonly moduleComponents: Readonly<
+    Partial<Record<ExamModule, ComponentType<ExamModuleProps<TExam, TSettings>>>>
+  >;
   readonly scoring: ExamScoring<TExam, TAttempt>;
 }

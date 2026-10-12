@@ -1,4 +1,5 @@
 import {
+  type DtzExam,
   type DualLevelExam,
   type ExamModuleProps,
   type LevelTrainerSettings,
@@ -11,3 +12,6 @@ export type A2b1ModuleProps = ExamModuleProps<DualLevelExam, Settings>;
 
 /** What a single-level (B1/B2) module renderer receives. */
 export type SingleLevelModuleProps = ExamModuleProps<SingleLevelExam, LevelTrainerSettings>;
+
+/** What a DTZ module renderer receives. */
+export type DtzModuleProps = ExamModuleProps<DtzExam, LevelTrainerSettings>;

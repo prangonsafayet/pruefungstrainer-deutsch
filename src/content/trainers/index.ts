@@ -4,18 +4,19 @@
  *
  * This barrel is deliberately eager — `validate.cjs` and the content-shape tests read every
  * trainer's content directly through it at build and test time — and deliberately the ONLY
- * eager route to it: importing so much as one named export here pulls in all three
- * trainers' exams, curricula, guides and vocabulary banks, because module evaluation runs
+ * eager route to it: importing so much as one named export here pulls in every
+ * trainer's exams, curricula, guides and vocabulary banks, because module evaluation runs
  * every import in the file regardless of which export a caller wanted. Application code
  * reaches a trainer's content through `TRAINERS[trainer].loadContent()` in
  * `@shared/config/trainers.ts` (or the `useTrainerContent` hook) instead, which is what
  * lets the bundler key a chunk per trainer. The exam format layer's small, trainer-specific
  * facts (a paper's timings, `findPaper`) are sourced directly from their own files for the
- * same reason — see each format's own `index.ts` under `features/exam/lib/formats` and
+ * same reason — see each format's own `index.ts` under `features/mock-exam/lib/formats` and
  * `@shared/lib/examLookup.ts`.
  */
 
 import {
+  type DtzExam,
   type DualLevelExam,
   type SingleLevelExam,
   type SingleLevelTrainerId,
@@ -26,12 +27,14 @@ import {
 import { A2B1_CONTENT } from './a2b1/index.ts';
 import { B1_CONTENT } from './b1/index.ts';
 import { B2_CONTENT } from './b2/index.ts';
+import { DTZ_CONTENT } from './dtz/index.ts';
 
 /** Everything every trainer studies from, keyed by trainer. */
 export const TRAINER_CONTENT: Readonly<Record<TrainerId, TrainerContent>> = {
   a2b1: A2B1_CONTENT,
   b1: B1_CONTENT,
-  b2: B2_CONTENT
+  b2: B2_CONTENT,
+  dtz: DTZ_CONTENT
 };
 
 /** The dual-level paper's exams, named by format rather than by trainer — test-only. */
@@ -42,3 +45,6 @@ export const SINGLE_LEVEL_EXAMS: Readonly<Record<SingleLevelTrainerId, readonly 
   b1: B1_CONTENT.exams,
   b2: B2_CONTENT.exams
 };
+
+/** The DTZ paper's exams, named by format — test-only. */
+export const DTZ_PAPER_EXAMS: readonly DtzExam[] = DTZ_CONTENT.exams;

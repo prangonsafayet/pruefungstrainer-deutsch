@@ -2,7 +2,7 @@
  * The trainer registry: one descriptor per trainer, and the only place a per-trainer fact
  * is allowed to live.
  *
- * The three trainers are peers, and a fourth that sets one of the two existing papers — telc
+ * The trainers are peers, and another one that sets one of the existing papers — telc
  * Deutsch B2 Beruf, say — costs a content folder under `src/content/trainers/`, one entry
  * here, and a row in the type-level plumbing that keeps this registry exhaustive and the
  * persisted document typed: `TrainerId`, `SingleLevelTrainerId` if it sets that paper, and a
@@ -18,15 +18,17 @@
  * out of this file.
  *
  * A trainer that sets a *new* paper costs much more: another `ExamFormatId`, a whole
- * `features/mock-exam/lib/formats/<new>/`, five module renderers, a `TrainerSlice` variant, an
- * attempt type and seven format-keyed records in `@shared/config/examConditions.ts`.
+ * `features/mock-exam/lib/formats/<new>/`, its module renderers, a `TrainerSlice` variant, an
+ * attempt type and eight format-keyed records in `@shared/config/examConditions.ts`.
  */
 
 import { A2B1_PAPER } from '@content/trainers/a2b1/paper.ts';
 import { B1_PAPER } from '@content/trainers/b1/paper.ts';
 import { B2_PAPER } from '@content/trainers/b2/paper.ts';
+import { DTZ_PAPER } from '@content/trainers/dtz/paper.ts';
 
 import {
+  type DtzDocKey,
   type SingleLevelTrainerId,
   type TrainerContent,
   type TrainerContentLoader,
@@ -51,7 +53,8 @@ import { SPRINT_LEARN_DAYS } from './schedule.ts';
 const CONTENT_LOADERS: Readonly<Record<TrainerId, TrainerContentLoader>> = {
   a2b1: () => import('@content/trainers/a2b1/index.ts').then(m => m.A2B1_CONTENT),
   b1: () => import('@content/trainers/b1/index.ts').then(m => m.B1_CONTENT),
-  b2: () => import('@content/trainers/b2/index.ts').then(m => m.B2_CONTENT)
+  b2: () => import('@content/trainers/b2/index.ts').then(m => m.B2_CONTENT),
+  dtz: () => import('@content/trainers/dtz/index.ts').then(m => m.DTZ_CONTENT)
 };
 
 /** User-facing app name. UI-level only — repo, package and storage keys keep theirs. */
@@ -125,10 +128,15 @@ export type TrainerInfo = TrainerInfoBase &
         /** Its own slice of the document, keyed by its id. */
         readonly docKey: TrainerDocKey;
       }
+    | {
+        readonly format: 'dtz-paper';
+        /** Its own slice of the document, holding DTZ attempts only. */
+        readonly docKey: DtzDocKey;
+      }
   );
 
 /** The trainers, in the order they are offered. */
-export const TRAINER_ORDER: readonly TrainerId[] = ['a2b1', 'b1', 'b2'];
+export const TRAINER_ORDER: readonly TrainerId[] = ['a2b1', 'b1', 'b2', 'dtz'];
 
 export const TRAINERS: Readonly<Record<TrainerId, TrainerInfo>> = {
   a2b1: {
@@ -207,6 +215,29 @@ export const TRAINERS: Readonly<Record<TrainerId, TrainerInfo>> = {
       prepositions: ['genitiv'],
       vocabulary: [],
       writing: ['brief']
+    }
+  },
+  dtz: {
+    id: 'dtz',
+    name: 'Deutsch-Test für Zuwanderer',
+    short: 'DTZ',
+    basePath: '/dtz',
+    accent: 'var(--success)',
+    format: 'dtz-paper',
+    tagline: 'A2–B1 · Zertifikat A2 oder B1',
+    docKey: 'dtz',
+    paper: DTZ_PAPER,
+    hasGuide: true,
+    loadContent: CONTENT_LOADERS.dtz,
+    sprintLearnDays: SPRINT_LEARN_DAYS,
+    weaknessCheatsheets: {
+      /* 'kasus' is titled 'Kasus & Präpositionen', so it serves both topics. */
+      cases: ['kasus'],
+      verbForms: ['verben'],
+      connectors: ['konnektoren'],
+      prepositions: ['kasus'],
+      vocabulary: ['alltag'],
+      writing: ['schreiben']
     }
   }
 };

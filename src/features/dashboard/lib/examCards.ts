@@ -1,13 +1,22 @@
+import { DTZ_MODULE_META, DTZ_MODULES, DTZ_PART_LINES } from '@shared/config/dtzExam.ts';
 import { EXAM_MODULES, FULL_EXAM_MAX, MODULE_META } from '@shared/config/exam.ts';
+import { unreachableFormat } from '@shared/config/examConditions.ts';
 import {
   SINGLE_LEVEL_MODULE_META,
   SINGLE_LEVEL_MODULES,
   SINGLE_LEVEL_TOTAL_MAX
 } from '@shared/config/singleLevelExam.ts';
 import { type TrainerInfo } from '@shared/config/trainers.ts';
-import { difficultyTone, gradeTone } from '@shared/lib/examBadges.ts';
+import { dtzHoerenLesen } from '@shared/lib/dtzScores.ts';
+import { difficultyTone, dtzResultTone, gradeTone } from '@shared/lib/examBadges.ts';
 import { moduleMinutes } from '@shared/lib/paper.ts';
-import { type DualLevelExam, type ExamDifficulty, type ExamPaper, type SingleLevelExam } from '@shared/types';
+import {
+  type DtzExam,
+  type DualLevelExam,
+  type ExamDifficulty,
+  type ExamPaper,
+  type SingleLevelExam
+} from '@shared/types';
 
 import { type TrainerSlice } from '@features/progress-store';
 
@@ -45,57 +54,94 @@ export const buildExamCards = (
   exams: readonly ExamPaper[],
   scheduleLabel: (examId: number) => string | null
 ): readonly ExamCardModel[] => {
-  if (slice.format === 'single-level') {
-    const modules: readonly ExamModuleChoice[] = SINGLE_LEVEL_MODULES.map(module => ({
-      mode: module,
-      label: `${SINGLE_LEVEL_MODULE_META[module].short} (${String(moduleMinutes(trainer.paper, module, slice.settings))} min)`
-    }));
+  switch (slice.format) {
+    case 'dtz-paper': {
+      const modules: readonly ExamModuleChoice[] = DTZ_MODULES.map(module => ({
+        mode: module,
+        label: `${DTZ_MODULE_META[module].short} (${String(moduleMinutes(trainer.paper, module, slice.settings))} min)`
+      }));
 
-    return (exams as readonly SingleLevelExam[]).map<ExamCardModel>(exam => {
-      const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
-      const best = bestOf(attempts.map(attempt => attempt.total));
-      const lastResult = attempts.at(-1)?.result ?? null;
-      return {
-        id: exam.id,
-        title: exam.title,
-        theme: exam.theme,
-        accent: trainer.accent,
-        badge: trainer.short,
-        badgeTone: 'secondary',
-        bestText: best === null ? null : `${String(best)}/${String(SINGLE_LEVEL_TOTAL_MAX)}`,
-        resultLabel: best === null ? null : lastResult,
-        resultTone: lastResult === 'Bestanden' ? 'success' : 'destructive',
-        attemptCount: attempts.length,
-        attempted: attempts.length > 0,
-        modules,
-        scheduleLabel: scheduleLabel(exam.id)
-      };
-    });
+      /* The DTZ has no total: a card shows its best Hören + Lesen of 45 and its last verdict. */
+      return (exams as readonly DtzExam[]).map<ExamCardModel>(exam => {
+        const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
+        const full = attempts.filter(attempt => attempt.mode === 'full');
+        const best = bestOf(full.map(attempt => dtzHoerenLesen(attempt.scores) ?? undefined));
+        const lastResult = full.at(-1)?.result ?? null;
+        return {
+          id: exam.id,
+          title: exam.title,
+          theme: exam.theme,
+          accent: trainer.accent,
+          badge: trainer.short,
+          badgeTone: 'secondary',
+          bestText: best === null ? null : `${String(best)}/${String(DTZ_PART_LINES.hoerenLesen.max)}`,
+          resultLabel: lastResult,
+          resultTone: lastResult === null ? null : dtzResultTone(lastResult),
+          attemptCount: attempts.length,
+          attempted: attempts.length > 0,
+          modules,
+          scheduleLabel: scheduleLabel(exam.id)
+        };
+      });
+    }
+
+    case 'single-level': {
+      const modules: readonly ExamModuleChoice[] = SINGLE_LEVEL_MODULES.map(module => ({
+        mode: module,
+        label: `${SINGLE_LEVEL_MODULE_META[module].short} (${String(moduleMinutes(trainer.paper, module, slice.settings))} min)`
+      }));
+
+      return (exams as readonly SingleLevelExam[]).map<ExamCardModel>(exam => {
+        const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
+        const best = bestOf(attempts.map(attempt => attempt.total));
+        const lastResult = attempts.at(-1)?.result ?? null;
+        return {
+          id: exam.id,
+          title: exam.title,
+          theme: exam.theme,
+          accent: trainer.accent,
+          badge: trainer.short,
+          badgeTone: 'secondary',
+          bestText: best === null ? null : `${String(best)}/${String(SINGLE_LEVEL_TOTAL_MAX)}`,
+          resultLabel: best === null ? null : lastResult,
+          resultTone: lastResult === 'Bestanden' ? 'success' : 'destructive',
+          attemptCount: attempts.length,
+          attempted: attempts.length > 0,
+          modules,
+          scheduleLabel: scheduleLabel(exam.id)
+        };
+      });
+    }
+
+    case 'dual-level': {
+      const modules: readonly ExamModuleChoice[] = EXAM_MODULES.map(module => ({
+        mode: module,
+        label: `${MODULE_META[module].short} (${String(moduleMinutes(trainer.paper, module, slice.settings))} min)`
+      }));
+
+      return (exams as readonly DualLevelExam[]).map<ExamCardModel>(exam => {
+        const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
+        const full = attempts.filter(attempt => attempt.mode === 'full');
+        const best =
+          full.length > 0 ? full.reduce((a, b) => ((b.total ?? 0) > (a.total ?? 0) ? b : a)) : null;
+        return {
+          id: exam.id,
+          title: exam.title,
+          theme: exam.theme,
+          accent: DIFFICULTY_ACCENTS[exam.difficulty],
+          badge: exam.level,
+          badgeTone: difficultyTone(exam.difficulty),
+          bestText: best === null ? null : `${String(best.total ?? 0)}/${String(FULL_EXAM_MAX)}`,
+          resultLabel: best?.result ?? null,
+          resultTone: best === null ? null : gradeTone(best.result),
+          attemptCount: attempts.length,
+          attempted: attempts.length > 0,
+          modules,
+          scheduleLabel: scheduleLabel(exam.id)
+        };
+      });
+    }
+    default:
+      return unreachableFormat(slice);
   }
-
-  const modules: readonly ExamModuleChoice[] = EXAM_MODULES.map(module => ({
-    mode: module,
-    label: `${MODULE_META[module].short} (${String(moduleMinutes(trainer.paper, module, slice.settings))} min)`
-  }));
-
-  return (exams as readonly DualLevelExam[]).map<ExamCardModel>(exam => {
-    const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
-    const full = attempts.filter(attempt => attempt.mode === 'full');
-    const best = full.length > 0 ? full.reduce((a, b) => ((b.total ?? 0) > (a.total ?? 0) ? b : a)) : null;
-    return {
-      id: exam.id,
-      title: exam.title,
-      theme: exam.theme,
-      accent: DIFFICULTY_ACCENTS[exam.difficulty],
-      badge: exam.level,
-      badgeTone: difficultyTone(exam.difficulty),
-      bestText: best === null ? null : `${String(best.total ?? 0)}/${String(FULL_EXAM_MAX)}`,
-      resultLabel: best?.result ?? null,
-      resultTone: best === null ? null : gradeTone(best.result),
-      attemptCount: attempts.length,
-      attempted: attempts.length > 0,
-      modules,
-      scheduleLabel: scheduleLabel(exam.id)
-    };
-  });
 };

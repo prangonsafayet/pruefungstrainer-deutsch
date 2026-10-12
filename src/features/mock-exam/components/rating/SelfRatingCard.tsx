@@ -50,8 +50,10 @@ const SelfRatingCard = <
           {format.moduleShort(module)} — self-scoring (max {max})
         </h2>
         <p className="mt-1 text-muted-foreground">
-          Compare honestly with the sample, then move the sliders. 0 = not at all · 5 = fully. Score = sum ×{' '}
-          {format.rating[module].scale}.
+          Compare honestly with the sample, then move the sliders. 0 = not at all · 5 = fully.{' '}
+          {format.rating[module].stepPoints
+            ? 'Each criterion weighs its own points.'
+            : `Score = sum × ${String(format.rating[module].scale)}.`}
         </p>
       </div>
 

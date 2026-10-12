@@ -1,5 +1,6 @@
 /** What a trainer is: the content it studies from and the document it persists. */
 
+import { type DtzAttempt, type DtzExam } from './dtzExam.ts';
 import { type ExamModule, type ExamPaper } from './exam.ts';
 import { type LearnPlan } from './learn.ts';
 import { type ActivityMap, type LearnDoneMap } from './progress.ts';
@@ -7,13 +8,15 @@ import { type SingleLevelAttempt, type SingleLevelExam } from './singleLevelExam
 import { type SrsMap, type VocabBank } from './vocab.ts';
 
 /** One of the trainers the app hosts. Every entry has a descriptor in `TRAINERS`. */
-export type TrainerId = 'a2b1' | 'b1' | 'b2';
+export type TrainerId = 'a2b1' | 'b1' | 'b2' | 'dtz';
 
 /**
- * Which paper a trainer sets. Two exist — the dual-level A2·B1 paper and the single-level
- * paper the B1 and B2 trainers share — and a trainer names one rather than owning a copy.
+ * Which paper a trainer sets. Three exist — the dual-level A2·B1 paper, the single-level
+ * paper the B1 and B2 trainers share, and the DTZ paper — and a trainer names one rather
+ * than owning a copy. The DTZ paper's id differs from its trainer's id on purpose: the
+ * trainer-id lint ban would otherwise refuse the format id everywhere outside the registry.
  */
-export type ExamFormatId = 'dual-level' | 'single-level';
+export type ExamFormatId = 'dual-level' | 'single-level' | 'dtz-paper';
 
 /** Word-count window for a writing task. */
 export interface WritingTarget {
@@ -98,6 +101,9 @@ export interface TrainerContent<TExam extends ExamPaper = ExamPaper> {
 /** The single-level content, narrowed to the paper its two trainers set. */
 export type SingleLevelContent = TrainerContent<SingleLevelExam>;
 
+/** The DTZ trainer's content, narrowed to its paper. */
+export type DtzContent = TrainerContent<DtzExam>;
+
 /**
  * How a trainer's descriptor hands over its content: on demand, not up front. Keying the
  * bundler's chunks per trainer only works once the registry stops holding every trainer's
@@ -108,10 +114,11 @@ export type TrainerContentLoader = () => Promise<TrainerContent>;
 
 /**
  * Everything a trainer with its own document persists. Lives inside `ProgressDatabase`, so
- * cloud sync and the JSON backup carry it without any extra plumbing.
+ * cloud sync and the JSON backup carry it without any extra plumbing. Generic over the
+ * attempt, which is the one field whose shape depends on the paper the trainer sets.
  */
-export interface LevelTrainerDoc {
-  readonly attempts: readonly SingleLevelAttempt[];
+export interface TrainerDoc<TAttempt> {
+  readonly attempts: readonly TAttempt[];
   /** Curriculum checkbox state, keyed `d<day>t<index>` like every other trainer's. */
   readonly learnDone: LearnDoneMap;
   /** Spaced-repetition state, keyed by vocab/grammar item id. */
@@ -120,6 +127,12 @@ export interface LevelTrainerDoc {
   readonly activity: ActivityMap;
   readonly settings: LevelTrainerSettings;
 }
+
+/** The document of a trainer that sets the single-level paper. */
+export type LevelTrainerDoc = TrainerDoc<SingleLevelAttempt>;
+
+/** The DTZ trainer's document. */
+export type DtzTrainerDoc = TrainerDoc<DtzAttempt>;
 
 /**
  * The keys under which `ProgressDatabase` holds a trainer's own document.
@@ -134,3 +147,10 @@ export interface LevelTrainerDoc {
  * trainer's id — that is the naming convention, not a type identity.
  */
 export type TrainerDocKey = 'b1' | 'b2';
+
+/**
+ * Where the DTZ trainer's document lives. Separate from `TrainerDocKey` because the document
+ * under it holds a different attempt type — the registry pairs it with the `'dtz-paper'`
+ * format, so a DTZ document can never be read as a single-level one.
+ */
+export type DtzDocKey = 'dtz';

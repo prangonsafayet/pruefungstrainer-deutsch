@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from 'react';
 
+import { unreachableFormat } from '@shared/config/examConditions.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { toIsoDate } from '@shared/lib/format.ts';
 import {
   type ActivityMap,
+  type DtzAttempt,
   type DualLevelAttempt,
   type LearnDoneMap,
   type LevelTrainerSettings,
@@ -55,7 +57,17 @@ export type TrainerSlice =
       readonly settings: LevelTrainerSettings;
       readonly attempts: readonly SingleLevelAttempt[];
       readonly saveAttempt: (attempt: SingleLevelAttempt) => void;
+    })
+  | (TrainerSliceBase & {
+      readonly format: 'dtz-paper';
+      readonly settings: LevelTrainerSettings;
+      readonly attempts: readonly DtzAttempt[];
+      readonly saveAttempt: (attempt: DtzAttempt) => void;
     });
+
+/* One shared empty list: `useExamBinding` memoises on `slice.attempts`, so an inline `[]`
+   would hand it a new reference on every render of a trainer nobody has sat yet. */
+const NO_ATTEMPTS: readonly never[] = [];
 
 /** Counts one practice touch for the streak, on the given local ISO date. */
 export const touchActivity = (state: TrainerSliceState, today: string, touches = 1): TrainerSliceState => ({
@@ -127,8 +139,10 @@ export const useTrainerSlice = (trainer: TrainerId): TrainerSlice => {
     [update]
   );
 
+  /* The registry pairs a document key with one paper, so whichever attempt arrives here is
+     the kind already stored under that key. */
   const saveDocAttempt = useCallback(
-    (attempt: SingleLevelAttempt) => {
+    (attempt: SingleLevelAttempt | DtzAttempt) => {
       update(current => {
         if (docKey === null) return current;
         const slice = current[docKey] ?? emptyTrainerDoc(trainer);
@@ -154,32 +168,36 @@ export const useTrainerSlice = (trainer: TrainerId): TrainerSlice => {
     };
 
     /* The root slice was written by the dual-level trainer and holds its attempts; a
-       trainer with its own document holds single-level ones. The registry pairs the paper
-       with the document location, so `info.format` is what says which of the two this is —
-       narrowing `info` here is only how the compiler is shown that the attempts it is about
-       to read match that paper. */
-    if (info.docKey === null) {
-      return {
-        ...base,
-        format: info.format,
-        learnDone: db.learnDone,
-        srs: db.srs,
-        activity: db.activity,
-        settings: db.settings,
-        attempts: db.attempts,
-        saveAttempt: saveRootAttempt
-      };
-    }
-
-    return {
+       trainer with its own document holds the attempts of the paper the registry pairs with
+       that document. `info.format` is what says which of them this is — narrowing `info`
+       here is only how the compiler is shown that the attempts it is about to read match
+       that paper. */
+    const docSlice = {
       ...base,
-      format: info.format,
       learnDone: doc.learnDone,
       srs: doc.srs,
       activity: doc.activity,
       settings: doc.settings,
-      attempts: doc.attempts,
       saveAttempt: saveDocAttempt
     };
+    switch (info.format) {
+      case 'dual-level':
+        return {
+          ...base,
+          format: info.format,
+          learnDone: db.learnDone,
+          srs: db.srs,
+          activity: db.activity,
+          settings: db.settings,
+          attempts: db.attempts,
+          saveAttempt: saveRootAttempt
+        };
+      case 'single-level':
+        return { ...docSlice, format: info.format, attempts: db[info.docKey]?.attempts ?? NO_ATTEMPTS };
+      case 'dtz-paper':
+        return { ...docSlice, format: info.format, attempts: db[info.docKey]?.attempts ?? NO_ATTEMPTS };
+      default:
+        return unreachableFormat(info);
+    }
   }, [trainer, info, attemptedExamIds, updateSlice, setSetting, doc, db, saveRootAttempt, saveDocAttempt]);
 };

@@ -1,23 +1,36 @@
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
+import { DEFAULT_PLAYS_ALLOWED } from '@shared/config/examConditions.ts';
 import { defaultLevelSettings } from '@shared/config/singleLevelExam.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { readLocalJson, writeLocal } from '@shared/lib/storage.ts';
-import { type LevelTrainerDoc, type ProgressDatabase, type TrainerId } from '@shared/types';
+import {
+  type LevelTrainerSettings,
+  type ProgressDatabase,
+  type TrainerDoc,
+  type TrainerId
+} from '@shared/types';
 
 /** localStorage key. Stable since v1 — do not rename without a migration. */
 export const PROGRESS_STORAGE_KEY = 'telcTrainerV1';
 
 /**
- * A fresh trainer document, with the writing time that trainer's own paper allows — read
- * from its registry descriptor rather than defaulted, so a trainer whose official Schreiben
- * runs for something other than 30 minutes does not silently inherit B1's.
+ * A trainer's default exam conditions: the writing time its own paper allows and the play
+ * count its paper defaults to — both read from its registry descriptor rather than defaulted,
+ * so a trainer whose Schreiben runs for something other than 30 minutes, or whose audio
+ * plays a different number of times, does not silently inherit B1's.
  */
-export const emptyTrainerDoc = (trainer: TrainerId): LevelTrainerDoc => ({
+const trainerDefaults = (trainer: TrainerId): LevelTrainerSettings => {
+  const info = TRAINERS[trainer];
+  return defaultLevelSettings(info.paper.minutes.schreiben, DEFAULT_PLAYS_ALLOWED[info.format]);
+};
+
+/** A fresh trainer document. No attempts, so it fits whichever paper the trainer sets. */
+export const emptyTrainerDoc = (trainer: TrainerId): TrainerDoc<never> => ({
   attempts: [],
   learnDone: {},
   srs: {},
   activity: {},
-  settings: defaultLevelSettings(TRAINERS[trainer].paper.minutes.schreiben)
+  settings: trainerDefaults(trainer)
 });
 
 export const EMPTY_DATABASE: ProgressDatabase = {
@@ -28,6 +41,7 @@ export const EMPTY_DATABASE: ProgressDatabase = {
   activity: {},
   b1: emptyTrainerDoc('b1'),
   b2: emptyTrainerDoc('b2'),
+  dtz: emptyTrainerDoc('dtz'),
   /* No trainer has an error history yet, and none is keyed until one is recorded. */
   weakness: {}
 };
@@ -69,18 +83,26 @@ const isMap = (value: unknown): value is object =>
 const unchanged = <T extends object>(before: Partial<T>, after: T): boolean =>
   Object.keys(after).every(key => before[key as keyof T] === after[key as keyof T]);
 
-/** Coerces anything that claims to be a trainer document, defaulting every field. */
-const normalizeTrainerDoc = (trainer: TrainerId, raw: unknown): LevelTrainerDoc => {
-  const input = (typeof raw === 'object' && raw !== null ? raw : {}) as Partial<LevelTrainerDoc>;
-  const normalized: LevelTrainerDoc = {
+/**
+ * Coerces anything that claims to be a trainer document, defaulting every field. The attempt
+ * type comes from the slot it was read from (`input.b1`, `input.dtz`); the value itself is
+ * treated as untrusted.
+ */
+const normalizeTrainerDoc = <TAttempt>(
+  trainer: TrainerId,
+  raw: TrainerDoc<TAttempt> | undefined
+): TrainerDoc<TAttempt> => {
+  const value: unknown = raw;
+  const input = (typeof value === 'object' && value !== null ? value : {}) as Partial<TrainerDoc<TAttempt>>;
+  const normalized: TrainerDoc<TAttempt> = {
     ...input,
     attempts: Array.isArray(input.attempts) ? input.attempts : [],
     learnDone: isMap(input.learnDone) ? input.learnDone : {},
     srs: isMap(input.srs) ? input.srs : {},
     activity: isMap(input.activity) ? input.activity : {},
-    settings: withDefaults(defaultLevelSettings(TRAINERS[trainer].paper.minutes.schreiben), input.settings)
+    settings: withDefaults(trainerDefaults(trainer), input.settings)
   };
-  return unchanged(input, normalized) ? (input as LevelTrainerDoc) : normalized;
+  return unchanged(input, normalized) ? (input as TrainerDoc<TAttempt>) : normalized;
 };
 
 /**
@@ -106,6 +128,7 @@ export const normalizeDatabase = (raw: unknown): ProgressDatabase => {
     activity: isMap(input.activity) ? input.activity : {},
     b1: normalizeTrainerDoc('b1', input.b1),
     b2: normalizeTrainerDoc('b2', input.b2),
+    dtz: normalizeTrainerDoc('dtz', input.dtz),
     /* Validated only as far as being a map: the trainers inside it are not enumerated here,
        so a profile written for a trainer this build does not know survives the round trip. */
     weakness: isMap(input.weakness) ? input.weakness : {},

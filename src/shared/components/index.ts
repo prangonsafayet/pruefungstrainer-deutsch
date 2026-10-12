@@ -21,6 +21,7 @@ export { default as PunkteGrid } from './exam-ui/PunkteGrid.tsx';
 export { default as RecorderControls } from './exam-ui/RecorderControls.tsx';
 export { default as RedemittelList } from './exam-ui/RedemittelList.tsx';
 export { default as ListeningTranscript } from './exam-ui/ListeningTranscript.tsx';
+export { default as WritingTaskBrief } from './exam-ui/WritingTaskBrief.tsx';
 
 export { default as GapFillText } from './exam-ui/gaps/GapFillText.tsx';
 export { default as InlineGapSelect } from './exam-ui/gaps/InlineGapSelect.tsx';

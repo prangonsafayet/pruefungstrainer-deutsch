@@ -208,6 +208,9 @@ describe('the authored Musterlösungen', () => {
   const samples: Sample[] = [];
   for (const info of Object.values(TRAINERS)) {
     const target = info.paper.writingTarget;
+    /* The DTZ states no word count, so the rubric's length criterion has nothing to judge its
+       Musterlösungen against; its writing is self-rated on the DTZ criteria instead. */
+    if (info.format === 'dtz-paper') continue;
     if (info.format === 'dual-level') {
       for (const exam of DUAL_LEVEL_EXAMS) {
         const writing = exam.schreiben;

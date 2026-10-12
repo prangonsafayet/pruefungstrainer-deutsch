@@ -4,6 +4,8 @@ import { mergeProgress } from '@features/account-sync/lib/mergeProgress.ts';
 import { EMPTY_DATABASE, normalizeDatabase } from '@features/progress-store/lib/progressDb.ts';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import {
+  type DtzAttempt,
+  type DtzTrainerDoc,
   type DualLevelAttempt,
   type LevelTrainerDoc,
   type ProgressDatabase,
@@ -33,6 +35,28 @@ const levelDoc = (over: Partial<LevelTrainerDoc> = {}): LevelTrainerDoc => ({
   srs: {},
   activity: {},
   settings: { examDate: '2026-10-01', writingMinutes: 30, playsAllowed: 1 },
+  ...over
+});
+
+const dtzAttempt = (id: number): DtzAttempt => ({
+  id,
+  examId: 1,
+  mode: 'full',
+  date: new Date(id).toISOString(),
+  times: {},
+  scores: { hoeren: 15, lesen: 20, schreiben: 12, sprechen: 80 },
+  answers: { 'l2.0': -1 },
+  ratings: { schreiben: 12, sprechen: 80 },
+  writingTask: 1,
+  result: 'Zertifikat B1'
+});
+
+const dtzDoc = (over: Partial<DtzTrainerDoc> = {}): DtzTrainerDoc => ({
+  attempts: [],
+  learnDone: {},
+  srs: {},
+  activity: {},
+  settings: { examDate: '2026-10-01', writingMinutes: 30, playsAllowed: 2 },
   ...over
 });
 
@@ -173,6 +197,32 @@ describe('the B1 and B2 documents', () => {
   });
 });
 
+describe('the DTZ document', () => {
+  it('unions DTZ attempts from both sides and ORs ticks, without touching the B1 document', () => {
+    const local = db({
+      dtz: dtzDoc({ attempts: [dtzAttempt(3)], learnDone: { d1t0: true } }),
+      b1: levelDoc({ learnDone: { d9t0: true } })
+    });
+    const remote = db({
+      dtz: dtzDoc({ attempts: [dtzAttempt(1), dtzAttempt(3)], learnDone: { d2t1: true } })
+    });
+    const merged = JSON.parse(JSON.stringify(mergeProgress(local, remote))) as ProgressDatabase;
+    expect(merged.dtz?.attempts.map(a => a.id)).toEqual([1, 3]);
+    expect(merged.dtz?.attempts[0]?.result).toBe('Zertifikat B1');
+    /* The X answer is a number and must survive the round trip as one. */
+    expect(merged.dtz?.attempts[0]?.answers['l2.0']).toBe(-1);
+    expect(merged.dtz?.learnDone).toEqual({ d1t0: true, d2t1: true });
+    expect(merged.b1?.learnDone).toEqual({ d9t0: true });
+    expect(merged.b1?.attempts).toEqual([]);
+  });
+
+  it('carries the DTZ document when only one side has it', () => {
+    const merged = mergeProgress(db(), db({ dtz: dtzDoc({ learnDone: { d4t2: true } }) }));
+    expect(merged.dtz?.learnDone).toEqual({ d4t2: true });
+    expect('dtz' in mergeProgress(db(), db())).toBe(false);
+  });
+});
+
 /* `normalizeDatabase` runs on every write, not only on load. Rebuilding its sub-objects
    unconditionally handed every memo a new `settings` and two new trainer documents each time
    a curriculum checkbox was ticked, which is why the exam binding churned. */
@@ -185,6 +235,7 @@ describe('normalizeDatabase', () => {
     expect(second.attempts).toBe(first.attempts);
     expect(second.b1).toBe(first.b1);
     expect(second.b2).toBe(first.b2);
+    expect(second.dtz).toBe(first.dtz);
     expect(second.learnDone).toEqual({ d1t0: true });
   });
 
@@ -545,6 +596,7 @@ describe('the field enumeration', () => {
     activity: { '2026-08-20': 12 },
     b1: levelDoc({ learnDone: { d1t0: true } }),
     b2: levelDoc({ learnDone: { d5t0: true } }),
+    dtz: dtzDoc({ attempts: [dtzAttempt(7)], learnDone: { d3t0: true } }),
     weakness: { b1: { case: { count: 7, lastSeen: '2026-08-20' } } },
     _updatedAt: '2026-08-20T00:00:00.000Z'
   });
@@ -560,6 +612,7 @@ describe('the field enumeration', () => {
     activity: { '2026-08-19': 3 },
     b1: levelDoc({ learnDone: { d2t0: true }, activity: { '2026-08-19': 9 } }),
     b2: levelDoc({ srs: { 'b2.v.001': { box: 2, due: '2026-07-01', seen: 3, correct: 2, wrong: 1 } } }),
+    dtz: dtzDoc({ attempts: [dtzAttempt(8)], activity: { '2026-08-19': 4 } }),
     weakness: {
       b1: { style: { count: 2, lastSeen: '2026-08-02' } },
       b2: { spelling: { count: 1, lastSeen: '2026-08-03' } }
@@ -587,6 +640,10 @@ describe('the field enumeration', () => {
       merged.b1?.activity['2026-08-19'] === 9,
     b2: (merged: ProgressDatabase) =>
       merged.b2?.learnDone['d5t0'] === true && merged.b2?.srs['b2.v.001'] !== undefined,
+    dtz: (merged: ProgressDatabase) =>
+      merged.dtz?.attempts.map(a => a.id).join(',') === '7,8' &&
+      merged.dtz?.learnDone['d3t0'] === true &&
+      merged.dtz?.activity['2026-08-19'] === 4,
     weakness: (merged: ProgressDatabase) =>
       merged.weakness?.b1?.case?.count === 7 &&
       merged.weakness?.b1?.style?.count === 2 &&
@@ -620,6 +677,7 @@ describe('the field enumeration', () => {
       'activity',
       'b1',
       'b2',
+      'dtz',
       'weakness'
     ]);
   });

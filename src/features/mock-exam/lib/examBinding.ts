@@ -1,5 +1,6 @@
 /** Collapsing an `ExamBinding` back to one code path. */
 
+import { unreachableFormat } from '@shared/config/examConditions.ts';
 import { type ExamPaper } from '@shared/types';
 
 import { type ExamBinding, type ExamStore } from '@features/mock-exam/types/examBinding.ts';
@@ -35,4 +36,15 @@ export const withBinding = <TResult>(
   render: <TExam extends ExamPaper, TSettings extends RunSettings, TAttempt extends StoredAttempt>(
     bound: BoundExam<TExam, TSettings, TAttempt>
   ) => TResult
-): TResult => (binding.kind === 'single-level' ? render(binding) : render(binding));
+): TResult => {
+  switch (binding.kind) {
+    case 'dual-level':
+      return render(binding);
+    case 'single-level':
+      return render(binding);
+    case 'dtz-paper':
+      return render(binding);
+    default:
+      return unreachableFormat(binding);
+  }
+};

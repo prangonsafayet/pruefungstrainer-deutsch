@@ -70,10 +70,15 @@ const AttemptResults = <
                 {grade.label}
               </div>
               <div className="text-lg tabular-nums">
-                <b>
-                  <CountedNumber value={grade.total} durationMs={SCORE_COUNT_UP_MS} />
-                </b>{' '}
-                / {grade.of} points · time used {fmtClock(summary.totalSeconds)}
+                {grade.points ? (
+                  <>
+                    <b>
+                      <CountedNumber value={grade.points.total} durationMs={SCORE_COUNT_UP_MS} />
+                    </b>{' '}
+                    / {grade.points.of} points ·{' '}
+                  </>
+                ) : null}
+                time used {fmtClock(summary.totalSeconds)}
               </div>
               {grade.notes.map(note => (
                 <p key={note} className="text-sm tabular-nums text-muted-foreground">
@@ -104,8 +109,8 @@ const AttemptResults = <
               value={bar.value}
               of={bar.of}
               colorByScore
-              thresholdPercent={summary.thresholdPercent}
-              thresholdLabel={summary.thresholdLabel}
+              thresholdPercent={bar.thresholdPercent ?? summary.thresholdPercent}
+              thresholdLabel={bar.thresholdLabel ?? summary.thresholdLabel}
             />
           ))}
         </CardContent>

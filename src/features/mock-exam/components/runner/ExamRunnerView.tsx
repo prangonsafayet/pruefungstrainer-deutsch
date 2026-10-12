@@ -107,12 +107,9 @@ const ExamRunnerView = <
   }
 
   const ModuleComponent = format.moduleComponents[run.module];
-  /* Defence in depth, and knowingly unreachable: `parseRun` now refuses a stored queue
-     naming a module that does not exist, and a descriptor's `moduleComponents` is a total
-     record by type — which is why the rule is silenced rather than the check dropped. The
-     module ultimately comes out of localStorage, this is the one runner every trainer uses,
-     and rendering `undefined` as a component is a blank screen with a stack trace. */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- see above
+  /* A paper without this module (the DTZ has no Sprachbausteine) has no renderer for it, and
+     the module ultimately comes out of localStorage: rendering `undefined` as a component is
+     a blank screen with a stack trace, so a run naming one goes home instead. */
   if (!ModuleComponent) return <Navigate to={trainerHome(trainer)} replace />;
 
   return (

@@ -3,12 +3,14 @@ import { type ExamFormatId, type TrainerId } from '@shared/types';
 
 import { type ExamRunFormat } from '@features/mock-exam/types/examFormat.ts';
 
+import { DTZ_RUN_FORMAT } from './dtz-paper/runFormat.ts';
 import { DUAL_LEVEL_RUN_FORMAT } from './dual-level/runFormat.ts';
 import { SINGLE_LEVEL_RUN_FORMAT } from './single-level/runFormat.ts';
 
 const RUN_FORMATS: Readonly<Record<ExamFormatId, ExamRunFormat>> = {
   'dual-level': DUAL_LEVEL_RUN_FORMAT,
-  'single-level': SINGLE_LEVEL_RUN_FORMAT
+  'single-level': SINGLE_LEVEL_RUN_FORMAT,
+  'dtz-paper': DTZ_RUN_FORMAT
 };
 
 /**

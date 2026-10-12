@@ -18,8 +18,7 @@ const gradeFor = (attempt: DualLevelAttempt): AttemptGrade | null => {
   return {
     label: attempt.result,
     tone: attempt.result === 'B1' ? 'success' : attempt.result === 'A2' ? 'warning' : 'destructive',
-    total: attempt.total,
-    of: FULL_EXAM_MAX,
+    points: { total: attempt.total, of: FULL_EXAM_MAX },
     notes: [PASS_RULE]
   };
 };

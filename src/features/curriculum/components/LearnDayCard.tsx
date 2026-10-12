@@ -29,7 +29,11 @@ const LearnDayCard = ({ day, complete, cheatsheets, isTaskDone, onToggleTask }: 
         <CardTitle className="text-base">
           Day {day.day}: {day.title}
         </CardTitle>
-        <Badge variant="secondary">{day.focus}</Badge>
+        {/* A day's focus can be a whole phrase: it wraps rather than pushing the page wider
+            than a phone (it overflowed the B1, B2 and DTZ Learn pages at 360px). */}
+        <Badge variant="secondary" className="max-w-full whitespace-normal text-left">
+          {day.focus}
+        </Badge>
         {complete ? <Badge variant="success">done</Badge> : null}
       </div>
     </CardHeader>

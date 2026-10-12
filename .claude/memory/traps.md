@@ -22,7 +22,9 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-12: schema libraries (zod) rejected for `normalizeDatabase` → it must pass unknown keys
   through and preserve object identity.
 - 2026-10-12: the DTZ run key is the new `telcTrainerDtzRunV1` → never reuse
-  `telcTrainerLevelRunV1` for another paper.
+  `telcTrainerLevelRunV1` for another paper. Protected keys (never rename or remove):
+  `telcTrainerV1`, `telcTrainerRunV1`, `telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`,
+  `telcTrainerAuth`, `telcTrainerTheme`.
 
 ## Lint and config
 
@@ -126,3 +128,9 @@ right area; see `.claude/rules/memory.md`.
 - Plan code blocks disagreed with their own tests → a plan's code is unrun code; execute it.
 - Narrowed memo deps changed nothing → write the identity assertion first; revert each half.
 - 2026-10-12: one writer per tree for cross-cutting refactors; subagents stage explicit paths.
+
+## Concurrency (2026-10-12)
+
+- Committing while another agent edits the same tree → lint-staged backs up and restores unstaged
+  changes around the hook, so the other agent's in-flight edits can vanish or be clobbered on disk.
+  **Rule:** never `git commit` while any writer agent is running in the tree; commit between phases.

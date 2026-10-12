@@ -39,16 +39,27 @@ list all read the registry through `scripts/trainerRegistry.mjs`.
 
 ## A trainer that sets a NEW paper — additionally
 
-- another `ExamFormatId` (`shared/types/trainer.ts`) and the exam type
+Measured by adding the DTZ (`'dtz-paper'`):
+
+- another `ExamFormatId` (`shared/types/trainer.ts`) — never equal to a trainer id, which the
+  trainer-id lint ban would then refuse everywhere — and the exam type
   (`shared/types/<paper>Exam.ts`, e.g. `dtzExam.ts`)
-- a whole `features/mock-exam/lib/formats/<new>/` mirroring `single-level/` (run format, scoring,
-  summary, review, briefing copy, self-rating scale)
-- the module renderers under `features/mock-exam/components/modules/<new>/`, imported only by that
-  format's `index.ts`
-- an `eslint.config.js` exemption for that folder if its renderers share basenames
-- an entry in `RUN_FORMATS`, a `TrainerSlice` variant, a `ProgressDatabase` attempt type
-- the format-keyed records in `shared/config/examConditions.ts` (seven for the existing papers)
+- a whole `features/mock-exam/lib/formats/<new>/` mirroring `single-level/` (run format with its
+  OWN storage key, scoring, summary, review, briefing copy, self-rating scale)
+- the module renderers under `features/mock-exam/components/modules/<new>/`, named after the
+  paper (`DtzLesenModule`) and imported only by that format's `index.ts`. No `eslint.config.js`
+  edit: its `ignores` already covers every `lib/formats/*/index.ts`
+- a `TrainerInfo` variant pairing the format with its document key (and a `<Paper>DocKey` type),
+  a `TrainerDoc<Attempt>` field on `ProgressDatabase`, a `TrainerSlice` variant, an
+  `ExamBinding` variant, a `ScoredAttempts` variant and an entry in `RUN_FORMATS`
+- the format-keyed records in `shared/config/examConditions.ts` (eight, including
+  `DEFAULT_PLAYS_ALLOWED`)
+- every switch over the format: `passLineLabel`, `writingTimeHint`, `withBinding`,
+  `useExamBinding`, `useTrainerSlice`, the dashboard model and exam cards, the attempts table
+  and the score chart. They are exhaustive (`unreachableFormat` or a `default`-less switch the
+  return type checks), so `npm run typecheck` lists them
 - `validate.cjs` checks for the new shape, and scoring tests against the official points
+- a new run key in `.claude/hooks/storage-keys.baseline` and the protected-key lists
 
 ## Checklist
 

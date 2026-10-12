@@ -32,8 +32,7 @@ const gradeFor = (attempt: SingleLevelAttempt): AttemptGrade | null => {
   return {
     label: attempt.result,
     tone: passed ? 'success' : 'destructive',
-    total: attempt.total,
-    of: SINGLE_LEVEL_TOTAL_MAX,
+    points: { total: attempt.total, of: SINGLE_LEVEL_TOTAL_MAX },
     notes: [
       `Written: ${String(attempt.written ?? 0)}/${String(SINGLE_LEVEL_WRITTEN_MAX)} (pass ≥ ${String(SINGLE_LEVEL_WRITTEN_PASS)}) · Oral: ${String(attempt.oral ?? 0)}/${String(SINGLE_LEVEL_ORAL_MAX)} (pass ≥ ${String(SINGLE_LEVEL_ORAL_PASS)}) — both must pass, no compensation.`
     ]

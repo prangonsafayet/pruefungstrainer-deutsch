@@ -94,17 +94,16 @@ export const SINGLE_LEVEL_RATING_CRITERIA: Readonly<
 export const SINGLE_LEVEL_RATING_SCALE = 3;
 
 /**
- * A fresh trainer document needs a date the schedule can work with, and the writing time
- * its own paper allows.
+ * A fresh trainer document needs a date the schedule can work with, the writing time its own
+ * paper allows and how often its audio plays by default.
  *
- * `writingMinutes` is a parameter rather than a constant because it is a per-*trainer* fact
- * that already exists on `TRAINERS[trainer].paper.minutes.schreiben` — B1 and B2 both run
- * 30 today, which is exactly why a hardcoded 30 would have gone on looking right while
- * silently giving a fourth single-level trainer the wrong default. `playsAllowed` stays here:
- * playing each listening clip once is a property of this paper, not of a trainer.
+ * Both numbers are parameters because they are facts about something else: `writingMinutes`
+ * is per-*trainer* (`TRAINERS[trainer].paper.minutes.schreiben`) and `playsAllowed` is per
+ * paper (`DEFAULT_PLAYS_ALLOWED` in `@shared/config/examConditions.ts`). A hardcoded value
+ * would go on looking right while silently giving another trainer the wrong default.
  */
-export const defaultLevelSettings = (writingMinutes: number): LevelTrainerSettings => ({
+export const defaultLevelSettings = (writingMinutes: number, playsAllowed: number): LevelTrainerSettings => ({
   examDate: defaultExamDate(),
   writingMinutes,
-  playsAllowed: 1
+  playsAllowed
 });

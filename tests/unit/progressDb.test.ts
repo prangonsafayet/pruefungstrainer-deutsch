@@ -6,6 +6,7 @@ import {
   normalizeDatabase
 } from '@features/progress-store/lib/progressDb.ts';
 import { defaultExamDate } from '@shared/config/exam.ts';
+import { DEFAULT_PLAYS_ALLOWED } from '@shared/config/examConditions.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 
 /*
@@ -29,8 +30,23 @@ describe('a fresh trainer document', () => {
     expect(emptyTrainerDoc(TRAINER_ORDER[0] ?? 'a2b1').settings.examDate).toBe(defaultExamDate());
   });
 
-  it('allows one play of each listening clip — a fact of this paper, not of a trainer', () => {
-    for (const trainer of TRAINER_ORDER) expect(emptyTrainerDoc(trainer).settings.playsAllowed).toBe(1);
+  it("takes its play count from its own paper's default, not a constant", () => {
+    for (const trainer of TRAINER_ORDER) {
+      expect(emptyTrainerDoc(trainer).settings.playsAllowed).toBe(
+        DEFAULT_PLAYS_ALLOWED[TRAINERS[trainer].format]
+      );
+    }
+    /* The single-level paper plays each clip once; the DTZ states no count, so its default is
+       this trainer's own training value. The two must differ, or this sweep proves nothing. */
+    expect(DEFAULT_PLAYS_ALLOWED['single-level']).toBe(1);
+    expect(DEFAULT_PLAYS_ALLOWED['dtz-paper']).toBe(2);
+  });
+
+  it('gives the DTZ document 30 minutes of writing and two plays per text', () => {
+    const dtz = TRAINER_ORDER.find(trainer => TRAINERS[trainer].format === 'dtz-paper');
+    if (dtz === undefined) throw new Error('the registry has no DTZ trainer');
+    expect(emptyTrainerDoc(dtz).settings).toMatchObject({ writingMinutes: 30, playsAllowed: 2 });
+    expect(normalizeDatabase({}).dtz?.settings).toMatchObject({ writingMinutes: 30, playsAllowed: 2 });
   });
 
   it('is empty of study state', () => {

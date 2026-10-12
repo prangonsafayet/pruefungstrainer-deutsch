@@ -39,7 +39,7 @@ Everything every exam format renders lives in `shared/components/exam-ui/` — i
 (`RichtigFalsch`, `MultipleChoice`, `LetterSelect`), layout (`TeilSection`, `QuestionItem`,
 `QuestionText`, `ReadingText`, `ExamCallout`), gaps (`InlineGapSelect`, `GapFillText`),
 `MatchingOptionCards`, `PunkteGrid`, `RedemittelList`, `ModuleBriefingCard`, `ExamModuleToolbar`,
-`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript` — consumed through
+`CriteriaRatingPanel`, `CountdownRing`, `RecorderControls`, `ListeningTranscript`, `WritingTaskBrief` — consumed through
 `@shared/components`. Module renderers keep no private copy.
 
 ## Design system

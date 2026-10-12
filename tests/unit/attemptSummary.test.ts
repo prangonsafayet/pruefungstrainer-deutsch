@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { type DualLevelAttempt, type SingleLevelAttempt } from '@shared/types';
+import { type DtzAttempt, type DualLevelAttempt, type SingleLevelAttempt } from '@shared/types';
 
+import { summarizeAttempt as summarizeDtz } from '@features/mock-exam/lib/formats/dtz-paper/summary.ts';
 import { summarizeAttempt as summarizeDualLevel } from '@features/mock-exam/lib/formats/dual-level/summary.ts';
 import { summarizeAttempt as summarizeSingleLevel } from '@features/mock-exam/lib/formats/single-level/summary.ts';
 
@@ -61,5 +62,55 @@ describe('summarizeAttempt — the pass line the score bars mark', () => {
     for (const bar of summary.bars) {
       expect(Math.round((bar.value / bar.of) * 100)).toBeGreaterThanOrEqual(summary.thresholdPercent);
     }
+  });
+});
+
+/* A DTZ attempt with Hören + Lesen 30/45 (A2), Schreiben 14/20 (A2: one below the B1 line)
+   and Sprechen 80/100 (B1). Neither written part reaches B1, so the certificate is A2 — a
+   fixture where a summed or averaged verdict would say otherwise. */
+const dtzAttempt: DtzAttempt = {
+  id: 3,
+  examId: 1,
+  mode: 'full',
+  date: '2026-01-01T00:00:00.000Z',
+  times: { hoeren: 60 },
+  scores: { hoeren: 12, lesen: 18, schreiben: 14, sprechen: 80 },
+  answers: {},
+  ratings: { schreiben: 14, sprechen: 80 },
+  result: 'Zertifikat A2'
+};
+
+describe('summarizeAttempt — the DTZ paper', () => {
+  const summary = summarizeDtz(dtzAttempt);
+
+  it('shows the certificate, not a points total', () => {
+    expect(summary.grade?.label).toBe('Zertifikat A2');
+    expect(summary.grade?.tone).toBe('warning');
+    expect(summary.grade?.points).toBeNull();
+  });
+
+  it('notes the three Teilergebnisse with their levels and lines, then the rule', () => {
+    expect(summary.grade?.notes).toEqual([
+      'Hören + Lesen: 30/45 → A2 (B1 ab 33, A2 ab 20)',
+      'Schreiben: 14/20 → A2 (B1 ab 15, A2 ab 7)',
+      'Sprechen: 80/100 → B1 (B1 ab 75, A2 ab 35)',
+      expect.stringContaining('Zertifikat B1')
+    ]);
+  });
+
+  it("marks each bar at its own part's line, Hören + Lesen at 33 of 45", () => {
+    const line = (label: string) => summary.bars.find(bar => bar.label === label)?.thresholdPercent;
+    expect(summary.bars.map(bar => bar.label)).toEqual([
+      'Hören',
+      'Lesen',
+      'Hören + Lesen',
+      'Schreiben (self)',
+      'Sprechen (self)'
+    ]);
+    expect(line('Hören + Lesen')).toBeCloseTo((33 / 45) * 100);
+    expect(line('Schreiben (self)')).toBe(75);
+    expect(line('Sprechen (self)')).toBe(75);
+    /* Hören alone has no official line: its mark is labelled as this trainer's target. */
+    expect(summary.bars[0]?.thresholdLabel).toContain("this trainer's target");
   });
 });

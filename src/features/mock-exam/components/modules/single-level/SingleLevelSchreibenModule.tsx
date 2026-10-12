@@ -1,4 +1,4 @@
-import { TeilSection } from '@shared/components';
+import { TeilSection, WritingTaskBrief } from '@shared/components';
 import {
   itemKey,
   numberAnswer,
@@ -11,8 +11,6 @@ import { describeWordCount } from '@shared/lib/writingFeedback.ts';
 import { Label, RadioGroup, RadioGroupItem, Textarea } from '@shared/ui';
 
 import { type SingleLevelModuleProps } from '@features/mock-exam/types/moduleProps.ts';
-
-import WritingTaskBrief from './WritingTaskBrief.tsx';
 
 const SingleLevelSchreibenModule = ({ exam, paper, answers, setAnswer }: SingleLevelModuleProps) => {
   const { schreiben } = exam;

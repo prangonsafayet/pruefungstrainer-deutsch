@@ -38,8 +38,8 @@ functions are spelled out per trainer (the two trainer-id lint exemptions).
 
 ## Storage keys are user data
 
-Five keys are live and must never be renamed or removed: `telcTrainerV1`, `telcTrainerRunV1`,
-`telcTrainerLevelRunV1`, `telcTrainerAuth`, `telcTrainerTheme`. The baseline is
+Six keys are live and must never be renamed or removed: `telcTrainerV1`, `telcTrainerRunV1`,
+`telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`, `telcTrainerAuth`, `telcTrainerTheme`. The baseline is
 `.claude/hooks/storage-keys.baseline`; `npm run check:storage-keys` (CI, pre-push and the
 PostToolUse hook) fails if any disappears. New keys are allowed — add them with
 `npm run check:storage-keys -- --update`.

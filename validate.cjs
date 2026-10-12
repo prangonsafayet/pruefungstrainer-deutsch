@@ -545,6 +545,9 @@ for (const { file } of dtzFiles) {
   // Teil 4: six sentences a–f, a Beispiel that uses one, three statements matched to the rest.
   const h4 = H.teil4 || {};
   if (!isStr(h4.anweisung) || !isStr(h4.thema)) err(f, 'hoeren.teil4 missing anweisung/thema');
+  // 6 sentences − 1 Beispiel − 3 Aussagen leaves exactly two; "drei" slipped into two papers once.
+  if (isStr(h4.anweisung) && /\b(drei|vier|fünf)\s+Sätze\s+(bleiben|passen)/i.test(h4.anweisung))
+    err(f, 'hoeren.teil4 anweisung miscounts the leftover sentences (two remain)');
   if (
     !Array.isArray(h4.sentences) ||
     h4.sentences.length !== 6 ||
@@ -650,6 +653,13 @@ for (const { file } of dtzFiles) {
     err(f, 'sprechen.teil1 needs an anweisung and ≥ 2 Nachfragen');
   const p2 = P.teil2 || {};
   if (!isStr(p2.anweisung)) err(f, 'sprechen.teil2 missing anweisung');
+  // In the DTZ the examiner asks the follow-up questions in Teil 1 and 2, not the partner.
+  for (const [teil, t] of [
+    ['teil1', p1],
+    ['teil2', p2]
+  ])
+    if (isStr(t.anweisung) && /Gesprächspartner\w*[^.]*\bFragen\b/.test(t.anweisung))
+      err(f, `sprechen.${teil} anweisung gives the follow-up questions to the partner, not the examiner`);
   if (!Array.isArray(p2.bilder) || p2.bilder.length !== 2) err(f, 'sprechen.teil2 needs 2 Bilder');
   else
     p2.bilder.forEach((b, i) => {

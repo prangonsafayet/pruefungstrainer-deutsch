@@ -120,6 +120,23 @@ describe('planImport', () => {
     expect(plan?.database.settings).toEqual(before.settings);
   });
 
+  it('keeps the DTZ document when restoring a backup written before the DTZ trainer existed', () => {
+    const before = stored();
+    const dtzKey =
+      TRAINERS[TRAINER_ORDER.find(trainer => TRAINERS[trainer].format === 'dtz-paper') ?? 'a2b1'].docKey;
+    if (dtzKey === null) throw new Error('the DTZ trainer keeps its own document');
+    expect(before[dtzKey]?.learnDone).toEqual({ d2t1: true });
+
+    /* Every other trainer's slice is in the file — only the DTZ one is not. */
+    const file: Partial<Record<string, unknown>> = { ...(preBranchFile() as object) };
+    for (const key of docKeys) if (key !== dtzKey) file[key] = levelDoc({ learnDone: { d7t0: true } });
+    const plan = planImport(before, file);
+
+    expect(plan?.keeps).toEqual([TRAINER_ORDER.find(trainer => TRAINERS[trainer].docKey === dtzKey)]);
+    expect(plan?.database[dtzKey]?.learnDone).toEqual({ d2t1: true });
+    expect(plan?.database[dtzKey]?.attempts).toHaveLength(1);
+  });
+
   it('refuses a file that speaks for no trainer at all', () => {
     for (const parsed of [{}, [], null, 7, 'progress', { unrelated: true }]) {
       expect(planImport(stored(), parsed)).toBeNull();

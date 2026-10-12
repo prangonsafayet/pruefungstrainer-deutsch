@@ -1,4 +1,4 @@
-import { type ExamDifficulty, type ExamGrade } from '@shared/types';
+import { type DtzResult, type ExamDifficulty, type ExamGrade } from '@shared/types';
 /* The one `import type` in the app rather than the usual inline `{ type X }`: under
    `verbatimModuleSyntax` the inline form leaves a real `import {} from '@shared/ui'`
    behind, and this is a pure lib — the tone union is derived from the design system, not
@@ -16,6 +16,13 @@ export type BadgeTone = Exclude<BadgeVariant, 'default'>;
 export const gradeTone = (result: ExamGrade | undefined): BadgeTone => {
   if (result === 'B1') return 'success';
   if (result === 'A2') return 'warning';
+  return 'destructive';
+};
+
+/** DTZ verdict → tone: B1 reads green, A2 amber, no certificate red. */
+export const dtzResultTone = (result: DtzResult | undefined): 'success' | 'warning' | 'destructive' => {
+  if (result === 'Zertifikat B1') return 'success';
+  if (result === 'Zertifikat A2') return 'warning';
   return 'destructive';
 };
 

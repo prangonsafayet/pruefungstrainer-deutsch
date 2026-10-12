@@ -17,7 +17,7 @@ src/content    inert data, keyed by trainer: content/trainers/<id>/ holds that t
 
 ## One registry, peer trainers
 
-The trainers (A2·B1, B1, B2, and DTZ being added) are peers described once in
+The trainers (A2·B1, B1, B2 and DTZ) are peers described once in
 `shared/config/trainers.ts`: one `TRAINERS` descriptor per trainer names its identity, route
 namespace, paper, progress slice and lazily-loaded content. That is the only place a
 per-trainer fact may live. A `no-restricted-syntax` rule refuses a trainer id anywhere else in
