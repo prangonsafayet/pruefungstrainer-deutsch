@@ -11,5 +11,5 @@
   ],
   "ignore": ["src/shared/ui/**"],
   "ignoreExportsUsedInFile": true,
-  "ignoreDependencies": ["npm-check-updates"]
+  "ignoreDependencies": ["npm-check-updates", "lint-staged"]
 }

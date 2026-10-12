@@ -149,3 +149,4 @@ right area; see `.claude/rules/memory.md`.
 - Committing while another agent edits the same tree → lint-staged backs up and restores unstaged
   changes around the hook, so the other agent's in-flight edits can vanish or be clobbered on disk.
   **Rule:** never `git commit` while any writer agent is running in the tree; commit between phases.
+- 2026-10-12: dependency sweep — the MCR playwright manifest URL returns 404 without an `Accept: application/vnd.oci.image.index.v1+json` header even for existing tags → check tag existence with that header (or `/v2/playwright/tags/list`). knip cannot see `lint-staged` used only by `.husky/pre-commit` → it is in `knip.json` ignoreDependencies. Dev-only `npm audit` residue (braces via eslint-plugin-check-file, postcss-selector-parser via @tailwindcss/typography) has no fix; prod audit is 0.

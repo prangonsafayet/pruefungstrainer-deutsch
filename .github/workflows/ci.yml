@@ -104,7 +104,7 @@ jobs:
     # them on a bare runner means `playwright install --with-deps` shelling out to apt for
     # ~20 MB of fonts and libs, which is slow and has hung the job outright.
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
       options: --user 1001
     steps:
       - uses: actions/checkout@v7
@@ -119,8 +119,8 @@ jobs:
       - name: Check the image matches the Playwright version
         run: |
           WANT=$(node -p "require('@playwright/test/package.json').version")
-          if [ "$WANT" != "1.62.1" ]; then
-            echo "::error::Playwright is $WANT but the container image is pinned to 1.62.1."
+          if [ "$WANT" != "1.64.0" ]; then
+            echo "::error::Playwright is $WANT but the container image is pinned to 1.64.0."
             echo "Update the image tag in .github/workflows/ci.yml and release.yml."
             exit 1
           fi

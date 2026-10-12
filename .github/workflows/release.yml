@@ -51,7 +51,7 @@ jobs:
     name: End-to-end tests
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
       options: --user 1001
     # Fake, non-secret configuration so the sign-in UI the specs assert on actually renders.
     # See the same block in ci.yml for why these are inline rather than repository secrets.
