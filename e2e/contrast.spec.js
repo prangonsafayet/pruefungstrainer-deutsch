@@ -149,6 +149,21 @@ const PAIRS = [
     prop: 'backgroundColor',
     need: 3
   },
+  /* Pass 5B: a text field's edge is the only thing that says "type here" (1.4.11). */
+  {
+    id: 'input boundary (--input) on a card',
+    surface: 'bg-card',
+    html: '<span class="block h-2 w-20 bg-input"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'input boundary (--input) on the page background',
+    surface: 'bg-background',
+    html: '<span class="block h-2 w-20 bg-input"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
   {
     id: 'teal second voice (charts) on a card',
     surface: 'bg-card',

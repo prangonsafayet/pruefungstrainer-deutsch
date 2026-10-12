@@ -28,6 +28,8 @@ export interface PasswordAuthState {
   readonly passwordCheck: PasswordCheck;
   /** First blocking problem, or null when the form is submittable. */
   readonly problem: string | null;
+  /** The field that problem is about, so the form can mark it invalid and describe it. */
+  readonly problemField: 'email' | 'password' | 'confirm' | null;
   readonly canSubmit: boolean;
   readonly busy: boolean;
   readonly submit: () => void;
@@ -52,14 +54,14 @@ export const usePasswordAuth = (): PasswordAuthState => {
 
   const passwordCheck = useMemo(() => checkPassword(password), [password]);
 
-  const problem = useMemo(() => {
-    if (email.length > 0 && !isValidEmail(email)) return 'Enter a valid email address.';
+  const [problem, problemField] = useMemo((): readonly [string | null, PasswordAuthState['problemField']] => {
+    if (email.length > 0 && !isValidEmail(email)) return ['Enter a valid email address.', 'email'];
     if (mode === 'signup') {
-      if (passwordCheck.problem) return passwordCheck.problem;
+      if (passwordCheck.problem) return [passwordCheck.problem, 'password'];
       if (confirmPassword.length > 0 && password !== confirmPassword)
-        return 'The two passwords do not match.';
+        return ['The two passwords do not match.', 'confirm'];
     }
-    return null;
+    return [null, null];
   }, [email, mode, passwordCheck.problem, password, confirmPassword]);
 
   const canSubmit =
@@ -150,6 +152,7 @@ export const usePasswordAuth = (): PasswordAuthState => {
     },
     passwordCheck,
     problem,
+    problemField,
     canSubmit,
     busy: sync.busyWithEmail,
     submit,

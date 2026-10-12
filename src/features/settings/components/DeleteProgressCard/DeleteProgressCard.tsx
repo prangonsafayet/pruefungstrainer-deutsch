@@ -22,7 +22,7 @@ const DeleteProgressCard = () => {
       <CardHeader>
         <div className="flex items-center gap-2">
           <TriangleAlert className="size-4 shrink-0 text-destructive" aria-hidden />
-          <h3 className="font-semibold leading-none">Delete all progress</h3>
+          <h3 className="font-bold leading-snug">Delete all progress</h3>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

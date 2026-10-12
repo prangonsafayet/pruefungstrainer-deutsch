@@ -20,26 +20,26 @@ expressed as shadcn variables so every primitive inherits them. Domain colours c
 on-tint and an on-fill ink (`--destructive-on-tint`, `--success-on-fill`) — a tint and a solid
 fill of one colour need opposite inks.
 
-| Token                           | Light                                | Dark                    | Role                                           |
-| ------------------------------- | ------------------------------------ | ----------------------- | ---------------------------------------------- |
-| `--background`                  | `#fbf7f1`                            | `#1b1714`               | canvas (warm cream / warm charcoal)            |
-| `--foreground`                  | `#2b2420`                            | `#f4ede5`               | ink                                            |
-| `--card` / `--popover`          | `#fffdf9`                            | `#26211d`               | cards, menus                                   |
-| `--muted` / `--secondary`       | `#f3ece3`                            | `#332c27`               | quiet surfaces, tracks                         |
-| `--muted-foreground`            | `#6b5e55`                            | `#b9aca1`               | secondary text; checkbox/radio edge            |
-| `--primary` / `--ring`          | `#b4441c`                            | `#f0895b`               | terracotta: actions, links, focus              |
-| `--primary-foreground`          | `#ffffff`                            | `#2a1206`               | label on primary                               |
-| `--accent` / `-foreground`      | `#f7e6da` / `#8a3416`                | `#3a2a22` / `#f8c9ae`   | soft tint: hover, active nav, secondary button |
-| `--brand-2`                     | `#17716b`                            | `#4fb8ae`               | teal second voice (charts), never status       |
-| `--success` / `-on-fill`        | `#2f7d52` / `#ffffff`                | `#5cc08a` / `#0d2618`   | fill and its label                             |
-| `--success-foreground`          | `#1e6440`                            | `#9be0b8`               | ink on the success tint                        |
-| `--warning` / `-foreground`     | `#e3a21a` / `#7a4e00`                | `#f0b93a` / `#f5d58a`   | tint source / ink, ring and meter stroke       |
-| `--destructive` / `-foreground` | `#c0362c` / `#ffffff`                | `#f07468` / `#2a0a07`   | fill and its label                             |
-| `--destructive-on-tint`         | `#a62e25`                            | `#ff9a8f`               | ink on the destructive tint                    |
-| `--border` / `--input`          | `#e8ddd0` / `#dccfbf`                | warm white at 12% / 18% |                                                |
-| `--scrim`                       | ink at 45%                           | near-black at 62%       | behind dialogs (`bg-scrim`)                    |
-| `--chart-1..5`                  | terracotta, teal, green, ochre, plum | lighter set             | charts, both themes                            |
-| `--logo-*`                      | fixed, no dark override              | —                       | the brand mark only                            |
+| Token                           | Light                                | Dark                       | Role                                                     |
+| ------------------------------- | ------------------------------------ | -------------------------- | -------------------------------------------------------- |
+| `--background`                  | `#fbf7f1`                            | `#1b1714`                  | canvas (warm cream / warm charcoal)                      |
+| `--foreground`                  | `#2b2420`                            | `#f4ede5`                  | ink                                                      |
+| `--card` / `--popover`          | `#fffdf9`                            | `#26211d`                  | cards, menus                                             |
+| `--muted` / `--secondary`       | `#f3ece3`                            | `#332c27`                  | quiet surfaces, tracks                                   |
+| `--muted-foreground`            | `#6b5e55`                            | `#b9aca1`                  | secondary text; checkbox/radio edge                      |
+| `--primary` / `--ring`          | `#b4441c`                            | `#f0895b`                  | terracotta: actions, links, focus                        |
+| `--primary-foreground`          | `#ffffff`                            | `#2a1206`                  | label on primary                                         |
+| `--accent` / `-foreground`      | `#f7e6da` / `#8a3416`                | `#3a2a22` / `#f8c9ae`      | soft tint: hover, active nav, secondary button           |
+| `--brand-2`                     | `#17716b`                            | `#4fb8ae`                  | teal second voice (charts), never status                 |
+| `--success` / `-on-fill`        | `#2f7d52` / `#ffffff`                | `#5cc08a` / `#0d2618`      | fill and its label                                       |
+| `--success-foreground`          | `#1e6440`                            | `#9be0b8`                  | ink on the success tint                                  |
+| `--warning` / `-foreground`     | `#e3a21a` / `#7a4e00`                | `#f0b93a` / `#f5d58a`      | tint source / ink, ring and meter stroke                 |
+| `--destructive` / `-foreground` | `#c0362c` / `#ffffff`                | `#f07468` / `#2a0a07`      | fill and its label                                       |
+| `--destructive-on-tint`         | `#a62e25`                            | `#ff9a8f`                  | ink on the destructive tint                              |
+| `--border` / `--input`          | `#e8ddd0` / `#98877a`                | 12% warm white / `#7a6c62` | hairlines / field boundary (input ≥ 3:1 on card, 1.4.11) |
+| `--scrim`                       | ink at 45%                           | near-black at 62%          | behind dialogs (`bg-scrim`)                              |
+| `--chart-1..5`                  | terracotta, teal, green, ochre, plum | lighter set                | charts, both themes                                      |
+| `--logo-*`                      | fixed, no dark override              | —                          | the brand mark only                                      |
 
 - **Shadows** (warm-tinted; utilities `shadow-soft` resting card, `shadow-lift` hover/raised,
   `shadow-pop` menus/dialogs). In dark each carries a 1px warm hairline, because shadows do

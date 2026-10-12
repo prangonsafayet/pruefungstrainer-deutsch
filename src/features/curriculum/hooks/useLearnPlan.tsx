@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useLocation } from 'react-router-dom';
-
+import { TRAINERS } from '@shared/config/trainers.ts';
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.tsx';
 import { learnTaskKey } from '@shared/lib/learnProgress.ts';
 import { touchActivity, useTrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
@@ -17,9 +16,8 @@ export interface LearnPlanState {
   readonly isTaskDone: (day: number, taskIndex: number) => boolean;
   readonly toggleTask: (day: number, taskIndex: number, done: boolean) => void;
   readonly isDayComplete: (day: number) => boolean;
-  /** Cheatsheet ids that are expanded. */
-  readonly openCheatsheets: readonly string[];
-  readonly setOpenCheatsheets: (ids: string[]) => void;
+  /** The trainer's route namespace, for the task links. */
+  readonly basePath: string;
 }
 
 /**
@@ -29,13 +27,7 @@ export interface LearnPlanState {
 export const useLearnPlan = (trainer: TrainerId): LearnPlanState => {
   const { learnDone: done, update } = useTrainerSlice(trainer);
   const today = useToday();
-  const { hash } = useLocation();
   const curriculum = useTrainerContent(trainer).curriculum;
-
-  /* A "#cs-writing" link from a day card should open that cheatsheet, not just scroll to
-     a collapsed header. */
-  const initialOpen = hash.startsWith('#cs-') ? [hash.slice(4)] : [];
-  const [openCheatsheets, setOpenCheatsheets] = useState<readonly string[]>(initialOpen);
 
   const isTaskDone = useCallback(
     (day: number, taskIndex: number) => done[learnTaskKey(day, taskIndex)] === true,
@@ -71,7 +63,6 @@ export const useLearnPlan = (trainer: TrainerId): LearnPlanState => {
     isTaskDone,
     toggleTask,
     isDayComplete,
-    openCheatsheets,
-    setOpenCheatsheets
+    basePath: TRAINERS[trainer].basePath
   };
 };

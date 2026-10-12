@@ -23,7 +23,7 @@ const TrainerSwitcher = () => {
           variant="outline"
           size="sm"
           className="shrink-0 gap-1.5 rounded-full px-3"
-          aria-label="Switch trainer"
+          aria-label={`${active.short} — switch trainer`}
         >
           <GraduationCap className="size-4 text-primary max-sm:hidden" aria-hidden />
           <span>{active.short}</span>

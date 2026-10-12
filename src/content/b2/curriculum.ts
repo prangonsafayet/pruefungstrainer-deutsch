@@ -118,9 +118,15 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       focus: 'The B2 exam map + the full case system',
       tasks: [
         'Read the B2 exam guide: every module, its items and points, and why the written and the oral part are judged separately — this trainer marks each at 60%.',
-        'Review the Kasus reference tables in the practice hub — especially the Genitiv rows and the n-Deklination nouns.',
+        {
+          text: 'Review the Kasus reference tables in the practice hub — especially the Genitiv rows and the n-Deklination nouns.',
+          target: { kind: 'practice', tab: 'tables' }
+        },
         'Cheatsheet: Genitiv — write 10 own sentences with wegen, trotz, während, innerhalb, aufgrund.',
-        'One flashcard session (20 cards) of nouns in the practice hub.'
+        {
+          text: 'One flashcard session (20 cards) of nouns in the practice hub.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['genitiv'],
       ai: [
@@ -137,7 +143,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       focus: 'Formal prepositions — Sprachbausteine ammunition',
       tasks: [
         'Cheatsheet: Genitiv — memorize the formal preposition list (aufgrund, infolge, angesichts, hinsichtlich, anlässlich, mangels, zwecks); one own sentence each.',
-        'Quiz: 15 Kasus items in the practice hub, then redo every one you missed.',
+        {
+          text: 'Quiz: 15 Kasus items in the practice hub, then redo every one you missed.',
+          target: { kind: 'quiz', category: 'caseItems' }
+        },
         'Rewrite 8 weil/obwohl sentences from your notes as wegen/trotz + Genitiv phrases.',
         'One flashcard session (20 cards) of nouns.'
       ],
@@ -156,7 +165,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       focus: 'werden + Partizip II from Präsens to Plusquamperfekt',
       tasks: [
         'Cheatsheet: Passiv — memorize the full tense table, especially Perfekt with "worden" and Modalverb + werden.',
-        'Quiz: 15 verb forms in the practice hub; add every unknown Partizip II to your flashcards.',
+        {
+          text: 'Quiz: 15 verb forms in the practice hub; add every unknown Partizip II to your flashcards.',
+          target: { kind: 'quiz', category: 'verbs' }
+        },
         'Write 10 passive sentences about processes (an application, a delivery, a renovation) using at least 4 different tenses.'
       ],
       cheats: ['passiv'],
@@ -176,7 +188,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
         'Cheatsheet: Passiv — learn the four Passiversatz patterns and say each example aloud twice.',
         'Transform 10 of yesterday’s passive sentences into Passiversatz forms (lässt sich lösen, ist zu bezahlen, machbar).',
         'Read one German news article and mark every passive or Passiversatz form you find.',
-        'One flashcard session (20 cards) of adjectives in the practice hub.'
+        {
+          text: 'One flashcard session (20 cards) of adjectives in the practice hub.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['passiv'],
       ai: [
@@ -230,7 +245,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       title: 'Checkpoint Woche 1',
       focus: 'Consolidate the grammar core',
       tasks: [
-        'Review ALL flashcards from days 1–6 in the practice hub; delete the ones you know instantly.',
+        {
+          text: 'Review ALL flashcards from days 1–6 in the practice hub; delete the ones you know instantly.',
+          target: { kind: 'practice' }
+        },
         'Re-read the Genitiv, Passiv and Konjunktiv II cheatsheets in one 30-minute sweep.',
         'Optional baseline: take the Lesen module of Modelltest 1 under timing — don’t worry about the score, it’s a reference point.'
       ],
@@ -249,7 +267,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       focus: 'Lesen Teil 3: 10 matching items on the clock',
       tasks: [
         'Strategy drill: for matching tasks, read the situations FIRST and underline the key need in each, then scan the ads.',
-        'Quiz: 15 Verben mit Präposition in the practice hub; write one own sentence for each you missed.',
+        {
+          text: 'Quiz: 15 Verben mit Präposition in the practice hub; write one own sentence for each you missed.',
+          target: { kind: 'quiz', category: 'prepVerbs' }
+        },
         'One flashcard session (20 cards) of nouns.'
       ],
       cheats: ['nominal'],
@@ -306,7 +327,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       tasks: [
         'Take Modelltest 1 under real timing — no pausing, no dictionary, letter included.',
         'Full review afterwards: redo every wrong item aloud with the reason why the right answer is right.',
-        'Add every unknown word from the test to your flashcards in the practice hub.',
+        {
+          text: 'Add every unknown word from the test to your flashcards in the practice hub.',
+          target: { kind: 'practice' }
+        },
         'Note your module scores against this trainer’s 60% line — this decides your focus for the next two weeks.'
       ],
       cheats: [],
@@ -419,7 +443,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       tasks: [
         'Cheatsheet: Redemittel — drill the Zustimmen/Widersprechen/Einhaken phrases aloud until automatic.',
         'Record yourself arguing 2 minutes for a position you personally DISAGREE with — the exam rewards flexibility.',
-        'Quiz: 15 Verben mit Präposition in the practice hub.'
+        {
+          text: 'Quiz: 15 Verben mit Präposition in the practice hub.',
+          target: { kind: 'quiz', category: 'prepVerbs' }
+        }
       ],
       cheats: ['muendlich', 'nominal'],
       ai: [
@@ -601,7 +628,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       focus: 'Last full mock + your own weak vocabulary',
       tasks: [
         'Take Modelltest 10 under real timing — this is your final full rehearsal, treat it like exam day.',
-        'Review it, then sweep the practice hub: collect the 100 words you still hesitate on into a final flashcard round.',
+        {
+          text: 'Review it, then sweep the practice hub: collect the 100 words you still hesitate on into a final flashcard round.',
+          target: { kind: 'practice' }
+        },
         'Active test: speak 60 seconds each about 5 exam topics (Arbeit, Umwelt, Medien, Gesundheit, Reisen) using your top-100 words.'
       ],
       cheats: [],

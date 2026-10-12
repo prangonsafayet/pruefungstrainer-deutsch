@@ -66,7 +66,7 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 | `--destructive`         | `#C0362C` | fill; white label 5.5:1                   |
 | `--destructive-on-tint` | `#A62E25` | ink on destructive tint                   |
 | `--border`              | `#E8DDD0` |                                           |
-| `--input`               | `#DCCFBF` |                                           |
+| `--input`               | `#98877A` | field boundary — 3.4:1 on card (1.4.11)   |
 | `--ring`                | `#B4441C` |                                           |
 
 ### Dark (warm charcoal, never pure black)
@@ -85,7 +85,7 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 | `--warning`             | `#F0B93A` (ink on tint `#F5D58A`)                    |
 | `--destructive`         | `#F07468` (ink on fill `#2A0A07`; on tint `#FF9A8F`) |
 | `--border`              | `rgb(255 240 225 / 0.12)`                            |
-| `--input`               | `rgb(255 240 225 / 0.18)`                            |
+| `--input`               | `#7A6C62` (field boundary, 3.15:1 on card)           |
 
 Charts get their own `--chart-1..5` in **both** themes (the old palette forgot dark).
 

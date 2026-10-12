@@ -326,11 +326,18 @@ test.describe('a full DTZ sitting', () => {
     await expect(main).toContainText('Sprechen: 100/100 → B1 (B1 ab 75, A2 ab 35)');
 
     await page.goto(`${BASE}/history`);
-    const row = page.getByRole('row').filter({ hasText: 'Zertifikat B1' });
+    /* Phones list attempts as cards; wider screens as a table. */
+    const phone = (page.viewportSize()?.width ?? 1280) < 640;
+    const row = page
+      .locator('main')
+      .getByRole(phone ? 'listitem' : 'row')
+      .filter({ hasText: 'Zertifikat B1' });
     await expect(row).toHaveCount(1);
     await expect(row).toContainText('0/45');
     await expect(row).toContainText('100/100');
-    await expect(page.locator('[title*="0/45 · Zertifikat B1"]')).toHaveCount(1);
+    await expect(page.getByRole('img', { name: /Latest: Test \d+, 0 of 45 \(Zertifikat B1\)/ })).toHaveCount(
+      1
+    );
 
     expect(errors).toEqual([]);
   });
@@ -402,7 +409,7 @@ test.describe('DTZ data stays its own', () => {
     await page.reload();
 
     const visit = async trainer => {
-      await page.getByRole('button', { name: 'Switch trainer' }).click();
+      await page.getByRole('button', { name: /switch trainer/i }).click();
       await page
         .getByRole('menuitem', {
           name: new RegExp(`^${trainer.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)
@@ -416,7 +423,11 @@ test.describe('DTZ data stays its own', () => {
     await visit(ROOT);
     await expect(page.getByText('Zertifikat A2')).toHaveCount(0);
     await visit(DTZ);
-    await expect(page.getByRole('row').filter({ hasText: 'Zertifikat A2' })).toHaveCount(1);
+    /* Phones list attempts as cards; wider screens as a table. */
+    const attemptRole = (page.viewportSize()?.width ?? 1280) < 640 ? 'listitem' : 'row';
+    await expect(
+      page.locator('main').getByRole(attemptRole).filter({ hasText: 'Zertifikat A2' })
+    ).toHaveCount(1);
     await visit(B1);
     await expect(page.getByText('Zertifikat A2')).toHaveCount(0);
   });

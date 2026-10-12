@@ -14,7 +14,7 @@ interface ResumeRunNoticeProps {
 
 const ResumeRunNotice = ({ run, modeLabel, onResume, onDiscard }: ResumeRunNoticeProps) => {
   return (
-    <Card className="animate-pop-in mb-6 border-l-4 border-l-primary shadow-md">
+    <Card className="animate-pop-in mb-6 border-l-4 border-l-primary shadow-lift">
       <CardHeader>
         <CardTitle>You have an exam in progress</CardTitle>
         <CardDescription>

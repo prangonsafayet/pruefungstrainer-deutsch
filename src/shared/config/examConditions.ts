@@ -83,6 +83,56 @@ export const PASS_RULES: Readonly<Record<ExamFormatId, string>> = {
     'Zertifikat B1: Sprechen ≥ 75/100 and either Hören + Lesen ≥ 33/45 or Schreiben ≥ 15/20. Zertifikat A2: Sprechen ≥ 35 and either Hören + Lesen ≥ 20 or Schreiben ≥ 7.'
 };
 
+export interface PassRuleRow {
+  readonly part: string;
+  readonly line: string;
+}
+
+export interface PassRuleSummary {
+  readonly title: string;
+  readonly rows: readonly PassRuleRow[];
+  readonly note: string;
+}
+
+const { hoerenLesen: DTZ_HL, schreiben: DTZ_SCHREIBEN, sprechen: DTZ_SPRECHEN } = DTZ_PART_LINES;
+
+const dtzLine = (line: { readonly max: number; readonly b1From: number; readonly a2From: number }): string =>
+  `B1 ≥ ${String(line.b1From)}/${String(line.max)} · A2 ≥ ${String(line.a2From)}/${String(line.max)}`;
+
+/**
+ * `PASS_RULES`, laid out for scanning: one row per condition. Same figures as the sentence
+ * (`tests/unit/examConditions.test.ts` holds the two together); the DTZ rows read the spec
+ * lines themselves.
+ */
+export const PASS_RULE_SUMMARY: Readonly<Record<ExamFormatId, PassRuleSummary>> = {
+  'dual-level': {
+    title: 'B1 needs all three',
+    rows: [
+      { part: 'Overall', line: '≥ 168/240' },
+      { part: 'Three of the four skills', line: '≥ 42/60 each' },
+      { part: 'The fourth skill', line: '≥ 24/60' }
+    ],
+    note: 'Below that, the same paper can still award A2.'
+  },
+  'single-level': {
+    title: 'The line this trainer marks at',
+    rows: [
+      { part: 'Written', line: '≥ 135/225' },
+      { part: 'Oral', line: '≥ 45/75' }
+    ],
+    note: 'This trainer marks each part at 60%, judged separately.'
+  },
+  'dtz-paper': {
+    title: 'Certificate lines',
+    rows: [
+      { part: 'Sprechen', line: dtzLine(DTZ_SPRECHEN) },
+      { part: 'Hören + Lesen', line: dtzLine(DTZ_HL) },
+      { part: 'Schreiben', line: dtzLine(DTZ_SCHREIBEN) }
+    ],
+    note: 'A certificate needs Sprechen at its level, plus Hören + Lesen or Schreiben at the same level.'
+  }
+};
+
 /**
  * How long the paper gives for writing, said next to the choice. The number comes from the
  * trainer's own paper rather than from a second list, so the two cannot disagree. The

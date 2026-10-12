@@ -18,6 +18,11 @@ interface VocabQuizSessionProps {
   readonly onClose: () => void;
 }
 
+/* A stable callback ref: runs when its element mounts, not on every render. */
+const focusOnMount = (node: HTMLElement | null): void => {
+  node?.focus({ preventScroll: true });
+};
+
 /** The quiz run: one question at a time with instant feedback and an explanation. */
 const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose }: VocabQuizSessionProps) => {
   if (done) {
@@ -35,11 +40,17 @@ const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose 
   const question = session.questions[session.index];
   if (!question) return null;
   const answered = session.chosen !== null;
+  const correct = session.chosen === question.answer;
+  const answerLetter = LETTERS[question.answer] ?? String(question.answer + 1);
 
   return (
     <div className="mx-auto max-w-xl space-y-5">
       <div className="flex items-center gap-3">
-        <Progress value={(session.index / session.questions.length) * 100} className="h-1.5" />
+        <Progress
+          value={(session.index / session.questions.length) * 100}
+          className="h-1.5"
+          aria-label="Quiz progress"
+        />
         <span className="shrink-0 text-sm tabular-nums text-muted-foreground">
           {session.index + 1}/{session.questions.length}
         </span>
@@ -49,8 +60,16 @@ const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose 
       <Card key={question.id} className="animate-pop-in">
         <CardContent className="space-y-4">
           <div>
-            <div className="text-lg font-semibold leading-relaxed">{question.prompt}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{question.hint}</div>
+            {/* Each question mounts afresh, so focus lands on it and a screen reader reads it. */}
+            <p
+              ref={focusOnMount}
+              tabIndex={-1}
+              lang="de"
+              className="font-heading text-lg font-bold leading-relaxed outline-none"
+            >
+              {question.prompt}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{question.hint}</p>
           </div>
 
           <div className="grid gap-2">
@@ -66,21 +85,26 @@ const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose 
                     onChoose(index);
                   }}
                   className={cn(
-                    'h-auto justify-start whitespace-normal py-2.5 text-left leading-relaxed transition-transform',
+                    'h-auto min-h-12 justify-start whitespace-normal py-2.5 text-left font-sans font-medium leading-relaxed transition-transform',
                     !answered && 'hover:scale-[1.01]',
+                    answered && 'disabled:opacity-100',
                     answered &&
                       isAnswer &&
-                      'border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,transparent)] opacity-100',
-                    answered && isChosen && !isAnswer && 'border-destructive bg-destructive/10 opacity-100'
+                      'border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,transparent)]',
+                    answered && isChosen && !isAnswer && 'border-destructive bg-destructive/10'
                   )}
                 >
                   <span className="mr-1 text-muted-foreground">{LETTERS[index] ?? String(index + 1)})</span>
                   <span className="min-w-0 flex-1">{option}</span>
                   {answered && isAnswer ? (
-                    <Check className="size-4 shrink-0 text-[color:var(--success-foreground)]" />
+                    <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-success-foreground">
+                      <Check className="size-4" aria-hidden /> Correct answer
+                    </span>
                   ) : null}
                   {answered && isChosen && !isAnswer ? (
-                    <X className="size-4 shrink-0 text-destructive" />
+                    <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-destructive-on-tint">
+                      <X className="size-4" aria-hidden /> Your answer
+                    </span>
                   ) : null}
                 </Button>
               );
@@ -89,14 +113,26 @@ const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose 
 
           {answered ? (
             <div className="animate-fade-up space-y-3">
+              {/* Focus moves here once an answer is in: the verdict is said in words, never
+                  by the colour of the option alone. */}
               <p
+                ref={focusOnMount}
+                tabIndex={-1}
                 className={cn(
-                  'rounded-lg border-l-4 p-3 text-sm leading-relaxed',
-                  session.chosen === question.answer
-                    ? 'border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_8%,transparent)]'
-                    : 'border-destructive bg-destructive/5'
+                  'rounded-xl border-l-4 p-3 text-sm leading-relaxed outline-none',
+                  correct
+                    ? 'border-[color:var(--success)] bg-[color-mix(in_oklab,var(--success)_10%,transparent)]'
+                    : 'border-destructive bg-destructive/10'
                 )}
               >
+                <strong
+                  className={cn(
+                    'block font-heading',
+                    correct ? 'text-success-foreground' : 'text-destructive-on-tint'
+                  )}
+                >
+                  {correct ? 'Richtig — well done.' : `Not quite — the answer is ${answerLetter}).`}
+                </strong>
                 {question.explanation}
               </p>
               <div className="flex justify-end">

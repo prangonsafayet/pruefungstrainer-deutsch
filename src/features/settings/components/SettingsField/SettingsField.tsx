@@ -19,7 +19,7 @@ interface SettingsFieldProps {
 
 /** One labelled settings control with an optional hint underneath. */
 const SettingsField = ({ label, htmlFor, hint, children }: SettingsFieldProps) => (
-  <div className="space-y-1.5">
+  <div className="min-w-0 space-y-1.5">
     {htmlFor === undefined ? (
       <span className="text-sm font-medium leading-none">{label}</span>
     ) : (

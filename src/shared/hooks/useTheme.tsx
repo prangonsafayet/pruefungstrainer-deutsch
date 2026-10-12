@@ -18,6 +18,19 @@ const storedTheme = (): Theme | null => {
 };
 
 /**
+ * Points the browser chrome (`<meta name="theme-color">`) at the canvas of the theme the app
+ * shows, not the OS one. `index.html` ships one meta per OS scheme; both get the same value,
+ * read from the `--background` token so no colour is restated here. Leaves them alone when the
+ * stylesheet has not resolved the token (nothing to say yet).
+ */
+export const syncThemeColor = (): void => {
+  const canvas = getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+  if (!canvas) return;
+  for (const meta of document.querySelectorAll('meta[name="theme-color"]'))
+    meta.setAttribute('content', canvas);
+};
+
+/**
  * The chosen theme, persisted, and the class on `<html>` that Tailwind's `dark` variant
  * reads. Falls back to the OS preference until the user picks one.
  *
@@ -32,6 +45,7 @@ export const useTheme = (): { readonly theme: Theme; readonly toggle: () => void
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     writeLocal(THEME_STORAGE_KEY, theme);
+    syncThemeColor();
   }, [theme]);
 
   const toggle = useCallback(() => {

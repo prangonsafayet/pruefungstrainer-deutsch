@@ -16,12 +16,16 @@ interface SettingsSectionProps {
  * screen reader jump between the groups instead of walking every field.
  */
 const SettingsSection = ({ title, lead, children }: SettingsSectionProps) => (
-  <section aria-label={title} className="mt-10">
-    <div className="mb-3">
-      <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+  <section
+    aria-label={title}
+    className="mt-10 border-border md:grid md:grid-cols-[13rem_minmax(0,1fr)] md:gap-8 md:border-t md:pt-8 lg:grid-cols-[16rem_minmax(0,1fr)]"
+  >
+    {/* Tablet and up: what the group is for on the left, its controls on the right. */}
+    <div className="mb-3 md:mb-0">
+      <h2 className="text-xl font-bold">{title}</h2>
       <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{lead}</p>
     </div>
-    {children}
+    <div className="min-w-0">{children}</div>
   </section>
 );
 

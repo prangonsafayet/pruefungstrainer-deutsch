@@ -24,7 +24,7 @@ const SettingsPage = () => (
       title="Your exams"
       lead="Each trainer has its own date, and its 28-day plan re-paces itself around that date on its own."
     >
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {TRAINER_ORDER.map(trainer => (
           <TrainerExamDateCard key={trainer} trainer={trainer} />
         ))}

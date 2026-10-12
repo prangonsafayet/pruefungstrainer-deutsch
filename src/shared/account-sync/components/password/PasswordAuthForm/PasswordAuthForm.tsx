@@ -13,6 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs.tsx';
 const PasswordAuthForm = () => {
   const auth = usePasswordAuth();
   const isSignUp = auth.mode === 'signup';
+  /* The problem names one field: that field is marked invalid and described by it. */
+  const invalid = (mode: AuthMode, field: NonNullable<typeof auth.problemField>) =>
+    auth.problemField === field
+      ? { 'aria-invalid': true, 'aria-describedby': `${mode}-problem` }
+      : { 'aria-invalid': false };
 
   return (
     <Tabs
@@ -46,6 +51,7 @@ const PasswordAuthForm = () => {
                 auth.setEmail(event.target.value);
               }}
               onKeyDown={auth.onKeyDown}
+              {...invalid(mode, 'email')}
             />
           </div>
 
@@ -62,6 +68,7 @@ const PasswordAuthForm = () => {
                   auth.setPassword(event.target.value);
                 }}
                 onKeyDown={auth.onKeyDown}
+                {...invalid(mode, 'password')}
               />
               <Button
                 type="button"
@@ -91,12 +98,18 @@ const PasswordAuthForm = () => {
                     auth.setConfirmPassword(event.target.value);
                   }}
                   onKeyDown={auth.onKeyDown}
+                  {...invalid(mode, 'confirm')}
                 />
               </div>
             </>
           ) : null}
 
-          {auth.problem ? <p className="text-sm text-destructive">{auth.problem}</p> : null}
+          {/* Announced once when it appears (role="alert"), not on every keystroke after. */}
+          {auth.problem ? (
+            <p id={`${mode}-problem`} role="alert" className="text-sm font-medium text-destructive-on-tint">
+              {auth.problem}
+            </p>
+          ) : null}
 
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={auth.submit} disabled={!auth.canSubmit}>

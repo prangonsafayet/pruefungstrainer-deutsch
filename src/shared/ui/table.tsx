@@ -64,3 +64,9 @@ export const TableCell = forwardRef<HTMLTableCellElement, ComponentPropsWithoutR
     return <td ref={ref} className={cn('whitespace-nowrap p-2 align-middle', className)} {...props} />;
   }
 );
+
+export const TableCaption = forwardRef<HTMLTableCaptionElement, ComponentPropsWithoutRef<'caption'>>(
+  ({ className, ...props }, ref) => {
+    return <caption ref={ref} className={cn('mt-3 text-sm text-muted-foreground', className)} {...props} />;
+  }
+);

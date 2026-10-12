@@ -88,7 +88,10 @@ export const B1_CURRICULUM: LearnPlan = {
       tasks: [
         'Read the B1 exam guide: the five modules, the points, and why the written and the oral part are judged separately — this trainer marks each at 60%.',
         'Review the Kasus reference table in the practice hub, then take the quiz: 15 Kasus items.',
-        'One flashcard session (20 cards) of nouns in the practice hub — this becomes your daily routine.'
+        {
+          text: 'One flashcard session (20 cards) of nouns in the practice hub — this becomes your daily routine.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['cases'],
       ai: [
@@ -105,7 +108,10 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: 'Perfekt for speaking, Präteritum for reading',
       tasks: [
         'Study the verb reference table in the practice hub, then quiz: 15 verb forms (Präteritum/Perfekt).',
-        'One flashcard session (20 cards) of verbs in the practice hub.',
+        {
+          text: 'One flashcard session (20 cards) of verbs in the practice hub.',
+          target: { kind: 'practice' }
+        },
         'Write 8 sentences about yesterday in Perfekt, then rewrite 4 of them in Präteritum.'
       ],
       cheats: ['verbs'],
@@ -124,7 +130,10 @@ export const B1_CURRICULUM: LearnPlan = {
       tasks: [
         'Learn the three connector groups from the cheatsheet: Position 0, verb to the end, inversion.',
         'Join 10 sentence pairs on paper: 4× weil, 3× obwohl, 3× deshalb — check the verb position every time.',
-        'One flashcard session (20 cards) in the practice hub, category of your choice.'
+        {
+          text: 'One flashcard session (20 cards) in the practice hub, category of your choice.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['konnektoren'],
       ai: [
@@ -140,7 +149,10 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Verben mit Präposition',
       focus: 'warten auf, sich freuen über — fixed pairs, free points',
       tasks: [
-        'Study the Verben-mit-Präposition reference table in the practice hub — mark the 10 you did not know.',
+        {
+          text: 'Study the Verben-mit-Präposition reference table in the practice hub — mark the 10 you did not know.',
+          target: { kind: 'practice', tab: 'tables' }
+        },
         'One flashcard session (20 cards) of Verben mit Präposition.',
         'Write 10 own sentences with the pairs you marked, then 3 with darauf/darüber/daran.'
       ],
@@ -195,8 +207,11 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: 'Teil 1: a/b/c · Teil 2: the word bank',
       tasks: [
         'Take the Sprachbausteine module of Modelltest 1 (module practice), untimed.',
-        'For every wrong gap, find the rule in the practice hub reference tables (Kasus, verbs, Konnektoren) — not knowing WHY it was wrong means it will be wrong again.',
-        'One flashcard session (20 cards) in the practice hub.'
+        {
+          text: 'For every wrong gap, find the rule in the practice hub reference tables (Kasus, verbs, Konnektoren) — not knowing WHY it was wrong means it will be wrong again.',
+          target: { kind: 'practice', tab: 'tables' }
+        },
+        { text: 'One flashcard session (20 cards) in the practice hub.', target: { kind: 'practice' } }
       ],
       cheats: ['konnektoren', 'cases'],
       ai: [
@@ -348,7 +363,10 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: 'wegen des Wetters — the B1 signature case',
       tasks: [
         'Study the Genitiv row and the n-Deklination list in the cases cheatsheet and the Kasus reference table.',
-        'Quiz: 15 Kasus items in the practice hub — this time watch specifically for Genitiv gaps.',
+        {
+          text: 'Quiz: 15 Kasus items in the practice hub — this time watch specifically for Genitiv gaps.',
+          target: { kind: 'quiz', category: 'caseItems' }
+        },
         'Write 8 sentences with wegen, trotz, während, statt + 4 with n-Deklination nouns (der Kunde, der Kollege).'
       ],
       cheats: ['cases'],
@@ -385,7 +403,10 @@ export const B1_CURRICULUM: LearnPlan = {
       tasks: [
         'Study the Konjunktiv II block in the verbs cheatsheet: wäre, hätte, würde, könnte, müsste, sollte.',
         'Write 6 irreale Bedingungen (Wenn ich …, würde ich …) and 4 Ratschläge (An deiner Stelle …).',
-        'Quiz: 15 verb forms in the practice hub, and flag every Konjunktiv item you hesitate on.'
+        {
+          text: 'Quiz: 15 verb forms in the practice hub, and flag every Konjunktiv item you hesitate on.',
+          target: { kind: 'quiz', category: 'verbs' }
+        }
       ],
       cheats: ['verbs'],
       ai: [

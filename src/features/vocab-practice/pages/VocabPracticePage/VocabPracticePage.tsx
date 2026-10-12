@@ -38,7 +38,7 @@ const VocabPracticePage = ({ trainer }: VocabPracticePageProps) => {
   if (session) {
     return (
       <>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-2 flex flex-wrap items-start justify-between gap-x-4">
           <PageTitle
             lead={
               session.kind === 'flashcards'

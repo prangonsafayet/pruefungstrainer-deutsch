@@ -158,8 +158,8 @@ describe('the A2·B1 grade zones', () => {
     buildTiles(withTotal(total), null, '2026-08-20').find(tile => tile.kind === 'best')?.caption ?? '';
 
   it('calls the B1 total B1 territory and nothing below it', () => {
-    expect(bestCaption(B1_TOTAL)).toBe('B1 territory 🎉');
-    expect(bestCaption(B1_TOTAL - 1)).not.toBe('B1 territory 🎉');
+    expect(bestCaption(B1_TOTAL)).toBe('B1 territory');
+    expect(bestCaption(B1_TOTAL - 1)).not.toBe('B1 territory');
   });
 
   it('points the A2 zone at the same B1 total the chart draws', () => {

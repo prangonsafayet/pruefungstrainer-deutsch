@@ -10,10 +10,11 @@ import { type LearnSlotGroup } from '@features/curriculum/hooks/useScheduledLear
 interface LearnSlotSectionProps {
   readonly group: LearnSlotGroup;
   readonly plan: LearnPlanState;
+  readonly onOpenCheatsheet: (id: string, fromDay: number) => void;
 }
 
 /** One day of the plan: its date, what it is for, and the lessons it holds. */
-const LearnSlotSection = ({ group, plan }: LearnSlotSectionProps) => (
+const LearnSlotSection = ({ group, plan, onOpenCheatsheet }: LearnSlotSectionProps) => (
   <section className="space-y-3">
     <div className="flex flex-wrap items-center gap-2">
       <h3
@@ -38,9 +39,13 @@ const LearnSlotSection = ({ group, plan }: LearnSlotSectionProps) => (
           day={day}
           complete={plan.isDayComplete(day.day)}
           cheatsheets={plan.cheatsheets}
+          basePath={plan.basePath}
           isTaskDone={index => plan.isTaskDone(day.day, index)}
           onToggleTask={(index, done) => {
             plan.toggleTask(day.day, index, done);
+          }}
+          onOpenCheatsheet={id => {
+            onOpenCheatsheet(id, day.day);
           }}
         />
       ))}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { examCount, TRAINERS } from '@shared/config/trainers.ts';
+import { type PassRuleSummary } from '@shared/config/examConditions.ts';
+import { examCount, examsRampInDifficulty, TRAINERS } from '@shared/config/trainers.ts';
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.tsx';
 import { buildScoreChart } from '@shared/lib/scoreChart.ts';
 import { useTrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
@@ -32,7 +33,7 @@ import { buildExamCards } from './examCards.ts';
 export interface DashboardStats {
   readonly heading: string;
   readonly lead: string;
-  readonly passRule: string;
+  readonly passRule: PassRuleSummary;
   readonly attemptCount: number;
   /** This trainer's own history page. */
   readonly historyTo: string;
@@ -64,9 +65,7 @@ export const useDashboardStats = (trainer: TrainerId): DashboardStats => {
     const counts = mastery === null ? null : masteryCounts(vocab, slice.srs, today);
     return {
       heading: `Dashboard · ${info.short}`,
-      lead: schedule
-        ? `${info.name}: ${describeMockLead(schedule, examCount(content))}`
-        : `${info.name}: ${String(examCount(content))} Modelltests, easiest first. Take them in order under real timing.`,
+      lead: `${info.name}: ${describeMockLead(schedule, examCount(content), examsRampInDifficulty(content))}`,
       passRule: passRuleFor(info),
       attemptCount: slice.attempts.length,
       historyTo: `${info.basePath}/history`,

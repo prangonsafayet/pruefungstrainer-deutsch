@@ -3,8 +3,9 @@ import { A2_TOTAL, B1_TOTAL, MODULE_META, SKILL_MAX, SKILL_MODULES } from '@shar
 import {
   PAPER_TOTAL_MAX,
   PASS_PERCENT,
-  PASS_RULES,
+  PASS_RULE_SUMMARY,
   passLineLabel,
+  type PassRuleSummary,
   unreachableFormat
 } from '@shared/config/examConditions.ts';
 import {
@@ -139,7 +140,7 @@ const bestLabel = (slice: TrainerSlice): string => {
 
 const dualLevelCaption = (best: number | null): string => {
   if (best == null) return 'no full exam yet';
-  if (best >= B1_TOTAL) return 'B1 territory 🎉';
+  if (best >= B1_TOTAL) return 'B1 territory';
   if (best >= A2_TOTAL) return `A2 zone — push to ${String(B1_TOTAL)}`;
   return 'keep training';
 };
@@ -376,5 +377,5 @@ export const buildWeakAreas = (
   return areas.toSorted((a, b) => b.severity - a.severity);
 };
 
-/** The pass rule of the paper a trainer sets, for the lead under the page title. */
-export const passRuleFor = (trainer: TrainerInfo): string => PASS_RULES[trainer.format];
+/** The pass rule of the paper a trainer sets, as the rows of the callout under the page title. */
+export const passRuleFor = (trainer: TrainerInfo): PassRuleSummary => PASS_RULE_SUMMARY[trainer.format];

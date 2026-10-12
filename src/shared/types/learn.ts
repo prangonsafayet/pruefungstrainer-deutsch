@@ -1,4 +1,7 @@
-/** The 28-day study plan authored in `src/content/learn.ts`. */
+/** The 28-day study plan authored in `src/content/<id>/curriculum.ts`. */
+
+import { type ExamModule } from './exam.ts';
+import { type StudyCategory } from './vocab.ts';
 
 export interface LearnAiPrompt {
   /** Short title, e.g. "Error debrief". */
@@ -6,6 +9,40 @@ export interface LearnAiPrompt {
   /** The prompt body, offered as copy-to-clipboard. Plain text. */
   readonly p: string;
 }
+
+/**
+ * Where a curriculum task is done, when the task names one place. Rendered as a "Go to …"
+ * link beside the checkbox. A target only labels and links — the runner opens the whole
+ * module (`teil` is named in the label, not jumped to).
+ */
+export type LearnTaskTarget =
+  | {
+      readonly kind: 'module';
+      /** A Modelltest id of the same trainer. */
+      readonly exam: number;
+      readonly module: ExamModule;
+      /** The Teil the task is about, e.g. "1" or "2A" — said in the link label only. */
+      readonly teil?: string;
+    }
+  | { readonly kind: 'practice'; readonly tab?: 'tables' }
+  | { readonly kind: 'quiz'; readonly category: StudyCategory }
+  /** An anchor id in the trainer's exam guide, without the `#`. */
+  | { readonly kind: 'guide'; readonly anchor: string }
+  /** A key into `LearnPlan.cheatsheets`; opens the sheet beside the plan. */
+  | { readonly kind: 'cheatsheet'; readonly id: string };
+
+/** A task that says where it is done. */
+export interface TargetedLearnTask {
+  readonly text: string;
+  readonly target: LearnTaskTarget;
+}
+
+/**
+ * One checkbox of a day. A plain string is still the common case; a task may be annotated
+ * with a target IN PLACE — its index is its persisted `learnDone` key (`d<day>t<index>`), so
+ * tasks are never added, removed or reordered.
+ */
+export type LearnTask = string | TargetedLearnTask;
 
 export interface LearnDay {
   readonly day: number;
@@ -17,7 +54,7 @@ export interface LearnDay {
   readonly tier: 'core' | 'extension';
   readonly title: string;
   readonly focus: string;
-  readonly tasks: readonly string[];
+  readonly tasks: readonly LearnTask[];
   /** Keys into `LearnPlan.cheatsheets`. */
   readonly cheats: readonly string[];
   readonly ai: readonly LearnAiPrompt[];

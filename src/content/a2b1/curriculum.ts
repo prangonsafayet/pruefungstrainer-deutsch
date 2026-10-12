@@ -137,7 +137,10 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
       title: 'Baseline & the exam map',
       focus: 'Know the enemy',
       tasks: [
-        'Read the whole Exam Guide tab (15 min) — know every module and its point value.',
+        {
+          text: 'Read the whole Exam Guide tab (15 min) — know every module and its point value.',
+          target: { kind: 'guide', anchor: 'g-structure' }
+        },
         'Cheatsheet: Cases & articles — read it, then write 10 own sentences using mit/für/in.',
         'Learn your Teil-1 speaking introduction by heart (write it down, say it aloud 5×).'
       ],
@@ -155,9 +158,18 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
       title: 'Reading I — ads & matching',
       focus: 'Lesen Teil 1+3 tactics',
       tasks: [
-        'Re-read the Lesen tactics in the Exam Guide.',
-        'Cheatsheet: Theme vocabulary — study fields 1–5, make flashcards for 20 unknown words.',
-        'Practice scanning: give yourself 60 seconds per ad-matching situation.'
+        {
+          text: 'Re-read the Lesen tactics in the Exam Guide.',
+          target: { kind: 'guide', anchor: 'g-lesen' }
+        },
+        {
+          text: 'Cheatsheet: Theme vocabulary — study fields 1–5, make flashcards for 20 unknown words.',
+          target: { kind: 'cheatsheet', id: 'vocab' }
+        },
+        {
+          text: 'Practice scanning: give yourself 60 seconds per ad-matching situation.',
+          target: { kind: 'module', exam: 1, module: 'lesen', teil: '1' }
+        }
       ],
       cheats: ['vocab'],
       ai: [

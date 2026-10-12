@@ -48,6 +48,8 @@ right area; see `.claude/rules/memory.md`.
   cached the `project` program; config now uses `projectService` — restart the ESLint server.
 - 2026-10-12: `npx shadcn add` wrote into a literal `@shared/ui/` folder → the CLI reads paths
   from the ROOT `tsconfig.json` only; it also emits `import { cn } from "cn"` — fix by hand.
+- 2026-10-12: `npx shadcn add sheet` also added `cn` (an unrelated npm package) and the `radix-ui`
+  umbrella to `package.json` → uninstall both and add the single `@radix-ui/react-<x>` package.
 
 ## Types
 
@@ -122,6 +124,8 @@ right area; see `.claude/rules/memory.md`.
 - Blank Playwright page (`require_react is not a function`) → no `server.open`, no stale
   `reuseExistingServer`.
 - `VITE_*` change had no effect → inlined at build time; rebuild.
+- 2026-10-12: og-image.png showed only the top-left of the card → `qlmanage` zooms non-square SVGs;
+  `npm run images` renders it with `npx playwright screenshot` — look at the PNG after.
 
 ## Hooks and tooling
 

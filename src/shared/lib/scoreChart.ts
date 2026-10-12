@@ -31,7 +31,7 @@ const DUAL_LEVEL_GRIDLINES: readonly ScoreChartGridline[] = [
   { value: A2_TOTAL, label: `${String(A2_TOTAL)} · A2` }
 ];
 
-const DUAL_LEVEL_DESCRIPTION = `Total points per full exam. Gridlines mark the B1 (${String(B1_TOTAL)}) and A2 (${String(A2_TOTAL)}) zones. B1 needs ${String(B1_TOTAL)} points *and* the per-subtest minimums — see the Exam Guide.`;
+const DUAL_LEVEL_DESCRIPTION = `Total points per full exam. Gridlines mark the B1 (${String(B1_TOTAL)}) and A2 (${String(A2_TOTAL)}) zones. B1 needs ${String(B1_TOTAL)} points and the per-subtest minimums — see the Exam Guide.`;
 
 /** 60% written plus 60% oral is the lowest total any pass can add up to. */
 const SINGLE_LEVEL_PASS_LINE = SINGLE_LEVEL_WRITTEN_PASS + SINGLE_LEVEL_ORAL_PASS;
@@ -129,4 +129,26 @@ export const buildScoreChart = (source: ScoredAttempts): ScoreChartModel => {
     default:
       return unreachableFormat(source);
   }
+};
+
+/** The chart's lines in words — "168 · B1, 96 · A2" — for its table caption and summary. */
+export const describeGridlines = (model: ScoreChartModel): string =>
+  model.gridlines.map(line => line.label).join(', ');
+
+/**
+ * What the bars say, in one sentence, for the chart's accessible name: bar heights alone
+ * tell a screen reader nothing. The full numbers are in the table under the chart.
+ */
+export const summarizeScoreChart = (model: ScoreChartModel): string => {
+  const latest = model.bars.at(-1);
+  if (!latest) return 'Score history: no full exams yet.';
+  const best = Math.max(...model.bars.map(bar => bar.total));
+  const count = model.bars.length;
+  const of = String(model.max);
+  return [
+    `Score history: ${String(count)} full exam${count === 1 ? '' : 's'}, scored out of ${of}.`,
+    `Latest: Test ${String(latest.examId)}, ${String(latest.total)} of ${of}${latest.result ? ` (${latest.result})` : ''}.`,
+    `Best: ${String(best)} of ${of}.`,
+    `Lines at ${describeGridlines(model)}.`
+  ].join(' ');
 };

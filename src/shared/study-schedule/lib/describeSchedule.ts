@@ -65,15 +65,23 @@ export const describeLearnLead = (schedule: Schedule): string => {
   return `${String(schedule.daysLeft)} days to your exam, so the plan below fits ${String(lessons)} lesson${lessons === 1 ? '' : 's'} into ${String(lessonDays)} study day${lessonDays === 1 ? '' : 's'}. Work through them in order — one box per day.`;
 };
 
-/** The Dashboard lead. */
-export const describeMockLead = (schedule: Schedule, totalExams: number): string => {
-  const scheduled = schedule.slots.reduce((sum, slot) => sum + slot.examIds.length, 0);
-  if (schedule.phase === 'past-due' || scheduled === 0) {
-    return `${String(totalExams)} Modelltests, easiest first. Take them in order under real timing.`;
+/**
+ * The Dashboard lead. Whether the papers get harder as you go is a fact of the trainer's own
+ * exams (`examsRampInDifficulty`), not of every trainer: only a paper set authored easy → B1
+ * may be called "easiest first".
+ */
+export const describeMockLead = (schedule: Schedule | null, totalExams: number, ramps: boolean): string => {
+  const count = `${String(totalExams)} Modelltests`;
+  const opening = ramps ? `${count}, easiest first` : `${count}, all at exam level`;
+  const scheduled = schedule ? schedule.slots.reduce((sum, slot) => sum + slot.examIds.length, 0) : 0;
+  if (!schedule || schedule.phase === 'past-due' || scheduled === 0) {
+    return ramps
+      ? `${opening}. Take them in order under real timing.`
+      : `${opening}. Take them under real timing, in any order.`;
   }
   const optional = schedule.unscheduledExamIds.length;
   const tail = optional > 0 ? ` The other ${String(optional)} stay available if you find the time.` : '';
-  return `${String(totalExams)} Modelltests, easiest first. Your date fits ${String(scheduled)} of them into the plan.${tail}`;
+  return `${opening}. Your date fits ${String(scheduled)} of them into the plan.${tail}`;
 };
 
 /** Where an exam sits in the plan: `today`, `planned Do, 28. Aug`, or `optional`. */

@@ -111,7 +111,7 @@ test.describe('the trainer switcher', () => {
     await page.goto('/');
 
     for (const { path, name } of ALL_TRAINERS) {
-      await page.getByRole('button', { name: 'Switch trainer' }).click();
+      await page.getByRole('button', { name: /switch trainer/i }).click();
       await page.getByRole('menuitem', { name: startsWith(name) }).click();
       await expect(page).toHaveURL(`http://localhost:5173${path}`);
       await expect(page.getByRole('heading', { name: /^Dashboard/, level: 1 })).toBeVisible();

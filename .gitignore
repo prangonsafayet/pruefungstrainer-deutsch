@@ -30,3 +30,6 @@ docs/*.local.md
 # Bridge-sync leftovers the sandboxed cloud session cannot delete; safe to remove.
 _to_delete/
 *.tgz
+
+# Intermediate redesign screenshot sets (large); the README set lives in docs/screenshots/*.png
+docs/screenshots/redesign-*/

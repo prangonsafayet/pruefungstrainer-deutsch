@@ -14,7 +14,7 @@ interface TodayPlanCardProps {
 
 /** The one card that answers "what do I do today?" without any reading. */
 const TodayPlanCard = ({ plan, onStartExam }: TodayPlanCardProps) => (
-  <Card className="animate-pop-in mb-6 border-l-4 border-l-primary shadow-md">
+  <Card className="animate-pop-in mb-6 border-l-4 border-l-primary shadow-lift">
     <CardHeader>
       <div className="flex flex-wrap items-center gap-2">
         <CardTitle className="flex items-center gap-1.5">

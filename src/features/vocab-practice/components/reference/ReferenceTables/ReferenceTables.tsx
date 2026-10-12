@@ -51,14 +51,14 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
         <TabsContent value="verbs">
           <Card>
             <CardContent className="overflow-x-auto">
-              <Table>
+              <Table lang="de">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Infinitiv</TableHead>
                     <TableHead>Präsens (er/sie/es)</TableHead>
                     <TableHead>Präteritum</TableHead>
                     <TableHead>Perfekt</TableHead>
-                    <TableHead>English</TableHead>
+                    <TableHead lang="en">English</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -68,7 +68,9 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                       <TableCell>{entry.praesens}</TableCell>
                       <TableCell>{entry.praeteritum}</TableCell>
                       <TableCell>{entry.perfekt}</TableCell>
-                      <TableCell className="text-muted-foreground">{entry.en}</TableCell>
+                      <TableCell lang="en" className="text-muted-foreground">
+                        {entry.en}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -80,12 +82,12 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
         <TabsContent value="nouns">
           <Card>
             <CardContent className="overflow-x-auto">
-              <Table>
+              <Table lang="de">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nomen</TableHead>
                     <TableHead>Plural</TableHead>
-                    <TableHead>English</TableHead>
+                    <TableHead lang="en">English</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -95,7 +97,9 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                         <span className="text-muted-foreground">{entry.article}</span> {entry.de}
                       </TableCell>
                       <TableCell>{entry.plural}</TableCell>
-                      <TableCell className="text-muted-foreground">{entry.en}</TableCell>
+                      <TableCell lang="en" className="text-muted-foreground">
+                        {entry.en}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -107,13 +111,13 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
         <TabsContent value="adjectives">
           <Card>
             <CardContent className="overflow-x-auto">
-              <Table>
+              <Table lang="de">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Adjektiv</TableHead>
                     <TableHead>Komparativ</TableHead>
                     <TableHead>Superlativ</TableHead>
-                    <TableHead>English</TableHead>
+                    <TableHead lang="en">English</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -122,7 +126,9 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                       <TableCell className="font-medium">{entry.de}</TableCell>
                       <TableCell>{entry.komparativ ?? '—'}</TableCell>
                       <TableCell>{entry.superlativ ?? '—'}</TableCell>
-                      <TableCell className="text-muted-foreground">{entry.en}</TableCell>
+                      <TableCell lang="en" className="text-muted-foreground">
+                        {entry.en}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -134,12 +140,12 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
         <TabsContent value="prepVerbs">
           <Card>
             <CardContent className="overflow-x-auto">
-              <Table>
+              <Table lang="de">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Verb</TableHead>
                     <TableHead>Präposition + Kasus</TableHead>
-                    <TableHead>English</TableHead>
+                    <TableHead lang="en">English</TableHead>
                     <TableHead>Beispiel</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -152,7 +158,9 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                           {entry.preposition} + {CASE_LABELS[entry.kasus]}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{entry.en}</TableCell>
+                      <TableCell lang="en" className="text-muted-foreground">
+                        {entry.en}
+                      </TableCell>
                       <TableCell className="max-w-72 text-sm" title={entry.example.en}>
                         {entry.example.de}
                       </TableCell>
@@ -173,11 +181,11 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                     <Badge variant={CASE_BADGE[group.kasus]}>{CASE_LABELS[group.kasus]}</Badge>
                     <span className="text-sm font-normal text-muted-foreground">{group.total} triggers</span>
                   </h3>
-                  <Table>
+                  <Table lang="de">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Auslöser</TableHead>
-                        <TableHead>English</TableHead>
+                        <TableHead lang="en">English</TableHead>
                         <TableHead>Beispiel</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -185,7 +193,9 @@ const ReferenceTables = ({ bank }: ReferenceTablesProps) => {
                       {group.items.map(entry => (
                         <TableRow key={entry.id}>
                           <TableCell className="font-medium">{entry.de}</TableCell>
-                          <TableCell className="text-muted-foreground">{entry.en}</TableCell>
+                          <TableCell lang="en" className="text-muted-foreground">
+                            {entry.en}
+                          </TableCell>
                           <TableCell className="max-w-72 text-sm" title={entry.example.en}>
                             {entry.example.de}
                           </TableCell>

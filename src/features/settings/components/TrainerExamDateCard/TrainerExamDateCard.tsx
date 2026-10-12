@@ -21,7 +21,7 @@ const TrainerExamDateCard = ({ trainer }: TrainerExamDateCardProps) => {
     <Card className="relative gap-4 overflow-hidden py-5">
       <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ background: accent }} />
       <CardHeader>
-        <h3 className="font-semibold leading-none">{name}</h3>
+        <h3 className="font-bold leading-snug">{name}</h3>
       </CardHeader>
       <CardContent>
         <SettingsField label="Exam date">

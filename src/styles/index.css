@@ -41,7 +41,7 @@
   --destructive-on-tint: #a62e25;
 
   --border: #e8ddd0;
-  --input: #dccfbf;
+  --input: #98877a; /* field boundary: 3.40:1 on --card (WCAG 1.4.11) */
   --ring: #b4441c;
 
   /* Domain colours: pass grades, correctness, urgency. */
@@ -97,7 +97,7 @@
   --destructive-on-tint: #ff9a8f;
 
   --border: rgb(255 240 225 / 0.12);
-  --input: rgb(255 240 225 / 0.18);
+  --input: #7a6c62; /* field boundary: 3.15:1 on --card (WCAG 1.4.11) */
   --ring: #f0895b;
 
   --success: #5cc08a;

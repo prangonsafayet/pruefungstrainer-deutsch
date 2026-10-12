@@ -136,7 +136,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Read the DTZ exam guide: four parts, the three results (Hören + Lesen, Schreiben, Sprechen) and the certificate rule — Sprechen is the gate.',
         'Review the Kasus cheatsheet and the reference table in the practice hub, then take the quiz: 15 Kasus items.',
-        'One flashcard session (20 cards) of nouns in the practice hub — this becomes your daily routine.'
+        {
+          text: 'One flashcard session (20 cards) of nouns in the practice hub — this becomes your daily routine.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['kasus'],
       ai: [
@@ -152,7 +155,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Perfekt & trennbare Verben',
       focus: 'Talking about the past, and the prefix that jumps to the end',
       tasks: [
-        'Study the verbs cheatsheet, then quiz: 15 verb forms in the practice hub.',
+        {
+          text: 'Study the verbs cheatsheet, then quiz: 15 verb forms in the practice hub.',
+          target: { kind: 'quiz', category: 'verbs' }
+        },
         'One flashcard session (20 cards) of verbs — say the Perfekt form aloud every time.',
         'Write 8 sentences about your last week at an office or a shop in Perfekt (Ich habe mich angemeldet. Ich bin zur Bank gegangen.), four of them with a trennbares Verb.'
       ],
@@ -172,7 +178,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Learn the three connector groups from the cheatsheet: Position 0, verb to the end, inversion.',
         'Join 10 sentence pairs on paper: 4× weil, 3× obwohl, 3× deshalb — check the verb position every time.',
-        'One flashcard session (20 cards) in the practice hub, category of your choice.'
+        {
+          text: 'One flashcard session (20 cards) in the practice hub, category of your choice.',
+          target: { kind: 'practice' }
+        }
       ],
       cheats: ['konnektoren'],
       ai: [
@@ -188,7 +197,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Verben mit Präposition',
       focus: 'warten auf, sich kümmern um — fixed pairs, free points in Lesen Teil 5',
       tasks: [
-        'Study the Verben-mit-Präposition reference table in the practice hub — mark the 10 you did not know.',
+        {
+          text: 'Study the Verben-mit-Präposition reference table in the practice hub — mark the 10 you did not know.',
+          target: { kind: 'practice', tab: 'tables' }
+        },
         'One flashcard session (20 cards) of Verben mit Präposition.',
         'Write 10 own sentences with the pairs you marked, including 3 about an Amt (sich anmelden bei, einen Antrag stellen auf, sich kümmern um).'
       ],
@@ -224,8 +236,14 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Lesen — Teil 1 and Teil 2',
       focus: 'Scan the directory; find the one ad that does not exist (X)',
       tasks: [
-        'Read the Lesen cheatsheet, then take Modelltest 1 → Lesen (Teil 1: Verzeichnis, a/b/c) — untimed.',
-        'Take Modelltest 1 → Lesen (Teil 2: Anzeigen, ein X): note for every situation the hard fact that decided it, and which situation was the X.',
+        {
+          text: 'Read the Lesen cheatsheet, then take Modelltest 1 → Lesen (Teil 1: Verzeichnis, a/b/c) — untimed.',
+          target: { kind: 'module', exam: 1, module: 'lesen', teil: '1' }
+        },
+        {
+          text: 'Take Modelltest 1 → Lesen (Teil 2: Anzeigen, ein X): note for every situation the hard fact that decided it, and which situation was the X.',
+          target: { kind: 'module', exam: 1, module: 'lesen', teil: '2' }
+        },
         'Add every unknown word that blocked an answer to your flashcards (max 15).'
       ],
       cheats: ['lesen'],
@@ -243,7 +261,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Ansagen and radio news: listen for the one fact the question asks for',
       tasks: [
         'Read the Hören cheatsheet — especially the paraphrase trap and the correction signals.',
-        'Take Modelltest 1 → Hören (Teil 1: Ansagen am Telefon und Durchsagen, a/b/c) and Modelltest 1 → Hören (Teil 2: Radio, a/b/c) in one go, no pausing.',
+        {
+          text: 'Take Modelltest 1 → Hören (Teil 1: Ansagen am Telefon und Durchsagen, a/b/c) and Modelltest 1 → Hören (Teil 2: Radio, a/b/c) in one go, no pausing.',
+          target: { kind: 'module', exam: 1, module: 'hoeren' }
+        },
         'Review every red item: was it a number, a paraphrase or a correction signal? Note the trap type.'
       ],
       cheats: ['hoeren'],
@@ -260,8 +281,14 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Hören — Teil 3 and Teil 4',
       focus: 'Two items per Gespräch; matching opinions to sentences a–f',
       tasks: [
-        'Take Modelltest 1 → Hören (Teil 3: Gespräche, je richtig/falsch + a/b/c): before each Gespräch, underline the key word of both items.',
-        'Take Modelltest 1 → Hören (Teil 4: Meinungen, a–f zuordnen): use the minute before the audio to underline the opinion word in each of the six sentences.',
+        {
+          text: 'Take Modelltest 1 → Hören (Teil 3: Gespräche, je richtig/falsch + a/b/c): before each Gespräch, underline the key word of both items.',
+          target: { kind: 'module', exam: 1, module: 'hoeren', teil: '3' }
+        },
+        {
+          text: 'Take Modelltest 1 → Hören (Teil 4: Meinungen, a–f zuordnen): use the minute before the audio to underline the opinion word in each of the six sentences.',
+          target: { kind: 'module', exam: 1, module: 'hoeren', teil: '4' }
+        },
         'Count your Hören items in Teil 1–4 (out of 20). Hören and Lesen are banded together out of 45 (33–45 = B1, 20–32 = A2), so keep this score and add your Lesen score (day 9) before you compare the sum with the bands.'
       ],
       cheats: ['hoeren'],
@@ -278,8 +305,14 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Lesen — Teil 3, 4 and 5',
       focus: 'Texts, brochure, and the letter with gaps',
       tasks: [
-        'Take Modelltest 2 → Lesen (Teil 3: Pressetexte und Mitteilungen) and Modelltest 2 → Lesen (Teil 4: Informationsbroschüre, richtig/falsch).',
-        'Take Modelltest 2 → Lesen (Teil 5: Brief ergänzen): for every wrong gap, say the rule from the Konnektoren or Kasus cheatsheet.',
+        {
+          text: 'Take Modelltest 2 → Lesen (Teil 3: Pressetexte und Mitteilungen) and Modelltest 2 → Lesen (Teil 4: Informationsbroschüre, richtig/falsch).',
+          target: { kind: 'module', exam: 2, module: 'lesen' }
+        },
+        {
+          text: 'Take Modelltest 2 → Lesen (Teil 5: Brief ergänzen): for every wrong gap, say the rule from the Konnektoren or Kasus cheatsheet.',
+          target: { kind: 'module', exam: 2, module: 'lesen', teil: '5' }
+        },
         'One flashcard session (20 cards) — include the words you collected on day 6.'
       ],
       cheats: ['lesen', 'konnektoren'],
@@ -315,7 +348,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Choose A or B, cover all four Leitpunkte, Anrede and Gruß',
       tasks: [
         'Memorize the skeleton from the Schreiben cheatsheet: Anrede, Einstieg, four Leitpunkte, Schluss, Gruß.',
-        'Take Modelltest 1 → Schreiben: choose Aufgabe A or B in the first minute, write for 30 minutes, no dictionary.',
+        {
+          text: 'Take Modelltest 1 → Schreiben: choose Aufgabe A or B in the first minute, write for 30 minutes, no dictionary.',
+          target: { kind: 'module', exam: 1, module: 'schreiben' }
+        },
         'Self-check: all four Leitpunkte? Anrede and Gruß? Three different connectors? Then rate yourself on the four criteria (0–5 each; 15–20 = B1, 7–14 = A2).'
       ],
       cheats: ['schreiben'],
@@ -338,7 +374,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Learn the Redemittel for Teil 1A, 1B, 2A and 2B from the Sprechen cheatsheet — say each set aloud 3 times.',
         'Record yourself: 90 seconds of Teil 1A (Name, Geburtsort, Wohnort, Arbeit/Beruf, Familie, Sprachen), then listen back and fix one thing.',
-        'Take Modelltest 1 → Sprechen (Teil 2A: Bild beschreiben): describe the photo aloud with the route Ort, Personen, Tätigkeit, Stimmung. Then answer two own-experience questions (Teil 2B).'
+        {
+          text: 'Take Modelltest 1 → Sprechen (Teil 2A: Bild beschreiben): describe the photo aloud with the route Ort, Personen, Tätigkeit, Stimmung. Then answer two own-experience questions (Teil 2B).',
+          target: { kind: 'module', exam: 1, module: 'sprechen', teil: '2A' }
+        }
       ],
       cheats: ['sprechen'],
       ai: [
@@ -355,7 +394,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Vorschläge machen, zustimmen, ablehnen — and reach a decision',
       tasks: [
         'Learn the Teil-3 Redemittel from the cheatsheet: Vorschläge machen, zustimmen, ablehnen + Alternative, Abschluss.',
-        'Take Modelltest 1 → Sprechen (Teil 3): use the five notes on the task sheet as your agenda and plan the whole thing out loud, solo, ending with a decision.',
+        {
+          text: 'Take Modelltest 1 → Sprechen (Teil 3): use the five notes on the task sheet as your agenda and plan the whole thing out loud, solo, ending with a decision.',
+          target: { kind: 'module', exam: 1, module: 'sprechen', teil: '3' }
+        },
         'Plan out loud for 3 minutes in a second situation of your own (a party for the Kita, a trip with your course): Wann? Wo? Was? Wer macht was?'
       ],
       cheats: ['sprechen'],
@@ -372,7 +414,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Core finale — second message & battle plan',
       focus: 'Close the core, open the mock phase',
       tasks: [
-        'Take Modelltest 2 → Schreiben: second message, 30 minutes, checklist afterwards.',
+        {
+          text: 'Take Modelltest 2 → Schreiben: second message, 30 minutes, checklist afterwards.',
+          target: { kind: 'module', exam: 2, module: 'schreiben' }
+        },
         'Review sweep: reread all eight cheatsheets once (30 min) and your red items from Modelltest 1 and 2.',
         'Say your Teil-1A self-presentation once — still automatic?',
         'From here the rhythm is: one Modelltest every 2–3 days, always with a full review the same day.'
@@ -393,7 +438,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Study the Konjunktiv-II block in the verbs cheatsheet: wäre, hätte, würde, könnte, sollte.',
         'Write 8 polite requests to an Amt, a landlord or a teacher (Könnten Sie mir bitte …? Wäre es möglich, …?) and 4 pieces of advice (An Ihrer Stelle würde ich …).',
-        'Quiz: 15 verb forms in the practice hub, and flag every Konjunktiv item you hesitate on.'
+        {
+          text: 'Quiz: 15 verb forms in the practice hub, and flag every Konjunktiv item you hesitate on.',
+          target: { kind: 'quiz', category: 'verbs' }
+        }
       ],
       cheats: ['verben'],
       ai: [
@@ -445,8 +493,14 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Modelltest 4 — Schreiben & Lesen',
       focus: 'Formal register under time pressure',
       tasks: [
-        'Take Modelltest 4 → Schreiben: choose A or B in the first minute, 30 minutes, formelle or halbformelle Mitteilung. Keep the last minutes for the checklist.',
-        'Take Modelltest 4 → Lesen (Teil 2: Anzeigen, ein X) and Modelltest 4 → Lesen (Teil 5: Brief ergänzen).',
+        {
+          text: 'Take Modelltest 4 → Schreiben: choose A or B in the first minute, 30 minutes, formelle or halbformelle Mitteilung. Keep the last minutes for the checklist.',
+          target: { kind: 'module', exam: 4, module: 'schreiben' }
+        },
+        {
+          text: 'Take Modelltest 4 → Lesen (Teil 2: Anzeigen, ein X) and Modelltest 4 → Lesen (Teil 5: Brief ergänzen).',
+          target: { kind: 'module', exam: 4, module: 'lesen' }
+        },
         'Review every red item and update your personal top-5 mistakes list.'
       ],
       cheats: ['schreiben', 'lesen'],
@@ -554,7 +608,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Zero points lost on paraphrases and digits',
       tasks: [
         'Reread the Hören cheatsheet and drill the correction signals (nicht … sondern, leider, stattdessen) out loud.',
-        'Take Modelltest 4 → Hören (Teil 1: Ansagen) and Modelltest 4 → Hören (Teil 4: Meinungen zuordnen): use the minute before Teil 4 to mark the opinion word in each of the six sentences.',
+        {
+          text: 'Take Modelltest 4 → Hören (Teil 1: Ansagen) and Modelltest 4 → Hören (Teil 4: Meinungen zuordnen): use the minute before Teil 4 to mark the opinion word in each of the six sentences.',
+          target: { kind: 'module', exam: 4, module: 'hoeren' }
+        },
         'Dictation marathon: 20 times, dates, prices and phone numbers heard as words, written as digits — repeat until 20/20.'
       ],
       cheats: ['hoeren'],
@@ -589,8 +646,14 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Schreiben & Sprechen — final polish',
       focus: 'Sprechen is the gate; Schreiben is a second path to B1',
       tasks: [
-        'Take Modelltest 8 → Schreiben again with the Aufgabe you did not choose on day 25: write it in 30 minutes, then check all four Leitpunkte, Anrede and Gruß.',
-        'Take Modelltest 9 → Sprechen: Teil 1A from memory, Teil 2A with the photo, Teil 2B with your own experience, Teil 3 as a full plan — record and listen back.',
+        {
+          text: 'Take Modelltest 8 → Schreiben again with the Aufgabe you did not choose on day 25: write it in 30 minutes, then check all four Leitpunkte, Anrede and Gruß.',
+          target: { kind: 'module', exam: 8, module: 'schreiben' }
+        },
+        {
+          text: 'Take Modelltest 9 → Sprechen: Teil 1A from memory, Teil 2A with the photo, Teil 2B with your own experience, Teil 3 as a full plan — record and listen back.',
+          target: { kind: 'module', exam: 9, module: 'sprechen' }
+        },
         'Drill the repair phrases one last time: Wie bitte? Könnten Sie das wiederholen? Ich meine …'
       ],
       cheats: ['schreiben', 'sprechen'],

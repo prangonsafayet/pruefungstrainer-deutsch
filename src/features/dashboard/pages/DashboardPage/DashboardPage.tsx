@@ -9,6 +9,7 @@ import { Card, CardContent } from '@shared/ui/card.tsx';
 import DashboardExamCard from '@features/dashboard/components/DashboardExamCard/DashboardExamCard.tsx';
 import DashboardStatTile from '@features/dashboard/components/DashboardStatTile/DashboardStatTile.tsx';
 import LocalOnlyNotice from '@features/dashboard/components/LocalOnlyNotice/LocalOnlyNotice.tsx';
+import PassRuleCallout from '@features/dashboard/components/PassRuleCallout/PassRuleCallout.tsx';
 import ResumeRunNotice from '@features/dashboard/components/ResumeRunNotice/ResumeRunNotice.tsx';
 import SchedulePhaseNotice from '@features/dashboard/components/SchedulePhaseNotice/SchedulePhaseNotice.tsx';
 import TodayPlanCard from '@features/dashboard/components/TodayPlanCard/TodayPlanCard.tsx';
@@ -36,15 +37,9 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
 
   return (
     <>
-      <PageTitle
-        lead={
-          <>
-            {stats.lead} <b className="text-foreground">{stats.passRule}</b>
-          </>
-        }
-      >
-        {stats.heading}
-      </PageTitle>
+      <PageTitle lead={stats.lead}>{stats.heading}</PageTitle>
+
+      <PassRuleCallout rule={stats.passRule} />
 
       {identity.signedIn ? null : (
         <LocalOnlyNotice
@@ -80,7 +75,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
         />
       ) : null}
 
-      <div className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="stagger grid grid-cols-2 gap-3 lg:grid-cols-3">
         {stats.tiles.map(tile => (
           <DashboardStatTile key={tile.kind} tile={tile} />
         ))}

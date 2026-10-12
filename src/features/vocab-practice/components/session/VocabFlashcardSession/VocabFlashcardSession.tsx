@@ -1,4 +1,4 @@
-import { Check, X } from 'lucide-react';
+import { Check, RotateCw, X } from 'lucide-react';
 
 import { Button } from '@shared/ui/button.tsx';
 import { Progress } from '@shared/ui/progress.tsx';
@@ -54,13 +54,23 @@ const VocabFlashcardSession = ({
         <VocabFlashcard card={card} flipped={session.flipped} onFlip={onFlip} />
       </div>
 
-      <div className="mx-auto flex max-w-xl justify-center gap-3">
+      {/* The flip button stays put when the grades appear, so keyboard focus is never dropped
+          onto the page; the grades follow it in tab order. */}
+      <div className="mx-auto grid max-w-xl grid-cols-2 gap-3 sm:flex sm:justify-center">
+        <Button
+          variant={session.flipped ? 'ghost' : 'secondary'}
+          size="lg"
+          className="col-span-2 justify-self-center"
+          onClick={onFlip}
+        >
+          <RotateCw /> {session.flipped ? 'Show German' : 'Flip card'}
+        </Button>
         {session.flipped ? (
           <>
             <Button
               variant="outline"
               size="lg"
-              className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              className="border-destructive/40 text-destructive-on-tint hover:bg-destructive/10 hover:text-destructive-on-tint"
               onClick={() => {
                 onGrade(false);
               }}
@@ -77,11 +87,7 @@ const VocabFlashcardSession = ({
               <Check /> Knew it
             </Button>
           </>
-        ) : (
-          <Button variant="secondary" size="lg" onClick={onFlip}>
-            Flip card
-          </Button>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -270,6 +270,14 @@ export const trainerHome = (trainer: TrainerId): string => TRAINERS[trainer].bas
  */
 export const examCount = (content: TrainerContent): number => content.exams.length;
 
+/**
+ * Whether a trainer's Modelltests get harder in order. Read from the papers' own `difficulty`
+ * field (only the dual-level papers carry one, graded easy → B1); a set at one level does not
+ * ramp, so its dashboard may not say "easiest first".
+ */
+export const examsRampInDifficulty = (content: TrainerContent): boolean =>
+  new Set(content.exams.flatMap(exam => ('difficulty' in exam ? [exam.difficulty] : []))).size > 1;
+
 /** Whether a vocabulary bank has anything in it to drill. */
 export const hasVocabBank = (vocab: VocabBank): boolean =>
   vocab.verbs.length +

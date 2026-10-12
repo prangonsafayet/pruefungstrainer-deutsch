@@ -28,6 +28,17 @@ export default defineConfig({
         isMobile: true,
         hasTouch: true
       }
+    },
+    /* iPad landscape: the first width the Learn tab puts its cheatsheets beside the plan. */
+    {
+      name: 'tablet-landscape',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1024, height: 768 },
+        deviceScaleFactor: 2,
+        isMobile: true,
+        hasTouch: true
+      }
     }
   ],
   webServer: {
