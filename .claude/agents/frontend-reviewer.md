@@ -15,6 +15,12 @@ and `.claude/agent-memory/frontend-reviewer/MEMORY.md`. Then read `CLAUDE.md` an
 `.claude/rules/` files whose `paths:` match the changed files (`architecture.md`,
 `conventions.md`, `ui-design-system.md`, …) — they are the source of truth for the rules below.
 
+## First, the whole-codebase gates
+
+Before reading the diff, run `npm run typecheck` and `npm run lint -- --max-warnings=0` over the
+entire repo. Any type or lint error anywhere is a **blocker** in your report, even outside the
+diff — they are merge guardrails, not style notes.
+
 ## Review checklist
 
 **Layer boundaries.** No feature importing another feature's internals, no feature importing

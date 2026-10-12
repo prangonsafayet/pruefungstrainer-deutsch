@@ -8,6 +8,7 @@
 #   - no `git add -A` / `.` / `--all`, no `git commit -a`: stage explicit paths, because a
 #     whole-tree stage in a shared checkout commits another session's work
 #   - no `rm -rf` of src, docs or .git
+#   - no `gh pr merge` unless every required check on the PR has passed, and never `--admin`
 set -u
 
 input=$(cat)
@@ -131,6 +132,29 @@ for (const argv of simpleCommands(command)) {
       const all = args.some(a => a === '-A' || a === '--all' || a === '.' || a === './' || a === ':/' || a === '*');
       if (all) block('stage explicit paths (`git add <path> <path>`), never -A / . / --all — in a shared checkout that commits another session\'s work.');
     }
+    continue;
+  }
+
+  /* Merging is gated on the PR's required checks (typecheck, zero-warning lint, format,
+     guards, unit, e2e, build). `--admin` would bypass branch protection, so it is refused. */
+  if (path.basename(argv[0]) === 'gh' && argv[1] === 'pr' && argv[2] === 'merge') {
+    const rest = argv.slice(3);
+    if (rest.includes('--admin')) block('`gh pr merge --admin` bypasses branch protection. Wait for the required checks instead.');
+    const target = rest.filter(a => !a.startsWith('-'))[0];
+    let buckets;
+    try {
+      const out = execFileSync('gh', ['pr', 'checks', ...(target ? [target] : []), '--required', '--json', 'name,bucket'], {
+        cwd,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      });
+      buckets = JSON.parse(out);
+    } catch {
+      block('could not read the PR\'s required checks (`gh pr checks --required`). Merge only after confirming they all pass.');
+    }
+    const failing = buckets.filter(c => c.bucket !== 'pass' && c.bucket !== 'skipping');
+    if (buckets.length === 0) block('the PR reports no required checks yet. Wait for CI to start and pass.');
+    if (failing.length) block(`required checks not green: ${failing.map(c => `${c.name} (${c.bucket})`).join(', ')}. Fix them before merging.`);
     continue;
   }
 

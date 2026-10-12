@@ -16,13 +16,13 @@ paths:
 
 ## Pipeline order
 
-| Where                       | Runs                                                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| pre-commit (husky)          | `lint-staged`: ESLint `--max-warnings 0 --fix` + Prettier on staged files                                           |
-| pre-push (husky)            | `typecheck` → `validate` → `test:unit` → `guards:offline`                                                           |
-| CI `static`                 | `typecheck` → `lint -- --max-warnings=0` → `format:check` → `guards`                                                |
-| CI `unit` / `e2e` / `build` | `validate` + `test:unit` / Playwright on Chromium / production build with no secrets                                |
-| CI `audit`, `deadcode`      | `npm audit --audit-level=high` (dev advisories) and `knip:ci` — both `continue-on-error` until their findings clear |
+| Where                       | Runs                                                                                                                  |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| pre-commit (husky)          | `lint-staged`: ESLint `--max-warnings 0 --fix` + Prettier on staged files                                             |
+| pre-push (husky)            | `typecheck` → `lint --max-warnings=0` → `format:check` → `validate` → `test:unit` → `guards:offline` (whole codebase) |
+| CI `static`                 | `typecheck` → `lint -- --max-warnings=0` → `format:check` → `guards`                                                  |
+| CI `unit` / `e2e` / `build` | `validate` + `test:unit` / Playwright on Chromium / production build with no secrets                                  |
+| CI `audit`, `deadcode`      | `npm audit --audit-level=high` (dev advisories) and `knip:ci` — both `continue-on-error` until their findings clear   |
 
 `npm run guards` = `guards:offline` (`check:architecture` → `check:css` → `check:storage-keys`
 → `test:hooks`) then `audit:prod` (`npm audit --omit=dev --audit-level=moderate`). Pre-push uses
@@ -84,3 +84,14 @@ inside `$(…)`. Never wire a hook before `bash -n` and `npm run test:hooks` pas
 - The pre-push hook checks the working tree, not the pushed commit.
 - `git mv` plus a reformat in one commit loses rename detection: move, then reformat.
 - In a shared checkout, stage explicit paths only (the hook enforces it).
+
+## Merge gate
+
+- `main` requires the four CI checks (Static analysis = typecheck + zero-warning lint + format +
+  guards; Unit tests; End-to-end tests; Production build) and **enforce_admins is on** (since
+  2026-10-12) — nobody, admins included, merges past a red check.
+- `.claude/hooks/guard-git.sh` refuses `gh pr merge` unless `gh pr checks --required` is all green,
+  and always refuses `--admin`.
+- Every code review (frontend-reviewer, /code-review, caveman-review, ponytail-review) starts by
+  running `npm run typecheck` and `npm run lint -- --max-warnings=0` over the WHOLE codebase and
+  reports any error as a blocker, not only issues in the diff.

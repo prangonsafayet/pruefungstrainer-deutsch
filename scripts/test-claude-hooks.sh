@@ -39,6 +39,9 @@ prompt() { json "{\"prompt\":$(node -e 'process.stdout.write(JSON.stringify(proc
 
 # --- guard-git.sh: blocked ---
 expect 2 guard-git.sh "$(bash_cmd 'git add -A')" 'git add -A'
+expect 2 guard-git.sh "$(bash_cmd 'gh pr merge 32 --squash --admin')" 'gh pr merge --admin'
+# A PR number that cannot be resolved (or no gh auth, as in CI) cannot prove its checks: blocked.
+expect 2 guard-git.sh "$(bash_cmd 'gh pr merge 999999999 --squash')" 'gh pr merge, checks unverifiable'
 expect 2 guard-git.sh "$(bash_cmd 'git add .')" 'git add .'
 expect 2 guard-git.sh "$(bash_cmd 'git add --all')" 'git add --all'
 expect 2 guard-git.sh "$(bash_cmd 'cd src && git add -A')" 'git add -A after cd'
