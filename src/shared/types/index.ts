@@ -1,3 +1,4 @@
+export * from './dtzExam.ts';
 export * from './exam.ts';
 export * from './examRun.ts';
 export * from './feedback.ts';
