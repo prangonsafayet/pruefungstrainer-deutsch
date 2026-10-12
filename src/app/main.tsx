@@ -2,9 +2,9 @@ import { StrictMode } from 'react';
 
 import { createRoot } from 'react-dom/client';
 
-import { AppProviders } from './app/providers/AppProviders.tsx';
-import { AppRouter } from './app/router.tsx';
-import './styles/index.css';
+import { AppProviders } from './providers/AppProviders.tsx';
+import { AppRouter } from './router.tsx';
+import '../styles/index.css';
 
 /* Anything that escapes a component still reaches the console rather than vanishing. */
 window.addEventListener('unhandledrejection', event => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { A2B1_EXAMS } from '@content/trainers/a2b1/exams/index.ts';
+import { A2B1_EXAMS } from '@content/a2b1/exams/index.ts';
 import { A2_TOTAL, B1_TOTAL } from '@shared/config/exam.ts';
 import { type AnswerMap, type SkillScores } from '@shared/types';
 

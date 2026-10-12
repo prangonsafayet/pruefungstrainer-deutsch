@@ -1,30 +1,25 @@
 import { CalendarClock } from 'lucide-react';
 
-import { daysUntil, parseIsoDate } from '@shared/lib/format.ts';
 import { Badge } from '@shared/ui';
+
+import { useExamCountdown } from '../hooks/useExamCountdown.ts';
 
 interface ExamCountdownBadgeProps {
   /** `YYYY-MM-DD`. */
   readonly examDate: string;
 }
 
-/** Under two weeks out, the countdown turns urgent. */
-const URGENT_DAYS = 14;
-
 const ExamCountdownBadge = ({ examDate }: ExamCountdownBadgeProps) => {
-  const date = parseIsoDate(examDate);
-  const days = daysUntil(examDate);
-  if (!date || days == null) return null;
+  const countdown = useExamCountdown(examDate);
+  if (!countdown) return null;
+  const { dateLabel, days, tone } = countdown;
 
   return (
-    <Badge
-      variant={days < 0 ? 'warning' : days <= URGENT_DAYS ? 'destructive' : 'secondary'}
-      className="gap-1.5 py-1"
-    >
+    <Badge variant={tone} className="gap-1.5 py-1">
       <CalendarClock className="size-3" aria-hidden />
       {days >= 0 ? (
         <span>
-          {date.toLocaleDateString('de-DE')} ·{' '}
+          {dateLabel} ·{' '}
           <b>
             {days} day{days === 1 ? '' : 's'} left
           </b>

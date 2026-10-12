@@ -8,7 +8,9 @@
 #   - no `git add -A` / `.` / `--all`, no `git commit -a`: stage explicit paths, because a
 #     whole-tree stage in a shared checkout commits another session's work
 #   - no `rm -rf` of src, docs or .git
-#   - no `gh pr merge` unless every required check on the PR has passed, and never `--admin`
+#   - merges only as the literal `gh pr merge <n> --squash [--delete-branch]`, after every
+#     required check is green (allowlist — see the comment above the merge check)
+#   - no `git push --all` / `--mirror`
 set -u
 
 input=$(cat)
@@ -106,10 +108,48 @@ const stripPrefix = argv => {
   return argv.slice(i);
 };
 
-/* A merge hidden inside a nested shell string (`bash -c "gh pr merge …"`, `eval …`) cannot be
-   parsed reliably, so it is refused outright: run the merge as its own command. */
-const NESTED_MERGE = /(?:\b(?:bash|sh|zsh)\s+-c|\beval\b|\bxargs\b)[^\n]*gh\s+(?:pr\s+merge|api\b[^\n]*pulls\/\d+\/merge)/;
-if (NESTED_MERGE.test(command)) block('a PR merge nested in `bash -c` / `eval` / `xargs` cannot be checked. Run `gh pr merge <n>` as its own command.');
+/* Merging is an ALLOWLIST, not a parser: parsing arbitrary shell for every way to reach a
+   merge (aliases, GH_REPO, variables, $(…), nested shells, the REST API) always leaves a gap.
+   The only merge this hook lets through is the canonical, fully literal form
+     gh pr merge <number> --squash [--delete-branch]
+   run as its own command, in this repo, after every required check is green. Anything else
+   that mentions a merge is refused. Branch protection with enforce_admins remains the real
+   gate; this is the second layer. */
+const CANONICAL_MERGE = /^\s*gh pr merge (\d+) --squash( --delete-branch)?\s*$/;
+/* Trigger 1: any parsed simple command that runs gh (after env/command/exec prefixes) and has a
+   merge-ish word anywhere in its argv — covers `gh pr merge`, `gh api …/merge`, aliases. */
+const ghMergeCall = simpleCommands(command).some(argv => {
+  const a = stripPrefix(argv);
+  return path.basename(a[0] ?? '') === 'gh' && a.some(w => /merge/i.test(w));
+});
+/* Trigger 2: gh + merge inside something this parser cannot see into — a nested shell, eval,
+   xargs, command substitution or backticks. Refused unless it is the canonical form (it never
+   is). Editing files that merely mention these words should use the Edit tool, not Bash. */
+const OPAQUE = /\b(?:bash|sh|zsh|dash)\s+-c\b|\beval\b|\bxargs\b|\$\(|`/;
+const opaqueGhMerge = OPAQUE.test(command) && /\bgh\b/.test(command) && /merge/i.test(command);
+if (ghMergeCall || opaqueGhMerge) {
+  const m = CANONICAL_MERGE.exec(command);
+  if (!m) block('merges must be the literal, standalone `gh pr merge <number> --squash [--delete-branch]` — no flags, prefixes, variables, aliases, -R/GH_REPO, nested shells or the REST API.');
+  let buckets;
+  try {
+    const env = { ...process.env };
+    delete env.GH_REPO;
+    buckets = JSON.parse(
+      execFileSync('gh', ['pr', 'checks', m[1], '--required', '--json', 'name,bucket'], {
+        cwd: project,
+        env,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      })
+    );
+  } catch {
+    block('could not read the PR\'s required checks (`gh pr checks <n> --required`). Merge only after confirming they all pass.');
+  }
+  if (!Array.isArray(buckets) || buckets.length === 0) block('the PR reports no required checks yet. Wait for CI to start and pass.');
+  const failing = buckets.filter(c => c.bucket !== 'pass');
+  if (failing.length) block(`required checks not green: ${failing.map(c => `${c.name} (${c.bucket})`).join(', ')}. Fix them before merging.`);
+  process.exit(0);
+}
 
 for (const argv of simpleCommands(command)) {
   const git = gitCall(argv);
@@ -141,6 +181,7 @@ for (const argv of simpleCommands(command)) {
       const refspecs = args.filter(a => !a.startsWith('-')).slice(1);
       const targetsMain = refspecs.some(r => /(^|:)(refs\/heads\/)?(main|master)$/.test(r.replace(/^\+/, '')));
       if (onMain()) block('you are on main. Never push from main: push a feature branch and open a PR.');
+      if (args.includes('--all') || args.includes('--mirror')) block('`git push --all/--mirror` pushes main too. Push the feature branch by name.');
       if (targetsMain) block(`${force ? 'force-' : ''}pushing to main. main only changes through a squash-merged PR.`);
     }
 
@@ -150,53 +191,6 @@ for (const argv of simpleCommands(command)) {
     }
     continue;
   }
-
-  /* Merging is gated on the PR's required checks (typecheck, zero-warning lint, format,
-     guards, unit, e2e, build). Branch protection (enforce_admins) is the real gate; this is
-     the second layer, so it must check the SAME PR in the SAME repo the merge acts on. */
-  const ghArgv = stripPrefix(argv);
-  if (path.basename(ghArgv[0] ?? '') === 'gh' && ghArgv[1] === 'pr' && ghArgv[2] === 'merge') {
-    const rest = ghArgv.slice(3);
-    if (rest.includes('--admin')) block('`gh pr merge --admin` bypasses branch protection. Wait for the required checks instead.');
-    // Flags of `gh pr merge` that take a value; their values are not the PR selector.
-    const VALUED = new Set(['-b', '--body', '-F', '--body-file', '-t', '--subject', '-A', '--author-email', '--match-head-commit', '-R', '--repo']);
-    let selector;
-    let repo;
-    for (let i = 0; i < rest.length; i++) {
-      const a = rest[i];
-      if (a.startsWith('--') && a.includes('=')) {
-        const [flag, value] = [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)];
-        if (flag === '--repo') repo = value;
-        continue;
-      }
-      if (VALUED.has(a)) {
-        if (a === '-R' || a === '--repo') repo = rest[i + 1];
-        i++;
-        continue;
-      }
-      if (a.startsWith('-')) continue;
-      if (selector !== undefined) block('`gh pr merge` got more than one PR argument; name exactly one PR.');
-      selector = a;
-    }
-    let buckets;
-    try {
-      const out = execFileSync(
-        'gh',
-        ['pr', 'checks', ...(selector ? [selector] : []), ...(repo ? ['--repo', repo] : []), '--required', '--json', 'name,bucket'],
-        { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-      );
-      buckets = JSON.parse(out);
-    } catch {
-      block('could not read the PR\'s required checks (`gh pr checks --required`). Merge only after confirming they all pass.');
-    }
-    const failing = buckets.filter(c => c.bucket !== 'pass' && c.bucket !== 'skipping');
-    if (buckets.length === 0) block('the PR reports no required checks yet. Wait for CI to start and pass.');
-    if (failing.length) block(`required checks not green: ${failing.map(c => `${c.name} (${c.bucket})`).join(', ')}. Fix them before merging.`);
-    continue;
-  }
-  /* The REST merge endpoint skips everything above. */
-  if (path.basename(ghArgv[0] ?? '') === 'gh' && ghArgv[1] === 'api' && ghArgv.some(a => /pulls\/\d+\/merge\b/.test(a)))
-    block('merging through `gh api …/pulls/N/merge` skips the checks gate. Use `gh pr merge <n>` after CI is green.');
 
   if (path.basename(argv[0]) === 'rm') {
     const flags = argv.slice(1).filter(a => a.startsWith('-'));

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/trainers/index.ts';
+import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/index.ts';
 import { coveredLeitpunkte, cuesFor } from '@features/writing-feedback/lib/leitpunkte.ts';
 import { FUNCTION_WORDS, MIN_CUE_LENGTH, PROMPT_VERBS } from '@shared/config/writingRubric.ts';
 

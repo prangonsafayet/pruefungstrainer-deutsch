@@ -1,39 +1,21 @@
-import { useEffect } from 'react';
-
 import { CloudOff } from 'lucide-react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 
 import { ErrorBoundary, AppLogo, ThemeToggle } from '@shared/components';
-import { APP_NAME, TRAINERS, trainerFromPath, trainerHome } from '@shared/config/trainers.ts';
-import { stopSpeech } from '@shared/lib/speech.ts';
+import { APP_NAME } from '@shared/config/trainers.ts';
 import { Badge } from '@shared/ui';
 
-import { AccountMenu, SyncContext, useCloudSync } from '@features/account-sync';
-import { useProgress, useTrainerSlice } from '@features/progress-store';
+import { AccountMenu, SyncContext } from '@features/account-sync';
+
+import { useAppLayout } from '../hooks/useAppLayout.ts';
 
 import AppFooter from './AppFooter.tsx';
 import ExamCountdownBadge from './ExamCountdownBadge.tsx';
 import MainNav from './MainNav.tsx';
 import TrainerSwitcher from './TrainerSwitcher.tsx';
-import { useHeaderHeight } from './useHeaderHeight.ts';
 
 const AppLayout = () => {
-  const { db, dbRef, replaceLocal } = useProgress();
-  const sync = useCloudSync({ dbRef, replaceLocal, updatedAt: db._updatedAt });
-  const { pathname } = useLocation();
-  const headerRef = useHeaderHeight<HTMLElement>();
-
-  /* The header follows the active trainer: name, countdown and nav all switch with it. */
-  const trainer = TRAINERS[trainerFromPath(pathname)];
-  const { settings } = useTrainerSlice(trainer.id);
-
-  /* Every navigation starts at the top and with the speaker silent. */
-  useEffect(() => {
-    stopSpeech();
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  const offline = sync.chip?.text.includes('offline') ?? false;
+  const { sync, offline, pathname, headerRef, trainer, home, examDate } = useAppLayout();
 
   return (
     <SyncContext.Provider value={sync}>
@@ -44,7 +26,7 @@ const AppLayout = () => {
         >
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
             <NavLink
-              to={trainerHome(trainer.id)}
+              to={home}
               className="group flex items-center gap-2.5 leading-tight"
               aria-label={`${APP_NAME} — dashboard`}
             >
@@ -61,7 +43,7 @@ const AppLayout = () => {
               <TrainerSwitcher />
             </div>
 
-            <ExamCountdownBadge examDate={settings.examDate} />
+            <ExamCountdownBadge examDate={examDate} />
 
             {offline ? (
               <Badge variant="warning" className="gap-1.5 py-1" title={sync.chip?.title}>

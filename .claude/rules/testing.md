@@ -52,6 +52,7 @@ npm run test:watch   # vitest in watch mode
 | `unit/referenceSearch`       | the five reference-table filters, which search a different set of fields per table                                                                 |
 | `unit/siteMeta`              | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt                                                      |
 | `unit/trainerRegistry`       | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                              |
+| `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the offline badge                          |
 | `render/routes`              | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                         |
 | `render/readableColors`      | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                        |
 | `render/contentInjection`    | authored HTML is injected, never shown as text                                                                                                     |
@@ -65,6 +66,7 @@ npm run test:watch   # vitest in watch mode
 | `render/practiceHub`         | flashcard and quiz answers write a real SRS transition into a trainer's own document slice, swept over every single-level trainer                  |
 | `render/dtzExamFlow`         | a full DTZ sitting through the mounted app, X in Lesen Teil 2, ending on a certificate; the missing Sprachbausteine route goes home                |
 | `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                    |
+| `render/appShell`            | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown and scrolls to the top on navigation        |
 
 **No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
 capture; `tests/render/setup.ts` only adds React's act flag and the in-memory `Storage` from

@@ -1,12 +1,12 @@
 // Node validator for exam data files.
-// Usage: node validate.cjs [src/content/trainers/<id>/exams/examNN.ts ...]
-// With no args it discovers every trainer under src/content/trainers and validates its
+// Usage: node validate.cjs [src/content/<id>/exams/examNN.ts ...]
+// With no args it discovers every trainer under src/content and validates its
 // papers against the format they are authored in — so a new trainer needs no edit here.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const TRAINERS_DIR = path.join(__dirname, 'src', 'content', 'trainers');
+const TRAINERS_DIR = path.join(__dirname, 'src', 'content');
 
 // Which paper a file is: the type it declares itself to satisfy, not its folder name.
 const formatOf = abs => {
@@ -25,7 +25,7 @@ const discover = () => {
       .readdirSync(dir)
       .filter(x => /^exam\d+\.ts$/.test(x))
       .sort()) {
-      const file = `src/content/trainers/${trainer}/exams/${name}`;
+      const file = `src/content/${trainer}/exams/${name}`;
       found.push({ trainer, file, format: formatOf(path.join(dir, name)) });
     }
   }
@@ -35,7 +35,7 @@ const discover = () => {
 const named = process.argv.slice(2);
 const allExams = named.length
   ? named.map(file => ({
-      trainer: file.split('/')[3],
+      trainer: file.split('/')[2],
       file,
       format: formatOf(path.join(__dirname, file))
     }))
@@ -286,7 +286,7 @@ for (const file of files) {
 }
 
 // ---------------------------------------------------------------------------
-// Single-level Modelltests (src/content/trainers/<id>/exams/examNN.ts)
+// Single-level Modelltests (src/content/<id>/exams/examNN.ts)
 // ---------------------------------------------------------------------------
 const telcFiles = allExams.filter(entry => entry.format === 'single-level');
 

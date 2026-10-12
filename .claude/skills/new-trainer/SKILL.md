@@ -17,13 +17,13 @@ list is wrong, fix this file in the same PR.
 
 | Edit                                                                                 | Why it cannot be derived                                                                         |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `content/trainers/<id>/` — the content folder                                        | it is the content                                                                                |
+| `content/<id>/` — the content folder                                                 | it is the content                                                                                |
 | one entry in `TRAINERS` (`shared/config/trainers.ts`)                                | it is the registry                                                                               |
 | `TrainerId`, and `SingleLevelTrainerId` if it sets that paper                        | widening either to `string` loses the exhaustiveness the design rests on                         |
 | a field on `ProgressDatabase` (`shared/types/progress.ts`)                           | the persisted document's own shape                                                               |
 | `EMPTY_DATABASE` + `normalizeDatabase` (`features/progress-store/lib/progressDb.ts`) | `exactOptionalPropertyTypes`: an unopened trainer is an ABSENT key, so defaulting is per trainer |
 | `mergeProgress` (`features/account-sync/lib/mergeProgress.ts`)                       | it rebuilds the document field by field on purpose; this is where two trainers were once wiped   |
-| `TRAINER_CONTENT` (`src/content/trainers/index.ts`)                                  | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
+| `TRAINER_CONTENT` (`src/content/index.ts`)                                           | the static content imports live here only; four suites and `validate.cjs` read it eagerly        |
 
 ## Two tests
 

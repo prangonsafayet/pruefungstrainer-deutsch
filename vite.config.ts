@@ -183,7 +183,7 @@ export default defineConfig(({ mode }) => {
                both eagerly and from an async chunk gets folded into the async one — which
                would make the eager registry statically import this chunk right back, and the
                whole heavy chunk would preload on every visit regardless of trainer. */
-            const trainerContentMatch = /src\/content\/trainers\/([^/]+)\/(?!paper\.ts$).+/.exec(id);
+            const trainerContentMatch = /src\/content\/([^/]+)\/(?!paper\.ts$).+/.exec(id);
             if (trainerContentMatch) return `content-${trainerContentMatch[1]}`;
             if (id.includes('@supabase')) return 'supabase';
             if (id.includes('react-dom') || id.includes('/react/') || id.includes('react-router'))

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS, TRAINER_CONTENT } from '@content/trainers/index.ts';
+import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS, TRAINER_CONTENT } from '@content/index.ts';
 import { type SingleLevelTrainerId, type TrainerId } from '@shared/types';
 
 /* The schedule engine trusts every curriculum's numbering and tiers, and every exam list's

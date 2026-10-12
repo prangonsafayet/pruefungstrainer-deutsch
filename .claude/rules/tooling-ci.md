@@ -90,8 +90,12 @@ inside `$(…)`. Never wire a hook before `bash -n` and `npm run test:hooks` pas
 - `main` requires the four CI checks (Static analysis = typecheck + zero-warning lint + format +
   guards; Unit tests; End-to-end tests; Production build) and **enforce_admins is on** (since
   2026-10-12) — nobody, admins included, merges past a red check.
-- `.claude/hooks/guard-git.sh` refuses `gh pr merge` unless `gh pr checks --required` is all green,
-  and always refuses `--admin`.
+- `.claude/hooks/guard-git.sh` is a second layer, not the boundary. Merges are an **allowlist**:
+  only the literal standalone `gh pr merge <n> --squash [--delete-branch]` passes, and only when
+  `gh pr checks <n> --required` is all green (run in the project dir with `GH_REPO` unset). Any
+  other gh command carrying a merge word, and any gh+merge inside `bash -c`/`eval`/`xargs`/`$(…)`/
+  backticks, is refused. Consequence: edit files that mention those words with the Edit tool, not
+  a Bash heredoc. Also refused: `git push --all` / `--mirror`.
 - Every code review (frontend-reviewer, /code-review, caveman-review, ponytail-review) starts by
   running `npm run typecheck` and `npm run lint -- --max-warnings=0` over the WHOLE codebase and
   reports any error as a blocker, not only issues in the diff.

@@ -6,10 +6,9 @@ import { RouteFallback } from '@shared/components';
 import { hasGuide, ROOT_TRAINER, TRAINER_ORDER, trainerHome } from '@shared/config/trainers.ts';
 import { type TrainerId } from '@shared/types';
 
+import AppLayout from '@features/app-shell/components/AppLayout.tsx';
+import NotFoundPage from '@features/app-shell/routes/NotFoundPage.tsx';
 import DashboardPage from '@features/dashboard/routes/DashboardPage.tsx';
-
-import AppLayout from './layout/AppLayout.tsx';
-import NotFoundPage from './routes/NotFoundPage.tsx';
 
 /**
  * The dashboard is the landing page and ships in the main bundle; every other screen

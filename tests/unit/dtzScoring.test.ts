@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DTZ_PAPER_EXAMS } from '@content/trainers/index.ts';
+import { DTZ_PAPER_EXAMS } from '@content/index.ts';
 import { DTZ_PART_LINES } from '@shared/config/dtzExam.ts';
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
 import { type AnswerMap, type DtzExam, type DtzLevel } from '@shared/types';

@@ -18,7 +18,7 @@ and `.claude/agent-memory/content-fact-checker/MEMORY.md`. Then read `.claude/ru
 1. The format specs: `docs/dtz-format.local.md` (DTZ), `docs/level-trainers.local.md`
    (telc B1/B2). They cite the provider's own documents. Their "Not stated" lists are facts too:
    anything on them must never be presented as official.
-2. Each trainer's `src/content/trainers/<id>/guide.ts`, verified against those sources.
+2. Each trainer's `src/content/<id>/guide.ts`, verified against those sources.
 3. The repo's own content, for derived numbers (e.g. 10 headlines − 5 texts = 5 unused).
 
 If these files are absent (another machine), say so and check only internal consistency.

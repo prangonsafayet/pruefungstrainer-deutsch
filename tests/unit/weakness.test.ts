@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/trainers/index.ts';
+import { TRAINER_CONTENT } from '@content/index.ts';
 
 import { buildErrorReport } from '@features/writing-feedback/lib/errorReport.ts';
 import { LT_RULE_TO_WEAKNESS, WEAKNESS_CATEGORIES, WEAKNESS_TOPICS } from '@shared/config/weakness.ts';

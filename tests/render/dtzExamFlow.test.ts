@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { DTZ_PAPER_EXAMS } from '@content/trainers/index.ts';
+import { DTZ_PAPER_EXAMS } from '@content/index.ts';
 import { NO_MATCH_ANSWER } from '@shared/lib/answers.ts';
 import { TRAINER_ORDER, TRAINERS } from '@shared/config/trainers.ts';
 import { type DtzAttempt, type TrainerId } from '@shared/types';

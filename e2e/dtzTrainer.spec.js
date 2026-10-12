@@ -30,10 +30,7 @@ const PROGRESS_KEY = 'telcTrainerV1';
 
 /** One DTZ Modelltest, evaluated from its authored file. */
 const loadExam = id => {
-  const file = new URL(
-    `../src/content/trainers/dtz/exams/exam${String(id).padStart(2, '0')}.ts`,
-    import.meta.url
-  );
+  const file = new URL(`../src/content/dtz/exams/exam${String(id).padStart(2, '0')}.ts`, import.meta.url);
   const source = readFileSync(file, 'utf8')
     .replace(/^import[^\n]*\n/gm, '')
     .replace(/^\s*const exam =\s*/m, '')

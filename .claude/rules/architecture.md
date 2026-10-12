@@ -6,13 +6,16 @@ paths:
 # Architecture
 
 ```
-src/app        composition root — providers, router, layout. May import anything.
+src/app        composition root ONLY — main.tsx, router.tsx, providers/AppProviders.tsx.
+               May import anything. No components, hooks or logic of its own.
 src/features   vertical slices: components/ hooks/ lib/ routes/, plus an index.ts naming the
-               public surface where another feature needs something from it.
+               public surface where another feature needs something from it. The header,
+               nav, layout and 404 page are the app-shell feature.
 src/shared     feature-agnostic building blocks — ui/ primitives, components, hooks, lib,
                config, types, providers.
-src/content    inert data, keyed by trainer: content/trainers/<id>/ holds that trainer's
-               exams, curriculum, vocabulary bank and guide HTML.
+src/content    inert data, keyed by trainer: content/<id>/ holds that trainer's
+               exams, curriculum, vocabulary bank and guide HTML; content/index.ts is
+               the eager, test-only TRAINER_CONTENT barrel.
 ```
 
 ## One registry, peer trainers
@@ -67,7 +70,8 @@ Route components are not exported from feature barrels: the router deep-imports 
 (`@features/mock-exam/routes/MockExamRunnerPage.tsx`). Exporting them once produced an import cycle that
 hung the settings route on a permanent skeleton. Only `account-sync`, `mock-exam`, `study-schedule` and `progress-store`
 have a barrel, because only they are read by another feature; a feature nobody imports needs
-no door. If two features need the same thing, it belongs in `src/shared` — that is why the
+no door. `app-shell` has none: the router deep-imports its `AppLayout` (a layout route) and
+`NotFoundPage` exactly as it does every other screen. If two features need the same thing, it belongs in `src/shared` — that is why the
 confirm dialog, the speech layer and the score-history chart live there.
 
 ## Where things go
@@ -81,7 +85,8 @@ confirm dialog, the speech layer and the score-history chart live there.
 | Design-system primitive   | `shared/ui/` (shadcn CLI writes here)      | `button.tsx`                   |
 | Domain type               | `shared/types/`                            | `exam.ts`, `progress.ts`       |
 | Shared constant           | `shared/config/`                           | `exam.ts`, `appInfo.ts`        |
-| Exam or study content     | `content/trainers/<id>/`                   | `a2b1/exams/exam07.ts`         |
+| App chrome (header, nav)  | `features/app-shell/`                      | `components/MainNav.tsx`       |
+| Exam or study content     | `content/<id>/`                            | `a2b1/exams/exam07.ts`         |
 
 ## The `study-schedule` feature
 
@@ -93,3 +98,15 @@ are the React surface. The schedule is derived on render and **never persisted**
 (`settings.examDate`, `learnDone`, `attempts`) are the only stored state. Constants:
 `@shared/config/schedule.ts`; types: `@shared/types/schedule.ts`. Date rules: the
 dates-timers rule.
+
+## The `app-shell` feature
+
+The chrome around every screen: `components/AppLayout.tsx` (the router's layout route),
+`MainNav`, `TrainerSwitcher`, `ExamCountdownBadge`, `AppFooter`, and `routes/NotFoundPage.tsx`.
+It is a normal feature — it reads `@features/account-sync` and `@features/progress-store`
+through their barrels and must not import `@app/**`. Its logic follows the visual-only rule:
+`hooks/useActiveTrainer.ts` (the trainer the URL is in, its home, the switch),
+`hooks/useAppLayout.ts` (sync state, header height, exam date, the scroll-and-silence reset
+on navigation), `hooks/useExamCountdown.ts` over the pure `lib/examCountdown.ts` (tone:
+passed → warning, 0–14 days → destructive, else secondary), `lib/navEntries.ts` and
+`lib/syncStatus.ts`. Tests: `tests/unit/appShell.test.ts`, `tests/render/appShell.test.ts`.

@@ -22,7 +22,7 @@ failure, a mangled TTS phrase, a fact you nearly invented), append one dated lin
 
 ## When the guide and the content disagree, the guide wins
 
-`src/content/trainers/<id>/guide.ts` is the in-repo reference for what a paper actually
+`src/content/<id>/guide.ts` is the in-repo reference for what a paper actually
 requires — it was written and verified against telc's own published documents. `paper.ts`
 and the exam files were authored earlier and, for B1/B2, held five verified errors that the
 guide does not: an invented "answer at least 3 of 4 Leitpunkte" rule (all four are
@@ -37,7 +37,7 @@ and check `validate.cjs` too: it has previously _enforced_ one of these errors
 
 ## The dual-level data contract (A2·B1)
 
-Each `src/content/trainers/a2b1/exams/examNN.ts` exports one object `satisfies Exam` (see
+Each `src/content/a2b1/exams/examNN.ts` exports one object `satisfies Exam` (see
 `src/shared/types/exam.ts`). `npm run validate` enforces the counts; run it after
 every edit. The required shape:
 
@@ -57,7 +57,7 @@ every edit. The required shape:
 
 ## The single-level data contract (telc B1 and B2)
 
-Each `src/content/trainers/{b1,b2}/exams/examNN.ts` exports one object
+Each `src/content/{b1,b2}/exams/examNN.ts` exports one object
 `satisfies SingleLevelExam` (see `src/shared/types/singleLevelExam.ts`). B1 and B2 share
 one skeleton and one scoring scheme — 225 written + 75 oral = 300 — and differ only in the
 writing task shape and the oral part names/weights. `npm run validate` enforces the counts;
@@ -88,7 +88,7 @@ run it after every edit.
 The exact type is `DtzExam` in `src/shared/types/dtzExam.ts` — **read that file first; it is the
 source of truth** and overrides this summary if they differ. The format facts come only from
 `docs/dtz-format.local.md` (gitignored; it cites the g.a.s.t. Übungssatz page by page). Each
-Modelltest is `src/content/trainers/dtz/exams/examNN.ts`, `satisfies DtzExam`. Summary:
+Modelltest is `src/content/dtz/exams/examNN.ts`, `satisfies DtzExam`. Summary:
 
 - **Hören — 4 Teile, 20 items.** Teil 1: 4 telephone messages / announcements, one a/b/c item
   each. Teil 2: 5 short radio items, one a/b/c each. Teil 3: 4 everyday conversations, each with

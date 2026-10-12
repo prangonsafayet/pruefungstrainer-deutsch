@@ -10,11 +10,11 @@ Follow the memory protocol first (`.claude/rules/memory.md`): read `.claude/memo
 and `docs/lessons.local.md` if present; append what cost you time.
 
 Adding a Modelltest touches three places in one trainer's folder,
-`src/content/trainers/<id>/`. Do them in this order.
+`src/content/<id>/`. Do them in this order.
 
 ## 1. Decide the trainer, level and theme
 
-Read `src/content/trainers/<id>/exams/index.ts` for what exists, then that trainer's `guide.ts`
+Read `src/content/<id>/exams/index.ts` for what exists, then that trainer's `guide.ts`
 and two neighbouring exams. Each trainer has its own data contract:
 
 | Trainer | Type (source of truth)                                     |
@@ -28,7 +28,7 @@ paper sits at its level and the exams vary by `theme`. Pick a theme not already 
 
 ## 2. Write the data file
 
-Create `src/content/trainers/<id>/exams/examNN.ts` in the exact shape of its neighbours, ending
+Create `src/content/<id>/exams/examNN.ts` in the exact shape of its neighbours, ending
 `} as const satisfies <ExamType>;` with a default export. Delegate the authoring to the
 **exam-author** agent — it knows every Teil's item counts and the content rules (plausible
 distractors, answers derivable from the text alone, mixed richtig/falsch, `alt` spellings on
@@ -37,7 +37,7 @@ note-sheet gaps, speakable TTS dialogue, original texts only). Then have
 
 ## 3. Register it
 
-Add the import and array entry in `src/content/trainers/<id>/exams/index.ts`, keeping it sorted
+Add the import and array entry in `src/content/<id>/exams/index.ts`, keeping it sorted
 by `id`. The dashboard, history, runner and plan read from there; nothing else changes.
 
 ## 4. Validate

@@ -1,6 +1,6 @@
 /**
  * The shape of one telc Deutsch B1 / B2 Modelltest — the single-level paper, as authored in
- * `src/content/trainers/<level>/exams`. Both levels share one skeleton (researched from
+ * `src/content/<level>/exams`. Both levels share one skeleton (researched from
  * the official telc handbooks): Lesen 5+5+10 items, Sprachbausteine 10+10, Hören 5+10+5,
  * one 45-point e-mail, a three-part oral. They differ in the writing task (B1 replies to
  * an incoming e-mail; B2 writes a halbformelle E-Mail directly from a prompt, no incoming

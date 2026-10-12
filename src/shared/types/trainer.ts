@@ -74,7 +74,7 @@ export interface TrainerExamSettings {
 export type LevelTrainerSettings = TrainerExamSettings;
 
 /**
- * Everything one trainer studies from, authored in `src/content/trainers/<id>/`. Every
+ * Everything one trainer studies from, authored in `src/content/<id>/`. Every
  * trainer exposes the same shape; the type parameter narrows the papers for the format
  * layer, which is the only place that knows how to mark them.
  *

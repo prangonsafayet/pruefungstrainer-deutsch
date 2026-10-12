@@ -2,7 +2,7 @@
  * Structure, points and pass rules of the single-level paper, as published in the official
  * handbooks. What every trainer setting this paper shares lives here; what each one decides
  * for itself — its timings, its briefing copy, its writing task and its listening speed —
- * lives on that trainer's `TrainerPaper` in `src/content/trainers/<id>/paper.ts`.
+ * lives on that trainer's `TrainerPaper` in `src/content/<id>/paper.ts`.
  */
 
 import { type ExamModule, type LevelTrainerSettings } from '@shared/types';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/trainers/index.ts';
+import { TRAINER_CONTENT } from '@content/index.ts';
 
 import { buildScheduleFrom, splitWorkDays } from '@features/study-schedule/lib/buildSchedule.ts';
 import { trainerScheduleSource } from '@features/study-schedule/lib/trainerSource.ts';

@@ -17,9 +17,10 @@ import { trainerIds } from './scripts/trainerRegistry.mjs';
 
 /* Architecture rules, enforced rather than documented.
  *
- *   src/app       the shell: providers, router, layout. May import anything.
+ *   src/app       the composition root: entry point, providers, router. May import anything.
  *   src/features  vertical slices. May import shared + content, never another
  *                 feature's internals — cross-feature use goes through its index.ts.
+ *                 The header, nav and layout are a feature too (features/app-shell).
  *   src/shared    reusable building blocks. May not import features or app.
  *   src/content   plain data. May not import anything from the app at all.
  *
@@ -43,7 +44,8 @@ const CROSS_FEATURE_INTERNALS = {
 
 const APP_SHELL = {
   group: ['@app/**'],
-  message: 'Features must not import the app shell — that inverts the dependency direction.'
+  message:
+    'Features must not import @app — src/app is the composition root above every feature; importing it inverts the dependency direction.'
 };
 
 const FEATURES_AND_APP = {
@@ -497,7 +499,6 @@ export default tseslint.config(
           'src/**/components/*.tsx': 'PASCAL_CASE',
           'src/**/routes/**/*.tsx': 'PASCAL_CASE',
           'src/**/hooks/**/*.ts': 'use+([A-Z])*([a-zA-Z0-9])',
-          'src/**/layout/use*.ts': 'use+([A-Z])*([a-zA-Z0-9])',
           'src/**/lib/**/*.ts': 'CAMEL_CASE',
           'src/**/config/**/*.ts': 'CAMEL_CASE',
           'src/**/types/**/*.ts': 'CAMEL_CASE',
@@ -616,12 +617,7 @@ export default tseslint.config(
   },
   {
     name: 'component-files-default-export',
-    files: [
-      'src/app/layout/*.tsx',
-      'src/app/routes/*.tsx',
-      'src/**/components/**/*.tsx',
-      'src/**/routes/*.tsx'
-    ],
+    files: ['src/**/components/**/*.tsx', 'src/**/routes/*.tsx'],
     ignores: ['src/shared/ui/**', '**/moduleProps.ts'],
     plugins: { local: componentDefaultExport },
     rules: { 'local/component-default-export': 'error' }
@@ -636,11 +632,11 @@ export default tseslint.config(
   },
   {
     /* Exam data files are enormous literals; naming rules there are pure noise. The path is
-       `src/content/trainers/<id>/exams/` — the pre-registry `src/content/exams/` this used to
+       `src/content/<id>/exams/` — the pre-registry `src/content/exams/` this used to
        name has not existed since the content moved, so the exemption was dead and passed only
        because `objectLiteralProperty` is `format: null` globally. */
     name: 'content-data',
-    files: ['src/content/trainers/*/exams/**/*.ts'],
+    files: ['src/content/*/exams/**/*.ts'],
     rules: { '@typescript-eslint/naming-convention': 'off' }
   },
   {

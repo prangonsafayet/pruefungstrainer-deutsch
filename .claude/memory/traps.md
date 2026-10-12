@@ -111,6 +111,8 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-12: bash 3.2 (macOS) mis-parses quotes in a heredoc inside `$()` → use
   `IFS= read -r -d '' var <<'EOF' || true`.
 - zsh loop ran once over a whole string → zsh does not word-split; use arrays.
+- 2026-10-12: a path rewrite with `sed 's#…\b#…#'` changed nothing on macOS → BSD sed has no
+  `\b`; grep for the old path after every bulk rewrite.
 - Pre-push typechecks the working tree, not the pushed commit → push explicit SHAs when others
   are mid-edit, and say so.
 - `git mv` + reformat lost rename history → move in one commit, reformat in the next.

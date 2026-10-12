@@ -2,7 +2,7 @@
  * Structure, points and level lines of the Deutsch-Test für Zuwanderer (DTZ, A2–B1), as the
  * g.a.s.t. Übungssatz this trainer follows states them (see `docs/dtz-format.local.md`).
  * What the trainer decides for itself — its timings, its briefing copy, its listening speed —
- * lives on its `TrainerPaper` in `src/content/trainers/dtz/paper.ts`.
+ * lives on its `TrainerPaper` in `src/content/dtz/paper.ts`.
  */
 
 import { type DtzModule, type ExamModule } from '@shared/types';

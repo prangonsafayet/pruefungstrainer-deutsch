@@ -6,7 +6,7 @@
 
 /* Sourced straight from its own paper.ts, not from the content barrel — see the note atop
    `dual-level/index.ts`. */
-import { DTZ_PAPER } from '@content/trainers/dtz/paper.ts';
+import { DTZ_PAPER } from '@content/dtz/paper.ts';
 
 import { DTZ_MODULE_META, DTZ_RATING_CRITERIA, DTZ_SPRECHEN_MAX } from '@shared/config/dtzExam.ts';
 import { moduleMinutes } from '@shared/lib/paper.ts';

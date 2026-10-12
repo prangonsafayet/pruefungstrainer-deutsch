@@ -101,11 +101,13 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 The interesting parts, for anyone reading the code:
 
 **Feature-sliced architecture with enforced boundaries.** `src/app` is the
-composition root, `src/features` holds vertical slices that expose a public
-surface through `index.ts`, `src/shared` holds feature-agnostic building blocks,
-and `src/content` is inert data, keyed by trainer. The dependency rules are
-ESLint rules, not documentation — a feature physically cannot reach into another
-feature's internals or import the app shell. Wiring this up surfaced two real
+composition root and nothing else — entry point, providers, router; the header,
+nav and layout are a feature like any other (`features/app-shell`).
+`src/features` holds vertical slices that expose a public surface through
+`index.ts`, `src/shared` holds feature-agnostic building blocks, and
+`src/content/<trainer>/` is inert data. The dependency rules are ESLint rules,
+not documentation — a feature physically cannot reach into another feature's
+internals or import `src/app`. Wiring this up surfaced two real
 import cycles, one of which was hanging a route.
 
 **Four trainers behind one registry.** telc Deutsch A2·B1, B1, B2 and the DTZ are
