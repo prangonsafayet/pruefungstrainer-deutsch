@@ -26,5 +26,5 @@ One dated line per lesson. Read before designing; append after a retry.
 - 2026-10-12: `overflow-hidden` on a card makes it the scroll container of a `sticky` child (split pane pinned 161px into the section) — use `overflow-clip`.
 - 2026-10-12: Radix radio arrow-select fires on a roving-focus setTimeout while the arrow is still down — Playwright `press` releases first; hold with `keyboard.down`, wait for focus, `up`.
 - 2026-10-12: Heading text + `sr-only` span → Chromium accessible name gets a stray space ("Nr. 21 , incorrect"); put one exact `aria-label` on the container.
-- 2026-10-12: `getByRole(..., { name: 'Modelltest 1' })` also matches 10–15; a `.catch(() => false)` in a Tab loop hid the strict-mode error — use `exact: true`, never swallow locator errors.
+- 2026-10-12: `getByRole(..., { name: 'Mock exam 1' })` also matches 10–15; a `.catch(() => false)` in a Tab loop hid the strict-mode error — use `exact: true`, never swallow locator errors.
 - 2026-10-12: Lazy route keeps the old screen up after the URL changes — scripts must wait for the new screen's control, not the URL.

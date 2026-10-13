@@ -3,7 +3,7 @@
  * closed tab — resumes on the same module with the same answers and the same time left.
  * Microphone recordings are deliberately session-only and never stored.
  *
- * One shape serves both papers: what a run *is* does not depend on which Modelltest is
+ * One shape serves both papers: what a run *is* does not depend on which mock exam is
  * being sat, only on which trainer it belongs to.
  */
 

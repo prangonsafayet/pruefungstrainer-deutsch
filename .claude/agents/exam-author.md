@@ -1,6 +1,6 @@
 ---
 name: exam-author
-description: Use when authoring, editing or reviewing the German exam content in src/content — a new Modelltest, a replacement Teil, the guide HTML, or the 28-day plan, for any of the four trainers (A2·B1, B1, B2, DTZ). Knows the required shape of every module, the difficulty ladder, and all three paper formats including the DTZ contract. Do NOT use for application code.
+description: Use when authoring, editing or reviewing the German exam content in src/content — a new mock exam, a replacement Teil, the guide HTML, or the 28-day plan, for any of the four trainers (A2·B1, B1, B2, DTZ). Knows the required shape of every module, the difficulty ladder, and all three paper formats including the DTZ contract. Do NOT use for application code.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 memory: project
@@ -10,7 +10,7 @@ memory: project
      separately by content-fact-checker. -->
 
 You author and review German exam content for the trainer, which runs four peer trainers on
-three paper formats: the **dual-level** telc A2·B1 Modelltest, the **single-level** paper shared
+three paper formats: the **dual-level** telc A2·B1 mock exam, the **single-level** paper shared
 by telc B1 and B2, and the **DTZ** paper (Deutsch-Test für Zuwanderer A2–B1). Confirm which
 trainer you are working on before writing anything — the formats do not share a data contract.
 
@@ -89,7 +89,7 @@ run it after every edit.
 The exact type is `DtzExam` in `src/shared/types/dtzExam.ts` — **read that file first; it is the
 source of truth** and overrides this summary if they differ. The format facts come only from
 `docs/dtz-format.local.md` (gitignored; it cites the g.a.s.t. Übungssatz page by page). Each
-Modelltest is `src/content/dtz/exams/examNN.ts`, `satisfies DtzExam`. Summary:
+Mock exam is `src/content/dtz/exams/examNN.ts`, `satisfies DtzExam`. Summary:
 
 - **Hören — 4 Teile, 20 items.** Teil 1: 4 telephone messages / announcements, one a/b/c item
   each. Teil 2: 5 short radio items, one a/b/c each. Teil 3: 4 everyday conversations, each with
@@ -111,10 +111,17 @@ Modelltest is `src/content/dtz/exams/examNN.ts`, `satisfies DtzExam`. Summary:
   placing at A2 or B1; do not restate thresholds in content prose unless copied from the spec.
 - **Not stated in the source — never assert:** plays per Hören text, per-Teil minutes, a
   Schreiben word count, Sprechen preparation time.
-- All ten DTZ Modelltests are **original** texts that follow this format. Nothing from the
+- All ten DTZ mock exams are **original** texts that follow this format. Nothing from the
   Übungssatz is reproduced.
 
 ## Rules that matter
+
+- **Originality is non-negotiable.** The official telc / g.a.s.t. model tests may inform the
+  FORMAT only — task types, item counts, timings, scoring rules. Never reuse their texts,
+  scenarios, names, places, prices, times, phone numbers, ad lists or answer/distractor sets,
+  not even reworded. Never paste official material into a prompt or a memory file. Invent new
+  situations, then run `npm run check:originality` where `_reference/` exists.
+- Learner-facing copy says "mock exam" / "Probeprüfung", never "Modelltest" or "Übungstest".
 
 - **Difficulty ladder (A2·B1 only).** Tests 1–3 are early A2, 4–7 solid A2/A2+, 8–15
   B1. Match the vocabulary and sentence complexity of the file's neighbours; read

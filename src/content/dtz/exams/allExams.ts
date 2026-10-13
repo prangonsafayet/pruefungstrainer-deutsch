@@ -11,7 +11,7 @@ import exam08 from './exam08.ts';
 import exam09 from './exam09.ts';
 import exam10 from './exam10.ts';
 
-/** All DTZ Modelltests, ordered by id. */
+/** All DTZ mock exams, ordered by id. */
 export const DTZ_EXAMS: readonly DtzExam[] = [
   exam01,
   exam02,

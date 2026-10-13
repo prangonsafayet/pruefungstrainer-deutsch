@@ -239,11 +239,11 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Scan the directory; find the one ad that does not exist (X)',
       tasks: [
         {
-          text: 'Read the Lesen cheatsheet, then take Modelltest 1 → Lesen (Teil 1: Verzeichnis, a/b/c) — untimed.',
+          text: 'Read the Lesen cheatsheet, then take mock exam 1 → Lesen (Teil 1: Verzeichnis, a/b/c) — untimed.',
           target: { kind: 'module', exam: 1, module: 'lesen', teil: '1' }
         },
         {
-          text: 'Take Modelltest 1 → Lesen (Teil 2: Anzeigen, ein X): note for every situation the hard fact that decided it, and which situation was the X.',
+          text: 'Take mock exam 1 → Lesen (Teil 2: Anzeigen, ein X): note for every situation the hard fact that decided it, and which situation was the X.',
           target: { kind: 'module', exam: 1, module: 'lesen', teil: '2' }
         },
         'Add every unknown word that blocked an answer to your flashcards (max 15).'
@@ -264,7 +264,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Read the Hören cheatsheet — especially the paraphrase trap and the correction signals.',
         {
-          text: 'Take Modelltest 1 → Hören (Teil 1: Ansagen am Telefon und Durchsagen, a/b/c) and Modelltest 1 → Hören (Teil 2: Radio, a/b/c) in one go, no pausing.',
+          text: 'Take mock exam 1 → Hören (Teil 1: Ansagen am Telefon und Durchsagen, a/b/c) and mock exam 1 → Hören (Teil 2: Radio, a/b/c) in one go, no pausing.',
           target: { kind: 'module', exam: 1, module: 'hoeren' }
         },
         'Review every red item: was it a number, a paraphrase or a correction signal? Note the trap type.'
@@ -284,11 +284,11 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Two items per Gespräch; matching opinions to sentences a–f',
       tasks: [
         {
-          text: 'Take Modelltest 1 → Hören (Teil 3: Gespräche, je richtig/falsch + a/b/c): before each Gespräch, underline the key word of both items.',
+          text: 'Take mock exam 1 → Hören (Teil 3: Gespräche, je richtig/falsch + a/b/c): before each Gespräch, underline the key word of both items.',
           target: { kind: 'module', exam: 1, module: 'hoeren', teil: '3' }
         },
         {
-          text: 'Take Modelltest 1 → Hören (Teil 4: Meinungen, a–f zuordnen): use the minute before the audio to underline the opinion word in each of the six sentences.',
+          text: 'Take mock exam 1 → Hören (Teil 4: Meinungen, a–f zuordnen): use the minute before the audio to underline the opinion word in each of the six sentences.',
           target: { kind: 'module', exam: 1, module: 'hoeren', teil: '4' }
         },
         'Count your Hören items in Teil 1–4 (out of 20). Hören and Lesen are banded together out of 45 (33–45 = B1, 20–32 = A2), so keep this score and add your Lesen score (day 9) before you compare the sum with the bands.'
@@ -308,11 +308,11 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Texts, brochure, and the letter with gaps',
       tasks: [
         {
-          text: 'Take Modelltest 2 → Lesen (Teil 3: Pressetexte und Mitteilungen) and Modelltest 2 → Lesen (Teil 4: Informationsbroschüre, richtig/falsch).',
+          text: 'Take mock exam 2 → Lesen (Teil 3: Pressetexte und Mitteilungen) and mock exam 2 → Lesen (Teil 4: Informationsbroschüre, richtig/falsch).',
           target: { kind: 'module', exam: 2, module: 'lesen' }
         },
         {
-          text: 'Take Modelltest 2 → Lesen (Teil 5: Brief ergänzen): for every wrong gap, say the rule from the Konnektoren or Kasus cheatsheet.',
+          text: 'Take mock exam 2 → Lesen (Teil 5: Brief ergänzen): for every wrong gap, say the rule from the Konnektoren or Kasus cheatsheet.',
           target: { kind: 'module', exam: 2, module: 'lesen', teil: '5' }
         },
         'One flashcard session (20 cards) — include the words you collected on day 6.'
@@ -331,7 +331,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Checkpoint week 1+',
       focus: 'Consolidate before you write and speak',
       tasks: [
-        'Review every red item from Modelltest 1 and 2 in the review screen — out loud, with the rule.',
+        'Review every red item from mock exam 1 and 2 in the review screen — out loud, with the rule.',
         'Flashcard sweep: repeat ALL cards from days 1–9; struggling cards go into a second session today.',
         'Quiz: 15 items in your weakest practice-hub category (be honest — the stats show it).'
       ],
@@ -352,7 +352,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Memorize the skeleton from the Schreiben cheatsheet: Anrede, Einstieg, four Leitpunkte, Schluss, Gruß.',
         {
-          text: 'Take Modelltest 1 → Schreiben: choose Aufgabe A or B in the first minute, write for 30 minutes, no dictionary.',
+          text: 'Take mock exam 1 → Schreiben: choose Aufgabe A or B in the first minute, write for 30 minutes, no dictionary.',
           target: { kind: 'module', exam: 1, module: 'schreiben' }
         },
         'Self-check: all four Leitpunkte? Anrede and Gruß? Three different connectors? Then rate yourself on the four criteria (0–5 each; 15–20 = B1, 7–14 = A2).'
@@ -378,7 +378,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
         'Learn the Redemittel for Teil 1A, 1B, 2A and 2B from the Sprechen cheatsheet — say each set aloud 3 times.',
         'Record yourself: 90 seconds of Teil 1A (Name, Geburtsort, Wohnort, Arbeit/Beruf, Familie, Sprachen), then listen back and fix one thing.',
         {
-          text: 'Take Modelltest 1 → Sprechen (Teil 2A: Bild beschreiben): describe the photo aloud with the route Ort, Personen, Tätigkeit, Stimmung. Then answer two own-experience questions (Teil 2B).',
+          text: 'Take mock exam 1 → Sprechen (Teil 2A: Bild beschreiben): describe the photo aloud with the route Ort, Personen, Tätigkeit, Stimmung. Then answer two own-experience questions (Teil 2B).',
           target: { kind: 'module', exam: 1, module: 'sprechen', teil: '2A' }
         }
       ],
@@ -398,7 +398,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Learn the Teil-3 Redemittel from the cheatsheet: Vorschläge machen, zustimmen, ablehnen + Alternative, Abschluss.',
         {
-          text: 'Take Modelltest 1 → Sprechen (Teil 3): use the five notes on the task sheet as your agenda and plan the whole thing out loud, solo, ending with a decision.',
+          text: 'Take mock exam 1 → Sprechen (Teil 3): use the five notes on the task sheet as your agenda and plan the whole thing out loud, solo, ending with a decision.',
           target: { kind: 'module', exam: 1, module: 'sprechen', teil: '3' }
         },
         'Plan out loud for 3 minutes in a second situation of your own (a party for the Kita, a trip with your course): Wann? Wo? Was? Wer macht was?'
@@ -418,12 +418,12 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Close the core, open the mock phase',
       tasks: [
         {
-          text: 'Take Modelltest 2 → Schreiben: second message, 30 minutes, checklist afterwards.',
+          text: 'Take mock exam 2 → Schreiben: second message, 30 minutes, checklist afterwards.',
           target: { kind: 'module', exam: 2, module: 'schreiben' }
         },
-        'Review sweep: reread all eight cheatsheets once (30 min) and your red items from Modelltest 1 and 2.',
+        'Review sweep: reread all eight cheatsheets once (30 min) and your red items from mock exam 1 and 2.',
         'Say your Teil-1A self-presentation once — still automatic?',
-        'From here the rhythm is: one Modelltest every 2–3 days, always with a full review the same day.'
+        'From here the rhythm is: one mock exam every 2–3 days, always with a full review the same day.'
       ],
       cheats: ['schreiben', 'sprechen'],
       ai: [
@@ -457,10 +457,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 16,
       tier: 'extension',
-      title: 'Modelltest 3 — the written part in one sitting',
+      title: 'Mock exam 3 — the written part in one sitting',
       focus: 'Hören, Lesen and Schreiben back to back, as in the real exam',
       tasks: [
-        'Take Modelltest 3 → Hören, Lesen and Schreiben in the exam order with the timer on: no pausing, no dictionary, no breaks between the three modules.',
+        'Take mock exam 3 → Hören, Lesen and Schreiben in the exam order with the timer on: no pausing, no dictionary, no breaks between the three modules.',
         'Add up Hören + Lesen (max 45) and rate your Schreiben (max 20), then compare with the bands in the guide (33–45 = B1, 20–32 = A2 · 15–20 = B1, 7–14 = A2).',
         'Review every red item and sort it: vocabulary gap, grammar gap or technique error. Add the 15 most painful unknown words to your flashcards.'
       ],
@@ -468,7 +468,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       ai: [
         {
           t: 'Error debrief',
-          p: 'Ich habe gerade einen kompletten schriftlichen Teil (Hören, Lesen, Schreiben) eines Modelltests für den Deutsch-Test für Zuwanderer gemacht. Ich füge meine Fehler ein (Aufgabe + meine falsche Antwort + richtige Antwort). Analysiere die Muster auf Englisch, nenne die 3 Baustellen mit dem größten Punkte-Hebel und erstelle zu jeder eine deutsche Mini-Übung (5 Aufgaben), die wir sofort zusammen machen.'
+          p: 'Ich habe gerade einen kompletten schriftlichen Teil (Hören, Lesen, Schreiben) einer Probeprüfung für den Deutsch-Test für Zuwanderer gemacht. Ich füge meine Fehler ein (Aufgabe + meine falsche Antwort + richtige Antwort). Analysiere die Muster auf Englisch, nenne die 3 Baustellen mit dem größten Punkte-Hebel und erstelle zu jeder eine deutsche Mini-Übung (5 Aufgaben), die wir sofort zusammen machen.'
         }
       ]
     },
@@ -493,15 +493,15 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 18,
       tier: 'extension',
-      title: 'Modelltest 4 — Schreiben & Lesen',
+      title: 'Mock exam 4 — Schreiben & Lesen',
       focus: 'Formal register under time pressure',
       tasks: [
         {
-          text: 'Take Modelltest 4 → Schreiben: choose A or B in the first minute, 30 minutes, formelle or halbformelle Mitteilung. Keep the last minutes for the checklist.',
+          text: 'Take mock exam 4 → Schreiben: choose A or B in the first minute, 30 minutes, formelle or halbformelle Mitteilung. Keep the last minutes for the checklist.',
           target: { kind: 'module', exam: 4, module: 'schreiben' }
         },
         {
-          text: 'Take Modelltest 4 → Lesen (Teil 2: Anzeigen, ein X) and Modelltest 4 → Lesen (Teil 5: Brief ergänzen).',
+          text: 'Take mock exam 4 → Lesen (Teil 2: Anzeigen, ein X) and mock exam 4 → Lesen (Teil 5: Brief ergänzen).',
           target: { kind: 'module', exam: 4, module: 'lesen' }
         },
         'Review every red item and update your personal top-5 mistakes list.'
@@ -510,25 +510,25 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       ai: [
         {
           t: 'Message upgrade',
-          p: 'Du bist Prüfer im Deutsch-Test für Zuwanderer. Ich füge meine Mitteilung aus dem heutigen Modelltest ein (Aufgabe + mein Text). Bewerte nach den vier Kriterien (Aufgabenbewältigung, kommunikative Gestaltung, Korrektheit, Wortschatz) mit je 0–5 Punkten, markiere jeden Fehler, und zeige dann, wie derselbe Text mit 3 besseren Konnektoren und 2 Konjunktiv-II-Formulierungen klingt. Danach diktierst du mir die 5 wichtigsten Korrekturen zum Abschreiben.'
+          p: 'Du bist Prüfer im Deutsch-Test für Zuwanderer. Ich füge meine Mitteilung aus der heutigen Probeprüfung ein (Aufgabe + mein Text). Bewerte nach den vier Kriterien (Aufgabenbewältigung, kommunikative Gestaltung, Korrektheit, Wortschatz) mit je 0–5 Punkten, markiere jeden Fehler, und zeige dann, wie derselbe Text mit 3 besseren Konnektoren und 2 Konjunktiv-II-Formulierungen klingt. Danach diktierst du mir die 5 wichtigsten Korrekturen zum Abschreiben.'
         }
       ]
     },
     {
       day: 19,
       tier: 'extension',
-      title: 'Modelltest 5 — the written part in one sitting',
+      title: 'Mock exam 5 — the written part in one sitting',
       focus: 'Written routine under pressure',
       tasks: [
-        'Take Modelltest 5 → Hören, Lesen and Schreiben in the exam order with the timer on and no breaks.',
-        'Rate your Schreiben on the four criteria before reading any feedback — honest self-assessment is an exam skill. Then compare Hören + Lesen and Schreiben with Modelltest 3.',
+        'Take mock exam 5 → Hören, Lesen and Schreiben in the exam order with the timer on and no breaks.',
+        'Rate your Schreiben on the four criteria before reading any feedback — honest self-assessment is an exam skill. Then compare Hören + Lesen and Schreiben with mock exam 3.',
         'Review every red item; note which Teil cost you the most items.'
       ],
       cheats: ['konnektoren'],
       ai: [
         {
           t: 'Teil-by-Teil review',
-          p: 'Ich füge meine Ergebnisse aus Modelltest 5 für den Deutsch-Test für Zuwanderer ein, getrennt nach Teilen (Hören Teil 1–4, Lesen Teil 1–5, Schreiben). Erkläre mir auf Englisch, in welchen Teilen ich die meisten Punkte verliere und warum (Wortschatz, Grammatik, Technik, Zeit). Gib mir danach 8 deutsche Übungsaufgaben für den schwächsten Teil, eine nach der anderen, mit sofortiger Korrektur.'
+          p: 'Ich füge meine Ergebnisse aus Probeprüfung 5 für den Deutsch-Test für Zuwanderer ein, getrennt nach Teilen (Hören Teil 1–4, Lesen Teil 1–5, Schreiben). Erkläre mir auf Englisch, in welchen Teilen ich die meisten Punkte verliere und warum (Wortschatz, Grammatik, Technik, Zeit). Gib mir danach 8 deutsche Übungsaufgaben für den schwächsten Teil, eine nach der anderen, mit sofortiger Korrektur.'
         }
       ]
     },
@@ -538,7 +538,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Sprechen — Bild & Erfahrungen',
       focus: 'Teil 2A and 2B: 20 of the 100 points',
       tasks: [
-        'Take Modelltest 3 → Sprechen (Teil 2A: Bild beschreiben) and Modelltest 4 → Sprechen (Teil 2A): record both, then listen back and count how many of Ort, Personen, Tätigkeit, Stimmung you covered.',
+        'Take mock exam 3 → Sprechen (Teil 2A: Bild beschreiben) and mock exam 4 → Sprechen (Teil 2A): record both, then listen back and count how many of Ort, Personen, Tätigkeit, Stimmung you covered.',
         'Answer the Teil-2B questions of both tests aloud with a real example from your life each time: Bei mir war das so: …',
         'Drill the repair phrases once more: Wie bitte? Könnten Sie das wiederholen? Wie sagt man …?'
       ],
@@ -553,18 +553,18 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 21,
       tier: 'extension',
-      title: 'Modelltest 6 & checkpoint week 3',
+      title: 'Mock exam 6 & checkpoint week 3',
       focus: 'Trend check: are the curves rising?',
       tasks: [
-        'Take Modelltest 6 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
-        'Look at your results across Modelltests 3, 5 and 6: write down your weakest Teil and your weakest grammar topic.',
+        'Take mock exam 6 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
+        'Look at your results across mock exams 3, 5 and 6: write down your weakest Teil and your weakest grammar topic.',
         'Flashcard sweep: review every struggling card from the last two weeks.'
       ],
       cheats: [],
       ai: [
         {
           t: 'Trend analysis',
-          p: 'Ich bin in Woche 3 meiner Vorbereitung auf den Deutsch-Test für Zuwanderer und füge meine Modelltest-Ergebnisse ein (Hören + Lesen von 45, Schreiben von 20). Analysiere den Trend auf Englisch: Bei welchem Zertifikat (A2 oder B1) stehe ich gerade, und was fehlt mir zum nächsten Band? Erstelle einen konkreten Plan für die letzte Woche: welcher Teil an welchem Tag, mit je einer messbaren Übung. Danach 10 deutsche Blitzfragen zu meinem schwächsten Grammatikthema.'
+          p: 'Ich bin in Woche 3 meiner Vorbereitung auf den Deutsch-Test für Zuwanderer und füge meine Ergebnisse der Probeprüfungen ein (Hören + Lesen von 45, Schreiben von 20). Analysiere den Trend auf Englisch: Bei welchem Zertifikat (A2 oder B1) stehe ich gerade, und was fehlt mir zum nächsten Band? Erstelle einen konkreten Plan für die letzte Woche: welcher Teil an welchem Tag, mit je einer messbaren Übung. Danach 10 deutsche Blitzfragen zu meinem schwächsten Grammatikthema.'
         }
       ]
     },
@@ -574,8 +574,8 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       title: 'Lesen & Hören sharpening',
       focus: 'The Teile that cost points: Lesen Teil 3 and Hören Teil 3',
       tasks: [
-        'Take Modelltest 5 → Lesen (Teil 3: Pressetexte und Mitteilungen) and Modelltest 6 → Lesen (Teil 3): for each text, name which of the two items was richtig/falsch and which was a/b/c, and where the proof sits.',
-        'Take Modelltest 5 → Hören (Teil 3: Gespräche) and Modelltest 6 → Hören (Teil 3): before each Gespräch, underline the key words of both items.',
+        'Take mock exam 5 → Lesen (Teil 3: Pressetexte und Mitteilungen) and mock exam 6 → Lesen (Teil 3): for each text, name which of the two items was richtig/falsch and which was a/b/c, and where the proof sits.',
+        'Take mock exam 5 → Hören (Teil 3: Gespräche) and mock exam 6 → Hören (Teil 3): before each Gespräch, underline the key words of both items.',
         'One flashcard session (20 cards) of Verben mit Präposition.'
       ],
       cheats: ['lesen', 'hoeren'],
@@ -589,10 +589,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 23,
       tier: 'extension',
-      title: 'Modelltest 7 — the written part in one sitting',
+      title: 'Mock exam 7 — the written part in one sitting',
       focus: 'Routine beats inspiration',
       tasks: [
-        'Take Modelltest 7 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
+        'Take mock exam 7 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
         'Rewrite your Schreiben text once more, fixing every marked mistake — the corrected version is the one your hand remembers.',
         'Review every red item; your top-5 mistakes list should be getting shorter, not longer.'
       ],
@@ -600,7 +600,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       ai: [
         {
           t: 'Error debrief',
-          p: 'Ich füge meine Fehler aus Modelltest 7 für den Deutsch-Test für Zuwanderer ein. Gruppiere sie auf Englisch nach Ursache (Wortschatz, Grammatikregel, Technik/Zeitdruck, Unaufmerksamkeit) und sage mir, welche Gruppe vor der Prüfung noch trainierbar ist und welche ich mit Strategie (Reihenfolge, Raten, Zeiteinteilung) abfangen muss. Danach eine 10-Aufgaben-Mini-Übung zur größten Gruppe.'
+          p: 'Ich füge meine Fehler aus Probeprüfung 7 für den Deutsch-Test für Zuwanderer ein. Gruppiere sie auf Englisch nach Ursache (Wortschatz, Grammatikregel, Technik/Zeitdruck, Unaufmerksamkeit) und sage mir, welche Gruppe vor der Prüfung noch trainierbar ist und welche ich mit Strategie (Reihenfolge, Raten, Zeiteinteilung) abfangen muss. Danach eine 10-Aufgaben-Mini-Übung zur größten Gruppe.'
         }
       ]
     },
@@ -612,7 +612,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       tasks: [
         'Reread the Hören cheatsheet and drill the correction signals (nicht … sondern, leider, stattdessen) out loud.',
         {
-          text: 'Take Modelltest 4 → Hören (Teil 1: Ansagen) and Modelltest 4 → Hören (Teil 4: Meinungen zuordnen): use the minute before Teil 4 to mark the opinion word in each of the six sentences.',
+          text: 'Take mock exam 4 → Hören (Teil 1: Ansagen) and mock exam 4 → Hören (Teil 4: Meinungen zuordnen): use the minute before Teil 4 to mark the opinion word in each of the six sentences.',
           target: { kind: 'module', exam: 4, module: 'hoeren' }
         },
         'Dictation marathon: 20 times, dates, prices and phone numbers heard as words, written as digits — repeat until 20/20.'
@@ -628,10 +628,10 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 25,
       tier: 'extension',
-      title: 'Modelltest 8 & the certificate check',
+      title: 'Mock exam 8 & the certificate check',
       focus: 'Which certificate does today’s result give you?',
       tasks: [
-        'Take Modelltest 8 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
+        'Take mock exam 8 → Hören, Lesen and Schreiben in one sitting, with the timer on.',
         'Check the certificate rule with your three results: B1 needs Sprechen B1 and (Hören + Lesen 33–45 or Schreiben 15–20); A2 needs Sprechen at least A2 and (Hören + Lesen at least 20 or Schreiben at least 7). Where are you today?',
         'Review every red item and do one flashcard session (20 cards) of your weakest category.'
       ],
@@ -639,7 +639,7 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       ai: [
         {
           t: 'Margin check',
-          p: 'Ich füge meine Ergebnisse aus Modelltest 8 für den Deutsch-Test für Zuwanderer ein (Hören + Lesen von 45, Schreiben von 20, meine Einschätzung für Sprechen von 100). Erkläre mir auf Englisch, welches Zertifikat daraus nach den Regeln folgt (Sprechen ist das Tor; für B1 Sprechen B1 und entweder Hören + Lesen B1 oder Schreiben B1) und was mir zum nächsten Band fehlt. Dann simuliere die 5 Aufgabentypen, in denen ich zuletzt Punkte verloren habe — eine nach der anderen, auf Deutsch, mit sofortiger Korrektur.'
+          p: 'Ich füge meine Ergebnisse aus Probeprüfung 8 für den Deutsch-Test für Zuwanderer ein (Hören + Lesen von 45, Schreiben von 20, meine Einschätzung für Sprechen von 100). Erkläre mir auf Englisch, welches Zertifikat daraus nach den Regeln folgt (Sprechen ist das Tor; für B1 Sprechen B1 und entweder Hören + Lesen B1 oder Schreiben B1) und was mir zum nächsten Band fehlt. Dann simuliere die 5 Aufgabentypen, in denen ich zuletzt Punkte verloren habe — eine nach der anderen, auf Deutsch, mit sofortiger Korrektur.'
         }
       ]
     },
@@ -650,11 +650,11 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
       focus: 'Sprechen is the gate; Schreiben is a second path to B1',
       tasks: [
         {
-          text: 'Take Modelltest 8 → Schreiben again with the Aufgabe you did not choose on day 25: write it in 30 minutes, then check all four Leitpunkte, Anrede and Gruß.',
+          text: 'Take mock exam 8 → Schreiben again with the Aufgabe you did not choose on day 25: write it in 30 minutes, then check all four Leitpunkte, Anrede and Gruß.',
           target: { kind: 'module', exam: 8, module: 'schreiben' }
         },
         {
-          text: 'Take Modelltest 9 → Sprechen: Teil 1A from memory, Teil 2A with the photo, Teil 2B with your own experience, Teil 3 as a full plan — record and listen back.',
+          text: 'Take mock exam 9 → Sprechen: Teil 1A from memory, Teil 2A with the photo, Teil 2B with your own experience, Teil 3 as a full plan — record and listen back.',
           target: { kind: 'module', exam: 9, module: 'sprechen' }
         },
         'Drill the repair phrases one last time: Wie bitte? Könnten Sie das wiederholen? Ich meine …'
@@ -670,18 +670,18 @@ Könnten Sie mir bitte helfen? · Würden Sie mir bitte einen Termin geben? · I
     {
       day: 27,
       tier: 'extension',
-      title: 'Modelltest 9 & final sweep',
+      title: 'Mock exam 9 & final sweep',
       focus: 'Last full rehearsal',
       tasks: [
-        'Take Modelltest 9 → Hören, Lesen and Schreiben in one sitting, with the timer on — treat it as the real day: same start time as your exam if possible.',
-        'Keep Modelltest 10 as a reserve: use only its module for your weakest skill, tomorrow morning at the earliest — or not at all.',
+        'Take mock exam 9 → Hören, Lesen and Schreiben in one sitting, with the timer on — treat it as the real day: same start time as your exam if possible.',
+        'Keep mock exam 10 as a reserve: use only its module for your weakest skill, tomorrow morning at the earliest — or not at all.',
         'Final flashcard sweep: only the cards that are still struggling; everything green stays closed.'
       ],
       cheats: [],
       ai: [
         {
           t: 'Final debrief',
-          p: 'Ich habe meinen letzten kompletten schriftlichen Modelltest für den Deutsch-Test für Zuwanderer gemacht und füge Ergebnisse und Fehler ein. Kein neues Training mehr: Sag mir auf Englisch nur noch, (1) welche 3 Dinge ich am Prüfungstag strategisch anders machen soll (Reihenfolge, Zeiteinteilung, Raten), (2) welche 5 Formulierungen ich für Schreiben und Sprechen noch einmal ansehen soll, (3) was ich bewusst NICHT mehr üben soll. Kurz und konkret.'
+          p: 'Ich habe meine letzte komplette schriftliche Probeprüfung für den Deutsch-Test für Zuwanderer gemacht und füge Ergebnisse und Fehler ein. Kein neues Training mehr: Sag mir auf Englisch nur noch, (1) welche 3 Dinge ich am Prüfungstag strategisch anders machen soll (Reihenfolge, Zeiteinteilung, Raten), (2) welche 5 Formulierungen ich für Schreiben und Sprechen noch einmal ansehen soll, (3) was ich bewusst NICHT mehr üben soll. Kurz und konkret.'
         }
       ]
     },

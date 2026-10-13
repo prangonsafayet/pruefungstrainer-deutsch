@@ -107,7 +107,7 @@ describe('useAppLayout', () => {
 
   it("moves focus to the new page's heading and names the tab after it", async () => {
     const page = await mount('/');
-    expect(document.title).toMatch(/^Dashboard.* — telc Deutsch Trainer$/);
+    expect(document.title).toMatch(/^Dashboard.* — Prüfungstrainer Deutsch$/);
 
     const learn = [...page.container.querySelectorAll('nav[aria-label="Main"] a')].find(link =>
       link.textContent.includes('Learn')
@@ -117,7 +117,7 @@ describe('useAppLayout', () => {
 
     const heading = document.activeElement?.textContent ?? '';
     expect(heading).not.toMatch(/^Dashboard/);
-    expect(document.title).toBe(`${heading.replace(/\s+/g, ' ').trim()} — telc Deutsch Trainer`);
+    expect(document.title).toBe(`${heading.replace(/\s+/g, ' ').trim()} — Prüfungstrainer Deutsch`);
     await page.unmount();
   });
 

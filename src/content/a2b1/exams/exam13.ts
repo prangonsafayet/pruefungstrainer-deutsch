@@ -2,7 +2,7 @@ import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 13,
-  title: 'Modelltest 13',
+  title: 'Mock exam 13',
   difficulty: 'b1',
   level: 'B1 · Prüfungsnah',
   theme: 'Pannen, Reklamationen & Service',

@@ -23,7 +23,7 @@ import {
  *   oral    = sprechen, max 75
  *   pass    = written >= 135 AND oral >= 45, no compensation between the two.
  *
- * A fixture is used rather than a real Modelltest so every count is exact and visible in
+ * A fixture is used rather than a real mock exam so every count is exact and visible in
  * one place instead of implied by a content file's shape.
  */
 

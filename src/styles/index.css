@@ -8,7 +8,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* "Warm & friendly, grown-up" — design-system/telc-deutsch-trainer/MASTER.md. Every pair
+/* "Warm & friendly, grown-up" — design-system/pruefungstrainer-deutsch/MASTER.md. Every pair
    below was measured; e2e/contrast.spec.js re-measures them in a real browser. */
 :root {
   --radius: 1rem;

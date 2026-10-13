@@ -46,7 +46,7 @@ test('a cheatsheet opens from its day card and leads back to that day', async ({
 
 test('a task link lands on the module it names', async ({ page }) => {
   await page.goto('/learn');
-  await page.getByRole('link', { name: /Go to Lesen Teil 1 · Modelltest 3/ }).click();
+  await page.getByRole('link', { name: /Go to Lesen Teil 1 · Mock exam 3/ }).click();
   await expect(page).toHaveURL(/\/exam\/3\/lesen$/);
   await expect(page.locator('main')).toContainText(/Lesen|Leseverstehen/);
 });

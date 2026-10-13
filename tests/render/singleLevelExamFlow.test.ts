@@ -63,8 +63,8 @@ describe.each(SINGLE_LEVEL_TRAINERS)('a single-module practice run — %s', trai
     /* The paper's label is `<title> · <level>` on both papers. It said "· telc Deutsch B1"
        here and nothing at all on the other paper; every exam in the app is a telc exam, so
        the brand distinguished nothing and only the level marker is carried. */
-    expect(view.text()).toMatch(/Modelltest 1 · B[12]/);
-    expect(view.text()).not.toMatch(/Modelltest 1 · telc/);
+    expect(view.text()).toMatch(/Mock exam 1 · B[12]/);
+    expect(view.text()).not.toMatch(/Mock exam 1 · telc/);
 
     /* 3. Answer one item (a Teil 2 multiple-choice question). */
     const radios = [...document.querySelectorAll('button[role="radio"]')];
@@ -158,7 +158,7 @@ describe("one trainer's run in progress survives another trainer's exam route", 
     /* And the dashboard says so, which is where the loss was invisible. */
     view = await mount(TRAINERS[first].basePath || '/');
     expect(view.text()).toMatch(/You have an exam in progress/);
-    expect(view.text()).toMatch(/Modelltest 2/);
+    expect(view.text()).toMatch(/Mock exam 2/);
     await view.unmount();
   });
 });

@@ -34,7 +34,7 @@ import { dtzKey, dualKey, singleKey } from '../support/answerKeys.ts';
 /*
  * The review screen re-marks every item to show ticks and crosses. Nothing checked that it
  * agrees with the scoring that produced the number at the top of the same screen. Swept over
- * every authored Modelltest of every paper:
+ * every authored mock exam of every paper:
  *
  *   - the answer key gives a row per item, every row correct, and `given` reads like `expected`;
  *   - a blank sitting gives the same rows, none correct and none with a `given`;
@@ -104,7 +104,7 @@ describe('single-level review (telc B1 and B2)', () => {
   const exams = [...B1_EXAMS, ...B2_EXAMS];
 
   it.each(exams.map(exam => [exam.level, exam.id, exam] as const))(
-    '%s Modelltest %i: the key reviews as all correct',
+    '%s Mock exam %i: the key reviews as all correct',
     (_level, _id, exam) => {
       const key = singleKey(exam);
       const rows = allRows(singleReview(exam, singleAttempt(exam, key)));
@@ -116,7 +116,7 @@ describe('single-level review (telc B1 and B2)', () => {
   );
 
   it.each(exams.map(exam => [exam.level, exam.id, exam] as const))(
-    '%s Modelltest %i: a blank sitting has no given answer and nothing correct',
+    '%s Mock exam %i: a blank sitting has no given answer and nothing correct',
     (_level, _id, exam) => {
       const rows = allRows(singleReview(exam, singleAttempt(exam, {})));
 
@@ -130,7 +130,7 @@ describe('single-level review (telc B1 and B2)', () => {
   );
 
   it.each(exams.map(exam => [exam.level, exam.id, exam] as const))(
-    '%s Modelltest %i: a mixed sitting marks exactly what the scoring counted',
+    '%s Mock exam %i: a mixed sitting marks exactly what the scoring counted',
     (_level, _id, exam) => {
       const answers = mixed(singleKey(exam));
       const sections = singleReview(exam, singleAttempt(exam, answers));
@@ -173,7 +173,7 @@ describe('single-level review (telc B1 and B2)', () => {
 
 describe('dual-level review (telc A2·B1)', () => {
   it.each(A2B1_EXAMS.map(exam => [exam.id, exam] as const))(
-    'Modelltest %i: the key reviews as all correct',
+    'Mock exam %i: the key reviews as all correct',
     (_id, exam) => {
       const key = dualKey(exam);
       const rows = allRows(dualReview(exam, dualAttempt(exam, key)));
@@ -184,7 +184,7 @@ describe('dual-level review (telc A2·B1)', () => {
   );
 
   it.each(A2B1_EXAMS.map(exam => [exam.id, exam] as const))(
-    'Modelltest %i: a blank sitting has no given answer and nothing correct',
+    'Mock exam %i: a blank sitting has no given answer and nothing correct',
     (_id, exam) => {
       const rows = allRows(dualReview(exam, dualAttempt(exam, {})));
 
@@ -197,7 +197,7 @@ describe('dual-level review (telc A2·B1)', () => {
   );
 
   it.each(A2B1_EXAMS.map(exam => [exam.id, exam] as const))(
-    'Modelltest %i: a mixed sitting marks exactly what the scoring counted',
+    'Mock exam %i: a mixed sitting marks exactly what the scoring counted',
     (_id, exam) => {
       const answers = mixed(dualKey(exam));
       const sections = dualReview(exam, dualAttempt(exam, answers));
@@ -244,7 +244,7 @@ describe('DTZ review', () => {
   const key = dtzKey;
 
   it.each(DTZ_EXAMS.map(exam => [exam.id, exam] as const))(
-    'Modelltest %i: key, blank and mixed sittings agree with the scoring',
+    'Mock exam %i: key, blank and mixed sittings agree with the scoring',
     (_id, exam) => {
       const keyed = allRows(dtzReview(exam, dtzAttempt(exam.id, key(exam))));
       expect(keyed).toHaveLength(45);

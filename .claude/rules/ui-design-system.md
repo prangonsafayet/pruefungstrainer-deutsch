@@ -9,7 +9,7 @@ paths:
 
 # UI and design system
 
-A redesign ("warm & friendly", `design-system/telc-deutsch-trainer/MASTER.md`) is in progress;
+A redesign ("warm & friendly", `design-system/pruefungstrainer-deutsch/MASTER.md`) is in progress;
 the `ui-designer` agent owns it. Pass 5A landed tokens, fonts, primitives and the app shell.
 Verify appearance in a real browser (Playwright MCP), never from a passing unit test.
 

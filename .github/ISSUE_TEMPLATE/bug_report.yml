@@ -14,7 +14,7 @@ body:
     attributes:
       label: Steps to reproduce
       placeholder: |
-        1. Start Modelltest 3 → Lesen
+        1. Start Mock exam 3 → Lesen
         2. Answer item 1, then reload the page
         3. …
     validations:

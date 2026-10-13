@@ -12,7 +12,7 @@ import { type TrainerId } from '@shared/types/trainer.ts';
 export interface StartOptions {
   /**
    * When the run in progress is this very exam and mode, open it as it is rather than start
-   * over — what a "Go to Lesen · Modelltest 3" link means. A "Start"/"Retry" button leaves it
+   * over — what a "Go to Lesen · Mock exam 3" link means. A "Start"/"Retry" button leaves it
    * off: it starts fresh, after asking.
    */
   readonly resumeIfSame?: boolean;
@@ -54,7 +54,7 @@ export const useStartAttempt = (trainer: TrainerId): StartAttempt => {
 
       const what = current.mode === 'full' ? 'a full exam' : format.moduleShort(current.mode);
       void confirm({
-        title: `You have ${what} in progress for Modelltest ${String(current.examId)} — discard it?`,
+        title: `You have ${what} in progress for mock exam ${String(current.examId)} — discard it?`,
         description: 'Starting this one replaces it, and its answers are lost.',
         confirmText: 'Discard and start',
         cancelText: 'Keep it',

@@ -38,7 +38,7 @@ const scheduleTone = (label: string): BadgeVariant => {
 };
 
 /**
- * One card per Modelltest of one trainer, with its best result and where the plan puts it.
+ * One card per mock exam of one trainer, with its best result and where the plan puts it.
  * The two papers differ in what a card can say about itself — a difficulty chip against a
  * level chip, 240 points against 300 — so each is resolved here and the card only renders.
  *

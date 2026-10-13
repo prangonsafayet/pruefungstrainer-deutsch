@@ -1,10 +1,11 @@
 # CLAUDE.md
 
-A React study app for four German exams — telc **A2·B1, B1 and B2**, and the **DTZ**
+**Prüfungstrainer Deutsch** — an independent React study app (not affiliated with telc gGmbH,
+g.a.s.t. or the BAMF) for four German exams — telc **A2·B1, B1 and B2**, and the **DTZ**
 (Deutsch-Test für Zuwanderer A2–B1) — run as peer trainers behind one registry,
 each with its own mock exams, 28-day curriculum, guide and vocabulary bank (flashcards, quizzes,
 spaced repetition). Modules are timed and scored by each paper's rules; progress is stored
-locally with optional Supabase sync. It is a portfolio project: code quality and presentation
+locally; Supabase sync is optional and off on the public (local-only, noindex) deployment. It is a portfolio project: code quality and presentation
 count as much as features.
 
 Detail lives in `.claude/rules/`, which load automatically when you touch matching files.

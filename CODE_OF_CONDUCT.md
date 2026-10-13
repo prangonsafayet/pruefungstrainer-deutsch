@@ -36,7 +36,7 @@ project space, plus situations where someone is representing the project publicl
 ## Reporting
 
 Report a problem by opening a
-[private security advisory](https://github.com/prangonsafayet/telc-a2b1-trainer/security/advisories/new),
+[private security advisory](https://github.com/prangonsafayet/pruefungstrainer-deutsch/security/advisories/new),
 which is the only private channel this repository has. Include what happened, where, and
 links if you have them.
 

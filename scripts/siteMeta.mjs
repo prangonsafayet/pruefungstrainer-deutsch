@@ -30,3 +30,33 @@ export const sitemapPages = basePaths =>
  */
 export const crawlerDisallows = basePaths =>
   basePaths.flatMap(base => [`${base}/exam/`, `${base}/results/`, `${base}/review/`]);
+
+/**
+ * Whether search engines may index the site. Off unless `VITE_ALLOW_INDEXING` is `true` (or
+ * `1`): the public deployment is a portfolio demo and stays out of search results.
+ *
+ * @param {string | undefined} flag
+ * @returns {boolean}
+ */
+export const isIndexable = flag => ['true', '1'].includes((flag ?? '').trim().toLowerCase());
+
+/** The `<meta name="robots">` content for the build. */
+export const robotsMeta = (/** @type {boolean} */ indexable) =>
+  indexable ? 'index, follow' : 'noindex, nofollow';
+
+/**
+ * The emitted `robots.txt`. A noindex build still allows crawling: a crawler that may not
+ * fetch a page never sees its `noindex` and can list the bare URL anyway.
+ *
+ * @param {{ readonly site: string, readonly indexable: boolean, readonly basePaths: readonly string[] }} options
+ * @returns {string}
+ */
+export const robotsTxt = ({ site, indexable, basePaths }) =>
+  indexable
+    ? 'User-agent: *\nAllow: /\n\n' +
+      '# Per-user attempt screens hold nothing crawlable.\n' +
+      crawlerDisallows(basePaths)
+        .map(path => `Disallow: ${path}`)
+        .join('\n') +
+      (site ? `\n\nSitemap: ${site}/sitemap.xml\n` : '\n')
+    : 'User-agent: *\nAllow: /\n\n# Not indexed: every page carries <meta name="robots" content="noindex, nofollow">.\n';

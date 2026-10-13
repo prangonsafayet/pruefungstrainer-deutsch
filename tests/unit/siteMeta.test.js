@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 
-import { crawlerDisallows, sitemapPages } from '../../scripts/siteMeta.mjs';
+import {
+  crawlerDisallows,
+  isIndexable,
+  robotsMeta,
+  robotsTxt,
+  sitemapPages
+} from '../../scripts/siteMeta.mjs';
 import { trainerBasePaths } from '../../scripts/trainerRegistry.mjs';
 
 /*
@@ -66,5 +72,32 @@ describe('robots.txt', () => {
       expect(disallows).not.toContain(page);
       expect(disallows).not.toContain(`${page}/`);
     }
+  });
+});
+
+describe('indexing is opt-in', () => {
+  it.each([undefined, '', 'false', '0', 'no', 'yes'])(
+    'VITE_ALLOW_INDEXING=%s keeps the site out of search',
+    flag => {
+      expect(isIndexable(flag)).toBe(false);
+      expect(robotsMeta(isIndexable(flag))).toBe('noindex, nofollow');
+    }
+  );
+
+  it.each(['true', 'TRUE', ' 1 '])('VITE_ALLOW_INDEXING=%s allows it', flag => {
+    expect(isIndexable(flag)).toBe(true);
+    expect(robotsMeta(isIndexable(flag))).toBe('index, follow');
+  });
+
+  it('a noindex robots.txt allows crawling, so crawlers can see the noindex, and names no sitemap', () => {
+    const txt = robotsTxt({ site: 'https://example.org', indexable: false, basePaths: BASE_PATHS });
+    expect(txt).toMatch(/^User-agent: \*\nAllow: \/\n/);
+    expect(txt).not.toMatch(/Disallow|Sitemap/);
+  });
+
+  it('an indexable robots.txt disallows every attempt screen and names the sitemap', () => {
+    const txt = robotsTxt({ site: 'https://example.org', indexable: true, basePaths: BASE_PATHS });
+    for (const path of crawlerDisallows(BASE_PATHS)) expect(txt).toContain(`Disallow: ${path}`);
+    expect(txt).toContain('Sitemap: https://example.org/sitemap.xml');
   });
 });

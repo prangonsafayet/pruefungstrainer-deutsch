@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <!-- Palette: design-system/telc-deutsch-trainer/MASTER.md (light theme). -->
+  <!-- Palette: design-system/pruefungstrainer-deutsch/MASTER.md (light theme). -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#fbf7f1"/>
@@ -30,9 +30,9 @@
     <path d="M38.5 44.5l3.8 3.8 7.2-7.6" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
-  <text class="t" x="84" y="272" font-size="76" font-weight="800" fill="#2b2420">telc Deutsch Trainer</text>
+  <text class="t" x="84" y="272" font-size="76" font-weight="800" fill="#2b2420">Prüfungstrainer Deutsch</text>
   <text class="t" x="84" y="352" font-size="56" font-weight="700" fill="#b4441c">Mock exams, plans &amp; practice</text>
-  <text class="t" x="86" y="416" font-size="31" fill="#6b5e55">Full Modelltests · real timing · 28-day plans · full review</text>
+  <text class="t" x="86" y="416" font-size="31" fill="#6b5e55">Full mock exams · real timing · 28-day plans · full review</text>
 
   <g class="t" font-size="28" font-weight="700">
     <g transform="translate(84 470)">

@@ -130,7 +130,7 @@ done
 # --- route-prompt.sh: never blocks, names the class ---
 expect 0 route-prompt.sh "$(prompt 'Where is the exam timer defined?')" 'lookup' 'Model routing: lookup'
 expect 0 route-prompt.sh "$(prompt 'rename useFoo to useBar')" 'mechanical' 'Model routing: mechanical'
-expect 0 route-prompt.sh "$(prompt 'Add a DTZ Modelltest 03')" 'content' 'Model routing: content'
+expect 0 route-prompt.sh "$(prompt 'Add a DTZ Mock exam 03')" 'content' 'Model routing: content'
 expect 0 route-prompt.sh "$(prompt 'Redesign the dashboard cards')" 'ui' 'Model routing: ui'
 expect 0 route-prompt.sh "$(prompt 'refactor how cloud sync merges progress')" 'architecture' 'Model routing: architecture'
 expect 0 route-prompt.sh "$(prompt 'review my diff before I push')" 'review' 'Model routing: review'

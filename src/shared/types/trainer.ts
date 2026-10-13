@@ -92,7 +92,7 @@ export interface TrainerContent<TExam extends ExamPaper = ExamPaper> {
   readonly vocab: VocabBank;
   /** The 28-day curriculum the adaptive plan schedules. */
   readonly curriculum: LearnPlan;
-  /** Its Modelltests, easiest first. */
+  /** Its mock exams, easiest first. */
   readonly exams: readonly TExam[];
   /** Authored HTML exam guide, or null while the trainer has none. */
   readonly guide: string | null;

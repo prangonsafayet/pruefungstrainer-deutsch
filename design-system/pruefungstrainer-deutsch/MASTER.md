@@ -1,4 +1,4 @@
-# Design system — telc Deutsch Trainer (MASTER)
+# Design system — Prüfungstrainer Deutsch (MASTER)
 
 Source of truth for the visual layer. Page-specific overrides go in `pages/<page>.md` next to
 this file and win over it. Tokens are implemented in `src/styles/index.css`; components consume
@@ -137,7 +137,7 @@ portrait and landscape where it applies.
   "Main" / "Trainer"), `main`, `footer`. A **"Skip to content"** link is the first focusable
   element.
 - Route changes move focus to the new page's `<h1>` (tabIndex -1) and update `document.title`
-  ("Lesen · Modelltest 3 · DTZ — telc Deutsch Trainer").
+  ("Lesen · Mock exam 3 · DTZ — Prüfungstrainer Deutsch").
 - **Language:** the UI chrome is English, exam content is German → every German content block
   carries `lang="de"` so screen readers switch voice and pronunciation. `<html lang>` matches the
   chrome.

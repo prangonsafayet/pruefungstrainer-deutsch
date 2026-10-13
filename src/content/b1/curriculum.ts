@@ -190,7 +190,7 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Lesen — technique day',
       focus: 'Read the questions first, trust the text only',
       tasks: [
-        'Take just the Lesen module of Modelltest 1 (module practice), untimed — technique before speed.',
+        'Take just the Lesen module of mock exam 1 (module practice), untimed — technique before speed.',
         'For every item note WHERE in the text the answer hides; remember: plausible but not stated = wrong.',
         'Add every unknown word that blocked an answer to your flashcards (max 15).'
       ],
@@ -208,7 +208,7 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Sprachbausteine — grammar under exam conditions',
       focus: 'Teil 1: a/b/c · Teil 2: the word bank',
       tasks: [
-        'Take the Sprachbausteine module of Modelltest 1 (module practice), untimed.',
+        'Take the Sprachbausteine module of mock exam 1 (module practice), untimed.',
         {
           text: 'For every wrong gap, find the rule in the practice hub reference tables (Kasus, verbs, Konnektoren) — not knowing WHY it was wrong means it will be wrong again.',
           target: { kind: 'practice', tab: 'tables' }
@@ -230,7 +230,7 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: 'One pass, no second chance',
       tasks: [
         'Read the Hören cheatsheet — especially the paraphrase trap and the correction signals.',
-        'Take the Hören module of Modelltest 1 (module practice) under real conditions: no pausing, no replaying.',
+        'Take the Hören module of mock exam 1 (module practice) under real conditions: no pausing, no replaying.',
         'Review every red item: was it a paraphrase, a number, or the wrong speaker? Note the trap type.'
       ],
       cheats: ['hoeren'],
@@ -247,7 +247,7 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Skills on the clock',
       focus: 'Same tasks, real timing',
       tasks: [
-        'Take the Lesen and Sprachbausteine modules of Modelltest 2 (module practice), strictly timed.',
+        'Take the Lesen and Sprachbausteine modules of mock exam 2 (module practice), strictly timed.',
         'Analyze your timing: which Teil ate the most minutes? Decide your working order for the real exam.',
         'One flashcard session (20 cards) — include the words you collected on day 6.'
       ],
@@ -265,7 +265,7 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Checkpoint week 1+',
       focus: 'Consolidate before the letter',
       tasks: [
-        'Review every red item from your Modelltest 1 and 2 modules in the review screen — out loud, with the rule.',
+        'Review every red item from your Mock exam 1 and 2 modules in the review screen — out loud, with the rule.',
         'Flashcard sweep: repeat ALL cards from days 1–9; struggling cards go into a second session today.',
         'Quiz: 15 items in your weakest practice-hub category (be honest — the stats show it).'
       ],
@@ -285,7 +285,7 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: '4 Leitpunkte, 30 minutes, fixed skeleton',
       tasks: [
         'Memorize the letter skeleton from the cheatsheet: Anrede, Einstieg, Leitpunkte, Schluss, Gruß.',
-        'Take the Schreiben module of Modelltest 1: write the letter in 30 minutes, no dictionary.',
+        'Take the Schreiben module of mock exam 1: write the letter in 30 minutes, no dictionary.',
         'Self-check with the checklist: all 4 Leitpunkte? Sie capitalized? 3 connectors used?'
       ],
       cheats: ['schreiben'],
@@ -304,9 +304,9 @@ export const B1_CURRICULUM: LearnPlan = {
       day: 12,
       tier: 'core',
       title: 'First full mock',
-      focus: 'Modelltest 3, real conditions',
+      focus: 'Mock exam 3, real conditions',
       tasks: [
-        'Take Modelltest 3 under real timing: Lesen, Sprachbausteine, Hören and Schreiben in one sitting — timer on, no pausing, no dictionary.',
+        'Take mock exam 3 under real timing: Lesen, Sprachbausteine, Hören and Schreiben in one sitting — timer on, no pausing, no dictionary.',
         'Review every red item in the review screen and sort them: vocabulary gap, grammar gap, or technique error.',
         'Add the 15 most painful unknown words to your flashcards.'
       ],
@@ -314,7 +314,7 @@ export const B1_CURRICULUM: LearnPlan = {
       ai: [
         {
           t: 'Error debrief',
-          p: 'Ich habe gerade einen kompletten telc-B1-Modelltest gemacht. Ich füge meine Fehler ein (Aufgabe + meine falsche Antwort + richtige Antwort). Analysiere die Muster auf Englisch, nenne die 3 Baustellen mit dem größten Punkte-Hebel vor meiner Prüfung und erstelle zu jeder eine deutsche Mini-Übung (5 Aufgaben), die wir sofort zusammen machen.'
+          p: 'Ich habe gerade eine komplette B1-Probeprüfung gemacht. Ich füge meine Fehler ein (Aufgabe + meine falsche Antwort + richtige Antwort). Analysiere die Muster auf Englisch, nenne die 3 Baustellen mit dem größten Punkte-Hebel vor meiner Prüfung und erstelle zu jeder eine deutsche Mini-Übung (5 Aufgaben), die wir sofort zusammen machen.'
         }
       ]
     },
@@ -346,10 +346,10 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Core finale — letter II & battle plan',
       focus: 'Close the core, open the mock phase',
       tasks: [
-        'Take the Schreiben module of Modelltest 2: second letter, 30 minutes, checklist afterwards.',
-        'Review sweep: reread all six cheatsheets once (30 min) and your red items from Modelltest 3.',
+        'Take the Schreiben module of mock exam 2: second letter, 30 minutes, checklist afterwards.',
+        'Review sweep: reread all six cheatsheets once (30 min) and your red items from mock exam 3.',
         'Say your Teil-1 self-presentation once — still automatic?',
-        'From here the rhythm is: one Modelltest every 2–3 days, always with a full review the same day.'
+        'From here the rhythm is: one mock exam every 2–3 days, always with a full review the same day.'
       ],
       cheats: ['schreiben', 'sprechen'],
       ai: [
@@ -383,18 +383,18 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 16,
       tier: 'extension',
-      title: 'Modelltest 4',
-      focus: 'Beat your Modelltest-3 score',
+      title: 'Mock exam 4',
+      focus: 'Beat your mock-exam-3 score',
       tasks: [
-        'Take Modelltest 4 under real timing, complete written part in one sitting.',
-        'Compare with Modelltest 3 in the results: which module moved, which did not?',
+        'Take mock exam 4 under real timing, complete written part in one sitting.',
+        'Compare with mock exam 3 in the results: which module moved, which did not?',
         'Review every red item; add unknown words to flashcards and do one 20-card session.'
       ],
       cheats: [],
       ai: [
         {
           t: 'Error debrief',
-          p: 'Ich habe telc-B1-Modelltest Nummer 4 gemacht und vergleiche ihn mit dem letzten. Ich füge meine Fehler und die Punktzahlen pro Modul ein. Sag mir auf Englisch: Welche Fehler wiederholen sich? Welche Fallen übersehe ich systematisch? Dann drille mich mit 8 deutschen Aufgaben genau zu meinem hartnäckigsten Fehlertyp.'
+          p: 'Ich habe B1-Probeprüfung Nummer 4 gemacht und vergleiche sie mit dem letzten. Ich füge meine Fehler und die Punktzahlen pro Modul ein. Sag mir auf Englisch: Welche Fehler wiederholen sich? Welche Fallen übersehe ich systematisch? Dann drille mich mit 8 deutschen Aufgaben genau zu meinem hartnäckigsten Fehlertyp.'
         }
       ]
     },
@@ -440,10 +440,10 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 19,
       tier: 'extension',
-      title: 'Modelltest 5 & letter III',
+      title: 'Mock exam 5 & letter III',
       focus: 'Written routine under pressure',
       tasks: [
-        'Take Modelltest 5 under real timing, including the Schreiben module — this is letter number three.',
+        'Take mock exam 5 under real timing, including the Schreiben module — this is letter number three.',
         'Score your letter yourself against the three telc criteria before reading any feedback — honest self-assessment is an exam skill.',
         'Review every red item and update your personal top-5 mistakes list.'
       ],
@@ -451,7 +451,7 @@ export const B1_CURRICULUM: LearnPlan = {
       ai: [
         {
           t: 'Letter upgrade',
-          p: 'Du bist telc-B1-Prüfer. Ich füge meinen Brief aus dem heutigen Modelltest ein (Aufgabe + mein Text). Bewerte nach den drei Kriterien (Leitpunkte, kommunikative Gestaltung, formale Richtigkeit) mit je einer Stufe A/B/C/D = 5/3/1/0, Summe × 3, höchstens 45 Punkte, markiere jeden Fehler, und zeige dann, wie derselbe Brief mit 3 besseren Konnektoren und 2 Konjunktiv-II-Formulierungen klingt. Danach diktierst du mir die 5 wichtigsten Korrekturen zum Abschreiben.'
+          p: 'Du bist telc-B1-Prüfer. Ich füge meinen Brief aus der heutigen Probeprüfung ein (Aufgabe + mein Text). Bewerte nach den drei Kriterien (Leitpunkte, kommunikative Gestaltung, formale Richtigkeit) mit je einer Stufe A/B/C/D = 5/3/1/0, Summe × 3, höchstens 45 Punkte, markiere jeden Fehler, und zeige dann, wie derselbe Brief mit 3 besseren Konnektoren und 2 Konjunktiv-II-Formulierungen klingt. Danach diktierst du mir die 5 wichtigsten Korrekturen zum Abschreiben.'
         }
       ]
     },
@@ -480,18 +480,18 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 21,
       tier: 'extension',
-      title: 'Modelltest 6 & checkpoint week 3',
+      title: 'Mock exam 6 & checkpoint week 3',
       focus: 'Trend check: are the curves rising?',
       tasks: [
-        'Take Modelltest 6 under real timing.',
-        'Look at your results across Modelltests 3–6: write down your weakest module and your weakest grammar topic.',
+        'Take mock exam 6 under real timing.',
+        'Look at your results across mock exams 3–6: write down your weakest module and your weakest grammar topic.',
         'Flashcard sweep: review every struggling card from the last two weeks.'
       ],
       cheats: [],
       ai: [
         {
           t: 'Trend analysis',
-          p: 'Ich bin in Woche 3 meiner telc-B1-Vorbereitung und füge meine Modelltest-Ergebnisse pro Modul ein (Test 3 bis 6). Analysiere den Trend auf Englisch: Wo verliere ich noch Punkte gegenüber der 60-Prozent-Marke, mit der dieser Trainer rechnet, und wo gegen ein gutes Ergebnis? Erstelle einen konkreten Plan für die letzte Woche: welcher Skill an welchem Tag, mit je einer messbaren Übung. Danach 10 deutsche Blitzfragen zu meinem schwächsten Grammatikthema.'
+          p: 'Ich bin in Woche 3 meiner telc-B1-Vorbereitung und füge meine Ergebnisse der Probeprüfungen pro Modul ein (Test 3 bis 6). Analysiere den Trend auf Englisch: Wo verliere ich noch Punkte gegenüber der 60-Prozent-Marke, mit der dieser Trainer rechnet, und wo gegen ein gutes Ergebnis? Erstelle einen konkreten Plan für die letzte Woche: welcher Skill an welchem Tag, mit je einer messbaren Übung. Danach 10 deutsche Blitzfragen zu meinem schwächsten Grammatikthema.'
         }
       ]
     },
@@ -502,7 +502,7 @@ export const B1_CURRICULUM: LearnPlan = {
       focus: 'Grammar gaps at exam speed',
       tasks: [
         'Quiz marathon in the practice hub: 15 Kasus items + 15 verb forms + 15 adjective endings — note every category under 80%.',
-        'Review every red Sprachbausteine item from Modelltests 3–6 in the review screens; say the rule out loud for each.',
+        'Review every red Sprachbausteine item from mock exams 3–6 in the review screens; say the rule out loud for each.',
         'One flashcard session (20 cards) of Verben mit Präposition.'
       ],
       cheats: ['konnektoren', 'cases', 'verbs'],
@@ -516,10 +516,10 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 23,
       tier: 'extension',
-      title: 'Modelltest 7',
+      title: 'Mock exam 7',
       focus: 'Routine beats inspiration',
       tasks: [
-        'Take Modelltest 7 under real timing.',
+        'Take mock exam 7 under real timing.',
         'Rewrite today’s letter once more, fixing every marked mistake — the corrected version is the one your hand remembers.',
         'Review every red item; your top-5 mistakes list should be getting shorter, not longer.'
       ],
@@ -527,7 +527,7 @@ export const B1_CURRICULUM: LearnPlan = {
       ai: [
         {
           t: 'Error debrief',
-          p: 'Ich füge meine Fehler aus telc-B1-Modelltest 7 ein. Gruppiere sie auf Englisch nach Ursache (Wortschatz, Grammatikregel, Technik/Zeitdruck, Unaufmerksamkeit) und sage mir, welche Gruppe vor der Prüfung noch trainierbar ist und welche ich mit Strategie (Reihenfolge, Raten, Zeitbudget) abfangen muss. Danach eine 10-Aufgaben-Mini-Übung zur größten Gruppe.'
+          p: 'Ich füge meine Fehler aus B1-Probeprüfung 7 ein. Gruppiere sie auf Englisch nach Ursache (Wortschatz, Grammatikregel, Technik/Zeitdruck, Unaufmerksamkeit) und sage mir, welche Gruppe vor der Prüfung noch trainierbar ist und welche ich mit Strategie (Reihenfolge, Raten, Zeitbudget) abfangen muss. Danach eine 10-Aufgaben-Mini-Übung zur größten Gruppe.'
         }
       ]
     },
@@ -552,10 +552,10 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 25,
       tier: 'extension',
-      title: 'Modelltest 8',
+      title: 'Mock exam 8',
       focus: 'Both halves comfortably clear',
       tasks: [
-        'Take Modelltest 8 under real timing.',
+        'Take mock exam 8 under real timing.',
         'Check the pass math in your results: this trainer marks the written and the oral part separately, 60% each — is your Sprechen practice keeping up?',
         'Review every red item and do one flashcard session (20 cards) of your weakest category.'
       ],
@@ -563,7 +563,7 @@ export const B1_CURRICULUM: LearnPlan = {
       ai: [
         {
           t: 'Margin check',
-          p: 'Ich füge meine Modulergebnisse aus telc-B1-Modelltest 8 ein. Rechne mir auf Englisch vor, wie weit ich über oder unter 60 Prozent im schriftlichen Teil liege (die Marke, mit der mein Trainer rechnet), und wie viele Fehler pro Modul ich mir am Prüfungstag leisten kann. Dann simuliere die 5 Aufgabentypen, in denen ich zuletzt Punkte verloren habe — eine nach der anderen, auf Deutsch, mit sofortiger Korrektur.'
+          p: 'Ich füge meine Modulergebnisse aus B1-Probeprüfung 8 ein. Rechne mir auf Englisch vor, wie weit ich über oder unter 60 Prozent im schriftlichen Teil liege (die Marke, mit der mein Trainer rechnet), und wie viele Fehler pro Modul ich mir am Prüfungstag leisten kann. Dann simuliere die 5 Aufgabentypen, in denen ich zuletzt Punkte verloren habe — eine nach der anderen, auf Deutsch, mit sofortiger Korrektur.'
         }
       ]
     },
@@ -573,7 +573,7 @@ export const B1_CURRICULUM: LearnPlan = {
       title: 'Schreiben & Sprechen — final polish',
       focus: 'The productive skills win the pass',
       tasks: [
-        'Write one letter in 25 minutes (5 minutes under exam time) using a Schreiben task from an unused Modelltest.',
+        'Write one letter in 25 minutes (5 minutes under exam time) using a Schreiben task from an unused mock exam.',
         'Do one full oral run: Teil 1 from memory, one Teil-2 topic, one Teil-3 plan — record and listen back.',
         'Drill the repair phrases one last time: Wie bitte? Könnten Sie das wiederholen? Ich meine …'
       ],
@@ -588,18 +588,18 @@ export const B1_CURRICULUM: LearnPlan = {
     {
       day: 27,
       tier: 'extension',
-      title: 'Modelltest 9 & final sweep',
+      title: 'Mock exam 9 & final sweep',
       focus: 'Last full rehearsal',
       tasks: [
-        'Take Modelltest 9 under real timing — treat it as the real day: same start time as your exam if possible.',
-        'Keep Modelltest 10 as a reserve: use only its module for your weakest skill, tomorrow morning at the earliest — or not at all.',
+        'Take mock exam 9 under real timing — treat it as the real day: same start time as your exam if possible.',
+        'Keep mock exam 10 as a reserve: use only its module for your weakest skill, tomorrow morning at the earliest — or not at all.',
         'Final flashcard sweep: only the cards that are still struggling; everything green stays closed.'
       ],
       cheats: [],
       ai: [
         {
           t: 'Final debrief',
-          p: 'Ich habe meinen letzten kompletten telc-B1-Modelltest gemacht und füge Ergebnisse und Fehler ein. Kein neues Training mehr: Sag mir auf Englisch nur noch, (1) welche 3 Dinge ich am Prüfungstag strategisch anders machen soll (Reihenfolge, Zeitbudget, Raten), (2) welche 5 Formulierungen ich für Brief und Sprechen noch einmal ansehen soll, (3) was ich bewusst NICHT mehr üben soll. Kurz und konkret.'
+          p: 'Ich habe meine letzte komplette B1-Probeprüfung gemacht und füge Ergebnisse und Fehler ein. Kein neues Training mehr: Sag mir auf Englisch nur noch, (1) welche 3 Dinge ich am Prüfungstag strategisch anders machen soll (Reihenfolge, Zeitbudget, Raten), (2) welche 5 Formulierungen ich für Brief und Sprechen noch einmal ansehen soll, (3) was ich bewusst NICHT mehr üben soll. Kurz und konkret.'
         }
       ]
     },

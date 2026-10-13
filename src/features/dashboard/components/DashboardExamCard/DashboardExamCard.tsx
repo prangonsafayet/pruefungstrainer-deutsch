@@ -13,7 +13,7 @@ interface DashboardExamCardProps {
   readonly onStart: (examId: number, mode: AttemptMode) => void;
 }
 
-/** One Modelltest of any trainer: how it went, where the plan puts it, and how to start it. */
+/** One mock exam of any trainer: how it went, where the plan puts it, and how to start it. */
 const DashboardExamCard = ({ card, onStart }: DashboardExamCardProps) => (
   <Card className="card-hover relative gap-4 overflow-hidden">
     <span aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: card.accent }} />

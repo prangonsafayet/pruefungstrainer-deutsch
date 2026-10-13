@@ -6,7 +6,7 @@ import { type ExamPaper } from '@shared/types/exam.ts';
 
 import { type ExamBinding, type ExamStore } from '@features/mock-exam/types/examBinding.ts';
 
-/** One trainer's paper, its Modelltests and its stored attempts, with the types lined up. */
+/** One trainer's paper, its mock exams and its stored attempts, with the types lined up. */
 export interface BoundExam<
   TExam extends ExamPaper,
   TSettings extends RunSettings,

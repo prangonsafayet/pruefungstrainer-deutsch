@@ -1,8 +1,8 @@
 /**
  * What it means to sit an exam, in the abstract.
  *
- * The app hosts three papers: the telc Deutsch A2·B1 Modelltest, the telc Deutsch B1/B2
- * Modelltest and the DTZ (Deutsch-Test für Zuwanderer). They differ in their Teile, their item shapes, their timing and their
+ * The app hosts three papers: the telc Deutsch A2·B1 mock exam, the telc Deutsch B1/B2
+ * mock exam and the DTZ (Deutsch-Test für Zuwanderer). They differ in their Teile, their item shapes, their timing and their
  * marking — but not in what running one means: a queue of modules against a clock, answers
  * keyed by item, a self-rating for the two productive modules, and a stored attempt at the
  * end. Everything paper-specific is reached through this descriptor, which is why the
@@ -152,7 +152,7 @@ export interface ExamScoring<TExam extends ExamPaper, TAttempt extends StoredAtt
 
 /**
  * The part of a format that does not depend on the shape of its paper: enough to start,
- * resume or discard a run without knowing which Modelltest it is.
+ * resume or discard a run without knowing which mock exam it is.
  */
 export interface ExamRunFormat {
   /** Module order of a full sitting. */
@@ -167,7 +167,7 @@ export interface ExamFormat<
   TSettings extends RunSettings,
   TAttempt extends StoredAttempt
 > extends ExamRunFormat {
-  /** Identifies the paper on every screen, e.g. `Modelltest 3 · A2 · leicht`. */
+  /** Identifies the paper on every screen, e.g. `Mock exam 3 · A2 · leicht`. */
   readonly examLabel: (exam: TExam) => string;
   readonly moduleName: (module: ExamModule) => string;
   readonly minutes: (module: ExamModule, exam: TExam, settings: TSettings) => number;

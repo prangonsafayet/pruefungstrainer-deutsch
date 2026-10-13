@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "telc Deutsch Trainer",
-  "short_name": "telc Trainer",
+  "name": "Prüfungstrainer Deutsch",
+  "short_name": "Prüfungstrainer",
   "description": "Mock exams, 28-day study plans and vocabulary practice for four German exams: telc Deutsch A2·B1, B1, B2 and the Deutsch-Test für Zuwanderer (DTZ). Works offline after the first visit.",
   "start_url": "/",
   "scope": "/",

@@ -1,6 +1,6 @@
 ---
 name: new-exam
-description: Scaffold and author a new Modelltest for one of the four trainers (A2·B1, B1, B2, DTZ), wired into that trainer's exam index and validated. Use when asked to add a further mock exam, or to replace an existing one wholesale.
+description: Scaffold and author a new mock exam for one of the four trainers (A2·B1, B1, B2, DTZ), wired into that trainer's exam index and validated. Use when asked to add a further mock exam, or to replace an existing one wholesale.
 argument-hint: '<trainer id> [exam number]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '<trainer id> [exam number]'
 Follow the memory protocol first (`.claude/rules/memory.md`): read `.claude/memory/traps.md`
 and `docs/lessons.local.md` if present; append what cost you time.
 
-Adding a Modelltest touches three places in one trainer's folder,
+Adding a mock exam touches three places in one trainer's folder,
 `src/content/<id>/`. Do them in this order.
 
 ## 1. Decide the trainer, level and theme

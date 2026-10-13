@@ -111,7 +111,7 @@ const AccountMenu = () => {
                 data, using private browsing, or switching to another device or browser will lose it.
                 {identity.configured
                   ? ' Sign in to back it up and sync across devices.'
-                  : ' Cloud sync is not configured for this build.'}
+                  : ' This deployment runs in local-only mode — export a backup file to keep a copy.'}
               </span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

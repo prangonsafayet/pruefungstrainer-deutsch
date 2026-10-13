@@ -17,7 +17,7 @@ const AttemptTable = ({ model }: AttemptTableProps) => {
   if (model.rows.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">
-        Nothing here yet — take a Modelltest and it will show up.
+        Nothing here yet — take a mock exam and it will show up.
       </p>
     );
   }

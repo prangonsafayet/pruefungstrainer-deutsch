@@ -2,7 +2,7 @@ import { type DtzExam } from '@shared/types/dtzExam.ts';
 
 const exam = {
   id: 1,
-  title: 'Modelltest 1',
+  title: 'Mock exam 1',
   theme: 'Ankommen & Behörden',
 
   hoeren: {

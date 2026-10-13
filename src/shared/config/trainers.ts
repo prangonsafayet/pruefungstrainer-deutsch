@@ -58,7 +58,7 @@ const CONTENT_LOADERS: Readonly<Record<TrainerId, TrainerContentLoader>> = {
 };
 
 /** User-facing app name. UI-level only — repo, package and storage keys keep theirs. */
-export const APP_NAME = 'telc Deutsch Trainer';
+export const APP_NAME = 'Prüfungstrainer Deutsch';
 
 interface TrainerInfoBase {
   readonly id: TrainerId;
@@ -74,7 +74,7 @@ interface TrainerInfoBase {
    * What it offers, in one short line, for a menu row and a header subtitle — e.g. "Dual-
    * level paper · A2 or B1 certificate". Static and hand-written against the verified figures
    * in `docs/level-trainers.local.md`, never a count derived from `loadContent`: an earlier
-   * version counted exams and once claimed "10 Modelltests" while the arrays were still
+   * version counted exams and once claimed "10 mock exams" while the arrays were still
    * empty, and a menu that lists every trainer at once cannot wait on three content chunks
    * just to render its rows. A screen that has already loaded a trainer's content (the
    * dashboard lead) is where a real count belongs.
@@ -264,14 +264,14 @@ export const ROOT_TRAINER: TrainerId =
 export const trainerHome = (trainer: TrainerId): string => TRAINERS[trainer].basePath || '/';
 
 /**
- * How many Modelltests a trainer offers. Counted from its content, never restated — but
+ * How many mock exams a trainer offers. Counted from its content, never restated — but
  * that content loads lazily now, so this reads the trainer's already-resolved content
  * rather than reaching into the registry itself.
  */
 export const examCount = (content: TrainerContent): number => content.exams.length;
 
 /**
- * Whether a trainer's Modelltests get harder in order. Read from the papers' own `difficulty`
+ * Whether a trainer's mock exams get harder in order. Read from the papers' own `difficulty`
  * field (only the dual-level papers carry one, graded easy → B1); a set at one level does not
  * ramp, so its dashboard may not say "easiest first".
  */

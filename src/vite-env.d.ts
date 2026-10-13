@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY?: string;
   /** Comma-separated OAuth provider ids, e.g. "google,github". */
   readonly VITE_AUTH_PROVIDERS?: string;
+  /** `true` lets search engines index the build; anything else ships noindex (the default). */
+  readonly VITE_ALLOW_INDEXING?: string;
   /** Absolute public URL, used for canonical/OG tags and the sitemap. */
   readonly VITE_SITE_URL?: string;
   /** Feature switch for dynamic feedback; the actual server address is never shipped here. */

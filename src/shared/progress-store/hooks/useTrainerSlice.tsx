@@ -128,7 +128,7 @@ export const useTrainerSlice = (trainer: TrainerId): TrainerSlice => {
     [update, docKey, trainer]
   );
 
-  /* Both writers count the sitting towards the streak: taking a Modelltest is study. */
+  /* Both writers count the sitting towards the streak: taking a mock exam is study. */
   const saveRootAttempt = useCallback(
     (attempt: DualLevelAttempt) => {
       update(current => ({

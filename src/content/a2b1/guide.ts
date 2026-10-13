@@ -3,7 +3,7 @@
 /** Structure, scoring and per-module tactics. Trusted, repo-authored HTML. */
 export const A2B1_GUIDE = `
 <h1>Exam Guide — telc Deutsch A2·B1</h1>
-<p class="lead">Structure, scoring, and concrete tactics to crack every module. Based on the official telc exam format and first-hand exam-taker reports.</p>
+<p class="lead">Structure, scoring, and concrete tactics to crack every module. Based on the published telc exam format and first-hand exam-taker reports.</p>
 
 <div class="guide-toc">
   <a href="#g-structure">Structure &amp; timing</a>
@@ -29,7 +29,7 @@ Teil 1: 4 announcements, richtig/falsch · Teil 2: 4 info clips, multiple-choice
 Teil 1: introduce yourself · Teil 2: talk about a topic / exchange opinions · Teil 3: plan something together with your partner.</p>
 </div>
 
-<h2 id="g-scoring">2. Scoring &amp; pass rules (official)</h2>
+<h2 id="g-scoring">2. Scoring &amp; pass rules (as published)</h2>
 <div class="card">
 <p>240 points total — 60 per skill: Lesen, Hören, Schreiben, Sprechen. (Sprachbausteine feed the reading/writing subtests; this app tracks them separately as your grammar signal.)</p>
 <p><b>B1 certificate:</b> at least <b>70% (42/60) in 3 of the 4 skills</b> and at least <b>40% (24/60) in the remaining one</b>.</p>

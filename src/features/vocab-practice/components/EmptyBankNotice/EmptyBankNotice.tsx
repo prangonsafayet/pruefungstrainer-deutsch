@@ -24,7 +24,7 @@ const EmptyBankNotice = ({ trainerName, learnTo }: EmptyBankNoticeProps) => (
       </CardTitle>
       <CardDescription>
         The {trainerName} trainer has no vocabulary and grammar bank to drill yet, so there is nothing here to
-        practise. Its Modelltests and its study plan are complete and waiting.
+        practise. Its mock exams and its study plan are complete and waiting.
       </CardDescription>
     </CardHeader>
     <CardContent>

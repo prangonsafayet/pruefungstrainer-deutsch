@@ -23,7 +23,7 @@ export type AiPromptLang = 'en' | 'de';
 export type LearnTaskTarget =
   | {
       readonly kind: 'module';
-      /** A Modelltest id of the same trainer. */
+      /** A mock exam id of the same trainer. */
       readonly exam: number;
       readonly module: ExamModule;
       /** The Teil the task is about, e.g. "1" or "2A" — said in the link label only. */

@@ -15,8 +15,8 @@ import { type ProgressDatabase } from '@shared/types/progress.ts';
 export const RECOVERED_TOAST = 'progress-recovered';
 const STORAGE_TOAST = 'storage-failure';
 
-export const DAMAGED_FILENAME = 'telc-trainer-damaged-progress.txt';
-export const BACKUP_FILENAME = 'telc-trainer-progress.json';
+export const DAMAGED_FILENAME = 'pruefungstrainer-damaged-progress.txt';
+export const BACKUP_FILENAME = 'pruefungstrainer-progress.json';
 
 /**
  * The things about the stored document a learner has to hear about: it could not be read

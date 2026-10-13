@@ -1,5 +1,5 @@
 /**
- * The shape of one Deutsch-Test für Zuwanderer (DTZ, A2–B1) Modelltest, as authored in
+ * The shape of one Deutsch-Test für Zuwanderer (DTZ, A2–B1) mock exam, as authored in
  * `src/content/dtz/exams`. Every count here comes from the g.a.s.t. Übungssatz the
  * trainer follows (see `docs/dtz-format.local.md`): Hören 4+5+8+3 items, Lesen 5+5+6+3+6, one
  * writing task chosen from two, a three-part oral. There is no Sprachbausteine module — the

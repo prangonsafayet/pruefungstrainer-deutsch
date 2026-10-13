@@ -61,7 +61,7 @@ its old path.
 | `unit/attemptTable`                        | one column header per cell in the attempts table, on both papers, and none of them unnamed                                                                                                                                       |
 | `unit/progressDb`                          | a fresh trainer document takes its writing time from its own paper rather than a constant                                                                                                                                        |
 | `unit/referenceSearch`                     | the five reference-table filters, which search a different set of fields per table                                                                                                                                               |
-| `unit/siteMeta`                            | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt                                                                                                                                    |
+| `unit/siteMeta`                            | every trainer's namespace reaches the emitted sitemap, and its attempt screens the robots.txt; indexing is opt-in (noindex by default)                                                                                           |
 | `unit/trainerRegistry`                     | the Node-side text parse of the registry, field-for-field against the real `TRAINERS`                                                                                                                                            |
 | `unit/timerAnnouncements`                  | the spoken exam clock: exactly 10/5/1 minutes on fake timers, never between, never the threshold a module starts on                                                                                                              |
 | `unit/appShell`                            | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                             |
@@ -77,6 +77,7 @@ its old path.
 | `render/copyToClipboard`                   | a rejected or missing clipboard ends in "Copy failed" and a toast, never an unhandled rejection                                                                                                                                  |
 | `render/errorBoundary`                     | the crash fallback (never the raw message), "Try again", the reset on route change, the stale-chunk Reload (once, never in an exam), and a failed content load retried afresh                                                    |
 | `render/routes`                            | every route of every trainer mounts with no React warning — generated from `TRAINER_ORDER`                                                                                                                                       |
+| `render/publicDemo`                        | the local-only build: no sign-in or sign-up entry point, the self-hosting note, the deep-linked Impressum and Datenschutz pages, the footer links and the independence notice                                                    |
 | `render/readableColors`                    | the four call sites that render a domain colour as ink or as a mark pick the readable token                                                                                                                                      |
 | `render/contentInjection`                  | authored HTML is injected, never shown as text                                                                                                                                                                                   |
 | `render/authVisibility`                    | the signed-out warnings appear everywhere                                                                                                                                                                                        |
@@ -92,7 +93,7 @@ its old path.
 | `render/startAttempt`                      | a curriculum Go link asks before replacing a run in progress — both choices — and resumes the very same module without asking                                                                                                    |
 | `render/appShell`                          | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown, puts the skip link first, scrolls to the top and moves focus to the new `<h1>` (and the tab title) on navigation         |
 | `render/updatePrompt`                      | the service-worker store's states; the update toast with a Reload that sends skip-waiting — never in an exam sitting, back when it ends; no reload on a takeover mid-exam                                                        |
-| `unit/reviewSections`                      | the review rows of every authored Modelltest of every paper: the key reviews all correct, a blank sitting has no answer, a mixed one marks exactly what the scoring counted                                                      |
+| `unit/reviewSections`                      | the review rows of every authored mock exam of every paper: the key reviews all correct, a blank sitting has no answer, a mixed one marks exactly what the scoring counted                                                       |
 | `unit/attemptBuild`                        | the attempt each paper persists: module-only scores, a missing self-rating stored as 0, a verdict only on a full sitting, the completion toast and the writing sample                                                            |
 | `unit/scoreChart`                          | the history chart per paper: full scored sittings only, the last twelve, colour by verdict, and the sentence a screen reader hears                                                                                               |
 | `unit/passwordPolicy`                      | the sign-up form's email and password checks at their edges (exact minimum, the 12-character bonus, the meter's ends)                                                                                                            |
@@ -131,7 +132,7 @@ The harness exists so you do not re-learn:
 - The setup clears `document.body` after every test.
 
 `tests/support/answerKeys.ts` builds the perfect answer map of any authored paper from its own
-data, so a suite can sweep every Modelltest instead of hardcoding one.
+data, so a suite can sweep every mock exam instead of hardcoding one.
 
 **Run the render project from the main checkout, not a worktree.** A worktree under
 `.claude/worktrees/` resolves a second React and fails with

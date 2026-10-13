@@ -3,6 +3,7 @@ import { lazy, Suspense, type ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import RouteFallback from '@shared/components/RouteFallback/RouteFallback.tsx';
+import { DATENSCHUTZ_PATH, IMPRESSUM_PATH } from '@shared/config/legal.ts';
 import { hasGuide, ROOT_TRAINER, TRAINER_ORDER, trainerHome } from '@shared/config/trainers.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
 
@@ -20,6 +21,8 @@ const AttemptHistoryPage = lazy(
   () => import('@features/attempt-history/pages/AttemptHistoryPage/AttemptHistoryPage.tsx')
 );
 const SettingsPage = lazy(() => import('@features/settings/pages/SettingsPage/SettingsPage.tsx'));
+const ImpressumPage = lazy(() => import('@features/legal/pages/ImpressumPage/ImpressumPage.tsx'));
+const DatenschutzPage = lazy(() => import('@features/legal/pages/DatenschutzPage/DatenschutzPage.tsx'));
 const VocabPracticePage = lazy(
   () => import('@features/vocab-practice/pages/VocabPracticePage/VocabPracticePage.tsx')
 );
@@ -73,6 +76,8 @@ export const AppRouter = () => (
 
         {/* Settings covers every trainer, so it sits beside them rather than inside one. */}
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path={IMPRESSUM_PATH} element={<ImpressumPage />} />
+        <Route path={DATENSCHUTZ_PATH} element={<DatenschutzPage />} />
 
         <Route path="/dashboard" element={<Navigate to={trainerHome(ROOT_TRAINER)} replace />} />
         <Route path="*" element={<NotFoundPage />} />

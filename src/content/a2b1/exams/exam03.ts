@@ -2,7 +2,7 @@ import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 3,
-  title: 'Modelltest 3',
+  title: 'Mock exam 3',
   difficulty: 'easy',
   level: 'A2 · leicht',
   theme: 'Wohnen & Nachbarschaft',

@@ -1,7 +1,7 @@
-/** The shape of one Modelltest, as authored in `src/content/<id>/exams`. */
+/** The shape of one mock exam, as authored in `src/content/<id>/exams`. */
 
 /**
- * What every Modelltest of every paper has. Enough for the generic layers — the registry,
+ * What every mock exam of every paper has. Enough for the generic layers — the registry,
  * the schedule engine, the exam lists — to work with a paper they cannot narrow.
  */
 export interface ExamPaper {
