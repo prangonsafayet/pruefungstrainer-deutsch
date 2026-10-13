@@ -33,7 +33,7 @@ const ExamModuleToolbar = ({
 }: ExamModuleToolbarProps) => (
   <section
     aria-label="Timer, progress and submit"
-    className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.625rem+env(safe-area-inset-bottom))] pt-2.5 shadow-pop backdrop-blur-md sm:sticky sm:inset-x-auto sm:bottom-auto sm:top-[var(--header-h,4rem)] sm:z-30 sm:-mx-6 sm:mb-6 sm:border-b sm:border-t-0 sm:px-6 sm:py-3 sm:shadow-none"
+    className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[max(0.75rem,calc(0.375rem+env(safe-area-inset-bottom)))] pt-2.5 shadow-pop backdrop-blur-md sm:sticky sm:inset-x-auto sm:bottom-auto sm:top-[var(--header-h,4rem)] sm:z-30 sm:-mx-6 sm:mb-6 sm:border-b sm:border-t-0 sm:px-6 sm:py-3 sm:shadow-none"
   >
     <div className="mx-auto flex max-w-6xl items-center gap-3 sm:gap-5">
       <div className="flex min-w-0 flex-col">
