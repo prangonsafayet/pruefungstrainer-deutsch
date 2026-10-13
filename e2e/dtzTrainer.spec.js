@@ -194,7 +194,7 @@ test.describe('the DTZ dashboard and its routes', () => {
     await expect(dashboardHeading(page)).toContainText(DTZ.short);
     /* The full name sits in the header subtitle, which a phone hides: present, not visible. */
     await expect(page.getByText(DTZ.name).first()).toBeAttached();
-    await expect(page.getByRole('combobox', { name: /^Practice one module of mock exam \d+$/ })).toHaveCount(
+    await expect(page.getByRole('combobox', { name: /^Practice one module of Mock exam \d+$/ })).toHaveCount(
       10
     );
 
