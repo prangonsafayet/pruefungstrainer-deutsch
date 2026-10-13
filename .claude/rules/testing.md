@@ -66,7 +66,7 @@ its old path.
 | `unit/timerAnnouncements`    | the spoken exam clock: exactly 10/5/1 minutes on fake timers, never between, never the threshold a module starts on                                                                                                      |
 | `unit/appShell`              | the header countdown's tone at both edges of the 14-day window and past dates, each trainer's nav tabs, the phone tab-bar split, exam-mode routes, the offline badge                                                     |
 | `unit/meterTone`             | a results bar is green at or above its pass line, amber/red below, and a dashboard bar stays primary                                                                                                                     |
-| `unit/productionChecks`      | the `_headers` parser, the CSP inline-script hashing (source `index.html` vs `public/_headers`) and the bundle budget                                                                                                    |
+| `unit/productionChecks`      | the `_headers` parser, CSP inline-script hashing, the bundle budget, `sw.js` no-cache, the manifest's icons and shortcuts                                                                                                |
 | `unit/appError`              | `toAppError` classifies quota, stale chunks (all three browser wordings) and dead networks; `tryCatch` never throws or rejects                                                                                           |
 | `unit/logger`                | redaction (email, JWT, Supabase key, bearer, `code=`/`password=`), the 100-entry bound, the sessionStorage mirror, and that an arbitrary object (answers) is never serialised                                            |
 | `unit/storage`               | quota and blocked writes return a typed failure and notify listeners; a failed write is read back from memory, not the stale disk value                                                                                  |
@@ -91,6 +91,7 @@ its old path.
 | `render/singleLevelExamFlow` | the single-level equivalent of `examFlow` — a full attempt including a mid-module reload, swept over every single-level trainer                                                                                          |
 | `render/startAttempt`        | a curriculum Go link asks before replacing a run in progress — both choices — and resumes the very same module without asking                                                                                            |
 | `render/appShell`            | `useActiveTrainer` reads and switches every trainer from its URLs; the layout shows the exam countdown, puts the skip link first, scrolls to the top and moves focus to the new `<h1>` (and the tab title) on navigation |
+| `render/updatePrompt`        | the service-worker store's states; the update toast with a Reload that sends skip-waiting — never in an exam sitting, back when it ends; no reload on a takeover mid-exam                                                |
 
 **No jsdom.** happy-dom provides `matchMedia`, both observers, `scrollIntoView` and pointer
 capture; `tests/render/setup.ts` only adds React's act flag and the in-memory `Storage` from
@@ -138,7 +139,10 @@ select on the roving-focus tick, so an arrow must be held (`keyboard.down`, wait
 `e2e/errorHandling.spec.js` 404s a lazy chunk after first load (one reload, then the fallback —
 never a loop; none during an exam sitting) and boots on damaged `telcTrainerV1`.
 `e2e/csp.spec.js` is not in the main config: `npm run test:csp` runs it against the built site
-served with its real `_headers` (see the tooling-ci rule).
+served with its real `_headers` (see the tooling-ci rule). Nor is `e2e/offline.spec.js`:
+`npm run test:offline` (chromium + mobile) installs the service worker, goes offline, loads
+every trainer's dashboard, Learn and Practice, sits and submits a DTZ Lesen module and reloads
+it; and ships a changed `sw.js` to see the update prompt, held back in an exam sitting.
 react-day-picker marks month navigation with `aria-disabled` but day cells with both
 `data-disabled` and a real `disabled` — assert the right one. For interactive checks use the
 **Playwright MCP** instead of a throwaway spec.

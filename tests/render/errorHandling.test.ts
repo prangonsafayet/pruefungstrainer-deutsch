@@ -153,6 +153,9 @@ describe('Settings → Copy diagnostics', () => {
     expect(report).toMatch(/^telc trainer diagnostics\nBuild: v\d/);
     expect(report).toContain('Browser: ');
     expect(report).toMatch(/Sync: mode \w+, URL present (yes|no)/);
+    /* Tests never register a service worker (main.tsx does, in production builds only). */
+    expect(report).toContain('Offline mode: off in this build');
+    expect(app.text()).toContain('Offline mode: off in this build');
     expect(report).toContain('WARN [auth] Sign-in failed for [email]');
     expect(report).not.toContain('lena@example.de');
     expect(findByText(/Diagnostics copied/)).toBeDefined();

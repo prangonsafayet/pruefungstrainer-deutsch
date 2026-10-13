@@ -131,6 +131,9 @@ jobs:
       # The production build served with its real _headers: any CSP violation fails here.
       - run: npm run build
       - run: npm run test:csp
+      # The same build as a PWA: one visit, then offline — every trainer, a DTZ module sat
+      # and submitted, and the update prompt for a new deploy. Desktop and phone.
+      - run: npm run test:offline
 
       - uses: actions/upload-artifact@v7
         if: failure()

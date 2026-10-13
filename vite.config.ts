@@ -3,6 +3,7 @@ import path from 'node:path';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 import { crawlerDisallows, sitemapPages } from './scripts/siteMeta.mjs';
 import { trainerBasePaths } from './scripts/trainerRegistry.mjs';
@@ -161,7 +162,47 @@ export const appDefines = (commitRef: string): Record<string, string> => ({
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
-    plugins: [react(), tailwindcss(), supabaseEnvCheck(env), languageToolCheck(env), siteUrlHtml(env)],
+    plugins: [
+      react(),
+      tailwindcss(),
+      supabaseEnvCheck(env),
+      languageToolCheck(env),
+      siteUrlHtml(env),
+      /* Offline support: a Workbox service worker precaches the whole build — the shell, every
+         route chunk and every trainer's content chunk — so all four trainers work offline
+         after the first visit. How updates reach the learner: src/shared/lib/serviceWorker.ts. */
+      VitePWA({
+        /* A new version waits until the learner says Reload (never mid-exam); nothing calls
+           skipWaiting on its own. */
+        registerType: 'prompt',
+        /* Registered from src/shared/lib/serviceWorker.ts, so no registerSW.js and no inline
+           script — the CSP allows no inline script but the hashed theme one. */
+        injectRegister: false,
+        /* public/manifest.webmanifest is hand-written and linked from index.html. */
+        manifest: false,
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,woff2,svg,png,webmanifest}'],
+          globIgnores: [
+            /* The social card is for link previews, never shown in the app. */
+            'og-image.png',
+            /* German and English text use only the latin subsets; the rest would only ever
+               load for a Cyrillic or Vietnamese character, and then from the network. */
+            '**/*-{cyrillic,cyrillic-ext,vietnamese}-*.woff2'
+          ],
+          /* One file, served no-cache by public/_headers, instead of sw.js + workbox-<hash>.js. */
+          inlineWorkboxRuntime: true,
+          /* The first visit is controlled at once, so it works offline without a second load. */
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
+          navigateFallback: 'index.html',
+          /* Only app routes get the shell: never a file (anything with an extension) or an
+             asset path, so a missing chunk 404s and the stale-chunk reload can see it. */
+          navigateFallbackDenylist: [/^\/assets\//, /\/[^/?]+\.[^/]+$/]
+          /* Deliberately no runtimeCaching: Supabase (auth, sync) and LanguageTool are
+             cross-origin and never routed, so they always go to the network. */
+        }
+      })
+    ],
     define: appDefines(env.COMMIT_REF ?? ''),
     resolve: { alias: LAYER_ALIASES },
     build: {

@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig } from 'vitest/config';
 
 import { appDefines, LAYER_ALIASES } from './vite.config.ts';
@@ -17,9 +19,16 @@ import { appDefines, LAYER_ALIASES } from './vite.config.ts';
    environment now runs the suites exactly as CI does. */
 const NO_DOTENV = { envDir: false } as const;
 
+/* `virtual:pwa-register` exists only inside a build running vite-plugin-pwa; the suites get a
+   stub that lets them drive the service worker's lifecycle by hand. */
+const ALIASES = {
+  ...LAYER_ALIASES,
+  'virtual:pwa-register': fileURLToPath(new URL('./tests/support/pwaRegister.ts', import.meta.url))
+};
+
 export default defineConfig({
   ...NO_DOTENV,
-  resolve: { alias: LAYER_ALIASES },
+  resolve: { alias: ALIASES },
   define: appDefines(''),
   test: {
     restoreMocks: true,
@@ -37,7 +46,7 @@ export default defineConfig({
     projects: [
       {
         ...NO_DOTENV,
-        resolve: { alias: LAYER_ALIASES },
+        resolve: { alias: ALIASES },
         test: {
           name: 'logic',
           /* `.js` as well as `.ts`: a suite that has to import a file outside
@@ -52,7 +61,7 @@ export default defineConfig({
       },
       {
         ...NO_DOTENV,
-        resolve: { alias: LAYER_ALIASES },
+        resolve: { alias: ALIASES },
         define: appDefines(''),
         test: {
           name: 'render',

@@ -82,6 +82,11 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-13: a test that a failed `use()` promise shows the boundary passed the wrong way →
   React re-renders once on error before committing it; once a rejected promise is evicted, that
   retry refetches. Make the stub reject until restored.
+- 2026-10-13: `import { type X } from 'vite-plugin-pwa/types'` failed at runtime ("./types is
+  not exported") → `verbatimModuleSyntax` keeps an inline-type import as a bare `import {}`;
+  use `import type` for a subpath that only exists for types.
+- 2026-10-13: after `vi.resetModules()` the suite's static import of a stub was not the instance
+  the re-imported module used → re-import the stub (and every stateful module) after the reset.
 - 2026-10-13: happy-dom's `location.reload` cannot be spied in place → swap `window.location` via
   `defineProperty` for a copy with a `vi.fn()` reload, restore after.
 
@@ -163,6 +168,13 @@ right area; see `.claude/rules/memory.md`.
   the budget → `speakScript` returns a `Result`; consume only once audio actually starts.
 - 2026-10-13: `use()` cached a rejected content promise, so "Try again" re-threw forever →
   evict the promise on rejection.
+- 2026-10-13: vite-plugin-pwa's prompt mode reloads every tab on `controlling` — one tab's
+  Reload would reload another mid-exam → pass `onNeedReload` and gate it on the exam path
+  (`src/shared/lib/serviceWorker.ts`).
+- 2026-10-13: a stale-chunk reload while offline lands on the browser's offline page, not the
+  app → the reload-once guard refuses when `navigator.onLine` is false.
+- 2026-10-13: a service-worker update in e2e needs no second build and no test hook → copy
+  `dist/`, serve it on its own port, append a byte to `sw.js`, call `registration.update()`.
 
 ## Hooks and tooling
 

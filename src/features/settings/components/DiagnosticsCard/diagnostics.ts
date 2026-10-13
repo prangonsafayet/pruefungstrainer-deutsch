@@ -1,5 +1,6 @@
 import { type SyncDiagnostics } from '@shared/account-sync/lib/supabaseClient.ts';
 import { type LogEntry } from '@shared/lib/logger.ts';
+import { type ServiceWorkerStatus } from '@shared/lib/serviceWorker.ts';
 
 export interface DiagnosticsInput {
   readonly build: string;
@@ -7,8 +8,19 @@ export interface DiagnosticsInput {
   readonly online: boolean;
   readonly now: string;
   readonly sync: SyncDiagnostics;
+  readonly serviceWorker: ServiceWorkerStatus;
   readonly entries: readonly LogEntry[];
 }
+
+/** The service worker's state in words, for the card and the report. */
+export const SERVICE_WORKER_LABEL: Readonly<Record<ServiceWorkerStatus, string>> = {
+  off: 'off in this build',
+  unsupported: 'not supported by this browser',
+  registering: 'setting up',
+  ready: 'ready — works without a connection',
+  'update-waiting': 'a new version is waiting — reload to use it',
+  failed: 'could not start'
+};
 
 /** How many log lines go into a report: enough to see a sequence, short enough to paste. */
 export const DIAGNOSTIC_ENTRIES = 50;
@@ -24,6 +36,7 @@ export const formatDiagnostics = ({
   online,
   now,
   sync,
+  serviceWorker,
   entries
 }: DiagnosticsInput): string => {
   const flag = (value: boolean): string => (value ? 'yes' : 'no');
@@ -34,6 +47,7 @@ export const formatDiagnostics = ({
     `Captured: ${now}`,
     `Browser: ${userAgent}`,
     `Online: ${flag(online)}`,
+    `Offline mode: ${SERVICE_WORKER_LABEL[serviceWorker]}`,
     `Sync: mode ${sync.mode}, URL present ${flag(sync.urlPresent)}, URL valid ${flag(sync.urlValid)}, key present ${flag(sync.keyPresent)}, key looks valid ${flag(sync.keyLooksValid)}, secret key ${flag(sync.keyIsSecret)}`,
     `Log (last ${String(log.length)}):`,
     ...(log.length === 0

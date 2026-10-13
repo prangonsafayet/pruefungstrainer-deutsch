@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
+  <!-- The logo as a maskable app icon: the terracotta gradient bleeds to every edge (a launcher
+       crops it to its own shape), and the paper + tick sit inside the central safe zone — a
+       circle 80% of the width — so no mask clips them. Palette: MASTER.md. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d2643a"/>
+      <stop offset="1" stop-color="#b4441c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" fill="url(#g)"/>
+  <!-- The logo's artwork (x 13–58.5, y 11–58.5) scaled by 0.72 about (35, 34): x 16.2–48.9,
+       y 15.4–49.6. Its farthest point, the paper's top-left corner, lies 22.9 units from the
+       centre — inside the 25.6-unit safe radius. -->
+  <g transform="translate(32 32) scale(0.72) translate(-35 -34)">
+    <rect x="13" y="11" width="31" height="42" rx="5" fill="#fffdf9"/>
+    <g fill="#b4441c" opacity=".3">
+      <rect x="18.5" y="18" width="20" height="3" rx="1.5"/>
+      <rect x="18.5" y="25" width="20" height="3" rx="1.5"/>
+      <rect x="18.5" y="32" width="13" height="3" rx="1.5"/>
+    </g>
+    <circle cx="44" cy="44" r="13" fill="#17716b" stroke="#fffdf9" stroke-width="3"/>
+    <path d="M38.5 44.5l3.8 3.8 7.2-7.6" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

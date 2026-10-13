@@ -19,10 +19,17 @@ type GuardStorage = Pick<Storage, 'getItem' | 'setItem'>;
 /**
  * Whether to reload now, recording the decision. Never during an exam sitting: the run is
  * persisted, but a page that vanishes mid-module is alarming — the fallback's Reload button
- * lets the candidate choose the moment.
+ * lets the candidate choose the moment. Never offline either: a reload cannot fetch the
+ * missing chunk, and without a service worker in control it lands on the browser's offline
+ * page instead of the app's fallback.
  */
-export const claimStaleChunkReload = (storage: GuardStorage, now: number, pathname: string): boolean => {
-  if (isExamRunPath(pathname)) return false;
+export const claimStaleChunkReload = (
+  storage: GuardStorage,
+  now: number,
+  pathname: string,
+  online: boolean
+): boolean => {
+  if (isExamRunPath(pathname) || !online) return false;
   const last = Number(storage.getItem(RELOAD_SESSION_KEY));
   /* A timestamp from the future (a clock change) blocks as well: safe beats sorry. */
   if (last > 0 && now - last < RELOAD_WINDOW_MS) return false;
@@ -32,7 +39,9 @@ export const claimStaleChunkReload = (storage: GuardStorage, now: number, pathna
 
 /** Reloads once for a stale chunk. False when the guard (or no sessionStorage) says no. */
 export const reloadOnceForStaleChunk = (): boolean => {
-  const claimed = tryCatch(() => claimStaleChunkReload(sessionStorage, Date.now(), window.location.pathname));
+  const claimed = tryCatch(() =>
+    claimStaleChunkReload(sessionStorage, Date.now(), window.location.pathname, navigator.onLine)
+  );
   if (!claimed.ok || !claimed.value) {
     logger.warn('chunk', 'Stale chunk; not reloading automatically', claimed.ok ? undefined : claimed.error);
     return false;

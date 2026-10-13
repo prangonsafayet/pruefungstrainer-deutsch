@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
@@ -10,6 +10,7 @@ import {
 } from '../../scripts/check-bundle-size.mjs';
 import { cspScriptHashes, inlineScriptHashes } from '../../scripts/check-csp.mjs';
 import { headersFor, parseHeaders } from '../../scripts/serve-dist-with-headers.mjs';
+import { trainerDescriptors } from '../../scripts/trainerRegistry.mjs';
 
 /* The release checks are code too: the _headers parser the CSP suite serves with, the inline
    script hashing that keeps the CSP in step with index.html, and the bundle budget. */
@@ -54,8 +55,35 @@ describe('_headers', () => {
 
   it('the real public/_headers never sets one header twice for any path', () => {
     const real = parseHeaders(readFileSync('public/_headers', 'utf8'));
-    for (const path of ['/', '/index.html', '/settings', '/assets/index-abc.js', '/favicon.svg'])
+    for (const path of ['/', '/index.html', '/settings', '/assets/index-abc.js', '/favicon.svg', '/sw.js'])
       expect(() => headersFor(real, path)).not.toThrow();
+  });
+
+  it('serves the service worker no-cache, so an update is never hidden behind a cache', () => {
+    const real = parseHeaders(readFileSync('public/_headers', 'utf8'));
+    expect(headersFor(real, '/sw.js')).toContainEqual(['Cache-Control', 'no-cache']);
+  });
+});
+
+describe('web app manifest', () => {
+  const manifest = JSON.parse(readFileSync('public/manifest.webmanifest', 'utf8'));
+
+  it('is installable: standalone, scoped to the site, with 192, 512 and a maskable 512 icon on disk', () => {
+    expect(manifest).toMatchObject({ id: '/', start_url: '/', scope: '/', display: 'standalone' });
+    const pngs = manifest.icons.filter(icon => icon.type === 'image/png');
+    expect(pngs.map(icon => `${icon.sizes} ${icon.purpose}`).sort()).toEqual([
+      '192x192 any',
+      '512x512 any',
+      '512x512 maskable'
+    ]);
+    for (const icon of [...manifest.icons, ...manifest.shortcuts.flatMap(shortcut => shortcut.icons)])
+      expect(existsSync(`public${icon.src}`), icon.src).toBe(true);
+  });
+
+  it("has a shortcut to every trainer's dashboard, and to Learn", () => {
+    const urls = manifest.shortcuts.map(shortcut => shortcut.url);
+    for (const { basePath } of trainerDescriptors()) expect(urls).toContain(basePath || '/');
+    expect(urls).toContain('/learn');
   });
 });
 

@@ -121,6 +121,27 @@ describe('useAppLayout', () => {
     await page.unmount();
   });
 
+  it('shows the offline badge when the browser goes offline, and drops it when it is back', async () => {
+    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+    const page = await mount('/');
+    const badge = (): Element | null =>
+      page.container.querySelector('[aria-label="Offline — what still works"]');
+    expect(badge()).toBeNull();
+
+    onLine.mockReturnValue(false);
+    await act(async () => {
+      window.dispatchEvent(new Event('offline'));
+    });
+    expect(badge()).not.toBeNull();
+
+    onLine.mockReturnValue(true);
+    await act(async () => {
+      window.dispatchEvent(new Event('online'));
+    });
+    expect(badge()).toBeNull();
+    await page.unmount();
+  });
+
   it('scrolls to the top on every navigation', async () => {
     const page = await mount('/');
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);

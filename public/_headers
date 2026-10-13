@@ -21,3 +21,9 @@
   Cache-Control: no-cache
 /index.html
   Cache-Control: no-cache
+
+# The service worker must be revalidated on every check, or an update could be missed for as
+# long as a cache keeps the old one. Workbox's runtime is inlined into it (no workbox-*.js), and
+# it is registered from the app bundle (no registerSW.js).
+/sw.js
+  Cache-Control: no-cache

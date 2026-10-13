@@ -22,7 +22,7 @@ paths:
 | pre-push (husky)   | `typecheck` → `lint --max-warnings=0` → `format:check` → `validate` → `test:unit` → `guards:offline` (whole codebase) |
 | CI `static`        | `typecheck` → `lint -- --max-warnings=0` → `format:check` → `guards`                                                  |
 | CI `unit`          | `validate` → `test:coverage` (every vitest suite + the coverage gate)                                                 |
-| CI `e2e`           | Playwright on Chromium → `build` → `test:csp` (the build served with its real `_headers`)                             |
+| CI `e2e`           | Playwright on Chromium → `build` → `test:csp` (the build served with its real `_headers`) → `test:offline` (the PWA)  |
 | CI `build`         | production build with no secrets → `check:bundle` → `check:csp`                                                       |
 | CI `deadcode`      | `knip:ci` — blocking                                                                                                  |
 | CI `audit`         | `npm audit --audit-level=high` (dev advisories) — `continue-on-error` until they have a fix                           |
@@ -95,6 +95,40 @@ content changes at runtime.
 - After a deploy, confirm on the deploy preview with `curl -sI <url>` (look for
   `content-security-policy`, `strict-transport-security`, `permissions-policy`) and a browser
   console free of CSP errors.
+
+## Offline / PWA (vite-plugin-pwa, Workbox `generateSW`)
+
+- **What is precached**: every JS/CSS chunk including each `content-<id>` chunk, `index.html`,
+  the latin + latin-ext font subsets, the icons and the manifest — so all four trainers work
+  offline after one visit (`clientsClaim`: the first visit is controlled at once). Not
+  precached: `og-image.png`, the cyrillic/vietnamese font subsets. Measured 2026-10-13: 47
+  entries, 3,080 KiB; the largest file (a content chunk, ~430 kB) is under Workbox's 2 MiB
+  default, so `maximumFileSizeToCacheInBytes` is not raised. `npm run build` prints the total.
+- **No runtime caching.** Supabase and LanguageTool are cross-origin and never routed, so they
+  always hit the network. `navigateFallback: 'index.html'` with a denylist for `/assets/` and
+  any path with an extension, so a missing chunk still 404s and the stale-chunk guard sees it.
+- **Updates are prompted, never automatic** (`registerType: 'prompt'`, no `skipWaiting` in the
+  worker). `src/shared/lib/serviceWorker.ts` registers it (production only, from `main.tsx`;
+  `injectRegister: false`, so no `registerSW.js` and no inline script) and is the store;
+  `useServiceWorkerUpdate` reads it; the shell's `useUpdatePrompt` shows the sonner toast "A
+  new version is ready" + Reload outside exam sittings only, and takes it away when one
+  starts. When another tab's Reload hands control to the new worker mid-exam, the page is not
+  reloaded (`onNeedReload`); the prompt waits for the sitting to end.
+- **Stale chunks**: the old worker keeps serving the old build's chunks until the learner
+  reloads, so `vite:preloadError` is rarer; the reload-once guard stays, and never fires
+  offline (a reload cannot fetch the chunk) or in an exam.
+- `/sw.js` is `Cache-Control: no-cache` in `public/_headers`; the Workbox runtime is inlined
+  into it (`inlineWorkboxRuntime`), so there is no `workbox-*.js`. Netlify already serves
+  `.webmanifest` as `application/manifest+json`.
+- Icons: `npm run images` renders `icon-192.png` and `icon-512.png` from `public/logo.svg`, and
+  `icon-maskable-512.png` from `assets/icon-maskable.svg` (artwork inside the 80% safe zone).
+- `npm run test:offline` (`playwright.offline.config.ts`, `e2e/offline.spec.js`, chromium +
+  mobile) serves `dist/` like `test:csp` and needs a fresh build. The update test copies `dist/`
+  to a temp dir, serves it on its own port and appends a comment to `sw.js` — the browser's
+  byte comparison is the real update trigger, so no second build and no test hook in the app.
+- Vitest cannot resolve `virtual:pwa-register` (it exists only in a build running the plugin):
+  `vitest.config.ts` aliases it to `tests/support/pwaRegister.ts`, which records the options
+  so a suite fires the worker's lifecycle by hand.
 
 ## ESLint traps
 

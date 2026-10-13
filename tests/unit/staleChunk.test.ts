@@ -21,36 +21,44 @@ const T0 = 1_760_000_000_000;
 describe('claimStaleChunkReload', () => {
   it('allows exactly one reload inside the window — the second failure shows the fallback', () => {
     const storage = fakeStorage();
-    expect(claimStaleChunkReload(storage, T0, '/settings')).toBe(true);
+    expect(claimStaleChunkReload(storage, T0, '/settings', true)).toBe(true);
     /* The reload happened; the chunk is still missing on the fresh page. */
-    expect(claimStaleChunkReload(storage, T0 + 2_000, '/settings')).toBe(false);
-    expect(claimStaleChunkReload(storage, T0 + RELOAD_WINDOW_MS - 1, '/learn')).toBe(false);
+    expect(claimStaleChunkReload(storage, T0 + 2_000, '/settings', true)).toBe(false);
+    expect(claimStaleChunkReload(storage, T0 + RELOAD_WINDOW_MS - 1, '/learn', true)).toBe(false);
     expect(storage.writes).toBe(1);
   });
 
   it('allows another once the window has passed (a later deploy)', () => {
     const storage = fakeStorage();
-    claimStaleChunkReload(storage, T0, '/');
-    expect(claimStaleChunkReload(storage, T0 + RELOAD_WINDOW_MS, '/')).toBe(true);
+    claimStaleChunkReload(storage, T0, '/', true);
+    expect(claimStaleChunkReload(storage, T0 + RELOAD_WINDOW_MS, '/', true)).toBe(true);
   });
 
   it('never reloads during an exam sitting, and does not spend the guard there', () => {
     const storage = fakeStorage();
-    expect(claimStaleChunkReload(storage, T0, '/b1/exam/3/full')).toBe(false);
+    expect(claimStaleChunkReload(storage, T0, '/b1/exam/3/full', true)).toBe(false);
     expect(storage.writes).toBe(0);
     /* Results and review are not sittings. */
-    expect(claimStaleChunkReload(storage, T0, '/b1/results/7')).toBe(true);
+    expect(claimStaleChunkReload(storage, T0, '/b1/results/7', true)).toBe(true);
+  });
+
+  it('never reloads offline — the reload could not fetch the chunk — and keeps the guard for later', () => {
+    const storage = fakeStorage();
+    expect(claimStaleChunkReload(storage, T0, '/learn', false)).toBe(false);
+    expect(storage.writes).toBe(0);
+    /* Back online, the one reload is still available. */
+    expect(claimStaleChunkReload(storage, T0 + 1_000, '/learn', true)).toBe(true);
   });
 
   it('refuses when the stored time lies in the future (a clock change) — never a loop', () => {
     const storage = fakeStorage();
     storage.setItem('telcTrainerChunkReloadAt', String(T0 + 60_000));
-    expect(claimStaleChunkReload(storage, T0, '/')).toBe(false);
+    expect(claimStaleChunkReload(storage, T0, '/', true)).toBe(false);
   });
 
   it('treats a garbled guard value as no previous reload', () => {
     const storage = fakeStorage();
     storage.setItem('telcTrainerChunkReloadAt', 'not a number');
-    expect(claimStaleChunkReload(storage, T0, '/')).toBe(true);
+    expect(claimStaleChunkReload(storage, T0, '/', true)).toBe(true);
   });
 });

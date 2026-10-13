@@ -1,4 +1,3 @@
-import { CloudOff } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 import AccountMenu from '@shared/account-sync/components/AccountMenu/AccountMenu.tsx';
@@ -14,6 +13,7 @@ import AppFooter from '@features/app-shell/components/AppFooter/AppFooter.tsx';
 import BottomTabBar from '@features/app-shell/components/BottomTabBar/BottomTabBar.tsx';
 import ExamCountdownBadge from '@features/app-shell/components/ExamCountdownBadge/ExamCountdownBadge.tsx';
 import MainNav from '@features/app-shell/components/MainNav/MainNav.tsx';
+import OfflineBadge from '@features/app-shell/components/OfflineBadge/OfflineBadge.tsx';
 import TrainerSwitcher from '@features/app-shell/components/TrainerSwitcher/TrainerSwitcher.tsx';
 
 import { useAppLayout } from './useAppLayout.tsx';
@@ -76,12 +76,7 @@ const AppLayout = () => {
             <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
               {examMode ? null : <ExamCountdownBadge examDate={examDate} />}
 
-              {offline ? (
-                <Badge variant="warning" className="gap-1.5 py-1" title={sync.chip?.title}>
-                  <CloudOff className="size-3" aria-hidden />
-                  <span className="max-sm:sr-only">offline</span>
-                </Badge>
-              ) : null}
+              {offline ? <OfflineBadge /> : null}
 
               {examMode ? null : <AccountMenu />}
               <ThemeToggle />

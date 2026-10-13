@@ -12,12 +12,15 @@ import { useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.tsx
 
 import { isSyncOffline } from './syncStatus.ts';
 import { useHeaderHeight } from './useHeaderHeight.tsx';
+import { useOnline } from './useOnline.tsx';
 import { usePageFocus } from './usePageFocus.tsx';
+import { useUpdatePrompt } from './useUpdatePrompt.tsx';
 
 /**
  * Everything the app layout needs that is not markup: the cloud-sync state it puts on the
  * context, the header's measured height, the active trainer and its exam date, whether an
- * exam sitting is on screen — and the reset every navigation gets.
+ * exam sitting is on screen, whether the device is offline — and the reset every navigation
+ * gets. It also offers a waiting new version, outside exam sittings.
  */
 export const useAppLayout = () => {
   const { db, dbRef, replaceLocal } = useProgress();
@@ -38,15 +41,20 @@ export const useAppLayout = () => {
 
   usePageFocus(pathname, mainRef, trainer.name);
 
+  const examMode = isExamRunPath(pathname);
+  useUpdatePrompt(examMode);
+  const online = useOnline();
+
   return {
     sync,
-    offline: isSyncOffline(sync.chip),
+    /* The browser's own signal, or a sync that failed for want of a network. */
+    offline: !online || isSyncOffline(sync.chip),
     pathname,
     headerRef,
     mainRef,
     trainer,
     home,
     examDate: settings.examDate,
-    examMode: isExamRunPath(pathname)
+    examMode
   };
 };
