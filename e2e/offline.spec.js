@@ -22,16 +22,21 @@ if (!DTZ) throw new Error('the registry has no dtz-paper trainer');
 
 const dashboardHeading = page => page.getByRole('heading', { name: /^Dashboard/, level: 1 });
 
+/* `expect.poll`, never `page.waitForFunction`, for these async checks: waitForFunction does not
+   await a returned Promise — a Promise is truthy, so it resolved on the first poll, before the
+   precache install had finished (issue #35). */
 /** Until the worker is active (its precache filled during install) and controls this page. */
 const serviceWorkerInControl = page =>
-  page.waitForFunction(
-    async () => {
-      const registration = await navigator.serviceWorker.getRegistration();
-      return registration?.active?.state === 'activated' && navigator.serviceWorker.controller !== null;
-    },
-    null,
-    { timeout: 30_000 }
-  );
+  expect
+    .poll(
+      () =>
+        page.evaluate(async () => {
+          const registration = await navigator.serviceWorker.getRegistration();
+          return registration?.active?.state === 'activated' && navigator.serviceWorker.controller !== null;
+        }),
+      { timeout: 30_000 }
+    )
+    .toBe(true);
 
 const collectPageErrors = page => {
   const errors = [];
@@ -45,9 +50,16 @@ test('after one visit, every trainer works offline — down to a DTZ Lesen sitti
 }) => {
   test.setTimeout(120_000);
   const errors = collectPageErrors(page);
+  /* A slow precache install, as on a busy CI runner: going offline before it finishes fails
+     the reload below, so a wait that returns early fails here every time, not by chance. */
+  await context.route('**/assets/content-*', async route => {
+    await new Promise(resolve => setTimeout(resolve, 1_000));
+    await route.continue();
+  });
   await page.goto('/');
   await expect(dashboardHeading(page)).toBeVisible();
   await serviceWorkerInControl(page);
+  await context.unrouteAll();
 
   await context.setOffline(true);
   /* The emulation reaches the network for real: an unprecached file cannot be fetched. */
@@ -154,10 +166,14 @@ test.describe('a new deploy', () => {
       const registration = await navigator.serviceWorker.getRegistration();
       await registration?.update();
     });
-    await page.waitForFunction(async () => {
-      const registration = await navigator.serviceWorker.getRegistration();
-      return Boolean(registration?.waiting);
-    });
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const registration = await navigator.serviceWorker.getRegistration();
+          return Boolean(registration?.waiting);
+        })
+      )
+      .toBe(true);
     /* Long enough for the app to have heard of the waiting worker and (not) shown it. */
     await page.waitForTimeout(1_000);
     await expect(prompt).toBeHidden();
@@ -170,8 +186,9 @@ test.describe('a new deploy', () => {
     await expect(dashboardHeading(page)).toBeVisible();
     await expect(prompt).toBeVisible();
 
+    const reloaded = page.waitForEvent('load');
     await page.getByRole('button', { name: 'Reload' }).click();
-    await page.waitForEvent('load');
+    await reloaded;
     await expect(dashboardHeading(page)).toBeVisible();
     await expect(prompt).toBeHidden();
     const after = await page.evaluate(async () => {
