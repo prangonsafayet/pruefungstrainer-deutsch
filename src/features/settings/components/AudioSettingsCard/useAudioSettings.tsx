@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import { useGermanVoices } from '@shared/hooks/useGermanVoices.tsx';
 import { speakScript } from '@shared/lib/speech.ts';
 import { useProgress } from '@shared/progress-store/hooks/useProgress.tsx';
 
 import { AUTO_VOICE, VOICE_TEST_SCRIPT } from './audio.ts';
+import { useGermanVoices } from './useGermanVoices.tsx';
 
 export interface AudioSettingsState {
   /** Speed multiplier, as the select's numeric value. */

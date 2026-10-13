@@ -12,7 +12,7 @@ import {
 import { type ProgressDatabase } from '@shared/types/progress.ts';
 
 /** Fixed ids: StrictMode mounts twice and every failed write reports, but one notice shows. */
-const RECOVERED_TOAST = 'progress-recovered';
+export const RECOVERED_TOAST = 'progress-recovered';
 const STORAGE_TOAST = 'storage-failure';
 
 export const DAMAGED_FILENAME = 'telc-trainer-damaged-progress.txt';

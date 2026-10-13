@@ -5,6 +5,7 @@ import { BookOpen, Info } from 'lucide-react';
 import PageTitle from '@shared/components/layout/PageTitle/PageTitle.tsx';
 import SectionTitle from '@shared/components/layout/SectionTitle/SectionTitle.tsx';
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.tsx';
+import { plural } from '@shared/lib/format.ts';
 import { type LearnDay } from '@shared/types/learn.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shared/ui/accordion.tsx';
@@ -140,7 +141,7 @@ const CurriculumPage = ({ trainer }: CurriculumPageProps) => {
                   <Accordion type="single" collapsible>
                     <AccordionItem value="done" className="border-b-0">
                       <AccordionTrigger className="text-base font-semibold">
-                        {scheduled.done.length} day{scheduled.done.length === 1 ? '' : 's'} finished
+                        {plural(scheduled.done.length, 'day')} finished
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="space-y-4">{scheduled.done.map(day => dayCard(day, true))}</div>

@@ -1,4 +1,5 @@
 import { B1_TOTAL } from '@shared/config/exam.ts';
+import { isAnswered } from '@shared/lib/answers.ts';
 import { type DualLevelExam, type ExamGrade, type ExamModule, type NoteGap } from '@shared/types/exam.ts';
 import {
   type AnswerMap,
@@ -124,11 +125,7 @@ export const gradeFullExam = (scores: SkillScores): FullExamGrade => {
 
 /** How many items of a module are still blank — drives the submit warning. */
 export const countUnanswered = (exam: DualLevelExam, module: ExamModule, answers: AnswerMap): number => {
-  const missing = (keys: readonly string[]): number =>
-    keys.filter(key => {
-      const value = answers[key];
-      return value == null || value === '';
-    }).length;
+  const missing = (keys: readonly string[]): number => keys.filter(key => !isAnswered(answers, key)).length;
 
   const keysFor = (length: number, prefix: string): string[] =>
     Array.from({ length }, (_, i) => `${prefix}${String(i)}`);

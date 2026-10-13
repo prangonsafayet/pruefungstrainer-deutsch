@@ -16,6 +16,8 @@ const classify = (rule: LtMatch['rule']): WeaknessCategory => {
 /**
  * Turns LanguageTool's raw matches into a report a learner can read on its own: one entry
  * per span, sorted with the text, classified by what to study rather than which rule fired.
+ *
+ * @public Issue #18 (writing feedback): no screen calls it yet; its unit tests do.
  */
 export const buildErrorReport = (text: string, matches: readonly LtMatch[]): readonly ErrorReportEntry[] => {
   const bySpan = new Map<string, ErrorReportEntry>();

@@ -27,9 +27,12 @@ export const useCopyToClipboard = (): CopyToClipboard => {
     []
   );
 
+  /* "Copied" fades; "failed" stays until the next try, so a screen can keep the text on show
+     for the learner to copy by hand, as the toast tells them to. */
   const show = useCallback((next: CopyStatus) => {
     setStatus(next);
     clearTimeout(timerRef.current);
+    if (next !== 'copied') return;
     timerRef.current = setTimeout(() => {
       setStatus('idle');
     }, FEEDBACK_MS);

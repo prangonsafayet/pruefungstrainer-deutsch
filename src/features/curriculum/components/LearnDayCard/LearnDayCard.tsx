@@ -1,7 +1,6 @@
 import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import CopyTextButton from '@shared/components/actions/CopyTextButton/CopyTextButton.tsx';
 import { cn } from '@shared/lib/cn.ts';
 import { learnTaskKey, learnTaskTarget, learnTaskText } from '@shared/lib/learnProgress.ts';
 import { type ExamModule } from '@shared/types/exam.ts';
@@ -12,6 +11,7 @@ import { Card, CardContent, CardHeader } from '@shared/ui/card.tsx';
 import { Checkbox } from '@shared/ui/checkbox.tsx';
 import { Label } from '@shared/ui/label.tsx';
 
+import CopyTextButton from '@features/curriculum/components/CopyTextButton/CopyTextButton.tsx';
 import { learnDayAnchor } from '@features/curriculum/hooks/useCheatsheetPanel.tsx';
 import { resolveTaskTarget } from '@features/curriculum/lib/taskTarget.ts';
 

@@ -7,6 +7,7 @@ import ModuleBriefingCard from '@shared/components/exam-ui/ModuleBriefingCard/Mo
 import { TRAINERS, trainerHome } from '@shared/config/trainers.ts';
 import { UNTIMED_MODULES } from '@shared/exam-run/config/run.ts';
 import { type ExamFormat, type RunSettings, type StoredAttempt } from '@shared/exam-run/types/examFormat.ts';
+import { plural } from '@shared/lib/format.ts';
 import { useConfirm } from '@shared/providers/useConfirm.tsx';
 import { type AttemptMode, type ExamPaper } from '@shared/types/exam.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
@@ -65,7 +66,7 @@ const ExamRunnerView = <
     const ok = await confirm(
       missing > 0
         ? {
-            title: `${String(missing)} item${missing === 1 ? '' : 's'} still unanswered`,
+            title: `${plural(missing, 'item')} still unanswered`,
             description:
               'In the real exam a blank is a guaranteed zero — a guess costs nothing. Submit anyway?',
             confirmText: 'Submit anyway',

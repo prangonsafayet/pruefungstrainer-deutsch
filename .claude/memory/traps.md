@@ -40,6 +40,16 @@ right area; see `.claude/rules/memory.md`.
   (await work in flight, block new work), not render state.
 - 2026-10-13: a failed clear whose upsert had landed left a newer empty row, so the next merge
   reset every setting (LWW) → on failure re-stamp the local document so its push wins.
+- 2026-10-13: "Delete all progress" left `telcTrainerRecoveryV1` (a set-aside damaged document) behind → every
+  key that holds progress goes on delete; list them against the baseline when adding a wipe path.
+- 2026-10-13: delete while a damaged document was held (no room to set it aside) had its empty document refused
+  in silence; the data came back on reload → a wipe path calls `releaseDamaged()` after the cloud clear succeeds,
+  never on a failed clear, and dismisses the `RECOVERED_TOAST` notice.
+- 2026-10-13: a stored run naming a module the paper lacks bounced home and stayed stored, so Resume looped →
+  validate a resumed run against the consumer (`format.modules`), not just the parser; `parseRun` also refuses an
+  out-of-range `index` or unknown `phase`.
+- 2026-10-13: import dropped kept trainers' `weakness` (a root map keyed by trainer) → a per-trainer map at the root
+  is split per trainer like the slices: file's entry for a replaced trainer, stored entry for a kept one.
 
 ## Lint and config
 
@@ -69,6 +79,9 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-13: a swallowed `catch` hid every storage/sync/mic failure → `local/no-swallowed-catch`
   (rethrow, return, or `logger.*`/`toAppError`) plus `no-empty` `allowEmptyCatch: false`; a
   local rule, because `no-restricted-syntax` cannot look into the block and replaces, not merges.
+- 2026-10-13: `local/no-swallowed-catch` counted a bare `return;` as handling → only `return <expr>` counts now.
+- 2026-10-13: `new URL('..', import.meta.url).pathname` keeps `%20` for a checkout path with a space → use
+  `fileURLToPath`. `check:architecture` now resolves relative specifiers for feature isolation too.
 
 ## Types
 
@@ -148,6 +161,15 @@ right area; see `.claude/rules/memory.md`.
   `@layer components`; prose overrides are unlayered.
 - 2026-10-12: e2e `getByRole` missed a visible link right after a Radix menu item click → Radix
   aria-hides the page until the menu's exit ends; wait for `getByRole('menu')` hidden.
+- 2026-10-13: `decodeURIComponent` on a `URLSearchParams.get` value threw on `%25` inside an effect, before the
+  params were stripped, so every reload crashed → `get` already decodes; strip callback params first.
+- 2026-10-13: the layout's `scrollTo(0,0)` (parent effect, runs after the child's) cancelled the guide's hash
+  scroll → skip the reset when the URL has a hash; keep deps on `pathname` (the skip link changes the hash).
+- 2026-10-13: a hook that reads `new Date()` per render (the header countdown) never moves at midnight → `useToday`.
+  A "hook" that was really a plain function had a unit test calling it bare; once it uses state, test it with
+  `renderHook`.
+- 2026-10-13: state seeded once from `prefersReducedMotion() ? to : 0` froze a changed `to` → read the live
+  preference at return, not only in the initialiser.
 
 ## Exam facts and content
 
@@ -195,6 +217,10 @@ right area; see `.claude/rules/memory.md`.
   app → the reload-once guard refuses when `navigator.onLine` is false.
 - 2026-10-13: a service-worker update in e2e needs no second build and no test hook → copy
   `dist/`, serve it on its own port, append a byte to `sw.js`, call `registration.update()`.
+- 2026-10-13: a legacy `service_role` JWT passed both secret-key checks → JWT segments are base64url; plain `atob`
+  throws on `-`/`_` and the catch read it as "not a JWT". Decode base64url (map, pad); build check in
+  `scripts/supabaseKey.mjs`. The build's own `this.error` is then masked by vite-plugin-pwa's "Couldn't find
+  configuration for either precaching" — the build still fails; read the first plugin line, not the last error.
 
 ## Hooks and tooling
 
@@ -228,6 +254,9 @@ right area; see `.claude/rules/memory.md`.
 - Plan code blocks disagreed with their own tests → a plan's code is unrun code; execute it.
 - Narrowed memo deps changed nothing → write the identity assertion first; revert each half.
 - 2026-10-12: one writer per tree for cross-cutting refactors; subagents stage explicit paths.
+- 2026-10-13: PR #33 review premises checked: all S/P/F/C items held; `coveredLeitpunkte` is not test-only (used
+  by `rubric.ts`), CLAUDE.md already said four trainers. A Schreiben rating card with no sample fell through to
+  the Sprechen branch ("Your recordings") — the `isWriting` nit was a live bug.
 
 ## Concurrency (2026-10-12)
 

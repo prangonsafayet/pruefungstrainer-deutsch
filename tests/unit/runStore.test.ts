@@ -172,6 +172,23 @@ describe('the module queue', () => {
     }
   });
 
+  it('refuses a position past the queue, or a screen the runner does not have', () => {
+    for (const bad of [
+      { index: 1 },
+      { index: -1 },
+      { index: 0.5 },
+      { index: '0' },
+      { phase: 'results' },
+      { phase: undefined }
+    ]) {
+      writeLocal(KEY, JSON.stringify({ ...run(), queue: ['lesen'], ...bad }));
+      expect(store.load('b1')).toBeNull();
+    }
+    /* The positive control: the same run with a valid position and screen loads. */
+    writeLocal(KEY, JSON.stringify({ ...run(), queue: ['lesen'], index: 0, phase: 'rating' }));
+    expect(store.load('b1')?.phase).toBe('rating');
+  });
+
   it('refuses an empty queue, which has no module to open', () => {
     writeLocal(KEY, JSON.stringify({ ...run(), queue: [] }));
     expect(store.load('b1')).toBeNull();

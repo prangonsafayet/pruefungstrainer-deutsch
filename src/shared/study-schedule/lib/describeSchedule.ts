@@ -1,7 +1,7 @@
 /** Human-readable labels for the schedule. Kept out of the components, which stay visual. */
 
 import { MAX_PREP_DAYS, MIN_PREP_DAYS } from '@shared/config/schedule.ts';
-import { parseIsoDate } from '@shared/lib/format.ts';
+import { parseIsoDate, plural } from '@shared/lib/format.ts';
 import { type Schedule, type ScheduleSlot, type SlotKind } from '@shared/types/schedule.ts';
 
 import { splitWorkDays } from './buildSchedule.ts';
@@ -41,13 +41,13 @@ export const describePlanShape = (days: number): string => {
 export const describeClamp = (schedule: Schedule): string | null => {
   if (schedule.phase === 'past-due') {
     const ago = Math.abs(schedule.daysLeft);
-    return `Your exam date was ${String(ago)} day${ago === 1 ? '' : 's'} ago. Set the next one to get a plan.`;
+    return `Your exam date was ${plural(ago, 'day')} ago. Set the next one to get a plan.`;
   }
   if (schedule.clamped === 'above-max') {
     return `Your exam is ${String(schedule.daysLeft)} days away. This plan covers the next ${String(MAX_PREP_DAYS)} days — come back for the rest.`;
   }
   if (schedule.clamped === 'below-min') {
-    return `Only ${String(schedule.daysLeft)} day${schedule.daysLeft === 1 ? '' : 's'} left — this is the emergency plan: crash course, a few papers, then rest.`;
+    return `Only ${plural(schedule.daysLeft, 'day')} left — this is the emergency plan: crash course, a few papers, then rest.`;
   }
   return null;
 };
@@ -62,7 +62,7 @@ export const describeLearnLead = (schedule: Schedule): string => {
     return 'Every scheduled lesson is done — the plan is all mock exams and review from here.';
   }
   const lessonDays = schedule.slots.filter(slot => slot.learnDays.length > 0).length;
-  return `${String(schedule.daysLeft)} days to your exam, so the plan below fits ${String(lessons)} lesson${lessons === 1 ? '' : 's'} into ${String(lessonDays)} study day${lessonDays === 1 ? '' : 's'}. Work through them in order — one box per day.`;
+  return `${String(schedule.daysLeft)} days to your exam, so the plan below fits ${plural(lessons, 'lesson')} into ${plural(lessonDays, 'study day')}. Work through them in order — one box per day.`;
 };
 
 /**

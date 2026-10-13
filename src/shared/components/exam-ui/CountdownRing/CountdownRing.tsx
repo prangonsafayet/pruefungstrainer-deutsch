@@ -17,7 +17,8 @@ const STROKE = 4;
  * A stopwatch-style countdown: the ring drains clockwise as time runs out and shifts colour as
  * the deadline nears, and the time itself is always written beside it. Purely visual — the
  * deadline lives in run state, and the spoken warnings are the runner's live regions, never
- * this element (a timer read out every second is noise).
+ * this element (a timer read out every second is noise). No `aria-label`: it would replace the
+ * visible "mm:ss left" as the name, so a screen reader heard "Time remaining" with no time.
  */
 const CountdownRing = ({ secondsRemaining, totalSeconds, size = 40, className }: CountdownRingProps) => {
   const radius = (size - STROKE) / 2;
@@ -27,12 +28,7 @@ const CountdownRing = ({ secondsRemaining, totalSeconds, size = 40, className }:
   const warning = !critical && secondsRemaining <= WARNING_SECONDS;
 
   return (
-    <span
-      role="timer"
-      aria-live="off"
-      aria-label="Time remaining"
-      className={cn('inline-flex shrink-0 items-center gap-2', className)}
-    >
+    <span role="timer" aria-live="off" className={cn('inline-flex shrink-0 items-center gap-2', className)}>
       <svg width={size} height={size} className="-rotate-90" aria-hidden>
         <circle
           cx={size / 2}

@@ -44,10 +44,13 @@ describe('interpretSignUp', () => {
     expect(interpretSignUp(null, authError('user_already_exists')).kind).toBe('already-registered');
   });
 
-  it('surfaces any other error with its message intact', () => {
+  it('surfaces any other error in our words, not the server text', () => {
     const outcome = interpretSignUp(null, authError('Password should be at least 6 characters'));
     expect(outcome.kind).toBe('failed');
-    expect(outcome).toHaveProperty('message', 'Password should be at least 6 characters');
+    expect(outcome).toHaveProperty(
+      'message',
+      'That password is too weak for the account server. Choose a longer, less common one.'
+    );
   });
 
   it('treats no user and no error as a failure rather than a success', () => {

@@ -1,9 +1,13 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 import { type ExamRun } from '@shared/exam-run/types/run.ts';
 import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
-import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
+import {
+  loadDatabase,
+  PROGRESS_RECOVERY_KEY,
+  PROGRESS_STORAGE_KEY
+} from '@shared/progress-store/lib/progressDb.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
 
 import { bySelector, click, mount, seedProgress } from './harness.ts';
@@ -58,6 +62,8 @@ describe('delete all progress', () => {
     }
     localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(document_));
     for (const trainer of TRAINER_ORDER) runFormatFor(trainer).runStore.save(run(trainer));
+    /* A damaged document set aside on an earlier load: it is progress too. */
+    localStorage.setItem(PROGRESS_RECOVERY_KEY, '{"attempts": [trunc');
   });
 
   it('says what it will really do, then deletes the runs as well as the document', async () => {
@@ -84,6 +90,8 @@ describe('delete all progress', () => {
     for (const trainer of TRAINER_ORDER) {
       expect(runFormatFor(trainer).runStore.load(trainer)).toBeNull();
     }
+    /* Nor the set-aside damaged copy: it used to survive "delete everything". */
+    expect(localStorage.getItem(PROGRESS_RECOVERY_KEY)).toBeNull();
 
     await view.unmount();
   });
@@ -98,7 +106,33 @@ describe('delete all progress', () => {
     for (const trainer of TRAINER_ORDER) {
       expect(runFormatFor(trainer).runStore.load(trainer)?.answers['l1.0']).toBe('a');
     }
+    expect(localStorage.getItem(PROGRESS_RECOVERY_KEY)).not.toBeNull();
 
     await view.unmount();
+  });
+});
+
+describe('delete all progress while a damaged document is held', () => {
+  /* The damaged text could not be copied aside (no room), so every write was held back to keep
+     the original. Delete then had its empty document refused in silence: "All progress deleted"
+     on screen, the damaged text still stored, and the "deleted" data back on the next load. */
+  it('discards the held original, so the empty document is what stays', async () => {
+    localStorage.clear();
+    localStorage.setItem(PROGRESS_STORAGE_KEY, '{"attempts":');
+    const realSetItem = localStorage.setItem.bind(localStorage);
+    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation((key: string, value: string) => {
+      if (key === PROGRESS_RECOVERY_KEY)
+        throw Object.assign(new Error('quota'), { name: 'QuotaExceededError' });
+      realSetItem(key, value);
+    });
+
+    const view = await mount('/settings');
+    await click(bySelector('button').find(button => /Delete all progress/.test(button.textContent ?? '')));
+    await click(dialogButton(/Delete all progress/));
+    await view.unmount();
+    spy.mockRestore();
+
+    expect(storedDocument()['attempts']).toEqual([]);
+    expect(loadDatabase().damaged).toBeNull();
   });
 });

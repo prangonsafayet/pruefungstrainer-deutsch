@@ -16,9 +16,11 @@ const normalizeProjectUrl = (raw: string): string => {
   return trimmed;
 };
 
+/* JWT segments are base64url: plain `atob` threw on `-`/`_`, so a service_role key passed. */
 const decodeJwtPayload = (token: string): string => {
+  const segment = (token.split('.')[1] ?? '').replace(/-/g, '+').replace(/_/g, '/');
   try {
-    return atob(token.split('.')[1] ?? '');
+    return atob(segment.padEnd(Math.ceil(segment.length / 4) * 4, '='));
   } catch {
     return '';
   }

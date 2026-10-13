@@ -22,6 +22,12 @@ export const textAnswer = (answers: AnswerMap, key: string): string => {
   return typeof value === 'string' ? value : '';
 };
 
+/** Whether an item has an answer at all — what every paper's "still unanswered" counts. */
+export const isAnswered = (answers: AnswerMap, key: string): boolean => {
+  const value = answers[key];
+  return value != null && value !== '';
+};
+
 /** Item key builder, so key formats live in one place. */
 export const itemKey = (prefix: string, index: number): string => `${prefix}${String(index)}`;
 

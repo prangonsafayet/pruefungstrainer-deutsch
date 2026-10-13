@@ -12,14 +12,10 @@ import { type AnswerMap } from '@shared/types/progress.ts';
 import { type SingleLevelAttempt, type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
 
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
+import { boolLabel, teilLabel } from '@features/mock-exam/lib/reviewLabels.ts';
 
 const letter = (index: number | undefined): string =>
   index == null ? '—' : (LETTERS[index] ?? String(index + 1));
-
-const boolLabel = (value: boolean | undefined): string | null =>
-  value == null ? null : value ? 'richtig' : 'falsch';
-
-const teilLabel = (teil: number, index: number): string => `Teil ${String(teil)} · ${String(index + 1)}`;
 
 const lesenRows = (exam: SingleLevelExam, answers: AnswerMap): readonly ReviewRow[] => {
   const { teil1, teil2, teil3 } = exam.lesen;

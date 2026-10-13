@@ -54,6 +54,12 @@ export const planImport = (current: ProgressDatabase, parsed: unknown): ImportPl
   const replaces: TrainerId[] = [];
   const keeps: TrainerId[] = [];
   const next: Partial<Record<string, unknown>> = { ...file };
+  /* The weakness profile sits at the root, keyed by trainer, so it is split the same way:
+     the file's entry for a trainer it speaks for, the stored one for a trainer it keeps. */
+  const fileWeakness = file['weakness'];
+  const weakness: Partial<Record<string, unknown>> = isPlainObject(fileWeakness)
+    ? { ...(fileWeakness as Partial<Record<string, unknown>>) }
+    : {};
 
   for (const trainer of TRAINER_ORDER) {
     if (mentions(file, trainer)) {
@@ -61,6 +67,9 @@ export const planImport = (current: ProgressDatabase, parsed: unknown): ImportPl
       continue;
     }
     keeps.push(trainer);
+    const keptProfile = current.weakness?.[trainer];
+    if (keptProfile === undefined) Reflect.deleteProperty(weakness, trainer);
+    else weakness[trainer] = keptProfile;
     const docKey = TRAINERS[trainer].docKey;
     if (docKey === null) {
       for (const field of ROOT_SLICE_FIELDS) next[field] = current[field];
@@ -73,6 +82,7 @@ export const planImport = (current: ProgressDatabase, parsed: unknown): ImportPl
      wrong file. Refusing it beats importing it as "no progress" over everything stored. */
   if (replaces.length === 0) return null;
 
+  next['weakness'] = weakness;
   return { database: normalizeDatabase(next), replaces, keeps };
 };
 

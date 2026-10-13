@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { basename, dirname, join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Architecture checks about the shape of the tree, which ESLint (a file-at-a-time linter)
@@ -25,7 +26,8 @@ import { basename, dirname, join, relative, sep } from 'node:path';
  *                     `SyncSignInCard`). A deliberate pair goes in ALLOWED_TWINS with its reason.
  */
 
-const ROOT = new URL('..', import.meta.url).pathname;
+/* fileURLToPath, not `.pathname`: a checkout path with a space would stay `%20`. */
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SRC = join(ROOT, 'src');
 
 /** `<File>.tsx` names two files may legitimately share, each with its reason. */
@@ -93,11 +95,19 @@ for (const feature of features) {
   }
 }
 
-const SPECIFIER = /(?:from\s+|import\s*\(\s*)['"](@features\/[^'"]+)['"]/g;
+/* Alias and relative specifiers alike: a relative one is resolved, so `../other` that lands in
+   another feature is caught too. */
+const SPECIFIER = /(?:from\s+|import\s*\(\s*)['"]((?:@features\/|\.{1,2}\/)[^'"]+)['"]/g;
+const featureOf = (file, spec) => {
+  if (spec.startsWith('@features/')) return spec.split('/')[1];
+  const target = join(dirname(file), spec).split(sep).join('/');
+  return target.startsWith('src/features/') ? target.split('/')[2] : null;
+};
 for (const file of files.filter(path => /^src\/features\/[^/]+\/.*\.tsx?$/.test(path))) {
   const own = file.split('/')[2];
   for (const [, spec] of readFileSync(join(ROOT, file), 'utf8').matchAll(SPECIFIER)) {
-    if (!spec.startsWith(`@features/${own}/`)) {
+    const target = featureOf(file, spec);
+    if (target !== null && target !== own) {
       fail(
         'feature-isolation',
         `${file}: imports ${spec} — features never import each other; move shared code to src/shared`

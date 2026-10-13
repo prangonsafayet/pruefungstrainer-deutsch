@@ -9,6 +9,8 @@ import { Input } from '@shared/ui/input.tsx';
 import { Label } from '@shared/ui/label.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs.tsx';
 
+const MODES = ['signin', 'signup'] as const satisfies readonly AuthMode[];
+
 /** Email + password sign-in and sign-up, as two tabs over one form. */
 const PasswordAuthForm = () => {
   const auth = usePasswordAuth();
@@ -23,7 +25,8 @@ const PasswordAuthForm = () => {
     <Tabs
       value={auth.mode}
       onValueChange={value => {
-        auth.setMode(value as AuthMode);
+        const next = MODES.find(mode => mode === value);
+        if (next) auth.setMode(next);
       }}
     >
       <TabsList className="w-full">
@@ -35,7 +38,7 @@ const PasswordAuthForm = () => {
         </TabsTrigger>
       </TabsList>
 
-      {(['signin', 'signup'] as const).map(mode => (
+      {MODES.map(mode => (
         <TabsContent key={mode} value={mode} className="space-y-3">
           <SignUpNotice feedback={auth.signUpFeedback} busy={auth.busy} onResend={auth.resendConfirmation} />
           <div className="space-y-1.5">

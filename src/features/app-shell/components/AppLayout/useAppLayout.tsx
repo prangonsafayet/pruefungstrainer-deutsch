@@ -25,7 +25,7 @@ import { useUpdatePrompt } from './useUpdatePrompt.tsx';
 export const useAppLayout = () => {
   const { db, dbRef, replaceLocal } = useProgress();
   const sync = useCloudSync({ dbRef, replaceLocal, updatedAt: db._updatedAt });
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const headerRef = useHeaderHeight<HTMLElement>();
   const mainRef = useRef<HTMLElement | null>(null);
 
@@ -33,10 +33,12 @@ export const useAppLayout = () => {
   const { trainer, home } = useActiveTrainer();
   const { settings } = useTrainerSlice(trainer.id);
 
-  /* Every navigation starts at the top and with the speaker silent. */
+  /* Every navigation starts at the top and with the speaker silent — except at a `#section`:
+     this effect runs after the page's own, so it used to cancel the guide's hash scroll. */
   useEffect(() => {
     stopSpeech();
-    window.scrollTo(0, 0);
+    if (!hash) window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- per page, not per in-page anchor (the skip link changes the hash mid-exam)
   }, [pathname]);
 
   usePageFocus(pathname, mainRef, trainer.name);

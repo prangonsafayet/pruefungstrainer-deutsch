@@ -88,8 +88,13 @@ const AttemptTable = ({ model }: AttemptTableProps) => {
               ))}
               <TableCell>
                 <Button asChild variant="ghost" size="sm">
+                  {/* Every row's link would otherwise be named just "Review". */}
                   <Link to={row.reviewTo}>
                     <ListChecks /> Review
+                    <VisuallyHidden>
+                      {' '}
+                      {row.cells[1]?.text}, {row.cells[0]?.text}
+                    </VisuallyHidden>
                   </Link>
                 </Button>
               </TableCell>

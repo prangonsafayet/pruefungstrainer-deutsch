@@ -12,7 +12,7 @@ import {
 
 import { useActiveTrainer } from '@features/app-shell/hooks/useActiveTrainer.tsx';
 
-/** Switches between the three trainers; each one owns its own area of the app. */
+/** Switches between the trainers; each one owns its own area of the app. */
 const TrainerSwitcher = () => {
   const { trainer: active, trainers, switchTo } = useActiveTrainer();
 

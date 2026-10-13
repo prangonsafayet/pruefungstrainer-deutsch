@@ -70,7 +70,7 @@ popup). `/assets/*` is immutable; `/` and `/index.html` are `no-cache`.
 | `script-src`  | `'self'` + one `'sha256-…'`                                                       | the pre-paint theme script in `index.html`; no `unsafe-inline`                                          |
 | `style-src`   | `'self' 'unsafe-inline'`                                                          | sonner and Radix's scroll lock (`react-style-singleton`) inject `<style>` elements with runtime content |
 | `img-src`     | `'self' data: blob:` + `*.googleusercontent.com`, `avatars.githubusercontent.com` | OAuth provider avatars in the account menu                                                              |
-| `connect-src` | `'self'` + `https://*.supabase.co`, `https://api.languagetool.org`                | auth + sync REST (no realtime, so no `wss:`), writing feedback                                          |
+| `connect-src` | `'self'` + `https://*.supabase.co`, `https://api.languagetool.org`                | auth + sync REST (no realtime, so no `wss:`), writing feedback (issue #18: client built, no caller yet) |
 | `media-src`   | `'self' blob:`                                                                    | playback of the recorder's blob URL                                                                     |
 
 Also: `font-src 'self'` (fonts are self-hosted), `worker-src` and `manifest-src 'self'`,

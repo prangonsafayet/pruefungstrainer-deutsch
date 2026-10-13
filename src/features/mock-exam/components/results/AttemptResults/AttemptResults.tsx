@@ -5,7 +5,6 @@ import CountedNumber from '@shared/components/data-display/CountedNumber/Counted
 import ScoreMeter from '@shared/components/data-display/ScoreMeter/ScoreMeter.tsx';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { type ExamFormat, type RunSettings, type StoredAttempt } from '@shared/exam-run/types/examFormat.ts';
-import { useAnnouncement } from '@shared/hooks/useAnnouncement.tsx';
 import { cn } from '@shared/lib/cn.ts';
 import { fmtClock } from '@shared/lib/format.ts';
 import { type AttemptMode, type ExamPaper } from '@shared/types/exam.ts';
@@ -16,6 +15,7 @@ import { Card, CardContent } from '@shared/ui/card.tsx';
 import { withTrainer } from '@features/mock-exam/lib/withTrainer.ts';
 
 import { BARS_ANIMATION_DELAY, GRADE_TONE_CLASS, SCORE_COUNT_UP_MS, verdictSentence } from './results.ts';
+import { useAnnouncement } from './useAnnouncement.tsx';
 
 interface AttemptResultsProps<
   TExam extends ExamPaper,
@@ -135,9 +135,7 @@ const AttemptResults = <
                 />
               ))}
             </div>
-            <p className="text-sm text-muted-foreground">
-              The thin mark on each bar is that part’s pass line.
-            </p>
+            <p className="text-sm text-muted-foreground">{summary.markNote}</p>
           </CardContent>
         </Card>
       </section>

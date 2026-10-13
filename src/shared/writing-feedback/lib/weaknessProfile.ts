@@ -13,6 +13,8 @@ import {
  * an attempt full of case errors cannot erase what the learner did last week. That matters
  * more here than it looks — the result is persisted and then merged by cloud sync, so
  * anything dropped is dropped on every device.
+ *
+ * @public Issue #18 (writing feedback): no screen calls it yet; its unit tests do.
  */
 export const recordWeaknesses = (
   profile: WeaknessProfile,
@@ -35,6 +37,8 @@ export const recordWeaknesses = (
  * order the keys happen to sit in: this profile is JSON that may have been written by another
  * device, so key order carries no meaning and two devices holding identical counts have to
  * rank them identically.
+ *
+ * @public Issue #18 (writing feedback): no screen calls it yet; its unit tests do.
  */
 export const topWeaknesses = (profile: WeaknessProfile, count: number): readonly WeaknessCategory[] =>
   (Object.entries(profile) as readonly [WeaknessCategory, WeaknessEntry | undefined][])

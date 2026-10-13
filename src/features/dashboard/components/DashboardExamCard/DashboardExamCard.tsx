@@ -1,7 +1,7 @@
 import { CalendarClock, PlayCircle, RotateCcw, Trophy } from 'lucide-react';
 
 import { type AttemptMode } from '@shared/types/exam.ts';
-import { Badge, type BadgeVariant } from '@shared/ui/badge.tsx';
+import { Badge } from '@shared/ui/badge.tsx';
 import { Button } from '@shared/ui/button.tsx';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select.tsx';
@@ -13,13 +13,6 @@ interface DashboardExamCardProps {
   readonly onStart: (examId: number, mode: AttemptMode) => void;
 }
 
-/** `today` earns the loud badge; a future date is quieter; optional is quietest. */
-const scheduleTone = (label: string): BadgeVariant => {
-  if (label === 'today') return 'default';
-  if (label === 'tomorrow') return 'info';
-  return label === 'optional' ? 'outline' : 'secondary';
-};
-
 /** One Modelltest of any trainer: how it went, where the plan puts it, and how to start it. */
 const DashboardExamCard = ({ card, onStart }: DashboardExamCardProps) => (
   <Card className="card-hover relative gap-4 overflow-hidden">
@@ -30,9 +23,9 @@ const DashboardExamCard = ({ card, onStart }: DashboardExamCardProps) => (
         <Badge variant={card.badgeTone}>{card.badge}</Badge>
       </div>
       <CardDescription>{card.theme}</CardDescription>
-      {card.scheduleLabel ? (
+      {card.scheduleLabel && card.scheduleTone ? (
         <div>
-          <Badge variant={scheduleTone(card.scheduleLabel)}>
+          <Badge variant={card.scheduleTone}>
             <CalendarClock aria-hidden /> {card.scheduleLabel}
           </Badge>
         </div>

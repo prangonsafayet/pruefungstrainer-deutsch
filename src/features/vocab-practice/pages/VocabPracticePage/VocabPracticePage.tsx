@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import PageTitle from '@shared/components/layout/PageTitle/PageTitle.tsx';
 import { TRAINERS } from '@shared/config/trainers.ts';
+import { plural } from '@shared/lib/format.ts';
 import { type TrainerId } from '@shared/types/trainer.ts';
 import { Button } from '@shared/ui/button.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs.tsx';
@@ -96,8 +97,8 @@ const VocabPracticePage = ({ trainer }: VocabPracticePageProps) => {
       <PageTitle
         lead={
           <>
-            {String(practice.mastery.due)} item{practice.mastery.due === 1 ? '' : 's'} due today. Flashcards
-            and quizzes feed the same spaced-repetition schedule; the tables are for looking things up.
+            {plural(practice.mastery.due, 'item')} due today. Flashcards and quizzes feed the same
+            spaced-repetition schedule; the tables are for looking things up.
           </>
         }
       >

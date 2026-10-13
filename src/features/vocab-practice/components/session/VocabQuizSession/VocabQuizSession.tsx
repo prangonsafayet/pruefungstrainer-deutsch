@@ -7,6 +7,7 @@ import { Card, CardContent } from '@shared/ui/card.tsx';
 import { Progress } from '@shared/ui/progress.tsx';
 
 import PracticeSessionSummary from '@features/vocab-practice/components/session/PracticeSessionSummary/PracticeSessionSummary.tsx';
+import { focusOnMount } from '@features/vocab-practice/lib/focusOnMount.ts';
 import { type QuizSession as QuizSessionState } from '@features/vocab-practice/lib/practiceStore.ts';
 
 interface VocabQuizSessionProps {
@@ -17,11 +18,6 @@ interface VocabQuizSessionProps {
   readonly onRestart: () => void;
   readonly onClose: () => void;
 }
-
-/* A stable callback ref: runs when its element mounts, not on every render. */
-const focusOnMount = (node: HTMLElement | null): void => {
-  node?.focus({ preventScroll: true });
-};
 
 /** The quiz run: one question at a time with instant feedback and an explanation. */
 const VocabQuizSession = ({ session, done, onChoose, onNext, onRestart, onClose }: VocabQuizSessionProps) => {

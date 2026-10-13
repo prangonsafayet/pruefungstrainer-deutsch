@@ -15,7 +15,10 @@ import {
 import { DTZ_FORMAT } from '@features/mock-exam/lib/formats/dtz-paper/format.ts';
 import { DUAL_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/dual-level/format.ts';
 import { SINGLE_LEVEL_FORMAT } from '@features/mock-exam/lib/formats/single-level/format.ts';
+import { type DtzFormat } from '@features/mock-exam/types/examBinding.ts';
 import { type RatingSpec } from '@shared/exam-run/types/examFormat.ts';
+import { type DtzAttempt, type DtzExam } from '@shared/types/dtzExam.ts';
+import { type LevelTrainerSettings } from '@shared/types/trainer.ts';
 
 /*
  * Schreiben and Sprechen are not marked by the app — the candidate marks them, and this hook
@@ -175,5 +178,45 @@ describe('the self-rating maths', () => {
 
     expect(live().values).toHaveLength(spec.criteria.length);
     expect(live().total).toBe(before);
+  });
+});
+
+describe('the self-scoring screen', () => {
+  /* The card branched on `isWriting && sample`, so a Schreiben paper without a sample fell
+     through to the Sprechen branch and showed "Your recordings" instead of the text. */
+  it('shows the written text for Schreiben even when the paper has no sample answer', async () => {
+    const { default: SelfRatingCard } =
+      await import('@features/mock-exam/components/rating/SelfRatingCard/SelfRatingCard.tsx');
+    const { DTZ_PAPER_EXAMS } = await import('@content/trainerContent.ts');
+    const exam = DTZ_PAPER_EXAMS[0];
+    if (!exam) throw new Error('the DTZ trainer needs an authored paper');
+    const format: DtzFormat = {
+      ...DTZ_FORMAT,
+      scoring: { ...DTZ_FORMAT.scoring, writingSample: () => null }
+    };
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        createElement(SelfRatingCard<DtzExam, LevelTrainerSettings, DtzAttempt>, {
+          format,
+          module: 'schreiben',
+          exam,
+          answers: { 'w.text': 'Liebe Frau Weber' },
+          recordings: {},
+          onConfirm: () => undefined
+        })
+      );
+    });
+
+    expect(container.textContent).toContain('Your text');
+    expect(container.textContent).toContain('Liebe Frau Weber');
+    expect(container.textContent).not.toContain('Your recordings');
+    await act(async () => {
+      root.unmount();
+    });
+    container.remove();
   });
 });

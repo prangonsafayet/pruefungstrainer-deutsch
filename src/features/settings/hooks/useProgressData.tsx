@@ -5,9 +5,16 @@ import { toast } from 'sonner';
 import { useSync } from '@shared/account-sync/hooks/useSync.tsx';
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { clearAllRuns } from '@shared/exam-run/lib/runFormats.ts';
+import { removeLocal } from '@shared/lib/storage.ts';
 import { useProgress } from '@shared/progress-store/hooks/useProgress.tsx';
 import { useProgressBackup } from '@shared/progress-store/hooks/useProgressBackup.tsx';
-import { EMPTY_DATABASE, stamp } from '@shared/progress-store/lib/progressDb.ts';
+import { RECOVERED_TOAST } from '@shared/progress-store/hooks/useProgressNotices.tsx';
+import {
+  EMPTY_DATABASE,
+  PROGRESS_RECOVERY_KEY,
+  releaseDamaged,
+  stamp
+} from '@shared/progress-store/lib/progressDb.ts';
 import { useConfirm } from '@shared/providers/useConfirm.tsx';
 
 import { describeDelete } from '@features/settings/lib/describeDelete.ts';
@@ -63,6 +70,14 @@ export const useProgressData = (): ProgressDataState => {
     /* The run in progress is stored under its own key, so emptying the document left a
        half-finished attempt — answers and typed text included — behind it. */
     clearAllRuns();
+    /* So is a damaged document once set aside for download: "everything in this browser" goes. */
+    removeLocal(PROGRESS_RECOVERY_KEY);
+    /* A damaged document that could not be set aside holds every write back; deleting is the
+       learner discarding it, so release the hold — or the empty document is refused, the
+       damaged text stays, and the "deleted" data is back on reload. Only after the cloud clear
+       succeeded: a failed clear returns above with the hold intact. */
+    releaseDamaged();
+    toast.dismiss(RECOVERED_TOAST);
     replaceLocal(empty);
 
     toast.success(

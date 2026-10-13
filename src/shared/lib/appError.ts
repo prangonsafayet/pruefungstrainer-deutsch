@@ -18,6 +18,13 @@ export type AppErrorCode =
   | 'sync-denied'
   | 'sync-rate-limited'
   | 'sync-failed'
+  | 'auth-offline'
+  | 'auth-rate-limited'
+  | 'auth-bad-credentials'
+  | 'auth-email-not-confirmed'
+  | 'auth-weak-password'
+  | 'auth-denied'
+  | 'auth-failed'
   | 'mic-denied'
   | 'mic-missing'
   | 'mic-unsupported'
@@ -56,6 +63,16 @@ const MESSAGES: Record<AppErrorCode, string> = {
   'sync-rate-limited': 'Too many sync requests just now. Wait a minute, then retry — nothing is lost.',
   'sync-failed':
     'Could not reach the cloud database. Your progress is saved in this browser and will sync next time.',
+  'auth-offline':
+    "You're offline, so the account server could not be reached. Try again when you're back online.",
+  'auth-rate-limited': 'Too many requests just now. Wait a minute, then try again.',
+  'auth-bad-credentials': 'Email or password is incorrect. Check both, or use "Forgot password?".',
+  'auth-email-not-confirmed': 'Confirm your email address first — check your inbox for the link.',
+  'auth-weak-password': 'That password is too weak for the account server. Choose a longer, less common one.',
+  'auth-denied':
+    'Sign-in was cancelled or refused at the provider. Try again, or sign in with email and password.',
+  'auth-failed':
+    'The account server did not accept the request. Try again in a moment — your progress is safe in this browser.',
   'mic-denied':
     'Microphone access is blocked. Allow it from the lock icon in the address bar, then press Record again — or speak out loud and rate yourself.',
   'mic-missing':

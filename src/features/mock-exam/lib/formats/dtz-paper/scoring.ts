@@ -5,6 +5,7 @@
  */
 
 import { DTZ_PART_LINES, type DtzPartLine } from '@shared/config/dtzExam.ts';
+import { isAnswered } from '@shared/lib/answers.ts';
 import { type DtzExam, type DtzLevel, type DtzResult, type DtzSectionScores } from '@shared/types/dtzExam.ts';
 import { type ExamModule } from '@shared/types/exam.ts';
 import { type AnswerMap } from '@shared/types/progress.ts';
@@ -62,8 +63,5 @@ export const gradeFullExam = (scores: DtzSectionScores): DtzGrade => {
 export const countUnanswered = (exam: DtzExam, module: ExamModule, answers: AnswerMap): number => {
   /* Schreiben and Sprechen are self-scored; DTZ has no Sprachbausteine. */
   if (module !== 'hoeren' && module !== 'lesen') return 0;
-  return dtzItems(exam, module).filter(item => {
-    const value = answers[item.key];
-    return value == null || value === '';
-  }).length;
+  return dtzItems(exam, module).filter(item => !isAnswered(answers, item.key)).length;
 };

@@ -58,7 +58,9 @@ const SelfRatingCard = <
         </p>
       </div>
 
-      {isWriting && sample ? (
+      {/* Writing first: a Schreiben paper without a sample still shows the text, never the
+          speaking recordings. */}
+      {isWriting ? (
         <Card>
           <CardHeader>
             <CardTitle>Your text</CardTitle>
@@ -67,24 +69,28 @@ const SelfRatingCard = <
             <div lang="de" className="rounded-xl bg-muted p-4 leading-relaxed">
               <MultilineText text={writtenText || '(empty)'} />
             </div>
-            <div>
-              <h3 className="mb-2 font-bold">Sample answer (Musterlösung)</h3>
-              <div
-                lang="de"
-                className="rounded-xl border-l-4 border-success bg-[color-mix(in_oklab,var(--success)_8%,var(--card))] p-4 leading-relaxed"
-              >
-                <MultilineText text={sample.musterloesung} />
-              </div>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
-              {sample.tipps}
-              <ul className="mt-1 list-disc pl-5">
-                {sample.points.map((point, index) => (
-                  <li key={index}>{point}</li>
-                ))}
-              </ul>
-            </div>
+            {sample ? (
+              <>
+                <div>
+                  <h3 className="mb-2 font-bold">Sample answer (Musterlösung)</h3>
+                  <div
+                    lang="de"
+                    className="rounded-xl border-l-4 border-success bg-[color-mix(in_oklab,var(--success)_8%,var(--card))] p-4 leading-relaxed"
+                  >
+                    <MultilineText text={sample.musterloesung} />
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
+                  {sample.tipps}
+                  <ul className="mt-1 list-disc pl-5">
+                    {sample.points.map((point, index) => (
+                      <li key={index}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            ) : null}
           </CardContent>
         </Card>
       ) : (

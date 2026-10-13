@@ -10,3 +10,4 @@ One dated line per lesson. Read before reviewing; append when a premise was wron
 - 2026-10-12: A token/type swap can narrow a union and change appearance (`BadgeTone` dropped `'default'`).
 - 2026-10-12: Binary format ternaries silently treat a third paper (DTZ) as dual-level — require exhaustive switches.
 - 2026-10-12: Persisted-data changes go to persistence-guardian, not a checklist pass.
+- 2026-10-13: auth-js `signOut` removes the local session even when server revocation fails — "failed sign-out leaves you signed in" is not a bug; read node_modules before filing.

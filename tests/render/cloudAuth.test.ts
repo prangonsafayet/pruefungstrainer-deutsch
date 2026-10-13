@@ -129,14 +129,31 @@ const lastToast = (): Toast | undefined => toasts.at(-1);
 describe('password sign-in', () => {
   it.each([
     [null, true, 'Signed in', ''],
-    ['Invalid login credentials', false, 'Could not sign in', 'Email or password is incorrect.'],
+    [
+      'Invalid login credentials',
+      false,
+      'Could not sign in',
+      'Email or password is incorrect. Check both, or use "Forgot password?".'
+    ],
     [
       'Email not confirmed',
       false,
       'Could not sign in',
       'Confirm your email address first — check your inbox for the link.'
     ],
-    ['Database error', false, 'Could not sign in', 'Database error']
+    /* Raw server text never reaches the learner: it is logged, and they read our words. */
+    [
+      'Database error',
+      false,
+      'Could not sign in',
+      'The account server did not accept the request. Try again in a moment — your progress is safe in this browser.'
+    ],
+    [
+      'Failed to fetch',
+      false,
+      'Could not sign in',
+      "You're offline, so the account server could not be reached. Try again when you're back online."
+    ]
   ])('%s → %s', async (message, succeeds, title, description) => {
     replies.set('signIn', { error: message === null ? null : { message } });
     const hook = await mountSync();
@@ -189,7 +206,11 @@ describe('sign-up', () => {
       outcome = await hook.current().signUpWithPassword('learner@example.test', 'Correct-Horse-9');
     });
 
-    expect(outcome).toEqual({ kind: 'failed', message: 'signUp crashed' });
+    expect(outcome).toEqual({
+      kind: 'failed',
+      message: expect.stringMatching(/^The account server did not accept the request/) as unknown
+    });
+    expect(lastToast()?.description).not.toMatch(/crashed/);
   });
 });
 
@@ -203,7 +224,7 @@ describe('resending the confirmation and resetting the password', () => {
       /try again in 51 seconds/
     ],
     ['Email rate limit exceeded', false, 'warning', /wait a minute/],
-    ['Mailer down', false, 'error', /^Mailer down$/]
+    ['Mailer down', false, 'error', /^The account server did not accept the request/]
   ])('resend with %s', async (message, succeeds, kind, description) => {
     replies.set('resend', { error: message === null ? null : { message } });
     const hook = await mountSync();
@@ -225,7 +246,8 @@ describe('resending the confirmation and resetting the password', () => {
 
     replies.set('reset', { error: { message: 'Mailer down' } });
     await hook.act(() => hook.current().sendPasswordReset('learner@example.test'));
-    expect(lastToast()).toMatchObject({ kind: 'error', description: 'Mailer down' });
+    expect(lastToast()?.kind).toBe('error');
+    expect(lastToast()?.description).toMatch(/^The account server did not accept the request/);
   });
 });
 
@@ -241,13 +263,14 @@ describe('provider sign-in', () => {
     expect(hook.current().pendingProvider).toBeNull();
   });
 
-  it('reports any other failure as is', async () => {
+  it('reports any other failure in our words, never the raw text', async () => {
     replies.set('oauth', { error: { message: 'network down' } });
     const hook = await mountSync();
 
     await hook.act(() => hook.current().signInWithProvider('github'));
 
-    expect(lastToast()).toMatchObject({ title: 'Could not start sign-in', description: 'network down' });
+    expect(lastToast()?.title).toBe('Could not start sign-in');
+    expect(lastToast()?.description).toMatch(/^The account server did not accept the request/);
   });
 });
 

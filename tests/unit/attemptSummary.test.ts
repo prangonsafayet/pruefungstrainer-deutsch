@@ -115,6 +115,14 @@ describe('summarizeAttempt — the DTZ paper', () => {
     /* Hören alone has no official line: its mark is labelled as this trainer's target. */
     expect(summary.bars[0]?.thresholdLabel).toContain("this trainer's target");
   });
+
+  it('says under the bars that the Hören and Lesen marks are a target, not a pass line', () => {
+    /* The results card said "that part's pass line" for every bar of every paper. */
+    expect(summary.markNote).toMatch(/pace this trainer sets/);
+    expect(summary.markNote).not.toMatch(/pass line/);
+    expect(summarizeSingleLevel(singleLevelAttempt).markNote).toMatch(/pass line/);
+    expect(summarizeDualLevel(dualLevelAttempt).markNote).toMatch(/pass line/);
+  });
 });
 
 /*

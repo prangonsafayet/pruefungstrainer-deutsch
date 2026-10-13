@@ -48,7 +48,7 @@ export const buildAttempt = ({
 export const completionToast = (exam: DtzExam, attempt: DtzAttempt): CompletionToast => {
   if (attempt.result != null) {
     const { scores } = attempt;
-    const hoerenLesen = (scores.hoeren ?? 0) + (scores.lesen ?? 0);
+    const { hoerenLesen } = gradeFullExam(scores);
     return {
       tone: attempt.result === 'unter A2' ? 'info' : 'success',
       title: `${exam.title} finished — ${attempt.result}`,

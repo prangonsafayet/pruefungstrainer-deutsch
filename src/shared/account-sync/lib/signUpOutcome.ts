@@ -1,5 +1,7 @@
 import { type AuthError, type User } from '@supabase/supabase-js';
 
+import { classifyAuthError } from '@shared/account-sync/lib/authError.ts';
+
 /**
  * What actually happened when we called `signUp`.
  *
@@ -39,7 +41,8 @@ export const interpretSignUp = (response: SignUpResponse | null, error: AuthErro
     if (/already registered|already exists|user_already_exists/i.test(error.message)) {
       return { kind: 'already-registered' };
     }
-    return { kind: 'failed', message: error.message };
+    /* In our words: the raw text is Supabase's, not written for a learner. */
+    return { kind: 'failed', message: classifyAuthError(error).message };
   }
 
   if (!response?.user) return { kind: 'failed', message: 'Sign-up did not return an account.' };

@@ -13,7 +13,7 @@
 
 /** Everything that goes, whether or not an account is involved. */
 const LOCAL =
-  'Everything stored in this browser goes: every attempt and score, every learn-plan tick of every trainer, and any exam in progress. Exam conditions return to their defaults.';
+  'Everything stored in this browser goes: every attempt and score, every learn-plan tick of every trainer, any exam in progress, and any damaged copy set aside for download. Exam conditions return to their defaults.';
 
 /**
  * The dialog's description. `signedIn` decides the second half, because that is where the

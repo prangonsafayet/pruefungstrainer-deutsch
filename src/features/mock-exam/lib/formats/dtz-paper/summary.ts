@@ -93,6 +93,9 @@ export const summarizeAttempt = (attempt: DtzAttempt): AttemptSummary => {
     bars: scoreBars,
     thresholdPercent: PASS_PERCENT['dtz-paper'],
     thresholdLabel: passLineLabel('dtz-paper'),
+    /* Hören and Lesen have no line of their own (only their sum does): theirs is a target. */
+    markNote:
+      'The thin mark on each bar is where B1 starts for that part. Hören and Lesen alone have no line of their own — their mark is a pace this trainer sets.',
     moduleTimes,
     grade: gradeFor(attempt),
     headlineScore: firstBar ? String(firstBar.value) : '–',

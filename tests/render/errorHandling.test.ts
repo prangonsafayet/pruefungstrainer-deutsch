@@ -159,6 +159,22 @@ describe('Settings → Copy diagnostics', () => {
     expect(report).toContain('WARN [auth] Sign-in failed for [email]');
     expect(report).not.toContain('lena@example.de');
     expect(findByText(/Diagnostics copied/)).toBeDefined();
+    expect(app.container.querySelector('textarea')).toBeNull();
+    await app.unmount();
+  });
+
+  it('shows the report to copy by hand when the clipboard refuses it', async () => {
+    /* The toast said "select the text and copy it by hand", but the report was never on screen. */
+    const writeText = vi.fn<Clipboard['writeText']>(() => Promise.reject(new Error('denied')));
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+
+    const app = await mount('/settings');
+    await click(findByText(/Copy diagnostics/));
+    await settle();
+
+    const report = app.container.querySelector('textarea');
+    expect(report?.readOnly).toBe(true);
+    expect(report?.value).toMatch(/^telc trainer diagnostics\nBuild: v\d/);
     await app.unmount();
   });
 });

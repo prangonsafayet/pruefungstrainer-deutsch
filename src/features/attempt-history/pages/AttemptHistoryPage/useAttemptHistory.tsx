@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { TRAINERS } from '@shared/config/trainers.ts';
+import { plural } from '@shared/lib/format.ts';
 import { buildScoreChart } from '@shared/lib/scoreChart.ts';
 import { useTrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
 import { type ScoreChartModel } from '@shared/types/scoreChart.ts';
@@ -27,7 +28,7 @@ export const useAttemptHistory = (trainer: TrainerId): AttemptHistory => {
     const practice = slice.attempts.length - full;
     return {
       heading: `History · ${short}`,
-      lead: `Every attempt in the ${name} trainer — ${String(full)} full exam${full === 1 ? '' : 's'} and ${String(practice)} module practice run${practice === 1 ? '' : 's'}, with the time you actually used.`,
+      lead: `Every attempt in the ${name} trainer — ${plural(full, 'full exam')} and ${plural(practice, 'module practice run')}, with the time you actually used.`,
       chart: buildScoreChart(slice),
       table: buildAttemptTable(slice, basePath)
     };

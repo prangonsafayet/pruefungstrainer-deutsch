@@ -84,7 +84,9 @@ export const useScheduledLearn = (trainer: TrainerId): ScheduledLearn => {
       lead: describeLearnLead(schedule),
       notice: describeClamp(schedule),
       groups,
-      extra: lookup(schedule.unscheduledLearnDays),
+      /* No slot holds a lesson (exam today or tomorrow): the page lists `pending` instead, and
+         these same days again would render every card twice, ids and all. */
+      extra: groups.length > 0 ? lookup(schedule.unscheduledLearnDays) : [],
       done: complete,
       pending
     };

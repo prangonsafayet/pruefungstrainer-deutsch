@@ -9,6 +9,7 @@ import {
   SINGLE_LEVEL_POINTS,
   SINGLE_LEVEL_WRITTEN_PASS
 } from '@shared/config/singleLevelExam.ts';
+import { isAnswered, itemKey } from '@shared/lib/answers.ts';
 import { type ExamModule } from '@shared/types/exam.ts';
 import { type AnswerMap } from '@shared/types/progress.ts';
 import {
@@ -104,8 +105,7 @@ export const countUnanswered = (exam: SingleLevelExam, module: ExamModule, answe
   const missing = (length: number, prefix: string): number => {
     let blanks = 0;
     for (let index = 0; index < length; index += 1) {
-      const value = answers[`${prefix}${String(index)}`];
-      if (value == null || value === '') blanks += 1;
+      if (!isAnswered(answers, itemKey(prefix, index))) blanks += 1;
     }
     return blanks;
   };

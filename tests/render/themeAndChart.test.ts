@@ -73,6 +73,14 @@ describe('the score history chart', () => {
     expect(table?.querySelectorAll('tbody tr').length).toBe(3);
     expect(table?.querySelector('caption')?.textContent).toBe('Lines: 240, 168 · B1, 96 · A2.');
     expect(table?.textContent).toContain('180 / 240');
+
+    /* Each attempt's Review link says which attempt it opens, not just "Review". */
+    const reviews = [...page.container.querySelectorAll('table:not(details table) a')].map(
+      link => link.textContent
+    );
+    expect(reviews).toHaveLength(3);
+    expect(new Set(reviews).size).toBe(3);
+    expect(reviews[0]?.trim()).toMatch(/^Review T3, \d/);
     await page.unmount();
   });
 });

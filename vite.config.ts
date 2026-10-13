@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import { crawlerDisallows, sitemapPages } from './scripts/siteMeta.mjs';
+import { isSecretSupabaseKey } from './scripts/supabaseKey.mjs';
 import { trainerBasePaths } from './scripts/trainerRegistry.mjs';
 
 /* VITE_* values are inlined at build time, so a build that runs without them produces a
@@ -74,9 +75,9 @@ const supabaseEnvCheck = (env: Record<string, string>): Plugin => ({
     const key = (env.VITE_SUPABASE_ANON_KEY || '').trim();
     if (url && key) {
       this.info(`Supabase cloud sync will be enabled (${url}).`);
-      if (/^sb_secret_/i.test(key)) {
+      if (isSecretSupabaseKey(key)) {
         this.error(
-          'VITE_SUPABASE_ANON_KEY is a SECRET key. Use the anon / publishable key — never ship a secret to the browser.'
+          'VITE_SUPABASE_ANON_KEY is a SECRET key (sb_secret_ or a service_role JWT). Use the anon / publishable key — never ship a secret to the browser.'
         );
       }
       return;

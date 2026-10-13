@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * The persisted storage keys are live user data: renaming or dropping one silently orphans
@@ -11,7 +12,8 @@ import { join } from 'node:path';
  * implementation of the invariant.
  */
 
-const ROOT = new URL('..', import.meta.url).pathname;
+/* fileURLToPath, not `.pathname`: a checkout path with a space would stay `%20`. */
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const BASELINE = join(ROOT, '.claude/hooks/storage-keys.baseline');
 const KEY = /'(telcTrainer[A-Za-z0-9]*)'/g;
 

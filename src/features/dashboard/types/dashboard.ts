@@ -9,6 +9,7 @@
 
 import { type BadgeTone } from '@shared/lib/examBadges.ts';
 import { type AttemptMode } from '@shared/types/exam.ts';
+import { type BadgeVariant } from '@shared/ui/badge.tsx';
 
 /** Which icon a tile wears. The component owns the icons; the model owns the numbers. */
 export type StatTileKind = 'streak' | 'due' | 'exams' | 'best' | 'last';
@@ -83,4 +84,6 @@ export interface ExamCardModel {
   readonly modules: readonly ExamModuleChoice[];
   /** Where the plan puts this exam: `today`, `planned Do, 28. Aug`, `optional`, or nothing. */
   readonly scheduleLabel: string | null;
+  /** `today` is loud, a future date quieter, `optional` quietest. */
+  readonly scheduleTone: BadgeVariant | null;
 }

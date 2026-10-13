@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 import { type User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
+import { classifyAuthError } from '@shared/account-sync/lib/authError.ts';
 import { mergeProgress } from '@shared/account-sync/lib/mergeProgress.ts';
 import {
   enabledProviders,
@@ -314,10 +315,12 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       hash.get('error_description') ??
       hash.get('error');
     if (reported) {
-      toast.error('Sign-in was not completed', {
-        description: decodeURIComponent(reported).replace(/\+/g, ' ')
-      });
+      /* Stripped first: anything below that throws would otherwise re-run on every reload. The
+         value is already decoded by URLSearchParams, and anyone can put text in a link, so it
+         is logged, never shown — the learner reads our own words for it. */
       stripCallbackParams();
+      logger.warn('auth', 'The provider returned an error', reported);
+      toast.error('Sign-in was not completed', { description: classifyAuthError(reported).message });
       return;
     }
 
@@ -340,7 +343,9 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       if (!error) return;
 
       logger.warn('auth', 'OAuth code exchange failed', error);
-      toast.error('Sign-in could not be completed', { description: error.message });
+      toast.error('Sign-in could not be completed', {
+        description: classifyAuthError(error, navigator.onLine).message
+      });
     })().catch((error: unknown) => {
       logger.error('auth', 'OAuth callback crashed', error);
       toast.error('Sign-in could not be completed', { description: 'Try signing in again.' });
@@ -443,8 +448,8 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       if (error) throw new Error(error.message);
     } catch (error) {
       logger.warn('auth', `OAuth sign-in with ${provider} did not start`, error);
-      const message = errorMessage(error);
-      const notEnabled = /provider is not enabled|Unsupported provider/i.test(message);
+      const notEnabled = /provider is not enabled|Unsupported provider/i.test(errorMessage(error));
+      const message = classifyAuthError(error, navigator.onLine).message;
       setStatus(
         notEnabled
           ? `${providerLabel(provider)} is not enabled for this Supabase project yet.`
@@ -478,13 +483,8 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       return true;
     } catch (error) {
       logger.info('auth', 'Password sign-in failed', error);
-      const message = errorMessage(error);
       /* Supabase deliberately does not say which half was wrong; do not guess for it. */
-      const friendly = /invalid login credentials/i.test(message)
-        ? 'Email or password is incorrect.'
-        : /email not confirmed/i.test(message)
-          ? 'Confirm your email address first — check your inbox for the link.'
-          : message;
+      const friendly = classifyAuthError(error, navigator.onLine).message;
       setStatus(friendly);
       toast.error('Could not sign in', { description: friendly });
       return false;
@@ -535,7 +535,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       return outcome;
     } catch (error) {
       logger.warn('auth', 'Sign-up failed', error);
-      const message = errorMessage(error);
+      const message = classifyAuthError(error, navigator.onLine).message;
       setStatus(message);
       toast.error('Could not create the account', { description: message });
       return { kind: 'failed', message };
@@ -577,8 +577,9 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
         setStatus(friendly);
         toast.warning('Slow down a moment', { description: friendly });
       } else {
-        setStatus(message);
-        toast.error('Could not re-send the email', { description: message });
+        const friendly = classifyAuthError(error, navigator.onLine).message;
+        setStatus(friendly);
+        toast.error('Could not re-send the email', { description: friendly });
       }
       return false;
     } finally {
@@ -600,7 +601,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       toast.success('Password reset sent', { description: `Check the inbox for ${email}.` });
     } catch (error) {
       logger.warn('auth', 'Could not send the reset link', error);
-      const message = errorMessage(error);
+      const message = classifyAuthError(error, navigator.onLine).message;
       setStatus(message);
       toast.error('Could not send the reset link', { description: message });
     } finally {
@@ -616,7 +617,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
       toast.success('Signed out', { description: 'Your progress stays in this browser.' });
     } catch (error) {
       logger.warn('auth', 'Sign-out failed', error);
-      toast.error('Could not sign out', { description: errorMessage(error) });
+      toast.error('Could not sign out', { description: classifyAuthError(error, navigator.onLine).message });
     }
     setUser(null);
     clearSessionState();

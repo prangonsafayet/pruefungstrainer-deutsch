@@ -3,7 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import CopyTextButton from '@shared/components/actions/CopyTextButton/CopyTextButton.tsx';
+import CopyTextButton from '@features/curriculum/components/CopyTextButton/CopyTextButton.tsx';
 
 import { settle } from './harness.ts';
 

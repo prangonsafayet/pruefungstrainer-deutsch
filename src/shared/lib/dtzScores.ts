@@ -37,8 +37,11 @@ export const dtzModuleLine = (module: DtzModule): DtzModuleLine => {
       return b1Line(DTZ_PART_LINES.schreiben);
     case 'sprechen':
       return b1Line(DTZ_PART_LINES.sprechen);
-    default:
-      return SHARE_LINE;
+    default: {
+      /* Exhaustive: a module added to the paper fails to compile here instead of passing silently. */
+      const unknown: never = module;
+      throw new Error(`Unknown DTZ module: ${String(unknown)}`);
+    }
   }
 };
 

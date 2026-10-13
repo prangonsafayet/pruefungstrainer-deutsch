@@ -133,6 +133,8 @@ const scoreCorrectness = (input: RubricInput, words: WordCountFeedback): RubricB
  * learner's own text, and no proofreader can know whether they answered the question. That is
  * why this is shown next to the learner's self-rating rather than instead of it, and why
  * `attempt.ratings` remains the score of record.
+ *
+ * @public Issue #18 (writing feedback): no screen calls it yet; its unit tests do.
  */
 export const scoreWriting = (input: RubricInput): RubricScore => {
   const words = describeWordCount(input.text, input.target);

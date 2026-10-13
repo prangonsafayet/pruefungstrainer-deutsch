@@ -139,6 +139,36 @@ describe('planImport', () => {
     expect(plan?.database[dtzKey]?.attempts).toHaveLength(1);
   });
 
+  it("keeps a kept trainer's weakness profile, and takes a replaced one's from the file", () => {
+    /* `weakness` sits at the root, keyed by trainer, so a file that did not carry it — or
+       carried only some trainers' — used to drop every kept trainer's profile. */
+    const [key] = docKeys;
+    const kept = TRAINER_ORDER.find(trainer => TRAINERS[trainer].docKey === key);
+    if (key === undefined || kept === undefined)
+      throw new Error('this suite needs a trainer with its own document');
+    const profile = { case: { count: 3, lastSeen: '2026-05-01' } };
+    const before = normalizeDatabase({
+      ...stored(),
+      weakness: { [kept]: profile, [rootTrainer]: { style: { count: 1, lastSeen: '2026-05-01' } } }
+    });
+    const fromFile = { spelling: { count: 7, lastSeen: '2026-06-01' } };
+
+    const plan = planImport(before, {
+      ...(preBranchFile() as object),
+      weakness: { [rootTrainer]: fromFile }
+    });
+
+    const written = JSON.parse(JSON.stringify(plan?.database)) as ProgressDatabase;
+    expect(written.weakness?.[kept]).toEqual(profile);
+    expect(written.weakness?.[rootTrainer]).toEqual(fromFile);
+
+    /* And a file with no weakness at all still keeps the kept trainer's. */
+    const bare = planImport(before, preBranchFile());
+    expect(bare?.database.weakness?.[kept]).toEqual(profile);
+    /* The file speaks for the root trainer and has no profile for it: its stored one goes. */
+    expect(bare?.database.weakness?.[rootTrainer]).toBeUndefined();
+  });
+
   it('refuses a file that speaks for no trainer at all', () => {
     for (const parsed of [{}, [], null, 7, 'progress', { unrelated: true }]) {
       expect(planImport(stored(), parsed)).toBeNull();

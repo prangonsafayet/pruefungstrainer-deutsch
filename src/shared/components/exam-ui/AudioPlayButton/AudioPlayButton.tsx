@@ -4,6 +4,7 @@ import { Play, Square } from 'lucide-react';
 
 import { useAudioPlayback } from '@shared/hooks/useAudioPlayback.tsx';
 import { cn } from '@shared/lib/cn.ts';
+import { plural } from '@shared/lib/format.ts';
 import { type AudioScript } from '@shared/types/exam.ts';
 import { Button } from '@shared/ui/button.tsx';
 
@@ -17,7 +18,7 @@ interface AudioPlayButtonProps {
 }
 
 const playsLeftText = (playsLeft: number): string =>
-  playsLeft <= 0 ? 'No plays left' : `${String(playsLeft)} play${playsLeft === 1 ? '' : 's'} left`;
+  playsLeft <= 0 ? 'No plays left' : `${plural(playsLeft, 'play')} left`;
 
 /**
  * Play/stop for one listening item, in any format: a real button, so Space and Enter work, with

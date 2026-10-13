@@ -401,7 +401,10 @@ const noSwallowedCatch = {
         callee.object.name === 'logger');
     return {
       ThrowStatement: mark,
-      ReturnStatement: mark,
+      /* A bare `return;` is a swallow with extra steps: only returning a value counts. */
+      ReturnStatement: node => {
+        if (node.argument) mark(node);
+      },
       CallExpression: node => {
         if (isHandlingCall(node)) mark(node);
       },

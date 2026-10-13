@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { prefersReducedMotion } from '@shared/lib/motion.ts';
 
+/* Hand-rolled: a ten-line rAF ease-out costs less than any count-up library's bundle. */
+
 /**
  * Counts from 0 to `to` once, so a score lands rather than simply appearing.
  * Returns `null` when `to` is nullish, and jumps straight to the value when the viewer
@@ -27,5 +29,7 @@ export const useCountUp = (to: number | null | undefined, durationMs = 700): num
     };
   }, [to, durationMs]);
 
-  return to == null ? null : value;
+  /* Read live, not from state: under reduced motion nothing animates, so a later `to` has to
+     show at once instead of the value the state was first given. */
+  return to == null ? null : prefersReducedMotion() ? to : value;
 };

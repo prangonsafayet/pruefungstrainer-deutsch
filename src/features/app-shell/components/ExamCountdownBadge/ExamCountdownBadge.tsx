@@ -1,5 +1,6 @@
 import { CalendarClock } from 'lucide-react';
 
+import { plural } from '@shared/lib/format.ts';
 import { Badge } from '@shared/ui/badge.tsx';
 
 import { useExamCountdown } from './useExamCountdown.tsx';
@@ -22,7 +23,7 @@ const ExamCountdownBadge = ({ examDate }: ExamCountdownBadgeProps) => {
         <span>
           <span className="max-sm:sr-only">{dateLabel} · </span>
           <b className="font-heading font-extrabold tabular-nums">
-            {days} day{days === 1 ? '' : 's'}
+            {plural(days, 'day')}
             <span className="max-sm:sr-only"> left</span>
           </b>
         </span>

@@ -81,9 +81,17 @@ export const headersFor = (blocks, urlPath) => {
 const serve = () => {
   const blocks = parseHeaders(readFileSync(path.join(ROOT, '_headers'), 'utf8'));
   createServer((request, response) => {
-    const urlPath = decodeURIComponent(new URL(request.url ?? '/', 'http://x').pathname);
+    let urlPath;
+    try {
+      urlPath = decodeURIComponent(new URL(request.url ?? '/', 'http://x').pathname);
+    } catch {
+      /* A malformed escape (`/%`) would otherwise throw out of the handler and kill the server. */
+      response.writeHead(400).end();
+      return;
+    }
     let file = path.join(ROOT, urlPath);
-    if (!file.startsWith(ROOT)) {
+    /* `ROOT + sep`: a bare prefix test let `/%2e%2e/dist-evil/…` out into a sibling folder. */
+    if (file !== ROOT && !file.startsWith(ROOT + path.sep)) {
       response.writeHead(400).end();
       return;
     }

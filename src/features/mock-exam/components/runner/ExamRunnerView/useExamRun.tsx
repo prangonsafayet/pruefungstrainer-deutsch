@@ -92,7 +92,15 @@ export const useExamRun = <
        resuming another trainer's run would mark it against the wrong paper, which is a worse
        failure than starting fresh, so it is asserted where it is relied on. */
     const saved = store.load(trainer);
-    if (saved !== null && saved.trainer === trainer && saved.examId === examId && saved.mode === mode) {
+    /* A stored queue naming a module this paper lacks (the DTZ has no Sprachbausteine) has no
+       renderer: resuming it bounced home and left the run behind, so every Resume did it again. */
+    if (
+      saved !== null &&
+      saved.trainer === trainer &&
+      saved.examId === examId &&
+      saved.mode === mode &&
+      saved.queue.every(module => format.modules.includes(module))
+    ) {
       return saved;
     }
     const fresh = createRun({ trainer, examId, mode, queue: queueForMode(format.modules, mode) });

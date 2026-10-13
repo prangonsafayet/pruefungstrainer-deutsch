@@ -3,18 +3,13 @@ import { cn } from '@shared/lib/cn.ts';
 import { type StudyCard } from '@shared/types/vocab.ts';
 import { Pressable } from '@shared/ui/pressable.tsx';
 
+import { focusOnMount } from '@features/vocab-practice/lib/focusOnMount.ts';
+
 interface VocabFlashcardProps {
   readonly card: StudyCard;
   readonly flipped: boolean;
   readonly onFlip: () => void;
 }
-
-/* Each new card mounts afresh (the session keys it by id), so a keyboard learner who just
-   graded one lands on the next and can flip it with Space or Enter straight away. A stable
-   callback ref, so it runs on mount only. */
-const focusOnMount = (node: HTMLButtonElement | null): void => {
-  node?.focus({ preventScroll: true });
-};
 
 /**
  * One card with a 3D flip: German (and forms) on the front, English + example behind. The

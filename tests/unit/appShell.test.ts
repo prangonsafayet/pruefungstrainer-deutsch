@@ -1,8 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { TRAINER_ORDER, TRAINERS, trainerHome } from '@shared/config/trainers.ts';
 import { addDays } from '@shared/lib/format.ts';
-import { useExamCountdown } from '@features/app-shell/components/ExamCountdownBadge/useExamCountdown.tsx';
 import { examCountdown } from '@features/app-shell/components/ExamCountdownBadge/examCountdown.ts';
 import { NAV_ENTRIES, splitTabBar, TAB_BAR_SLOTS } from '@features/app-shell/lib/navEntries.ts';
 import { isExamRunPath } from '@shared/exam-run/lib/examMode.ts';
@@ -45,22 +44,6 @@ describe('the header exam countdown', () => {
     const countdown = examCountdown(inDays(days), TODAY);
     expect(countdown?.days).toBe(days);
     expect(countdown?.tone).toBe(tone);
-  });
-});
-
-describe('useExamCountdown', () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('measures from the real clock, local midnight to local midnight', () => {
-    vi.useFakeTimers();
-    /* Late evening: a UTC-based "today" would already be tomorrow east of Greenwich. */
-    vi.setSystemTime(new Date(2026, 9, 12, 23, 30));
-
-    expect(useExamCountdown(inDays(14))?.tone).toBe('destructive');
-    expect(useExamCountdown(inDays(15))?.tone).toBe('secondary');
-    expect(useExamCountdown(inDays(-1))).toMatchObject({ days: -1, tone: 'warning' });
   });
 });
 

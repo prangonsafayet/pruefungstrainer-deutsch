@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Colour in CSS comes from the design tokens, never from a literal. The tokens are defined in
@@ -11,7 +12,8 @@ import { join, relative } from 'node:path';
  * `--report-only` prints the findings and exits 0 (used while the redesign clears them).
  */
 
-const ROOT = new URL('..', import.meta.url).pathname;
+/* fileURLToPath, not `.pathname`: a checkout path with a space would stay `%20`. */
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const TOKEN_FILE = 'src/styles/index.css';
 const TOKEN_BLOCK = /^(?::root|\.dark|@theme)\b/;
 const RAW_COLOUR = [

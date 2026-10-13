@@ -16,7 +16,7 @@ import {
 import { CATEGORY_META, STUDY_CATEGORIES } from '@shared/config/studyCategories.ts';
 import { hasVocabBank, TRAINERS, type TrainerInfo } from '@shared/config/trainers.ts';
 import { dtzHoerenLesen, dtzModuleLine } from '@shared/lib/dtzScores.ts';
-import { fmtDate } from '@shared/lib/format.ts';
+import { fmtDate, plural } from '@shared/lib/format.ts';
 import { countMastery, streakLength, type MasteryCounts } from '@shared/lib/srs.ts';
 import { idsFor } from '@shared/lib/studyItems.ts';
 import { type TrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
@@ -31,15 +31,12 @@ import {
   type WeakAreaModel
 } from '@features/dashboard/types/dashboard.ts';
 
+import { bestOf } from './bestOf.ts';
+
 const bestFor = (
   attempts: readonly { readonly scores: Partial<Record<string, number>> }[],
   key: string
-): number | null => {
-  const scores = attempts
-    .map(attempt => attempt.scores[key])
-    .filter((value): value is number => value != null);
-  return scores.length > 0 ? Math.max(...scores) : null;
-};
+): number | null => bestOf(attempts.map(attempt => attempt.scores[key]));
 
 /**
  * What the meters are, per paper: the A2·B1 paper's four 60-point skills, the single-level
@@ -171,6 +168,7 @@ export const buildTiles = (
   const best = bestFullScore(slice);
   const max = PAPER_TOTAL_MAX[slice.format];
   const last = slice.attempts.at(-1) ?? null;
+  const streak = streakLength(slice.activity, today);
 
   const study: readonly StatTileModel[] =
     mastery === null
@@ -179,9 +177,9 @@ export const buildTiles = (
           {
             kind: 'streak',
             label: 'Streak',
-            value: streakLength(slice.activity, today),
+            value: streak,
             suffix: null,
-            caption: streakLength(slice.activity, today) === 1 ? 'day in a row' : 'days in a row'
+            caption: streak === 1 ? 'day in a row' : 'days in a row'
           },
           {
             kind: 'due',
@@ -367,7 +365,7 @@ export const buildWeakAreas = (
     areas.push({
       key: `exam.${section}`,
       label,
-      detail: `Averaging ${String(Math.round(percent))}% across ${String(scores.length)} attempt${scores.length === 1 ? '' : 's'} — below the ${String(Math.round(passPercent))}% ${lineName}.`,
+      detail: `Averaging ${String(Math.round(percent))}% across ${plural(scores.length, 'attempt')} — below the ${String(Math.round(passPercent))}% ${lineName}.`,
       severity: 1 - percent / 100,
       to: basePath || '/',
       actionLabel: 'Practise a mock'

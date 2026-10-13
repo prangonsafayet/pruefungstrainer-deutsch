@@ -2,18 +2,18 @@ import { NavLink, Outlet } from 'react-router-dom';
 
 import AccountMenu from '@shared/account-sync/components/AccountMenu/AccountMenu.tsx';
 import { SyncContext } from '@shared/account-sync/hooks/useSync.tsx';
-import AppLogo from '@shared/components/AppLogo/AppLogo.tsx';
 import ErrorBoundary from '@shared/components/ErrorBoundary/ErrorBoundary.tsx';
-import ThemeToggle from '@shared/components/ThemeToggle/ThemeToggle.tsx';
 import { APP_NAME } from '@shared/config/trainers.ts';
 import { cn } from '@shared/lib/cn.ts';
 import { Badge } from '@shared/ui/badge.tsx';
 
 import AppFooter from '@features/app-shell/components/AppFooter/AppFooter.tsx';
+import AppLogo from '@features/app-shell/components/AppLogo/AppLogo.tsx';
 import BottomTabBar from '@features/app-shell/components/BottomTabBar/BottomTabBar.tsx';
 import ExamCountdownBadge from '@features/app-shell/components/ExamCountdownBadge/ExamCountdownBadge.tsx';
 import MainNav from '@features/app-shell/components/MainNav/MainNav.tsx';
 import OfflineBadge from '@features/app-shell/components/OfflineBadge/OfflineBadge.tsx';
+import ThemeToggle from '@features/app-shell/components/ThemeToggle/ThemeToggle.tsx';
 import TrainerSwitcher from '@features/app-shell/components/TrainerSwitcher/TrainerSwitcher.tsx';
 
 import { useAppLayout } from './useAppLayout.tsx';

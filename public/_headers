@@ -3,6 +3,8 @@
 # (scripts/serve-dist-with-headers.mjs refuses that). How to change the CSP:
 # .claude/rules/tooling-ci.md, "Content Security Policy". After editing index.html's inline
 # script, `npm run build && npm run check:csp` prints the new hash for script-src.
+# connect-src keeps https://api.languagetool.org for issue #18's writing feedback: the client
+# (src/shared/lib/languageToolClient.ts) is built and tested, but no screen calls it yet.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-gT20sWprRl/e5ldI4AvJi0dklnYPAkKiD4on6SNYhUA='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.googleusercontent.com https://avatars.githubusercontent.com; connect-src 'self' https://*.supabase.co https://api.languagetool.org; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload

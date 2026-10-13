@@ -4,6 +4,8 @@
  * when time is up. Pure: the hook feeds it the clock, the tests feed it a fake one.
  */
 
+import { plural } from '@shared/lib/format.ts';
+
 /** Seconds remaining at which the clock speaks, largest first. */
 export const ANNOUNCE_AT_SECONDS = [600, 300, 60] as const;
 
@@ -20,7 +22,7 @@ export const crossedThreshold = (previous: number, current: number): number | nu
 
 export const remainingMessage = (threshold: number): string => {
   const minutes = Math.round(threshold / SECONDS_PER_MINUTE);
-  return `${String(minutes)} minute${minutes === 1 ? '' : 's'} remaining.`;
+  return `${plural(minutes, 'minute')} remaining.`;
 };
 
 /** The urgent announcement at zero: a hard stop submits, a guideline clock only informs. */

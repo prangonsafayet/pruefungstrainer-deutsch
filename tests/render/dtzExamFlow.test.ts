@@ -105,6 +105,32 @@ describe('a full DTZ sitting', () => {
     await view.unmount();
   });
 
+  it('starts afresh over a stored run naming a module the DTZ does not have', async () => {
+    /* It used to resume it, find no renderer, go home — and leave the run stored, so the
+       dashboard's Resume did the same thing forever. */
+    runStore.save({
+      runId: 1,
+      trainer: dtz,
+      examId: 1,
+      mode: 'full',
+      queue: ['hoeren', 'sprachbausteine'],
+      index: 1,
+      phase: 'module',
+      answers: {},
+      times: {},
+      plays: {},
+      ratings: {},
+      deadline: Date.now() + 60_000,
+      moduleStart: Date.now()
+    });
+
+    const view = await mount(`${info.basePath}/exam/1/full`);
+
+    expect(view.text()).toMatch(/Module 1 of 4/);
+    expect(runStore.load(dtz)?.queue).not.toContain('sprachbausteine');
+    await view.unmount();
+  });
+
   it('sends a run naming a module the DTZ does not have back to the dashboard', async () => {
     const view = await mount(`${info.basePath}/exam/1/sprachbausteine`);
     expect(view.text()).toMatch(/Dashboard/);

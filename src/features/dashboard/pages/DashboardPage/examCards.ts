@@ -14,8 +14,11 @@ import { type TrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.
 import { type DtzExam } from '@shared/types/dtzExam.ts';
 import { type DualLevelExam, type ExamDifficulty, type ExamPaper } from '@shared/types/exam.ts';
 import { type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
+import { type BadgeVariant } from '@shared/ui/badge.tsx';
 
 import { type ExamCardModel, type ExamModuleChoice } from '@features/dashboard/types/dashboard.ts';
+
+import { bestOf } from './bestOf.ts';
 
 /** Difficulty accent, so the ramp from A2 to B1 is visible at a glance. */
 const DIFFICULTY_ACCENTS: Readonly<Record<ExamDifficulty, string>> = {
@@ -27,9 +30,11 @@ const DIFFICULTY_ACCENTS: Readonly<Record<ExamDifficulty, string>> = {
   b1: 'var(--primary)'
 };
 
-const bestOf = (totals: readonly (number | undefined)[]): number | null => {
-  const scored = totals.filter((total): total is number => typeof total === 'number');
-  return scored.length > 0 ? Math.max(...scored) : null;
+/** `today` earns the loud badge; a future date is quieter; optional is quietest. */
+const scheduleTone = (label: string): BadgeVariant => {
+  if (label === 'today') return 'default';
+  if (label === 'tomorrow') return 'info';
+  return label === 'optional' ? 'outline' : 'secondary';
 };
 
 /**
@@ -49,6 +54,11 @@ export const buildExamCards = (
   exams: readonly ExamPaper[],
   scheduleLabel: (examId: number) => string | null
 ): readonly ExamCardModel[] => {
+  const schedule = (examId: number): Pick<ExamCardModel, 'scheduleLabel' | 'scheduleTone'> => {
+    const label = scheduleLabel(examId);
+    return { scheduleLabel: label, scheduleTone: label === null ? null : scheduleTone(label) };
+  };
+
   switch (slice.format) {
     case 'dtz-paper': {
       const modules: readonly ExamModuleChoice[] = DTZ_MODULES.map(module => ({
@@ -60,7 +70,7 @@ export const buildExamCards = (
       return (exams as readonly DtzExam[]).map<ExamCardModel>(exam => {
         const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
         const full = attempts.filter(attempt => attempt.mode === 'full');
-        const best = bestOf(full.map(attempt => dtzHoerenLesen(attempt.scores) ?? undefined));
+        const best = bestOf(full.map(attempt => dtzHoerenLesen(attempt.scores)));
         const lastResult = full.at(-1)?.result ?? null;
         return {
           id: exam.id,
@@ -75,7 +85,7 @@ export const buildExamCards = (
           attemptCount: attempts.length,
           attempted: attempts.length > 0,
           modules,
-          scheduleLabel: scheduleLabel(exam.id)
+          ...schedule(exam.id)
         };
       });
     }
@@ -88,8 +98,10 @@ export const buildExamCards = (
 
       return (exams as readonly SingleLevelExam[]).map<ExamCardModel>(exam => {
         const attempts = slice.attempts.filter(attempt => attempt.examId === exam.id);
-        const best = bestOf(attempts.map(attempt => attempt.total));
-        const lastResult = attempts.at(-1)?.result ?? null;
+        /* Full sittings only: a module practice taken last has no verdict and hid the badge. */
+        const full = attempts.filter(attempt => attempt.mode === 'full');
+        const best = bestOf(full.map(attempt => attempt.total));
+        const lastResult = full.at(-1)?.result ?? null;
         return {
           id: exam.id,
           title: exam.title,
@@ -103,7 +115,7 @@ export const buildExamCards = (
           attemptCount: attempts.length,
           attempted: attempts.length > 0,
           modules,
-          scheduleLabel: scheduleLabel(exam.id)
+          ...schedule(exam.id)
         };
       });
     }
@@ -132,7 +144,7 @@ export const buildExamCards = (
           attemptCount: attempts.length,
           attempted: attempts.length > 0,
           modules,
-          scheduleLabel: scheduleLabel(exam.id)
+          ...schedule(exam.id)
         };
       });
     }

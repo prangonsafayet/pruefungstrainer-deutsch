@@ -11,24 +11,15 @@ import { type DualLevelExam, type ExamModule } from '@shared/types/exam.ts';
 import { type DualLevelAttempt } from '@shared/types/progress.ts';
 
 import { attemptIncludes } from '@features/mock-exam/lib/attemptMode.ts';
+import { boolLabel, richtigFalsch, teilLabel } from '@features/mock-exam/lib/reviewLabels.ts';
 
 import { isGapCorrect } from './scoring.ts';
-
-const RICHTIG = 'richtig';
-const FALSCH = 'falsch';
 
 /** How much of a matching text is enough to recognise the item in the review. */
 const MESSAGE_PREVIEW_CHARS = 90;
 
-const boolLabel = (value: boolean | undefined): string | null => {
-  if (value == null) return null;
-  return value ? RICHTIG : FALSCH;
-};
-
 const optionLabel = (options: readonly string[], index: number | undefined): string | null =>
   index == null ? null : (options[index] ?? null);
-
-const teilLabel = (teil: number, index: number): string => `Teil ${String(teil)} · ${String(index + 1)}`;
 
 const buildLesen = (exam: DualLevelExam, attempt: DualLevelAttempt): ReviewSection => {
   const { lesen } = exam;
@@ -79,7 +70,7 @@ const buildLesen = (exam: DualLevelExam, attempt: DualLevelAttempt): ReviewSecti
       label: teilLabel(4, i),
       prompt: statement.text,
       given: boolLabel(given),
-      expected: statement.answer ? RICHTIG : FALSCH
+      expected: richtigFalsch(statement.answer)
     });
   });
 
@@ -152,7 +143,7 @@ const buildHoeren = (exam: DualLevelExam, attempt: DualLevelAttempt): ReviewSect
       label: teilLabel(1, i),
       prompt: item.statement,
       given: boolLabel(given),
-      expected: item.answer ? RICHTIG : FALSCH,
+      expected: richtigFalsch(item.answer),
       audio: item.audio
     });
   });
@@ -178,7 +169,7 @@ const buildHoeren = (exam: DualLevelExam, attempt: DualLevelAttempt): ReviewSect
       label: teilLabel(3, i),
       prompt: item.statement,
       given: boolLabel(given),
-      expected: item.answer ? RICHTIG : FALSCH,
+      expected: richtigFalsch(item.answer),
       audio: item.audio
     });
   });

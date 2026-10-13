@@ -49,6 +49,10 @@ export const parseIsoDate = (iso: string | undefined): Date | null => {
 
 export const toIsoDate = (date: Date): string => lightFormat(date, 'yyyy-MM-dd');
 
+/** `1 day`, `3 days` — English nouns that take an `s` are all this copy needs. */
+export const plural = (count: number, noun: string): string =>
+  `${String(count)} ${noun}${count === 1 ? '' : 's'}`;
+
 /** `iso` shifted by whole calendar days (DST-safe), or null when `iso` is not a date. */
 export const addDays = (iso: string | undefined, days: number): string | null => {
   const start = parseIsoDate(iso);

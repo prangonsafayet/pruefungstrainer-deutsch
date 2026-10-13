@@ -110,6 +110,8 @@ export interface AttemptSummary {
   /** Where this paper's pass line sits on every bar, as a percentage of the bar's `of`. */
   readonly thresholdPercent: number;
   readonly thresholdLabel: string;
+  /** The sentence under the bars saying what their thin mark is — it differs per paper. */
+  readonly markNote: string;
   readonly moduleTimes: readonly ModuleTimeEntry[];
   readonly grade: AttemptGrade | null;
   /** For a single-module practice run: the one number worth showing large. */

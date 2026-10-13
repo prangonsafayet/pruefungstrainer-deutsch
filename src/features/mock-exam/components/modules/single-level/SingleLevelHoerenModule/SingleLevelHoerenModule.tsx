@@ -24,7 +24,7 @@ const SingleLevelHoerenModule = ({
   onConsumePlay
 }: SingleLevelModuleProps) => {
   const { hoeren } = exam;
-  /* Voice and speed are the global speech settings, shared across all three trainers. */
+  /* Voice and speed are the global speech settings, shared across every trainer. */
   const { ttsRate, voiceName } = useSettings();
 
   const playButton = (key: string) => (

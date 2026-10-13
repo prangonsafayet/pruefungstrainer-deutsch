@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { MAX_PREP_DAYS, MIN_PREP_DAYS } from '@shared/config/schedule.ts';
-import { addDays, daysBetween, parseIsoDate, toIsoDate } from '@shared/lib/format.ts';
+import { addDays, daysBetween, parseIsoDate, plural, toIsoDate } from '@shared/lib/format.ts';
 import { useToday } from '@shared/study-schedule/hooks/useToday.tsx';
 import { describePlanShape } from '@shared/study-schedule/lib/describeSchedule.ts';
 
@@ -41,11 +41,11 @@ export interface ExamDateState {
 const describeCountdown = (days: number | null): string | null => {
   if (days == null) return null;
   if (days > 0) {
-    return `${String(days)} day${days === 1 ? '' : 's'} to go — the countdown in the header follows this date.`;
+    return `${plural(days, 'day')} to go — the countdown in the header follows this date.`;
   }
   if (days === 0) return 'That is today. Viel Erfolg! 🍀';
   const past = Math.abs(days);
-  return `That was ${String(past)} day${past === 1 ? '' : 's'} ago — pick a new date.`;
+  return `That was ${plural(past, 'day')} ago — pick a new date.`;
 };
 
 /**

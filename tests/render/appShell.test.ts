@@ -156,4 +156,20 @@ describe('useAppLayout', () => {
     expect(scrollTo).toHaveBeenCalledWith(0, 0);
     await page.unmount();
   });
+
+  it('leaves a #section link to the page, which scrolls to it', async () => {
+    /* The layout's reset runs after the page's own effect, so it used to undo the guide's
+       hash scroll and land every TOC link at the top. */
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
+
+    const page = await mount('/guide#g-scoring');
+
+    expect(scrollTo).not.toHaveBeenCalledWith(0, 0);
+    expect(
+      scrollIntoView.mock.contexts.some(element => element instanceof Element && element.id === 'g-scoring')
+    ).toBe(true);
+    scrollIntoView.mockRestore();
+    await page.unmount();
+  });
 });

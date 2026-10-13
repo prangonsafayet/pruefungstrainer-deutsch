@@ -67,6 +67,7 @@ export const summarizeAttempt = (attempt: SingleLevelAttempt): AttemptSummary =>
     bars,
     thresholdPercent: PASS_PERCENT['single-level'],
     thresholdLabel: passLineLabel('single-level'),
+    markNote: 'The thin mark on each bar is that part’s pass line.',
     moduleTimes,
     grade: gradeFor(attempt),
     headlineScore: firstBar ? String(firstBar.value) : '–',

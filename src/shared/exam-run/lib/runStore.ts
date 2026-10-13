@@ -34,8 +34,10 @@ const unwrapLegacyEnvelope = (value: object): unknown => {
 };
 
 /** What a stored run might actually hold: the fields below are validated, not trusted. */
-type StoredRun = Omit<Partial<ExamRun>, 'queue'> & {
+type StoredRun = Omit<Partial<ExamRun>, 'queue' | 'index' | 'phase'> & {
   readonly queue?: unknown;
+  readonly index?: unknown;
+  readonly phase?: unknown;
   readonly level?: unknown;
 };
 
@@ -72,6 +74,12 @@ export const parseRun = (value: unknown): ExamRun | null => {
      component — a blank screen, not a rejected run. */
   const queue = readQueue(candidate.queue);
   if (queue === null) return null;
+  /* Likewise the position and the screen: an index past the queue or an unknown phase is a
+     run the runner cannot show, so it is not offered for resuming at all. */
+  const { index, phase } = candidate;
+  if (typeof index !== 'number' || !Number.isInteger(index) || index < 0 || index >= queue.length)
+    return null;
+  if (phase !== 'brief' && phase !== 'module' && phase !== 'rating') return null;
 
   /* `level` is read for the trainer and then dropped: it is the old field name and has no
      place on an `ExamRun`, which never declared it. */
@@ -79,6 +87,8 @@ export const parseRun = (value: unknown): ExamRun | null => {
   return {
     ...(rest as ExamRun),
     queue,
+    index,
+    phase,
     trainer: readTrainer(candidate.trainer ?? candidate.level)
   };
 };

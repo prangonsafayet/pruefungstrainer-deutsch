@@ -6,26 +6,14 @@ import { TRAINERS, trainerHome } from '@shared/config/trainers.ts';
 import { useTrainerContent } from '@shared/hooks/useTrainerContent.tsx';
 import { type TrainerId } from '@shared/types/trainer.ts';
 
-import { splitGuide, type GuideTocEntry } from './guideParts.ts';
+import GuideToc from '@features/exam-guide/components/GuideToc/GuideToc.tsx';
+
+import { splitGuide } from './guideParts.ts';
 import { useHashScroll } from './useHashScroll.tsx';
 
 interface ExamGuidePageProps {
   readonly trainer: TrainerId;
 }
-
-const TOC_LINK =
-  'block rounded-lg px-3 py-2 font-heading text-sm font-semibold text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring';
-
-const tocList = (toc: readonly GuideTocEntry[]) => (
-  <ul className="space-y-0.5">
-    {toc.map(entry => (
-      <li key={entry.href}>
-        {/* Authored label (it carries entities like &amp;), injected like the rest of the guide. */}
-        <a className={TOC_LINK} href={entry.href} dangerouslySetInnerHTML={{ __html: entry.label }} />
-      </li>
-    ))}
-  </ul>
-);
 
 /**
  * The exam guide of one trainer: authored HTML from its content. Its title and lead become the
@@ -64,7 +52,9 @@ const ExamGuidePage = ({ trainer }: ExamGuidePageProps) => {
                     {parts.toc.length} sections
                   </span>
                 </summary>
-                <div className="px-2 pb-3">{tocList(parts.toc)}</div>
+                <div className="px-2 pb-3">
+                  <GuideToc toc={parts.toc} />
+                </div>
               </details>
             </nav>
             <nav
@@ -74,7 +64,7 @@ const ExamGuidePage = ({ trainer }: ExamGuidePageProps) => {
               <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 On this page
               </p>
-              {tocList(parts.toc)}
+              <GuideToc toc={parts.toc} />
             </nav>
           </>
         ) : null}

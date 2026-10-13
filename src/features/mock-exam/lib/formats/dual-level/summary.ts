@@ -60,6 +60,7 @@ export const summarizeAttempt = (attempt: DualLevelAttempt): AttemptSummary => {
     bars,
     thresholdPercent: PASS_PERCENT['dual-level'],
     thresholdLabel: passLineLabel('dual-level'),
+    markNote: 'The thin mark on each bar is that part’s pass line.',
     moduleTimes,
     grade: gradeFor(attempt),
     headlineScore,

@@ -8,6 +8,7 @@ import {
   SINGLE_LEVEL_TOTAL_MAX,
   SINGLE_LEVEL_WRITTEN_PASS
 } from '@shared/config/singleLevelExam.ts';
+import { plural } from '@shared/lib/format.ts';
 import { type DtzAttempt } from '@shared/types/dtzExam.ts';
 import { type ExamGrade } from '@shared/types/exam.ts';
 import { type DualLevelAttempt } from '@shared/types/progress.ts';
@@ -146,7 +147,7 @@ export const summarizeScoreChart = (model: ScoreChartModel): string => {
   const count = model.bars.length;
   const of = String(model.max);
   return [
-    `Score history: ${String(count)} full exam${count === 1 ? '' : 's'}, scored out of ${of}.`,
+    `Score history: ${plural(count, 'full exam')}, scored out of ${of}.`,
     `Latest: Test ${String(latest.examId)}, ${String(latest.total)} of ${of}${latest.result ? ` (${latest.result})` : ''}.`,
     `Best: ${String(best)} of ${of}.`,
     `Lines at ${describeGridlines(model)}.`

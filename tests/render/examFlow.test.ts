@@ -41,6 +41,10 @@ describe('a single-module practice run', () => {
     await click(start);
     expect(view.text()).toMatch(/Teil 1 — Anzeigen zuordnen/);
     expect(view.text()).toMatch(/4[45]:\d\d/);
+    /* The timer is named by its own text: an aria-label replaced it with "Time remaining". */
+    const timer = document.querySelector('[role="timer"]');
+    expect(timer?.hasAttribute('aria-label')).toBe(false);
+    expect(timer?.textContent).toMatch(/^4[45]:\d\d left$/);
     const started = runStore.load('a2b1');
     expect(started?.phase).toBe('module');
     /* An absolute deadline, not a countdown: a countdown cannot survive a reload. */
