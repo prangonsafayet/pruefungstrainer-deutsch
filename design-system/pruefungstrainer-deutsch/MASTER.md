@@ -12,12 +12,12 @@ then corrected by hand: the skill's default for "education" is a children's clay
 with Comic Neue, which is wrong for adult learners — including immigrants preparing for the
 DTZ — who need calm, legible, encouraging, never childish.
 
-## Direction: warm & friendly, grown-up
+## Direction: friendly, grown-up — indigo on cool neutrals
 
-- Warm cream canvas, white-warm cards, ink that is brown-black rather than blue-black.
-- One brand colour (indigo) for action and focus; magenta as the quiet second voice for
+- Cool off-white canvas, white cards, slate-navy ink: neutrals from the same blue family as the indigo, so nothing fights it (the earlier cream/brown base did).
+- One brand colour (indigo) for action and focus; teal as the quiet second voice for
   charts and secondary emphasis. Green/amber/red carry status only.
-- Generous rounding (cards 16px, controls 12px, pills full), soft warm-tinted shadows, no hard
+- Generous rounding (cards 16px, controls 12px, pills full), soft slate-tinted shadows, no hard
   1px grey boxes everywhere — separate with space and surface tone first, borders second.
 - Friendly type: rounded humanist sans. Large, calm headings; comfortable 16px body at 1.6.
 - Motion is subtle (150–250ms, ease-out), explains state changes, and disappears under
@@ -47,45 +47,45 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 
 ### Light
 
-| Token                   | Value     | Use                                       |
-| ----------------------- | --------- | ----------------------------------------- |
-| `--background`          | `#FBF7F1` | canvas (warm cream)                       |
-| `--foreground`          | `#2B2420` | ink — 14.3:1                              |
-| `--card`                | `#FFFDF9` | cards, popovers                           |
-| `--muted`/`--secondary` | `#F3ECE3` | quiet surfaces, tracks                    |
-| `--muted-foreground`    | `#6B5E55` | secondary text — 5.9:1 on bg              |
-| `--primary`             | `#4338CA` | indigo: actions, focus, links — 7.4:1     |
-| `--primary-foreground`  | `#FFFFFF` | on primary — 7.9:1                        |
-| `--accent`              | `#E9E8FB` | soft indigo tint (hover, active nav)      |
-| `--accent-foreground`   | `#3730A3` | on accent — 8.2:1                         |
-| `--brand-2`             | `#A21CAF` | magenta second voice (charts, highlights) |
-| `--success`             | `#2F7D52` | fill; white label 5.0:1                   |
-| `--success-foreground`  | `#1E6440` | ink on success tint                       |
-| `--warning`             | `#E3A21A` | fill/tint source                          |
-| `--warning-foreground`  | `#7A4E00` | ink on warning tint, ring/meter stroke    |
-| `--destructive`         | `#C0362C` | fill; white label 5.5:1                   |
-| `--destructive-on-tint` | `#A62E25` | ink on destructive tint                   |
-| `--border`              | `#E8DDD0` |                                           |
-| `--input`               | `#98877A` | field boundary — 3.4:1 on card (1.4.11)   |
-| `--ring`                | `#4338CA` |                                           |
+| Token                   | Value     | Use                                     |
+| ----------------------- | --------- | --------------------------------------- |
+| `--background`          | `#F6F7FB` | canvas (cool off-white)                 |
+| `--foreground`          | `#1C2033` | ink — 15.1:1                            |
+| `--card`                | `#FFFFFF` | cards, popovers                         |
+| `--muted`/`--secondary` | `#ECEEF5` | quiet surfaces, tracks                  |
+| `--muted-foreground`    | `#555D73` | secondary text — 6.1:1 on bg            |
+| `--primary`             | `#4338CA` | indigo: actions, focus, links — 7.4:1   |
+| `--primary-foreground`  | `#FFFFFF` | on primary — 7.9:1                      |
+| `--accent`              | `#E9E8FB` | soft indigo tint (hover, active nav)    |
+| `--accent-foreground`   | `#3730A3` | on accent — 8.2:1                       |
+| `--brand-2`             | `#0F766E` | teal second voice (charts, highlights)  |
+| `--success`             | `#2F7D52` | fill; white label 5.0:1                 |
+| `--success-foreground`  | `#1E6440` | ink on success tint                     |
+| `--warning`             | `#E3A21A` | fill/tint source                        |
+| `--warning-foreground`  | `#7A4E00` | ink on warning tint, ring/meter stroke  |
+| `--destructive`         | `#C0362C` | fill; white label 5.5:1                 |
+| `--destructive-on-tint` | `#A62E25` | ink on destructive tint                 |
+| `--border`              | `#E1E4EE` |                                         |
+| `--input`               | `#80869C` | field boundary — 3.6:1 on card (1.4.11) |
+| `--ring`                | `#4338CA` |                                         |
 
-### Dark (warm charcoal, never pure black)
+### Dark (deep slate, never pure black)
 
 | Token                   | Value                                                |
 | ----------------------- | ---------------------------------------------------- |
-| `--background`          | `#1B1714`                                            |
-| `--foreground`          | `#F4EDE5`                                            |
-| `--card`                | `#26211D`                                            |
-| `--muted`/`--secondary` | `#332C27`                                            |
-| `--muted-foreground`    | `#B9ACA1`                                            |
+| `--background`          | `#12141C`                                            |
+| `--foreground`          | `#E7E9F2`                                            |
+| `--card`                | `#1B1E2A`                                            |
+| `--muted`/`--secondary` | `#262A38`                                            |
+| `--muted-foreground`    | `#A3ABC2`                                            |
 | `--primary`             | `#A5B4FC` (ink `#1E1B4B`, 8.0:1)                     |
-| `--accent`              | `#2A2847` (ink `#C7D2FE`)                            |
-| `--brand-2`             | `#E879F9`                                            |
+| `--accent`              | `#25274A` (ink `#C7D2FE`)                            |
+| `--brand-2`             | `#2DD4BF`                                            |
 | `--success`             | `#5CC08A` (ink on fill `#0D2618`; on tint `#9BE0B8`) |
 | `--warning`             | `#F0B93A` (ink on tint `#F5D58A`)                    |
 | `--destructive`         | `#F07468` (ink on fill `#2A0A07`; on tint `#FF9A8F`) |
-| `--border`              | `rgb(255 240 225 / 0.12)`                            |
-| `--input`               | `#7A6C62` (field boundary, 3.15:1 on card)           |
+| `--border`              | `rgb(200 210 255 / 0.12)`                            |
+| `--input`               | `#6C7389` (field boundary, 3.5:1 on card)            |
 
 Charts get their own `--chart-1..5` in **both** themes (the old palette forgot dark).
 
@@ -93,7 +93,7 @@ Charts get their own `--chart-1..5` in **both** themes (the old palette forgot d
 
 - `--radius: 1rem` (cards, `rounded-2xl`). Controls `rounded-xl` = `--radius-xl` (0.75rem);
   chips/pills full.
-- Shadows are warm-tinted and soft, as tokens: `--shadow-soft` (resting card),
+- Shadows are slate-tinted and soft, as tokens: `--shadow-soft` (resting card),
   `--shadow-lift` (hover/raised), `--shadow-pop` (menus, dialogs). No default grey shadows.
 - Spacing: 4px base; cards `p-5 sm:p-6`; page gutter 16px mobile / 24px desktop; sections
   separated by 32–40px.

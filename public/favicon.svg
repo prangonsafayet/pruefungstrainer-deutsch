@@ -7,7 +7,7 @@
   </defs>
   <!-- The logo, simplified for 16px: the paper's text lines are dropped and the shapes enlarged. -->
   <rect width="64" height="64" rx="14" fill="url(#g)"/>
-  <rect x="10" y="8" width="34" height="46" rx="5" fill="#fffdf9"/>
-  <circle cx="44" cy="44" r="15" fill="#a21caf" stroke="#fffdf9" stroke-width="3.5"/>
-  <path d="M37.5 44.5l4.5 4.5 8.5-9" fill="none" stroke="#fffdf9" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="10" y="8" width="34" height="46" rx="5" fill="#ffffff"/>
+  <circle cx="44" cy="44" r="15" fill="#0f766e" stroke="#ffffff" stroke-width="3.5"/>
+  <path d="M37.5 44.5l4.5 4.5 8.5-9" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
