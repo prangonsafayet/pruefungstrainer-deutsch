@@ -2,6 +2,7 @@
   <img src="public/logo.svg" alt="" width="76" height="76">
   <h1>Prüfungstrainer Deutsch</h1>
   <p><strong>Four German exams — telc A2·B1, B1, B2 and the DTZ — 45 complete mock exams under real timing, scored using the published pass rules.</strong></p>
+  <p><a href="https://pruefungstrainer-deutsch.netlify.app"><strong>Live demo →</strong></a> runs entirely in your browser, no sign-up.</p>
   <p>
     <a href="https://github.com/prangonsafayet/pruefungstrainer-deutsch/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/prangonsafayet/pruefungstrainer-deutsch/actions/workflows/ci.yml/badge.svg"></a>
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
@@ -69,7 +70,7 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 - **Local-first progress.** Everything is stored in the browser and exportable as a
   file. Self-hosted builds can add optional cloud sync behind Google, GitHub or
   email + password; without it the app says clearly that progress stays local.
-- A redesigned UI built on design tokens, in light and dark mode,
+- A UI built on design tokens (indigo and magenta), in light and dark mode,
   keyboard-accessible throughout, and a deep-linkable URL for every screen.
 
 ## Screens
@@ -78,13 +79,13 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 
 <table>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/learn-plan.png" alt="The Learn tab: today's dated lesson with checkboxes and Go-to links on the left, and the Theme vocabulary cheatsheet open in a side panel on the right with a Back to Day 2 button"></td>
+    <td colspan="2"><img src="docs/screenshots/learn-plan.png" alt="The Learn tab: today's dated lesson with its first task ticked and Go-to links on the left, and the Theme vocabulary cheatsheet open in a side panel on the right"></td>
   </tr>
   <tr>
     <td colspan="2"><strong>The plan</strong> — the curriculum laid out as dated days from today, re-paced whenever the exam date changes. Each task links to where it is done, and cheatsheets open beside the plan.</td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/screenshots/runner.png" alt="The B1 Lesen module on a wide screen: a sticky bar with the countdown ring, 5 of 20 answered and a Submit button; below, the reading text on the left and its multiple-choice questions on the right, the chosen option outlined and marked Selected"></td>
+    <td width="50%"><img src="docs/screenshots/runner.png" alt="The B1 Lesen module on a wide screen: a sticky bar with the countdown ring, 4 of 20 answered and a Submit button; below, the ten headings of Teil 1 on the left and the texts to match them to on the right"></td>
     <td width="50%"><img src="docs/screenshots/results.png" alt="DTZ results for a full sitting: Zertifikat B1 in large green type, the three part results with their B1 and A2 lines in German, and score bars per part"></td>
   </tr>
   <tr>
@@ -101,7 +102,7 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
   </tr>
   <tr>
     <td><img src="docs/screenshots/mobile-dashboard.png" alt="The dashboard on a phone, with the bottom tab bar for Dashboard, Learn, Practice, History and More"></td>
-    <td><img src="docs/screenshots/mobile-runner.png" alt="The DTZ Lesen module on a phone: the directory text above its question, the chosen answer card marked Selected, and the timer, progress and Submit button docked at the bottom within thumb reach"></td>
+    <td><img src="docs/screenshots/mobile-runner.png" alt="The DTZ Lesen module on a phone: the directory text of Teil 1, with the timer, progress and Submit button docked at the bottom within thumb reach"></td>
   </tr>
   <tr>
     <td><strong>On a phone</strong> — a bottom tab bar for the daily screens; nothing scrolls sideways at 360px.</td>
@@ -152,11 +153,11 @@ verified in a real browser via the network log, not just by chunk names in the
 build report.
 
 **Two test layers, because they catch different things.** Vitest runs the pure
-logic in Node and the mounted app in happy-dom — 1,212 assertions across 39 files
-in a few seconds, including a sweep of the schedule engine across every runway
+logic in Node and the mounted app in happy-dom — more than 1,800 tests across 82 files
+in under a minute, including a sweep of the schedule engine across every runway
 length from five days to ninety, and a check that an attempt survives a
 mid-module reload with its clock still running. Playwright covers what no DOM
-emulation can judge: layout at three breakpoints, dark-mode persistence, popover
+emulation can judge: layout at three breakpoints, colour contrast in both themes, dark-mode persistence, popover
 positioning, and that the OAuth handoff is really PKCE rather than an implicit
 flow. Between them they caught an infinite render loop that only reproduced on
 machines with no German text-to-speech voice installed, a timer that stalled
@@ -176,24 +177,27 @@ interactive elements in feature code, and every animation behind
 
 Every gate runs in CI on each pull request; the fast, offline ones also run before a push.
 
-| Gate                            | Command                                                                                |
-| ------------------------------- | -------------------------------------------------------------------------------------- |
-| Typecheck (strict)              | `npm run typecheck`                                                                    |
-| Lint, zero warnings             | `npm run lint -- --max-warnings=0`                                                     |
-| Accessibility lint              | jsx-a11y's strict preset, inside lint                                                  |
-| Architecture                    | layer boundaries and components-visual-only in lint, plus `npm run check:architecture` |
-| Design tokens                   | raw colours refused in lint and `npm run check:css`                                    |
-| Formatting                      | `npm run format:check`                                                                 |
-| Exam-data validation            | `npm run validate`                                                                     |
-| Unit and render tests           | `npm run test:unit` (Vitest, Node + happy-dom)                                         |
-| End-to-end                      | `npm run test:e2e` (Playwright)                                                        |
-| Production dependency audit     | `npm run audit:prod`                                                                   |
-| Persisted storage-key invariant | `npm run check:storage-keys`                                                           |
-| Claude Code guardrail hooks     | `npm run test:hooks`                                                                   |
+| Gate                            | Command                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------------- |
+| Typecheck (strict)              | `npm run typecheck`                                                                     |
+| Lint, zero warnings             | `npm run lint -- --max-warnings=0`                                                      |
+| Accessibility lint              | jsx-a11y's strict preset, inside lint                                                   |
+| Architecture                    | layer boundaries and components-visual-only in lint, plus `npm run check:architecture`  |
+| Design tokens                   | raw colours refused in lint and `npm run check:css`                                     |
+| Formatting                      | `npm run format:check`                                                                  |
+| Exam-data validation            | `npm run validate`                                                                      |
+| Unit and render tests           | `npm run test:coverage` (Vitest, Node + happy-dom, with a coverage gate)                |
+| Dead code                       | `npm run knip:ci`                                                                       |
+| Built site: CSP and offline     | `npm run test:csp`, `npm run test:offline` (the production build with its real headers) |
+| End-to-end                      | `npm run test:e2e` (Playwright)                                                         |
+| Production dependency audit     | `npm run audit:prod`                                                                    |
+| Persisted storage-key invariant | `npm run check:storage-keys`                                                            |
+| Claude Code guardrail hooks     | `npm run test:hooks`                                                                    |
 
 `npm run guards` runs the architecture, token, storage-key, hook and audit gates together.
-Two more report without blocking until their findings are cleared: the dev-dependency audit
-(`npm run audit:all`) and dead-code detection with knip (`npm run knip`).
+The dev-dependency audit (`npm run audit:all`) reports without blocking. Content originality is
+checked locally with `npm run check:originality`, which compares the mock exams against
+reference texts kept out of the repo.
 
 ## Working with Claude Code
 
