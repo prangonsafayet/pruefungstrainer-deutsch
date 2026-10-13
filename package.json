@@ -1,7 +1,7 @@
 {
   "name": "telc-a2b1-trainer",
   "private": true,
-  "version": "2.1.0",
+  "version": "3.0.0",
   "type": "module",
   "description": "telc Deutsch trainer for the A2·B1, B1, B2 and DTZ exams — 45 full model tests, a 28-day study plan per exam, and a vocabulary bank with spaced repetition",
   "scripts": {
