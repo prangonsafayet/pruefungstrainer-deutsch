@@ -35,7 +35,7 @@ flowchart TD
   merge --> tag{"package.json version changed?"}
   tag -- yes --> release["tag-release.yml: tag, attach built site,<br/>GitHub release"]
 
-  classDef boundary fill:#e9e8fb,stroke:#4338ca,stroke-width:2px,color:#2b2420
+  classDef boundary fill:#e9e8fb,stroke:#4338ca,stroke-width:2px,color:#1c2033
   class protect boundary
 ```
 
