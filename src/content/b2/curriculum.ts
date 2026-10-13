@@ -9,7 +9,7 @@ export const B2_CURRICULUM: LearnPlan = {
   aiPromptLang: 'de',
   intro: `This plan adapts to your <b>B2 exam date</b> — set it in Settings and the days re-pace themselves.
   Each day = vocabulary in the practice hub + one grammar or exam focus + an <b>AI practice session</b>: copy the prompt into Claude (or any AI chat) and it becomes your tutor, discussion partner or examiner.
-  Days 1–14 are the <b>core curriculum</b> and are always scheduled; days 15–28 sharpen argumentation, the mündliche Prüfung and the remaining Modelltests when your date leaves room.`,
+  Days 1–14 are the <b>core curriculum</b> and are always scheduled; days 15–28 sharpen argumentation, the mündliche Prüfung and the remaining mock exams when your date leaves room.`,
 
   cheatsheets: {
     genitiv: {
@@ -252,7 +252,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
           target: { kind: 'practice' }
         },
         'Re-read the Genitiv, Passiv and Konjunktiv II cheatsheets in one 30-minute sweep.',
-        'Optional baseline: take the Lesen module of Modelltest 1 under timing — don’t worry about the score, it’s a reference point.'
+        'Optional baseline: take the Lesen module of mock exam 1 under timing — don’t worry about the score, it’s a reference point.'
       ],
       cheats: ['genitiv', 'passiv', 'kii'],
       ai: [
@@ -324,10 +324,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 11,
       tier: 'core',
-      title: 'Modelltest 1 — Standortbestimmung',
+      title: 'Mock exam 1 — Standortbestimmung',
       focus: 'First full mock under real conditions',
       tasks: [
-        'Take Modelltest 1 under real timing — no pausing, no dictionary, letter included.',
+        'Take mock exam 1 under real timing — no pausing, no dictionary, letter included.',
         'Full review afterwards: redo every wrong item aloud with the reason why the right answer is right.',
         {
           text: 'Add every unknown word from the test to your flashcards in the practice hub.',
@@ -339,7 +339,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       ai: [
         {
           t: 'Fehler-Analyse',
-          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich habe gerade einen kompletten Modelltest gemacht und schicke dir meine Fehler (Aufgaben + meine falschen Antworten + richtige Antworten). Analysiere die Muster, nenne mir auf Englisch die drei Baustellen mit dem größten Punkte-Hebel vor der Prüfung und erstelle für jede eine Mini-Übung mit 5 Aufgaben. Konkret und knapp.'
+          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich habe gerade eine komplette Probeprüfung gemacht und schicke dir meine Fehler (Aufgaben + meine falschen Antworten + richtige Antworten). Analysiere die Muster, nenne mir auf Englisch die drei Baustellen mit dem größten Punkte-Hebel vor der Prüfung und erstelle für jede eine Mini-Übung mit 5 Aufgaben. Konkret und knapp.'
         }
       ]
     },
@@ -365,10 +365,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 13,
       tier: 'core',
-      title: 'Modelltest 2 & E-Mail-Feinschliff',
+      title: 'Mock exam 2 & E-Mail-Feinschliff',
       focus: 'Second mock + rewrite the letter properly',
       tasks: [
-        'Take Modelltest 2 under real timing.',
+        'Take mock exam 2 under real timing.',
         'Review every mistake; pay special attention to which Sprachbausteine patterns keep costing you points.',
         'Rewrite the letter from the test once more with the cheatsheet open — fix every marked weakness.'
       ],
@@ -388,7 +388,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       tasks: [
         'Cheatsheet: Die halbformelle E-Mail — learn the Anfrage and Bewerbung moves.',
         'Write one halbformelle Anfrage e-mail, timed (aim for roughly 150–220 words), and self-check with the checklist.',
-        'Compare your Modelltest 1 and 2 scores per module; write down your two weakest modules.',
+        'Compare your Mock exam 1 and 2 scores per module; write down your two weakest modules.',
         'Review ALL flashcards from days 8–13. From tomorrow the extension tier deepens speaking and argumentation.'
       ],
       cheats: ['brief', 'kii'],
@@ -461,10 +461,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 18,
       tier: 'extension',
-      title: 'Modelltest 4 + Hören schärfen',
+      title: 'Mock exam 4 + Hören schärfen',
       focus: 'Third full week starts with data',
       tasks: [
-        'Take Modelltest 4 under real timing (Modelltest 3 stays in reserve for a weak-module rerun).',
+        'Take mock exam 4 under real timing (Mock exam 3 stays in reserve for a weak-module rerun).',
         'Review with extra care in Hören: for every miss, find the exact sentence in the transcript that carried the answer.',
         'Shadowing: repeat 10 sentences from the Hören texts at natural speed.'
       ],
@@ -472,7 +472,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       ai: [
         {
           t: 'Hör-Debriefing',
-          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich schicke dir meine Hören-Fehler aus einem Modelltest (Aufgabe, meine Antwort, richtige Antwort, ggf. Transkript-Ausschnitt). Kategorisiere die Fehler (Zahl überhört, Korrektursignal verpasst, Wort nicht gekannt, zu langsam gelesen) und gib mir für die häufigste Kategorie eine konkrete Übungsroutine für die nächsten 5 Tage — auf Englisch, knapp.'
+          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich schicke dir meine Hören-Fehler aus einer Probeprüfung (Aufgabe, meine Antwort, richtige Antwort, ggf. Transkript-Ausschnitt). Kategorisiere die Fehler (Zahl überhört, Korrektursignal verpasst, Wort nicht gekannt, zu langsam gelesen) und gib mir für die häufigste Kategorie eine konkrete Übungsroutine für die nächsten 5 Tage — auf Englisch, knapp.'
         }
       ]
     },
@@ -498,10 +498,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 20,
       tier: 'extension',
-      title: 'Modelltest 5 + mündliche Generalprobe I',
+      title: 'Mock exam 5 + mündliche Generalprobe I',
       focus: 'Full written mock + first complete oral run',
       tasks: [
-        'Take Modelltest 5 under real timing and review it fully.',
+        'Take mock exam 5 under real timing and review it fully.',
         'Do one complete oral exam in a single recording: Über Erfahrungen sprechen, then Diskussion, then Planung — about 15 minutes, no pausing.',
         'Listen back and note your 3 most repeated mistakes; write their corrections 3 times.'
       ],
@@ -516,11 +516,11 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 21,
       tier: 'extension',
-      title: 'Modelltest 6 & Fehler-Klinik',
+      title: 'Mock exam 6 & Fehler-Klinik',
       focus: 'Turn week-3 mistakes into points',
       tasks: [
-        'Take Modelltest 6 under real timing.',
-        'Open the reviews of Modelltests 4–6 and redo every single wrong item aloud, with the reason why the right answer is right.',
+        'Take mock exam 6 under real timing.',
+        'Open the reviews of mock exams 4–6 and redo every single wrong item aloud, with the reason why the right answer is right.',
         'Build your personal error top 10 (grammar + vocabulary) and write each correction 3 times.',
         'Review ALL flashcards from days 15–20; delete the instant ones.'
       ],
@@ -528,7 +528,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       ai: [
         {
           t: 'Muster-Jäger',
-          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich schicke dir gesammelte Fehler aus drei Modelltests. Gruppiere sie in Muster, sortiere die Muster nach Punktverlust und erstelle ein 12-Fragen-Quiz, das genau meine drei teuersten Muster trainiert. Stelle die Fragen einzeln, korrigiere sofort und wiederhole falsch beantwortete Fragen am Ende noch einmal.'
+          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Ich schicke dir gesammelte Fehler aus drei Probeprüfungen. Gruppiere sie in Muster, sortiere die Muster nach Punktverlust und erstelle ein 12-Fragen-Quiz, das genau meine drei teuersten Muster trainiert. Stelle die Fragen einzeln, korrigiere sofort und wiederhole falsch beantwortete Fragen am Ende noch einmal.'
         }
       ]
     },
@@ -540,7 +540,7 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       tasks: [
         'Quiz: 15 Verben mit Präposition, then 15 Kasus items in the practice hub — repeat each until 13/15 or better.',
         'Cheatsheet: Genitiv + Nominalisierung — one final sweep; write 6 sentences mixing a Genitivpräposition with a formal Konnektor.',
-        'Take the Sprachbausteine module of Modelltest 3 under timing and review every gap.'
+        'Take the Sprachbausteine module of mock exam 3 under timing and review every gap.'
       ],
       cheats: ['genitiv', 'nominal'],
       ai: [
@@ -553,10 +553,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 23,
       tier: 'extension',
-      title: 'Modelltest 7 — Lesen auf Zeit',
+      title: 'Mock exam 7 — Lesen auf Zeit',
       focus: 'Timing strategy for the 20 reading items',
       tasks: [
-        'Take Modelltest 7 under real timing.',
+        'Take mock exam 7 under real timing.',
         'Analyze your Lesen timing: which Teil ate the most minutes? Fix your Teil order for exam day and write it down.',
         'Never-leave-a-blank check: count your guesses — every blank is a wasted free chance.'
       ],
@@ -571,10 +571,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 24,
       tier: 'extension',
-      title: 'Modelltest 8 + Hören-Bootcamp',
+      title: 'Mock exam 8 + Hören-Bootcamp',
       focus: 'Zero points lost to speed',
       tasks: [
-        'Take Modelltest 8 under real timing.',
+        'Take mock exam 8 under real timing.',
         'Hören drill: replay every Teil-2 item you missed and pinpoint the correction signal (allerdings, stattdessen, nicht … sondern) you overheard.',
         'Shadowing: 10 sentences from the recordings at natural speed, mimicking the melody.',
         'One flashcard session (20 cards) of verbs.'
@@ -608,10 +608,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 26,
       tier: 'extension',
-      title: 'Modelltest 9 + mündliche Generalprobe II',
+      title: 'Mock exam 9 + mündliche Generalprobe II',
       focus: 'Both exam halves in one day',
       tasks: [
-        'Take Modelltest 9 under real timing.',
+        'Take mock exam 9 under real timing.',
         'Do the full oral simulation once more in a single recording (Über Erfahrungen sprechen, Diskussion, Planung) and compare with day 20 — what improved?',
         'Cheatsheet: Redemittel — final drill of the repair phrases: Könnten Sie das bitte noch einmal erklären? Was genau meinen Sie mit …?'
       ],
@@ -626,10 +626,10 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
     {
       day: 27,
       tier: 'extension',
-      title: 'Modelltest 10 & persönliche Top 100',
+      title: 'Mock exam 10 & persönliche Top 100',
       focus: 'Last full mock + your own weak vocabulary',
       tasks: [
-        'Take Modelltest 10 under real timing — this is your final full rehearsal, treat it like exam day.',
+        'Take mock exam 10 under real timing — this is your final full rehearsal, treat it like exam day.',
         {
           text: 'Review it, then sweep the practice hub: collect the 100 words you still hesitate on into a final flashcard round.',
           target: { kind: 'practice' }
@@ -652,13 +652,13 @@ Der Minister sagte, die Lage <b>sei</b> stabil und man <b>werde</b> weitere Maß
       tasks: [
         'Re-read ALL six cheatsheets once, slowly (45 min) — mark the 5 things you still need on a single sheet of paper.',
         'Say your Über-Erfahrungen-sprechen opening, your Kompromiss phrases and your 5 favourite Konjunktiv-II Bitten aloud — they must be automatic.',
-        'Check your Modelltest scores on the dashboard against both of this trainer’s 60% lines, decide which single module gets your last review evening — then close the books and rest.'
+        'Check your mock exam scores on the dashboard against both of this trainer’s 60% lines, decide which single module gets your last review evening — then close the books and rest.'
       ],
       cheats: ['brief', 'muendlich', 'kii', 'nominal'],
       ai: [
         {
           t: 'Finaler Strategie-Talk',
-          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Interviewe mich auf Englisch: meine Modelltest-Ergebnisse pro Modul, mein schwächstes Modul, mein Prüfungstermin. Erstelle dann meinen Schlachtplan für die letzten Tage: was ich am Vorabend wiederhole, meine Teil-Reihenfolge im Lesen, meine E-Mail-Strategie (Register und Struktur sofort parat haben) und ein realistisches Punktziel pro Modul für beide 60-Prozent-Marken, mit denen mein Trainer rechnet. Konkret und ermutigend, kein Geschwafel.'
+          p: 'Du bist mein Prüfungscoach für telc Deutsch B2. Interviewe mich auf Englisch: meine Ergebnisse der Probeprüfungen pro Modul, mein schwächstes Modul, mein Prüfungstermin. Erstelle dann meinen Schlachtplan für die letzten Tage: was ich am Vorabend wiederhole, meine Teil-Reihenfolge im Lesen, meine E-Mail-Strategie (Register und Struktur sofort parat haben) und ein realistisches Punktziel pro Modul für beide 60-Prozent-Marken, mit denen mein Trainer rechnet. Konkret und ermutigend, kein Geschwafel.'
         }
       ]
     }

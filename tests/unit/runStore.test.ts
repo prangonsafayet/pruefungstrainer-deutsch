@@ -210,7 +210,7 @@ describe('the legacy trainer field', () => {
 
 /*
  * B1 and B2 share this key. Until each trainer got its own entry under it, a candidate two
- * modules into a B1 Modelltest lost that sitting — answers and remaining time — by merely
+ * modules into a B1 mock exam lost that sitting — answers and remaining time — by merely
  * opening a B2 exam route, because `useExamRun`'s initialiser writes a fresh run in the
  * initialiser and the whole key held exactly one run. The `trainer` field stopped the worse
  * bug (marking a B1 run against the B2 paper) but not the loss.

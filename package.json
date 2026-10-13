@@ -1,14 +1,15 @@
 {
-  "name": "telc-a2b1-trainer",
+  "name": "pruefungstrainer-deutsch",
   "private": true,
   "version": "3.0.0",
   "type": "module",
-  "description": "telc Deutsch trainer for the A2·B1, B1, B2 and DTZ exams — 45 full model tests, a 28-day study plan per exam, and a vocabulary bank with spaced repetition",
+  "description": "Independent practice app for the telc Deutsch A2·B1, B1, B2 and DTZ exams — 45 original mock exams, a 28-day study plan per exam, and a vocabulary bank with spaced repetition",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "validate": "node validate.cjs",
+    "check:originality": "node scripts/check-content-overlap.mjs",
     "test": "npm run typecheck && npm run lint && npm run validate && npm run test:unit",
     "test:unit": "vitest run",
     "test:coverage": "vitest run --coverage",

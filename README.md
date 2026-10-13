@@ -1,9 +1,9 @@
 <div align="center">
   <img src="public/logo.svg" alt="" width="76" height="76">
-  <h1>telc Deutsch Trainer</h1>
-  <p><strong>Four German exams — telc A2·B1, B1, B2 and the DTZ — 45 complete mock exams under real timing, marked by the official weighting.</strong></p>
+  <h1>Prüfungstrainer Deutsch</h1>
+  <p><strong>Four German exams — telc A2·B1, B1, B2 and the DTZ — 45 complete mock exams under real timing, scored using the published pass rules.</strong></p>
   <p>
-    <a href="https://github.com/prangonsafayet/telc-a2b1-trainer/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/prangonsafayet/telc-a2b1-trainer/actions/workflows/ci.yml/badge.svg"></a>
+    <a href="https://github.com/prangonsafayet/pruefungstrainer-deutsch/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/prangonsafayet/pruefungstrainer-deutsch/actions/workflows/ci.yml/badge.svg"></a>
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
   </p>
   <p>
@@ -15,6 +15,11 @@
     <img alt="Playwright" src="https://img.shields.io/badge/Playwright-e2e-2ead33?logo=playwright&logoColor=white">
   </p>
 </div>
+
+> **Independent project. Not affiliated with or endorsed by telc gGmbH, g.a.s.t. e.V. or the Bundesamt für Migration und Flüchtlinge (BAMF). Exam names are used only to describe what this app helps you prepare for.**
+>
+> All 45 mock exams are original texts written for this app. The official model tests informed
+> only the format — task types, item counts, timings and the published pass rules.
 
 ---
 
@@ -36,7 +41,7 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
 
 - **Four peer trainers, one app.** telc Deutsch A2·B1, telc B1, telc B2 and the DTZ
   each have their own exams, study plan, guide and vocabulary bank, switchable from
-  one header control. Fifteen A2·B1 Modelltests plus ten each for B1, B2 and DTZ — 45
+  one header control. Fifteen A2·B1 mock exams plus ten each for B1, B2 and DTZ — 45
   full exams in total, from early A2 to upper B2, covering every module of their
   paper: Leseverstehen, Sprachbausteine (where the paper has it), Hörverstehen,
   Schreiben, Sprechen.
@@ -46,7 +51,7 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
   remaining time and the audio plays used — is written to browser storage as you
   go. Reload the tab, or come back after closing it, and it resumes exactly where
   you were.
-- **Official scoring**, plus guided self-assessment for the two modules a human
+- **Scoring by the published pass rules**, plus guided self-assessment for the two modules a human
   has to grade, against sample answers and telc-style criteria.
 - **Full review** of any past attempt: every answer against the correct one, with
   the listening transcripts revealed only afterwards.
@@ -61,9 +66,9 @@ from three Teilergebnisse — Hören/Lesen, Schreiben and Sprechen.
   items for A2·B1, and again for each of telc B1 and B2 — drilled as flashcards,
   quiz questions and reference tables, scheduled by spaced repetition rather than
   shown once and forgotten.
-- **Progress that follows you.** Optional cloud sync behind Google, GitHub or
-  email + password; without it everything stays local, and the app says so
-  clearly rather than letting you assume otherwise.
+- **Local-first progress.** Everything is stored in the browser and exportable as a
+  file. Self-hosted builds can add optional cloud sync behind Google, GitHub or
+  email + password; without it the app says clearly that progress stays local.
 - A redesigned UI built on design tokens, in light and dark mode,
   keyboard-accessible throughout, and a deep-linkable URL for every screen.
 
@@ -138,7 +143,7 @@ hook and maps over data.
 **Strict TypeScript**, including `noUncheckedIndexedAccess` and
 `exactOptionalPropertyTypes`, with no `any` and no non-null assertions. The exam
 data files are checked against the domain types with `satisfies`, so a malformed
-Modelltest fails the build rather than the exam.
+Mock exam fails the build rather than the exam.
 
 **Content is split and lazy-loaded per trainer.** Each trainer's exams,
 curriculum, guide and vocabulary bank load through one dynamic `import()`, so
@@ -225,15 +230,37 @@ npm run dev          # http://localhost:5173
 | `npm run test:e2e` | Playwright (needs `npx playwright install chromium` once) |
 | `npm run test:all` | Everything                                                |
 
-Cloud sync is optional. Copy `.env.example` to `.env` and fill in a Supabase
-project URL and publishable key to enable it; leave it out and the app runs fully
-offline on browser storage.
+### Public demo: local-only mode
+
+The public deployment is built **without** any Supabase values, so it runs in
+local-only mode: no accounts, no sign-up and no sign-in buttons, and no request
+to anything but the site itself (fonts and scripts are self-hosted, there is no
+analytics). Progress lives in browser storage and can be exported and restored as a
+file from History. It is also built without `VITE_ALLOW_INDEXING`, so every page
+carries `noindex, nofollow` and no sitemap is emitted.
+
+### Self-hosting with cloud sync
+
+Cloud sync is a complete, tested feature that is simply switched off on the demo.
+To turn it on in your own deployment:
+
+1. Create a Supabase project and run [`supabase-setup.sql`](supabase-setup.sql) in its SQL
+   editor (the table and its row-level-security policies).
+2. Enable the sign-in providers you want under Authentication → Providers, and add your
+   deployment's URL to Authentication → URL Configuration (site URL and redirect URLs).
+3. Copy `.env.example` to `.env` (or set the same variables in your host's
+   environment) with the project URL and the **publishable** key, then rebuild.
+4. Add your Supabase origin to `connect-src` in `public/_headers` if you use a custom
+   domain (`*.supabase.co` is already allowed).
+5. Update the privacy policy: with accounts on, it must cover Supabase and every OAuth
+   provider you enable, and you need a data processing agreement with Supabase.
 
 ```dotenv
 VITE_SUPABASE_URL=https://<project-ref>.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon / publishable key>
 VITE_AUTH_PROVIDERS=google,github
 VITE_SITE_URL=https://your-deployment-url
+VITE_ALLOW_INDEXING=        # true to let search engines index it
 ```
 
 `VITE_*` values are inlined at build time, so changing one needs a rebuild. The
@@ -249,6 +276,8 @@ turns "why is sync off?" into a five-second answer.
 - In the A2·B1 dual-level paper, Sprachbausteine is tracked separately, since in
   the real exam it feeds the reading and writing subtests rather than forming its
   own 60-point skill.
+- Legal pages: `/impressum` and `/datenschutz`, with the operator's details in
+  `src/shared/config/legal.ts`. The privacy page describes the local-only deployment.
 - `npm run validate` checks all 45 exam files. [`CLAUDE.md`](CLAUDE.md) documents
   the architecture and conventions, [`CONTRIBUTING.md`](CONTRIBUTING.md) the
   issue → branch → PR → release workflow, [`SECURITY.md`](SECURITY.md) how auth and data

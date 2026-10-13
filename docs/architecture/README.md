@@ -1,8 +1,8 @@
 # Architecture
 
-The telc Deutsch Trainer is a client-only React single-page app. It prepares learners for
+The Prüfungstrainer Deutsch is a client-only React single-page app. It prepares learners for
 four German exams: telc Deutsch A2·B1, telc Deutsch B1, telc Deutsch B2 and the
-Deutsch-Test für Zuwanderer (DTZ). Four trainers ship 45 Modelltests in total (15 + 10 + 10
+Deutsch-Test für Zuwanderer (DTZ). Four trainers ship 45 mock exams in total (15 + 10 + 10
 
 - 10), and each trainer has a 28-day curriculum, an exam guide and a vocabulary bank. The
   app runs a sitting module by module against a clock, marks it by its paper's rules and
@@ -50,7 +50,7 @@ The diagrams use the [C4 model](https://c4model.com) in Mermaid. GitHub renders 
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Trainer**      | One exam the app prepares for: `a2b1`, `b1`, `b2` or `dtz` (`TrainerId`). A `TrainerInfo` entry in `TRAINERS` gives its name, route base path, paper, progress slice and lazy content loader. The trainers are peers.                                                       |
 | **Paper/format** | The shape of a sitting: its modules, timing, marking and self-rating scales. There are three (`ExamFormatId`): `dual-level` (A2·B1), `single-level` (B1 and B2) and `dtz-paper` (DTZ). Each has a format descriptor in `features/mock-exam/lib/formats/<format>/format.ts`. |
-| **Modelltest**   | One complete mock exam: one file `src/content/<id>/exams/examNN.ts` that satisfies the paper's type (`DualLevelExam`, `SingleLevelExam` or `DtzExam`).                                                                                                                      |
+| **mock exam**    | One complete mock exam: one file `src/content/<id>/exams/examNN.ts` that satisfies the paper's type (`DualLevelExam`, `SingleLevelExam` or `DtzExam`).                                                                                                                      |
 | **Module**       | One part of a sitting: `lesen`, `sprachbausteine`, `hoeren`, `schreiben` or `sprechen` (`ExamModule`). The DTZ has no `sprachbausteine`.                                                                                                                                    |
 | **Teil**         | A numbered part inside a module, for example DTZ Hören Teil 3. Answer keys carry the Teil number: `h3.0` is Hören Teil 3, item 0.                                                                                                                                           |
 | **Teilergebnis** | A DTZ part result. There are three: Hören + Lesen (max 45), Schreiben (max 20) and Sprechen (max 100). Each one is placed at B1, A2 or "unter A2". `dtzCertificate` derives the certificate from the three levels, not from a total.                                        |

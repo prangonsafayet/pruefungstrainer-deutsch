@@ -2,7 +2,7 @@ import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 6,
-  title: 'Modelltest 6',
+  title: 'Mock exam 6',
   difficulty: 'medium',
   level: 'A2+ · mittel',
   theme: 'Reisen & Verkehr',

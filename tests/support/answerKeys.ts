@@ -7,7 +7,7 @@ import { dtzItems } from '@features/mock-exam/lib/formats/dtz-paper/items.ts';
 
 /*
  * The answer key of a paper as the stored answer map a perfect sitting leaves behind. Built
- * from the exam's own data, so a suite can sweep every authored Modelltest.
+ * from the exam's own data, so a suite can sweep every authored mock exam.
  */
 
 const keyEntries = (prefix: string, values: readonly AnswerValue[]): [string, AnswerValue][] =>

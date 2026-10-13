@@ -3,7 +3,7 @@ import { type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
 const exam = {
   id: 5,
   level: 'b2',
-  title: 'Modelltest 5',
+  title: 'Mock exam 5',
   theme: 'Bildung & lebenslanges Lernen',
 
   lesen: {
@@ -110,7 +110,7 @@ Karin Vogel hat inzwischen die Zwischenprüfung bestanden, als Zweitbeste ihres 
         'Lernstudio Pythagoras: Einzelnachhilfe in Mathe und Physik für die Klassen 5 bis 13, gezieltes Prüfungstraining vor Abschlussprüfungen.',
         'Fernakademie Comenius: Staatlich zugelassener Lehrgang „Personalfachkaufmann/-frau (IHK)“ — ortsunabhängig lernen, Präsenz nur zur Prüfung.',
         'Musikschule Crescendo: Gitarre, Klavier oder Saxofon für Erwachsene — Anfängerkurse dienstags und donnerstags ab 19 Uhr.',
-        'Sprachinstitut Lingua: Intensivtraining für die Prüfung telc Deutsch B2 mit Modelltests und individueller Fehleranalyse. Nächster Start: 5. März.',
+        'Sprachinstitut Lingua: Intensivtraining für die Prüfung telc Deutsch B2 mit mock exams und individueller Fehleranalyse. Nächster Start: 5. März.',
         'Universität im Alter: Öffentliche Ringvorlesung für Menschen ab 60 — jeden Mittwochnachmittag, Semesterbeitrag 40 Euro, keine Prüfungen.',
         'DRK-Kreisverband: Erste-Hilfe-Kurse für Firmen — wir kommen mit unserem Schulungsteam direkt in Ihren Betrieb, Termine nach Absprache.',
         'Verein Chancenwerk e. V.: Kostenlose Hausaufgaben- und Lernhilfe für Kinder aus Familien mit geringem Einkommen, gefördert von der Stadt.',

@@ -1,5 +1,5 @@
 /**
- * The dual-level paper — the telc Deutsch A2·B1 Modelltest — described for the generic
+ * The dual-level paper — the telc Deutsch A2·B1 mock exam — described for the generic
  * runner: five modules, four 60-point skills plus Sprachbausteine, and a grade of B1, A2 or
  * Nicht bestanden.
  */

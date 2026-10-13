@@ -37,7 +37,7 @@ describe('a task with a target', () => {
     stubWidth(true);
     const page = await mount('/learn');
     const link = [...page.container.querySelectorAll('a')].find(anchor =>
-      /Go to Lesen Teil 1 · Modelltest 3/.test(anchor.textContent)
+      /Go to Lesen Teil 1 · Mock exam 3/.test(anchor.textContent)
     );
     expect(link?.getAttribute('href')).toBe('/exam/3/lesen');
     await page.unmount();

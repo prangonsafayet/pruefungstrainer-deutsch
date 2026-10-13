@@ -28,7 +28,7 @@ export type ExamBinding =
       readonly kind: 'dual-level';
       readonly trainer: TrainerId;
       readonly format: DualLevelFormat;
-      /** Its Modelltests, easiest first. */
+      /** Its mock exams, easiest first. */
       readonly papers: readonly DualLevelExam[];
       readonly store: ExamStore<Settings, DualLevelAttempt>;
     }

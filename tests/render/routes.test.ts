@@ -39,6 +39,8 @@ const ROUTES = [
     path: `${TRAINERS[trainer].basePath}/guide`,
     expect: /telc/
   })),
+  { path: '/impressum', expect: /Impressum/ },
+  { path: '/datenschutz', expect: /Datenschutzerklärung/ },
   { path: '/nope', expect: /not found|404/i }
 ] as const;
 

@@ -8,7 +8,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* "Warm & friendly, grown-up" — design-system/telc-deutsch-trainer/MASTER.md. Every pair
+/* "Warm & friendly, grown-up" — design-system/pruefungstrainer-deutsch/MASTER.md. Every pair
    below was measured; e2e/contrast.spec.js re-measures them in a real browser. */
 :root {
   --radius: 1rem;
@@ -20,18 +20,18 @@
   --popover: #fffdf9;
   --popover-foreground: #2b2420;
 
-  /* Terracotta. White on it measures 5.6:1; as text on the canvas 5.2:1. Lightening it
+  /* Indigo. White on it measures 7.9:1; as text on the canvas 7.4:1. Lightening it
      re-breaks the default button, the most-used control in the app. */
-  --primary: #b4441c;
+  --primary: #4338ca;
   --primary-foreground: #ffffff;
   --secondary: #f3ece3;
   --secondary-foreground: #2b2420;
   --muted: #f3ece3;
   --muted-foreground: #6b5e55; /* 5.9:1 on the canvas */
-  --accent: #f7e6da; /* soft terracotta tint: hover, active nav */
-  --accent-foreground: #8a3416; /* 6.7:1 on the accent */
-  /* Teal second voice: charts and secondary emphasis, never status. */
-  --brand-2: #17716b;
+  --accent: #e9e8fb; /* soft indigo tint: hover, active nav */
+  --accent-foreground: #3730a3; /* 8.2:1 on the accent */
+  /* Magenta second voice: charts and secondary emphasis, never status. */
+  --brand-2: #a21caf;
 
   /* A tint and a solid fill of one colour need opposite inks, so each domain colour carries
      both. `--*-foreground` / `--*-on-fill` sit on the solid fill; `--*-on-tint` and the
@@ -42,7 +42,7 @@
 
   --border: #e8ddd0;
   --input: #98877a; /* field boundary: 3.40:1 on --card (WCAG 1.4.11) */
-  --ring: #b4441c;
+  --ring: #4338ca;
 
   /* Domain colours: pass grades, correctness, urgency. */
   --success: #2f7d52;
@@ -60,16 +60,16 @@
   --shadow-pop: 0 6px 16px rgb(74 46 26 / 0.1), 0 24px 48px -12px rgb(74 46 26 / 0.24);
 
   /* The brand mark (AppLogo, public/logo.svg). Not overridden in .dark: a logo does not invert. */
-  --logo-tile: #b4441c;
-  --logo-tile-light: #d2643a;
+  --logo-tile: #4338ca;
+  --logo-tile-light: #6366f1;
   --logo-paper: #fffdf9;
-  --logo-mark: #17716b;
+  --logo-mark: #a21caf;
 
-  --chart-1: #b4441c;
-  --chart-2: #17716b;
+  --chart-1: #4338ca;
+  --chart-2: #a21caf;
   --chart-3: #2f7d52;
   --chart-4: #9a6400;
-  --chart-5: #6b5a99;
+  --chart-5: #5a6b7d;
 }
 
 /* Warm charcoal, never pure black. */
@@ -81,15 +81,15 @@
   --popover: #26211d;
   --popover-foreground: #f4ede5;
 
-  --primary: #f0895b;
-  --primary-foreground: #2a1206; /* 7.1:1 — the light fill takes a dark label */
+  --primary: #a5b4fc;
+  --primary-foreground: #1e1b4b; /* 8.0:1 — the light fill takes a dark label */
   --secondary: #332c27;
   --secondary-foreground: #f4ede5;
   --muted: #332c27;
   --muted-foreground: #b9aca1;
-  --accent: #3a2a22;
-  --accent-foreground: #f8c9ae;
-  --brand-2: #4fb8ae;
+  --accent: #2a2847;
+  --accent-foreground: #c7d2fe;
+  --brand-2: #e879f9;
 
   /* `--destructive` stays light: it is also the `text-destructive` ink on the canvas. */
   --destructive: #f07468;
@@ -98,7 +98,7 @@
 
   --border: rgb(255 240 225 / 0.12);
   --input: #7a6c62; /* field boundary: 3.15:1 on --card (WCAG 1.4.11) */
-  --ring: #f0895b;
+  --ring: #a5b4fc;
 
   --success: #5cc08a;
   --success-foreground: #9be0b8;
@@ -113,11 +113,11 @@
   --shadow-lift: 0 0 0 1px rgb(255 240 225 / 0.1), 0 14px 28px -8px rgb(0 0 0 / 0.55);
   --shadow-pop: 0 0 0 1px rgb(255 240 225 / 0.1), 0 24px 48px -12px rgb(0 0 0 / 0.65);
 
-  --chart-1: #f0895b;
-  --chart-2: #4fb8ae;
+  --chart-1: #a5b4fc;
+  --chart-2: #e879f9;
   --chart-3: #5cc08a;
   --chart-4: #f0b93a;
-  --chart-5: #b6a6e0;
+  --chart-5: #a7b4c4;
 }
 
 @theme inline {

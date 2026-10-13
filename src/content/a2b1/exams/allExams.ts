@@ -16,7 +16,7 @@ import exam13 from './exam13.ts';
 import exam14 from './exam14.ts';
 import exam15 from './exam15.ts';
 
-/** All A2·B1 Modelltests, ordered easiest first. */
+/** All A2·B1 mock exams, ordered easiest first. */
 export const A2B1_EXAMS: readonly DualLevelExam[] = [
   exam01,
   exam02,

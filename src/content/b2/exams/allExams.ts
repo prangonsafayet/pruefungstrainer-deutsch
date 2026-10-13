@@ -11,7 +11,7 @@ import exam08 from './exam08.ts';
 import exam09 from './exam09.ts';
 import exam10 from './exam10.ts';
 
-/** All B2 Modelltests, ordered by id. */
+/** All B2 mock exams, ordered by id. */
 export const B2_EXAMS: readonly SingleLevelExam[] = [
   exam01,
   exam02,

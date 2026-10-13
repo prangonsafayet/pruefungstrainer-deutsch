@@ -1,5 +1,5 @@
 name: Exam content correction
-description: A wrong, ambiguous or unfair item in one of the 35 Modelltests
+description: A wrong, ambiguous or unfair item in one of the 35 mock exams
 labels: [content]
 body:
   - type: dropdown
@@ -16,7 +16,7 @@ body:
     id: exam
     attributes:
       label: Which exam
-      placeholder: Modelltest 7
+      placeholder: Mock exam 7
     validations:
       required: true
   - type: input

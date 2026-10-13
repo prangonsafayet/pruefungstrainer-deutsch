@@ -1,5 +1,5 @@
 /**
- * The telc Deutsch B1 and B2 Modelltests, described for the generic runner. One descriptor
+ * The telc Deutsch B1 and B2 mock exams, described for the generic runner. One descriptor
  * serves both levels: everything that differs between them is a function of `exam.level`,
  * which the paper itself carries.
  */

@@ -66,7 +66,7 @@ test.describe('shell', () => {
 test.describe('SEO head', () => {
   test('title, description and social tags are present', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/telc Deutsch Trainer/);
+    await expect(page).toHaveTitle(/Prüfungstrainer Deutsch/);
     const content = name =>
       page.locator(`meta[name="${name}"], meta[property="${name}"]`).first().getAttribute('content');
     expect(await content('description')).toContain('telc Deutsch A2·B1');

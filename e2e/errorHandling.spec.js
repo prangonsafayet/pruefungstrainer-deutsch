@@ -74,7 +74,7 @@ test.describe('damaged progress in localStorage', () => {
 
     const download = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download the damaged data' }).click();
-    expect((await download).suggestedFilename()).toBe('telc-trainer-damaged-progress.txt');
+    expect((await download).suggestedFilename()).toBe('pruefungstrainer-damaged-progress.txt');
 
     /* Usable: navigating works and writes a fresh document the next load reads cleanly. */
     await navigate(page, '/settings');

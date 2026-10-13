@@ -17,7 +17,11 @@ interface LocalOnlyNoticeProps {
 const LocalOnlyNotice = ({ attemptCount, syncAvailable, historyTo }: LocalOnlyNoticeProps) => (
   <Alert variant="warning" className="animate-fade-up mb-6">
     <TriangleAlert />
-    <AlertTitle>You are not signed in — progress is saved only in this browser</AlertTitle>
+    <AlertTitle>
+      {syncAvailable
+        ? 'You are not signed in — progress is saved only in this browser'
+        : 'Progress is saved only in this browser'}
+    </AlertTitle>
     <AlertDescription>
       <p>
         {attemptCount > 0
@@ -26,7 +30,7 @@ const LocalOnlyNotice = ({ attemptCount, syncAvailable, historyTo }: LocalOnlyNo
         Clearing site data, private browsing, or moving to another device or browser will lose them.
         {syncAvailable
           ? ' Signing in with Google, GitHub or an email link backs everything up and syncs it across your devices.'
-          : ' Cloud sync is not configured for this build, so export a backup file regularly.'}
+          : ' This deployment runs in local-only mode, so export a backup file regularly.'}
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {syncAvailable ? (

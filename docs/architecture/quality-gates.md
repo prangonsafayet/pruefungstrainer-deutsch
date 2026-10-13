@@ -35,7 +35,7 @@ flowchart TD
   merge --> tag{"package.json version changed?"}
   tag -- yes --> release["tag-release.yml: tag, attach built site,<br/>GitHub release"]
 
-  classDef boundary fill:#f7e6da,stroke:#b4441c,stroke-width:2px,color:#2b2420
+  classDef boundary fill:#e9e8fb,stroke:#4338ca,stroke-width:2px,color:#2b2420
   class protect boundary
 ```
 
@@ -48,7 +48,7 @@ flowchart TD
 | pre-commit                       | `.husky/pre-commit`, `.lintstagedrc.json`          | Formatting and lint in the staged files                                                                                                                                                              | Yes (`--no-verify`)                                                                          |
 | pre-push                         | `.husky/pre-push`                                  | Type errors and lint anywhere, broken exam data, failing unit and render tests, architecture and storage-key violations. It checks the working tree, not the pushed commit.                          | Yes                                                                                          |
 | CI `static`                      | `.github/workflows/ci.yml`                         | The same static gates, plus `audit:prod` (moderate and above fails)                                                                                                                                  | No: required                                                                                 |
-| CI `unit`                        | `ci.yml`                                           | `validate.cjs` (every Modelltest against its paper), all vitest suites, and coverage thresholds on libs and hooks (they only ratchet up)                                                             | No: required                                                                                 |
+| CI `unit`                        | `ci.yml`                                           | `validate.cjs` (every mock exam against its paper), all vitest suites, and coverage thresholds on libs and hooks (they only ratchet up)                                                              | No: required                                                                                 |
 | CI `e2e`                         | `ci.yml`                                           | Real-browser flows: a11y (axe), keyboard-only, contrast, auth with stubbed Supabase, DTZ, exam, schedule; then the production build served with its real `_headers` and failing on any CSP violation | No: required                                                                                 |
 | CI `build`                       | `ci.yml`                                           | A build that depends on a local `.env`; entry chunk over baseline + 10%; a `content-<id>` chunk over 160 kB gzip; a stale CSP hash                                                                   | No: required                                                                                 |
 | CI `deadcode`                    | `ci.yml`                                           | Unused files, exports and dependencies (knip)                                                                                                                                                        | Shows red, but is not in the required set                                                    |

@@ -9,7 +9,7 @@ paths:
 
 # UI and design system
 
-A redesign ("warm & friendly", `design-system/telc-deutsch-trainer/MASTER.md`) is in progress;
+A redesign ("warm & friendly", `design-system/pruefungstrainer-deutsch/MASTER.md`) is in progress;
 the `ui-designer` agent owns it. Pass 5A landed tokens, fonts, primitives and the app shell.
 Verify appearance in a real browser (Playwright MCP), never from a passing unit test.
 
@@ -27,10 +27,10 @@ fill of one colour need opposite inks.
 | `--card` / `--popover`          | `#fffdf9`                            | `#26211d`                  | cards, menus                                             |
 | `--muted` / `--secondary`       | `#f3ece3`                            | `#332c27`                  | quiet surfaces, tracks                                   |
 | `--muted-foreground`            | `#6b5e55`                            | `#b9aca1`                  | secondary text; checkbox/radio edge                      |
-| `--primary` / `--ring`          | `#b4441c`                            | `#f0895b`                  | terracotta: actions, links, focus                        |
-| `--primary-foreground`          | `#ffffff`                            | `#2a1206`                  | label on primary                                         |
-| `--accent` / `-foreground`      | `#f7e6da` / `#8a3416`                | `#3a2a22` / `#f8c9ae`      | soft tint: hover, active nav, secondary button           |
-| `--brand-2`                     | `#17716b`                            | `#4fb8ae`                  | teal second voice (charts), never status                 |
+| `--primary` / `--ring`          | `#4338ca`                            | `#a5b4fc`                  | indigo: actions, links, focus                            |
+| `--primary-foreground`          | `#ffffff`                            | `#1e1b4b`                  | label on primary                                         |
+| `--accent` / `-foreground`      | `#e9e8fb` / `#3730a3`                | `#2a2847` / `#c7d2fe`      | soft tint: hover, active nav, secondary button           |
+| `--brand-2`                     | `#a21caf`                            | `#e879f9`                  | magenta second voice (charts), never status              |
 | `--success` / `-on-fill`        | `#2f7d52` / `#ffffff`                | `#5cc08a` / `#0d2618`      | fill and its label                                       |
 | `--success-foreground`          | `#1e6440`                            | `#9be0b8`                  | ink on the success tint                                  |
 | `--warning` / `-foreground`     | `#e3a21a` / `#7a4e00`                | `#f0b93a` / `#f5d58a`      | tint source / ink, ring and meter stroke                 |
@@ -38,7 +38,7 @@ fill of one colour need opposite inks.
 | `--destructive-on-tint`         | `#a62e25`                            | `#ff9a8f`                  | ink on the destructive tint                              |
 | `--border` / `--input`          | `#e8ddd0` / `#98877a`                | 12% warm white / `#7a6c62` | hairlines / field boundary (input ≥ 3:1 on card, 1.4.11) |
 | `--scrim`                       | ink at 45%                           | near-black at 62%          | behind dialogs (`bg-scrim`)                              |
-| `--chart-1..5`                  | terracotta, teal, green, ochre, plum | lighter set                | charts, both themes                                      |
+| `--chart-1..5`                  | indigo, magenta, green, ochre, slate | lighter set                | charts, both themes                                      |
 | `--logo-*`                      | fixed, no dark override              | —                          | the brand mark only                                      |
 
 - **Shadows** (warm-tinted; utilities `shadow-soft` resting card, `shadow-lift` hover/raised,
@@ -88,7 +88,8 @@ component lives in its own folder (`components/ScoreMeter/ScoreMeter.tsx`).
   itself hides its value.
 - Contrast: `e2e/contrast.spec.js` measures every ink and mark against its WCAG minimum in both
   themes by painting onto a canvas (computed styles return `oklch()`/`color-mix()`). White on
-  `--primary` measures 5.55:1 — lightening the terracotta re-breaks the default button. A class
+  `--primary` measures 7.9:1 (indigo since 2026-10-13, replacing a terracotta that read as
+  telc's red-orange). A class
   used only by that spec (`bg-brand-2`) is still generated: Tailwind scans `e2e/`.
 - Focus: 3px `ring-ring` (≥ 5:1 on canvas and card) with a 2px offset on filled controls; text
   fields swap their border to `--ring` plus a soft halo.

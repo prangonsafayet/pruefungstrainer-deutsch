@@ -286,7 +286,7 @@ for (const file of files) {
 }
 
 // ---------------------------------------------------------------------------
-// Single-level Modelltests (src/content/<id>/exams/examNN.ts)
+// Single-level mock exams (src/content/<id>/exams/examNN.ts)
 // ---------------------------------------------------------------------------
 const telcFiles = allExams.filter(entry => entry.format === 'single-level');
 

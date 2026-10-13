@@ -3,7 +3,7 @@ import { type SingleLevelExam } from '@shared/types/singleLevelExam.ts';
 const exam = {
   id: 7,
   level: 'b2',
-  title: 'Modelltest 7',
+  title: 'Mock exam 7',
   theme: 'Stadtleben & Wohnen',
 
   lesen: {

@@ -1,12 +1,36 @@
-import { CloudOff } from 'lucide-react';
+import { CloudOff, HardDrive } from 'lucide-react';
 
 import SyncDiagnosticRow from '@shared/account-sync/components/sync/SyncDiagnosticRow/SyncDiagnosticRow.tsx';
 import { syncDiagnostics } from '@shared/account-sync/lib/supabaseClient.ts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card.tsx';
 
-/** Explains exactly which sync env vars this build was compiled with and how to fix them. */
+/**
+ * Two cases. A build compiled with no Supabase values at all is local-only on purpose — the
+ * public demo is — so it gets a short note and no sign-in entry point. A build with some
+ * values that do not work is a broken self-hosted setup, so it gets the full diagnosis.
+ */
 const SyncNotConfiguredCard = () => {
   const d = syncDiagnostics;
+  if (!d.urlPresent && !d.keyPresent) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HardDrive className="size-4" /> Local-only mode
+          </CardTitle>
+          <CardDescription>
+            This deployment keeps your progress in your browser: no account, no sign-up, and your progress is
+            never sent to a server. Use <b>History → Export progress</b> to keep a backup or move to another
+            device.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Cloud sync across devices is available when you self-host the app with your own Supabase project —
+          see the README.
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <Card>
       <CardHeader>

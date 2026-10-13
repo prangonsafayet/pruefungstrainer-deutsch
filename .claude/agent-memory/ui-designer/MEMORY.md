@@ -2,7 +2,7 @@
 
 One dated line per lesson. Read before designing; append after a retry.
 
-- 2026-10-12: (5A palette) White on terracotta `--primary` #b4441c measures 5.55:1; lightening it re-breaks the default button.
+- 2026-10-12: (5A palette) White on the then-terracotta `--primary` measured 5.55:1; lightening it re-broke the default button. 2026-10-13: palette moved to indigo #4338ca / magenta #a21caf (7.9:1) so it no longer resembles telc's red-orange + teal.
 - 2026-10-12: A tint and a solid fill of one colour need opposite inks — `--*-on-tint` and `--*-on-fill` tokens.
 - 2026-10-12: Computed styles return `oklch()`/`color-mix()`; contrast is measured by painting to a canvas (`e2e/contrast.spec.js`).
 - 2026-10-12: `test.use({ reducedMotion })` did not reach the media query; use `page.emulateMedia` and assert it.
@@ -26,5 +26,5 @@ One dated line per lesson. Read before designing; append after a retry.
 - 2026-10-12: `overflow-hidden` on a card makes it the scroll container of a `sticky` child (split pane pinned 161px into the section) — use `overflow-clip`.
 - 2026-10-12: Radix radio arrow-select fires on a roving-focus setTimeout while the arrow is still down — Playwright `press` releases first; hold with `keyboard.down`, wait for focus, `up`.
 - 2026-10-12: Heading text + `sr-only` span → Chromium accessible name gets a stray space ("Nr. 21 , incorrect"); put one exact `aria-label` on the container.
-- 2026-10-12: `getByRole(..., { name: 'Modelltest 1' })` also matches 10–15; a `.catch(() => false)` in a Tab loop hid the strict-mode error — use `exact: true`, never swallow locator errors.
+- 2026-10-12: `getByRole(..., { name: 'Mock exam 1' })` also matches 10–15; a `.catch(() => false)` in a Tab loop hid the strict-mode error — use `exact: true`, never swallow locator errors.
 - 2026-10-12: Lazy route keeps the old screen up after the URL changes — scripts must wait for the new screen's control, not the URL.

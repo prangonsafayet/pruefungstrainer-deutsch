@@ -48,12 +48,12 @@ const pickWithKeys = async (page, name) => {
   await expect(listbox).toBeHidden();
 };
 
-/** Dashboard → "Practice one module of Modelltest 1" → Lesen → briefing → the open module. */
+/** Dashboard → "Practice one module of Mock exam 1" → Lesen → briefing → the open module. */
 const openLesenByKeyboard = async (page, base) => {
   await page.goto(base || '/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-  await tabTo(page, page.getByRole('combobox', { name: 'Practice one module of Modelltest 1', exact: true }));
+  await tabTo(page, page.getByRole('combobox', { name: 'Practice one module of Mock exam 1', exact: true }));
   await pickWithKeys(page, /^Les/);
   await expect(page).toHaveURL(/\/exam\/1\/lesen$/);
 

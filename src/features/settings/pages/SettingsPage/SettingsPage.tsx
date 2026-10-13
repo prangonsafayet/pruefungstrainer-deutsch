@@ -1,5 +1,9 @@
+import { Link } from 'react-router-dom';
+
 import SyncPanel from '@shared/account-sync/components/sync/SyncPanel/SyncPanel.tsx';
+import { isSyncConfigured } from '@shared/account-sync/lib/supabaseClient.ts';
 import PageTitle from '@shared/components/layout/PageTitle/PageTitle.tsx';
+import { DATENSCHUTZ_PATH, IMPRESSUM_PATH, INDEPENDENCE_DISCLAIMER } from '@shared/config/legal.ts';
 import { TRAINER_ORDER } from '@shared/config/trainers.ts';
 
 import AudioSettingsCard from '@features/settings/components/AudioSettingsCard/AudioSettingsCard.tsx';
@@ -11,9 +15,9 @@ import SettingsSection from '@features/settings/components/SettingsSection/Setti
 import TrainerExamDateCard from '@features/settings/components/TrainerExamDateCard/TrainerExamDateCard.tsx';
 
 /**
- * Five groups, in the order they matter: when you sit the exam, how strictly a mock exam
- * runs, what it sounds like, where the results are kept, and what to do with them — then,
- * last, help for when something breaks. Grouping by what a setting is for is what keeps the
+ * Six groups, in the order they matter: when you sit the exam, how strictly a mock exam
+ * runs, what it sounds like, where the results are kept, and what to do with them — then help for when something breaks, and last who
+ * made this and the legal pages. Grouping by what a setting is for is what keeps the
  * destructive action out of a row of dropdowns.
  */
 const SettingsPage = () => (
@@ -49,7 +53,11 @@ const SettingsPage = () => (
 
     <SettingsSection
       title="Account and sync"
-      lead="Sign in to carry your progress between devices. Without it, everything stays in this browser."
+      lead={
+        isSyncConfigured
+          ? 'Sign in to carry your progress between devices. Without it, everything stays in this browser.'
+          : 'Everything stays in this browser on this deployment.'
+      }
     >
       <SyncPanel />
     </SettingsSection>
@@ -69,6 +77,18 @@ const SettingsPage = () => (
       lead="Copy a short technical summary to paste into a bug report. It stays on this device until you paste it."
     >
       <DiagnosticsCard />
+    </SettingsSection>
+
+    <SettingsSection title="About" lead={INDEPENDENCE_DISCLAIMER}>
+      <p className="text-sm text-muted-foreground">
+        <Link to={IMPRESSUM_PATH} className="text-primary underline-offset-4 hover:underline">
+          Impressum
+        </Link>{' '}
+        ·{' '}
+        <Link to={DATENSCHUTZ_PATH} className="text-primary underline-offset-4 hover:underline">
+          Datenschutzerklärung
+        </Link>
+      </p>
     </SettingsSection>
   </>
 );

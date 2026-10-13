@@ -168,7 +168,7 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
         },
         {
           text: 'Practice scanning: give yourself 60 seconds per ad-matching situation.',
-          /* Modelltest 3 is an early-A2 paper, so the first full mock (Modelltest 1) stays unseen. */
+          /* Mock exam 3 is an early-A2 paper, so the first full mock (Mock exam 1) stays unseen. */
           target: { kind: 'module', exam: 3, module: 'lesen', teil: '1' }
         }
       ],
@@ -260,7 +260,7 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
       tasks: [
         'Review ALL flashcards from days 1–6.',
         'Cheatsheet: Connectors — learn the three word-order groups (und / weil / deshalb).',
-        "Optional reality check: take Modelltest 1 (easy) on the Dashboard — don't worry about the result, it's a baseline."
+        "Optional reality check: take mock exam 1 (easy) on the Dashboard — don't worry about the result, it's a baseline."
       ],
       cheats: ['connectors'],
       ai: [
@@ -385,7 +385,7 @@ Mit Modalverb: Der Antrag <b>muss</b> unterschrieben <b>werden</b>.</p>
       focus: 'Full-format day',
       tasks: [
         'Say your Teil-1 introduction once — still automatic?',
-        'Take Modelltest 1 or 2 on the Dashboard under REAL conditions (timer, no pausing, no dictionary).',
+        'Take mock exam 1 or 2 on the Dashboard under REAL conditions (timer, no pausing, no dictionary).',
         'Review every mistake in the review screen; add unknown words to flashcards. From tomorrow: one mock exam per day, easier → harder, always with full review.'
       ],
       cheats: ['writing', 'speaking', 'listening'],

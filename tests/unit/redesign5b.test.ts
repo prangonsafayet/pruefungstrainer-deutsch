@@ -22,9 +22,9 @@ describe('the dashboard lead', () => {
 
   it('never claims an order for papers at one level', () => {
     const lead = describeMockLead(null, 10, false);
-    expect(lead).toBe('10 Modelltests, all at exam level. Take them under real timing, in any order.');
+    expect(lead).toBe('10 mock exams, all at exam level. Take them under real timing, in any order.');
     expect(lead).not.toMatch(/easiest/);
-    expect(describeMockLead(null, 15, true)).toMatch(/^15 Modelltests, easiest first\./);
+    expect(describeMockLead(null, 15, true)).toMatch(/^15 mock exams, easiest first\./);
   });
 });
 
@@ -58,12 +58,12 @@ describe('a task target', () => {
     ).toEqual({
       kind: 'link',
       to: '/dtz/exam/4/hoeren',
-      label: 'Hören Teil 1 · Modelltest 4',
+      label: 'Hören Teil 1 · Mock exam 4',
       start: { exam: 4, module: 'hoeren' }
     });
     expect(resolveTaskTarget({ kind: 'module', exam: 1, module: 'lesen' }, '', sheets)).toMatchObject({
       to: '/exam/1/lesen',
-      label: 'Lesen · Modelltest 1'
+      label: 'Lesen · Mock exam 1'
     });
   });
 

@@ -150,7 +150,7 @@ describe('Settings → Copy diagnostics', () => {
     await settle();
 
     const report = String(writeText.mock.calls.at(0)?.[0] ?? '');
-    expect(report).toMatch(/^telc trainer diagnostics\nBuild: v\d/);
+    expect(report).toMatch(/^Prüfungstrainer diagnostics\nBuild: v\d/);
     expect(report).toContain('Browser: ');
     expect(report).toMatch(/Sync: mode \w+, URL present (yes|no)/);
     /* Tests never register a service worker (main.tsx does, in production builds only). */
@@ -174,7 +174,7 @@ describe('Settings → Copy diagnostics', () => {
 
     const report = app.container.querySelector('textarea');
     expect(report?.readOnly).toBe(true);
-    expect(report?.value).toMatch(/^telc trainer diagnostics\nBuild: v\d/);
+    expect(report?.value).toMatch(/^Prüfungstrainer diagnostics\nBuild: v\d/);
     await app.unmount();
   });
 });

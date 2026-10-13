@@ -5,7 +5,7 @@ build produces (`vite.config.ts`), the stores they write to, and the outside ser
 
 ```mermaid
 C4Container
-  title Containers: telc Deutsch Trainer
+  title Containers: Prüfungstrainer Deutsch
 
   Person(learner, "Learner")
 

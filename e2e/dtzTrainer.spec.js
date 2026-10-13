@@ -11,7 +11,7 @@ import { trainerDescriptors } from '../scripts/trainerRegistry.mjs';
  * history and settings, and the module it does not have.
  *
  * e2e specs are plain JS with no bundler, so the registry is read through
- * `scripts/trainerRegistry.mjs` and the answer key of Modelltest 1 is read straight from its
+ * `scripts/trainerRegistry.mjs` and the answer key of mock exam 1 is read straight from its
  * content file — the same text parse `validate.cjs` does — rather than hardcoded here, where it
  * would drift the day the paper is edited.
  */
@@ -28,7 +28,7 @@ const NO_MATCH = -1;
 const RUN_KEY = 'telcTrainerDtzRunV1';
 const PROGRESS_KEY = 'telcTrainerV1';
 
-/** One DTZ Modelltest, evaluated from its authored file. */
+/** One DTZ mock exam, evaluated from its authored file. */
 const loadExam = id => {
   const file = new URL(`../src/content/dtz/exams/exam${String(id).padStart(2, '0')}.ts`, import.meta.url);
   const source = readFileSync(file, 'utf8')
@@ -187,14 +187,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('the DTZ dashboard and its routes', () => {
-  test('lists 10 Modelltests under the DTZ name, and every nav route loads cleanly', async ({ page }) => {
+  test('lists 10 mock exams under the DTZ name, and every nav route loads cleanly', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.goto(BASE);
     await expect(dashboardHeading(page)).toBeVisible();
     await expect(dashboardHeading(page)).toContainText(DTZ.short);
     /* The full name sits in the header subtitle, which a phone hides: present, not visible. */
     await expect(page.getByText(DTZ.name).first()).toBeAttached();
-    await expect(page.getByRole('combobox', { name: /^Practice one module of Modelltest \d+$/ })).toHaveCount(
+    await expect(page.getByRole('combobox', { name: /^Practice one module of Mock exam \d+$/ })).toHaveCount(
       10
     );
 

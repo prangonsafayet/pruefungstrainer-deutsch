@@ -11,8 +11,8 @@ import { click, findByText, mount, seedProgress, waitFor } from './harness.ts';
  * one used to replace a half-finished sitting without a word. It must ask first, through the
  * app's confirm dialog, and do nothing unless the candidate agrees.
  *
- * Day 2 of the root trainer's plan links Lesen Teil 1 of Modelltest 3; the run in progress is
- * Hören of Modelltest 2.
+ * Day 2 of the root trainer's plan links Lesen Teil 1 of mock exam 3; the run in progress is
+ * Hören of mock exam 2.
  */
 
 const store = runFormatFor(ROOT_TRAINER).runStore;
@@ -20,7 +20,7 @@ const inProgress = createRun({ trainer: ROOT_TRAINER, examId: 2, mode: 'hoeren',
 
 const goLink = (): HTMLElement | undefined =>
   [...document.querySelectorAll<HTMLElement>('a')].find(anchor =>
-    /Go to Lesen Teil 1 · Modelltest 3/.test(anchor.textContent)
+    /Go to Lesen Teil 1 · Mock exam 3/.test(anchor.textContent)
   );
 
 const dialogText = (): string => document.querySelector('[role="alertdialog"]')?.textContent ?? '';
@@ -42,7 +42,7 @@ describe('a Go link that would replace a run in progress', () => {
     await click(goLink());
 
     expect(
-      await waitFor(() => /You have Hören in progress for Modelltest 2 — discard it\?/.test(dialogText()))
+      await waitFor(() => /You have Hören in progress for mock exam 2 — discard it\?/.test(dialogText()))
     ).toBe(true);
     await click(findByText(/^Keep it$/));
 

@@ -42,7 +42,7 @@ export const formatDiagnostics = ({
   const flag = (value: boolean): string => (value ? 'yes' : 'no');
   const log = entries.slice(-DIAGNOSTIC_ENTRIES);
   return [
-    'telc trainer diagnostics',
+    'Prüfungstrainer diagnostics',
     `Build: ${build}`,
     `Captured: ${now}`,
     `Browser: ${userAgent}`,

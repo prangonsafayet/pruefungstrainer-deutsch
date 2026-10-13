@@ -11,7 +11,7 @@ recorded — a commit explains what changed, an issue explains why it was worth
 changing.
 
 Pick the template that fits: **Bug report**, **Feature request**, or **Exam content
-correction** for a wrong or ambiguous item in one of the Modelltests.
+correction** for a wrong or ambiguous item in one of the mock exams.
 
 Label it so the release notes group correctly (see `.github/release.yml`):
 

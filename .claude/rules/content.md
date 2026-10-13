@@ -29,8 +29,8 @@ Author with the `exam-author` agent; check facts with `content-fact-checker`. Ru
 
 ## Original texts only
 
-All Modelltests, including DTZ's ten, are original texts that follow the format. Nothing from a
-published Übungssatz or Modelltest is reproduced.
+All mock exams, including DTZ's ten, are original texts that follow the format. Nothing from a
+published Übungssatz or mock exam is reproduced.
 
 ## HTML in both directions
 

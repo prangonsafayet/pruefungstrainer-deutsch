@@ -4,7 +4,7 @@ import { Button } from '@shared/ui/button.tsx';
 import { Card, CardContent } from '@shared/ui/card.tsx';
 
 interface ModuleBriefingCardProps {
-  /** "Modelltest 3 · B1 · Module 2 of 5" — whatever identifies the sitting. */
+  /** "Mock exam 3 · B1 · Module 2 of 5" — whatever identifies the sitting. */
   readonly kicker: string;
   /** The module name, e.g. "Leseverstehen". */
   readonly title: string;
@@ -22,7 +22,7 @@ interface ModuleBriefingCardProps {
 /**
  * The "what to do" screen shown before each exam module starts — shared by all trainers. The
  * module name is the screen's `<h1>`; the kicker rides inside it after a separator a screen
- * reader hears, so the tab title reads "Leseverstehen · Modelltest 3 · B1 · Module 1 of 5".
+ * reader hears, so the tab title reads "Leseverstehen · Mock exam 3 · B1 · Module 1 of 5".
  */
 const ModuleBriefingCard = ({
   kicker,

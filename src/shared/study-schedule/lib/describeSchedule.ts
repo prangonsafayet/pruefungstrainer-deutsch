@@ -71,7 +71,7 @@ export const describeLearnLead = (schedule: Schedule): string => {
  * may be called "easiest first".
  */
 export const describeMockLead = (schedule: Schedule | null, totalExams: number, ramps: boolean): string => {
-  const count = `${String(totalExams)} Modelltests`;
+  const count = `${String(totalExams)} mock exams`;
   const opening = ramps ? `${count}, easiest first` : `${count}, all at exam level`;
   const scheduled = schedule ? schedule.slots.reduce((sum, slot) => sum + slot.examIds.length, 0) : 0;
   if (!schedule || schedule.phase === 'past-due' || scheduled === 0) {

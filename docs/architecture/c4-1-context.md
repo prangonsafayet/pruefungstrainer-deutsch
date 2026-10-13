@@ -6,11 +6,11 @@ visit after a deploy.
 
 ```mermaid
 C4Context
-  title System context: telc Deutsch Trainer
+  title System context: Prüfungstrainer Deutsch
 
   Person(learner, "Learner", "Prepares for telc A2·B1, B1, B2 or the DTZ")
 
-  System(app, "telc Deutsch Trainer", "React SPA. Mock exams, curriculum, vocabulary drills. Stores progress in the browser.")
+  System(app, "Prüfungstrainer Deutsch", "React SPA. Mock exams, curriculum, vocabulary drills. Stores progress in the browser.")
 
   System_Ext(browser, "Browser platform", "localStorage, sessionStorage, speechSynthesis, MediaRecorder, service worker")
   System_Ext(netlify, "Netlify", "Static hosting, SPA fallback, response headers from public/_headers")
@@ -52,4 +52,4 @@ C4Context
   hash for the pre-paint theme script, and `font-src 'self'`
   ([ADR 0008](adr/0008-self-hosted-fonts-strict-csp.md)).
 - **No official exam material.** The DTZ format follows the g.a.s.t. _Übungssatz 1_ (June
-  2024). Every Modelltest is original text written to that format.
+  2024). Every mock exam is original text written to that format.

@@ -27,7 +27,7 @@ sequenceDiagram
   participant S as useTrainerSlice<br/>ProgressProvider
   participant LS as localStorage<br/>telcTrainerV1
 
-  L->>D: Start Modelltest 3, full
+  L->>D: Start Mock exam 3, full
   D->>RS: load("dtz")
   alt another run in progress
     D->>L: confirm "discard it?"

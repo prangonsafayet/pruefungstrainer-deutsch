@@ -13,7 +13,7 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground shadow-soft hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90',
         outline: 'border bg-card shadow-soft hover:bg-accent hover:text-accent-foreground',
-        /* A soft terracotta tint: the quiet sibling of the default fill. */
+        /* A soft indigo tint: the quiet sibling of the default fill. */
         secondary: 'bg-accent text-accent-foreground hover:bg-accent/70',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',

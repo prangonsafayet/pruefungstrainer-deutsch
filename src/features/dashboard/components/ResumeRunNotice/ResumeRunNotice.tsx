@@ -18,7 +18,7 @@ const ResumeRunNotice = ({ run, modeLabel, onResume, onDiscard }: ResumeRunNotic
       <CardHeader>
         <CardTitle>You have an exam in progress</CardTitle>
         <CardDescription>
-          Modelltest {run.examId} · {modeLabel} — module {run.index + 1} of {run.queue.length}. Your answers
+          Mock exam {run.examId} · {modeLabel} — module {run.index + 1} of {run.queue.length}. Your answers
           and remaining time were saved.
         </CardDescription>
       </CardHeader>

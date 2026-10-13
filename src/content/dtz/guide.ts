@@ -142,6 +142,6 @@ Every scale has six steps: B1 gut erfüllt (100%) · B1 erfüllt (80%) · A2 gut
 
 <h2 id="g-source">9. Source</h2>
 <div class="card">
-<p>The format and scoring facts in this guide follow the free <b>Übungssatz</b> published by <b>g.a.s.t.</b> — see <a href="https://www.gast.de/dtz" target="_blank" rel="noopener noreferrer">gast.de/dtz</a> for the official DTZ materials. The Modelltests in this trainer are original texts written to that format; nothing from the Übungssatz is copied. Where the official material gives no figure — how often a recording is played, the minutes per Teil inside Hören and Lesen, a word count for Schreiben, or preparation time before Sprechen — this guide gives none either. Check your own exam invitation for those details.</p>
+<p>The format and scoring facts in this guide follow the free <b>Übungssatz</b> published by <b>g.a.s.t.</b> — see <a href="https://www.gast.de/dtz" target="_blank" rel="noopener noreferrer">gast.de/dtz</a> for the official DTZ materials. The mock exams in this trainer are original texts written to that format; nothing from the Übungssatz is copied. Where the official material gives no figure — how often a recording is played, the minutes per Teil inside Hören and Lesen, a word count for Schreiben, or preparation time before Sprechen — this guide gives none either. Check your own exam invitation for those details.</p>
 </div>
 `;

@@ -2,7 +2,7 @@
 
 ## Reporting
 
-Open a [private security advisory](https://github.com/prangonsafayet/telc-a2b1-trainer/security/advisories/new)
+Open a [private security advisory](https://github.com/prangonsafayet/pruefungstrainer-deutsch/security/advisories/new)
 rather than a public issue. I will confirm within a few days.
 
 ## What this app handles

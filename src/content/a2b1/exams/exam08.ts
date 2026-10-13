@@ -2,7 +2,7 @@ import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 8,
-  title: 'Modelltest 8',
+  title: 'Mock exam 8',
   difficulty: 'b1',
   level: 'B1 · Aufbau',
   theme: 'Freizeit, Medien & Kultur',

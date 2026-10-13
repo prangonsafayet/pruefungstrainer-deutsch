@@ -10,7 +10,7 @@ import type { SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
 import type { LevelTrainerSettings } from '@shared/types/trainer.ts';
 
 /*
- * One dashboard card per Modelltest. The single-level branch read its best total and last
+ * One dashboard card per mock exam. The single-level branch read its best total and last
  * verdict from every attempt, so a module practice taken after a passed sitting — which has
  * no verdict — hid the "Bestanden" badge. The other two papers already read full sittings.
  */

@@ -2,7 +2,7 @@ import { type DtzExam } from '@shared/types/dtzExam.ts';
 
 const exam = {
   id: 10,
-  title: 'Modelltest 10',
+  title: 'Mock exam 10',
   theme: 'Banken, Verträge & Versicherungen',
 
   hoeren: {

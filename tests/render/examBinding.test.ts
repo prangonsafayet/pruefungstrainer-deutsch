@@ -11,7 +11,7 @@ import { useTrainerSlice, type TrainerSlice } from '@shared/progress-store/hooks
 import { waitFor } from './harness.ts';
 
 /*
- * `useExamBinding` resolves a trainer to its paper, its Modelltests and the document its
+ * `useExamBinding` resolves a trainer to its paper, its mock exams and the document its
  * attempts live in. Its memo used to depend on the whole slice and the whole content object,
  * both of which are rebuilt on every progress write — so ticking a curriculum checkbox
  * handed the runner a brand-new `store` and a brand-new `format`, and everything downstream

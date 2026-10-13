@@ -31,7 +31,7 @@ import { captureErrors, settle } from './harness.ts';
 const RUN_KEY = 'examFinishRegressionRunV1';
 const runStore = createRunStore(RUN_KEY);
 
-const EXAM: ExamPaper = { id: 1, title: 'Modelltest 1', theme: 'Fixture' };
+const EXAM: ExamPaper = { id: 1, title: 'Mock exam 1', theme: 'Fixture' };
 const SETTINGS: RunSettings = { writingMinutes: 30, playsAllowed: 1 };
 const RATING: ExamFormat<ExamPaper, RunSettings, StoredAttempt>['rating']['schreiben'] = {
   criteria: [['Inhalt', 'all three points covered']],
@@ -46,7 +46,7 @@ let stored: StoredAttempt[] = [];
 let nextAttemptId = 1;
 
 /* A stand-in paper. The machine is generic over the format, so the smallest descriptor
-   that satisfies the contract exercises it without dragging a Modelltest along. */
+   that satisfies the contract exercises it without dragging a mock exam along. */
 const FORMAT: ExamFormat<ExamPaper, RunSettings, StoredAttempt> = {
   modules: ['lesen'],
   runStore,

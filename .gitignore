@@ -36,3 +36,8 @@ _to_delete/
 
 # Intermediate redesign screenshot sets (large); the README set lives in docs/screenshots/*.png
 docs/screenshots/redesign-*/
+
+# Official exam material used ONLY for the local originality check (scripts/check-content-overlap.mjs).
+# Copyrighted — never commit it.
+_reference/
+*.pdf

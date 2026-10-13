@@ -193,7 +193,7 @@ right area; see `.claude/rules/memory.md`.
 - Hören Teil 3 play count unsourced → record open questions; do not guess.
 - 2026-10-12: DTZ facts only from `docs/dtz-format.local.md` → plays per text, per-Teil minutes,
   Schreiben word count and Sprechen prep time are NOT stated; never assert them.
-- 2026-10-12: never reproduce g.a.s.t. (or telc) material → Modelltests are original texts.
+- 2026-10-12: never reproduce g.a.s.t. (or telc) material → mock exams are original texts.
 
 ## Bundling and build
 

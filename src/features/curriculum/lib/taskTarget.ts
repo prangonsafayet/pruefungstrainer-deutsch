@@ -19,7 +19,7 @@ export type ResolvedTaskTarget =
 
 /**
  * `basePath` is the trainer's route namespace ('' for the root trainer). The label names the
- * destination in words, so the link reads as "Go to Lesen Teil 1 · Modelltest 1" on its own.
+ * destination in words, so the link reads as "Go to Lesen Teil 1 · Mock exam 1" on its own.
  */
 export const resolveTaskTarget = (
   target: LearnTaskTarget,
@@ -32,7 +32,7 @@ export const resolveTaskTarget = (
       return {
         kind: 'link',
         to: `${basePath}/exam/${String(target.exam)}/${target.module}`,
-        label: `${MODULE_META[target.module].short}${teil} · Modelltest ${String(target.exam)}`,
+        label: `${MODULE_META[target.module].short}${teil} · Mock exam ${String(target.exam)}`,
         start: { exam: target.exam, module: target.module }
       };
     }

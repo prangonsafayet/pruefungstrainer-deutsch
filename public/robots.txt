@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# Per-user attempt screens hold nothing crawlable.
-Disallow: /exam/
-Disallow: /results/
-Disallow: /review/

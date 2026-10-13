@@ -3,7 +3,7 @@
 /** Structure, scoring and per-module tactics. Trusted, repo-authored HTML. */
 export const B1_GUIDE = `
 <h1>Exam Guide — telc Deutsch B1</h1>
-<p class="lead">Structure, scoring, and concrete tactics to crack every module of telc Deutsch B1 (Zertifikat Deutsch). Based on the official telc exam format.</p>
+<p class="lead">Structure, scoring, and concrete tactics to crack every module of telc Deutsch B1 (Zertifikat Deutsch). Based on the published telc exam format.</p>
 
 <div class="guide-toc">
   <a href="#g-structure">Structure &amp; timing</a>

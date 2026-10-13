@@ -25,7 +25,7 @@ const TASKS_PER_DAY: Readonly<Record<TrainerId, readonly number[]>> = {
   dtz: threeEach({ 14: 4 })
 };
 
-/** How many Modelltests each trainer ships. A drop here is missing content, not a refactor. */
+/** How many mock exams each trainer ships. A drop here is missing content, not a refactor. */
 const EXPECTED_EXAMS: Readonly<Record<TrainerId, number>> = { a2b1: 15, b1: 10, b2: 10, dtz: 10 };
 
 it('covers every registered trainer', () => {

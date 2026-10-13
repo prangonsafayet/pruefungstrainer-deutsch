@@ -2,7 +2,7 @@ import { type DualLevelExam } from '@shared/types/exam.ts';
 
 const exam = {
   id: 15,
-  title: 'Modelltest 15',
+  title: 'Mock exam 15',
   difficulty: 'b1',
   level: 'B1 · Endspurt',
   theme: 'Leben & Arbeiten im Ausland',

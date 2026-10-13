@@ -120,7 +120,7 @@ const DashboardPage = ({ trainer }: DashboardPageProps) => {
           <DashboardExamCard key={card.id} card={card} onStart={resumable.start} />
         ))}
         {stats.examCards.length === 0 ? (
-          <p className="text-sm text-muted-foreground">The Modelltests for this trainer are on their way.</p>
+          <p className="text-sm text-muted-foreground">The mock exams for this trainer are on their way.</p>
         ) : null}
       </div>
     </>

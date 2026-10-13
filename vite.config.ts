@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-import { crawlerDisallows, sitemapPages } from './scripts/siteMeta.mjs';
+import { isIndexable, robotsMeta, robotsTxt, sitemapPages } from './scripts/siteMeta.mjs';
 import { isSecretSupabaseKey } from './scripts/supabaseKey.mjs';
 import { trainerBasePaths } from './scripts/trainerRegistry.mjs';
 
@@ -16,6 +16,8 @@ import { trainerBasePaths } from './scripts/trainerRegistry.mjs';
    build time from VITE_SITE_URL (Netlify also exposes it as URL / DEPLOY_PRIME_URL). */
 const siteUrlHtml = (env: Record<string, string>): Plugin => {
   const site = (env.VITE_SITE_URL || env.DEPLOY_PRIME_URL || env.URL || '').trim().replace(/\/+$/, '');
+  /* Search engines stay out unless VITE_ALLOW_INDEXING says otherwise (scripts/siteMeta.mjs). */
+  const indexable = isIndexable(env.VITE_ALLOW_INDEXING);
   return {
     name: 'site-url-html',
     /* Must run before vite:build-html, which decodeURI()s href attributes and would
@@ -23,24 +25,30 @@ const siteUrlHtml = (env: Record<string, string>): Plugin => {
     transformIndexHtml: {
       order: 'pre',
       handler: (html: string) => {
+        const withRobots = html.replace(/__ROBOTS__/g, robotsMeta(indexable));
         if (!site) {
           console.warn(
             '[site-url-html] VITE_SITE_URL is not set — canonical, og:url and og:image tags are omitted from index.html.'
           );
           /* Better to omit these tags than to publish a wrong absolute URL. */
-          return html
+          return withRobots
             .replace(
               /^.*(?:rel="canonical"|property="og:url"|property="og:image"|name="twitter:image").*$\n?/gm,
               ''
             )
             .replace(/__SITE_URL__/g, '');
         }
-        return html.replace(/__SITE_URL__/g, site);
+        return withRobots.replace(/__SITE_URL__/g, site);
       }
     },
     generateBundle() {
-      if (!site) return;
       const basePaths = trainerBasePaths();
+      this.emitFile({
+        type: 'asset',
+        fileName: 'robots.txt',
+        source: robotsTxt({ site, indexable, basePaths })
+      });
+      if (!site || !indexable) return;
       this.emitFile({
         type: 'asset',
         fileName: 'sitemap.xml',
@@ -51,17 +59,6 @@ const siteUrlHtml = (env: Record<string, string>): Plugin => {
             .map(u => `  <url><loc>${site}${u}</loc><changefreq>monthly</changefreq></url>`)
             .join('\n') +
           '\n</urlset>\n'
-      });
-      this.emitFile({
-        type: 'asset',
-        fileName: 'robots.txt',
-        source:
-          'User-agent: *\nAllow: /\n\n' +
-          '# Per-user attempt screens hold nothing crawlable.\n' +
-          crawlerDisallows(basePaths)
-            .map(path => `Disallow: ${path}`)
-            .join('\n') +
-          `\n\nSitemap: ${site}/sitemap.xml\n`
       });
     }
   };
@@ -83,11 +80,11 @@ const supabaseEnvCheck = (env: Record<string, string>): Plugin => ({
       return;
     }
     this.warn(
-      'Building WITHOUT Supabase credentials — cloud sync will be off in this build.\n' +
+      'Building WITHOUT Supabase credentials — local-only mode (how the public demo is built).\n' +
         `    VITE_SUPABASE_URL      ${url ? 'ok' : 'MISSING'}\n` +
         `    VITE_SUPABASE_ANON_KEY ${key ? 'ok' : 'MISSING'}\n` +
         '    Locally: create .env (see .env.example). On Netlify: Site configuration →\n' +
-        '    Environment variables, then trigger a new deploy. See HOSTING.md.'
+        '    Environment variables, then trigger a new deploy. See README, "Self-hosting with cloud sync".'
     );
   }
 });
