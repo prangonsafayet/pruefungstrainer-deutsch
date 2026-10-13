@@ -9,7 +9,7 @@ paths:
 
 # UI and design system
 
-A redesign ("warm & friendly", `design-system/pruefungstrainer-deutsch/MASTER.md`) is in progress;
+A redesign ("friendly, grown-up", `design-system/pruefungstrainer-deutsch/MASTER.md`; indigo on cool neutrals since v4.0.1) is in progress;
 the `ui-designer` agent owns it. Pass 5A landed tokens, fonts, primitives and the app shell.
 Verify appearance in a real browser (Playwright MCP), never from a passing unit test.
 
@@ -20,30 +20,30 @@ expressed as shadcn variables so every primitive inherits them. Domain colours c
 on-tint and an on-fill ink (`--destructive-on-tint`, `--success-on-fill`) — a tint and a solid
 fill of one colour need opposite inks.
 
-| Token                           | Light                                | Dark                       | Role                                                     |
-| ------------------------------- | ------------------------------------ | -------------------------- | -------------------------------------------------------- |
-| `--background`                  | `#fbf7f1`                            | `#1b1714`                  | canvas (warm cream / warm charcoal)                      |
-| `--foreground`                  | `#2b2420`                            | `#f4ede5`                  | ink                                                      |
-| `--card` / `--popover`          | `#fffdf9`                            | `#26211d`                  | cards, menus                                             |
-| `--muted` / `--secondary`       | `#f3ece3`                            | `#332c27`                  | quiet surfaces, tracks                                   |
-| `--muted-foreground`            | `#6b5e55`                            | `#b9aca1`                  | secondary text; checkbox/radio edge                      |
-| `--primary` / `--ring`          | `#4338ca`                            | `#a5b4fc`                  | indigo: actions, links, focus                            |
-| `--primary-foreground`          | `#ffffff`                            | `#1e1b4b`                  | label on primary                                         |
-| `--accent` / `-foreground`      | `#e9e8fb` / `#3730a3`                | `#2a2847` / `#c7d2fe`      | soft tint: hover, active nav, secondary button           |
-| `--brand-2`                     | `#a21caf`                            | `#e879f9`                  | magenta second voice (charts), never status              |
-| `--success` / `-on-fill`        | `#2f7d52` / `#ffffff`                | `#5cc08a` / `#0d2618`      | fill and its label                                       |
-| `--success-foreground`          | `#1e6440`                            | `#9be0b8`                  | ink on the success tint                                  |
-| `--warning` / `-foreground`     | `#e3a21a` / `#7a4e00`                | `#f0b93a` / `#f5d58a`      | tint source / ink, ring and meter stroke                 |
-| `--destructive` / `-foreground` | `#c0362c` / `#ffffff`                | `#f07468` / `#2a0a07`      | fill and its label                                       |
-| `--destructive-on-tint`         | `#a62e25`                            | `#ff9a8f`                  | ink on the destructive tint                              |
-| `--border` / `--input`          | `#e8ddd0` / `#98877a`                | 12% warm white / `#7a6c62` | hairlines / field boundary (input ≥ 3:1 on card, 1.4.11) |
-| `--scrim`                       | ink at 45%                           | near-black at 62%          | behind dialogs (`bg-scrim`)                              |
-| `--chart-1..5`                  | indigo, magenta, green, ochre, slate | lighter set                | charts, both themes                                      |
-| `--logo-*`                      | fixed, no dark override              | —                          | the brand mark only                                      |
+| Token                           | Light                             | Dark                       | Role                                                     |
+| ------------------------------- | --------------------------------- | -------------------------- | -------------------------------------------------------- |
+| `--background`                  | `#f6f7fb`                         | `#12141c`                  | canvas (cool off-white / deep slate)                     |
+| `--foreground`                  | `#1c2033`                         | `#e7e9f2`                  | ink                                                      |
+| `--card` / `--popover`          | `#ffffff`                         | `#1b1e2a`                  | cards, menus                                             |
+| `--muted` / `--secondary`       | `#eceef5`                         | `#262a38`                  | quiet surfaces, tracks                                   |
+| `--muted-foreground`            | `#555d73`                         | `#a3abc2`                  | secondary text; checkbox/radio edge                      |
+| `--primary` / `--ring`          | `#4338ca`                         | `#a5b4fc`                  | indigo: actions, links, focus                            |
+| `--primary-foreground`          | `#ffffff`                         | `#1e1b4b`                  | label on primary                                         |
+| `--accent` / `-foreground`      | `#e8e9fb` / `#3730a3`             | `#25274a` / `#c7d2fe`      | soft tint: hover, active nav, secondary button           |
+| `--brand-2`                     | `#0f766e`                         | `#2dd4bf`                  | teal second voice (charts), never status                 |
+| `--success` / `-on-fill`        | `#2f7d52` / `#ffffff`             | `#5cc08a` / `#0d2618`      | fill and its label                                       |
+| `--success-foreground`          | `#1e6440`                         | `#9be0b8`                  | ink on the success tint                                  |
+| `--warning` / `-foreground`     | `#e3a21a` / `#7a4e00`             | `#f0b93a` / `#f5d58a`      | tint source / ink, ring and meter stroke                 |
+| `--destructive` / `-foreground` | `#c0362c` / `#ffffff`             | `#f07468` / `#2a0a07`      | fill and its label                                       |
+| `--destructive-on-tint`         | `#a62e25`                         | `#ff9a8f`                  | ink on the destructive tint                              |
+| `--border` / `--input`          | `#e1e4ee` / `#80869c`             | 12% cool white / `#6c7389` | hairlines / field boundary (input ≥ 3:1 on card, 1.4.11) |
+| `--scrim`                       | ink at 45%                        | near-black at 62%          | behind dialogs (`bg-scrim`)                              |
+| `--chart-1..5`                  | indigo, teal, green, ochre, slate | lighter set                | charts, both themes                                      |
+| `--logo-*`                      | fixed, no dark override           | —                          | the brand mark only                                      |
 
-- **Shadows** (warm-tinted; utilities `shadow-soft` resting card, `shadow-lift` hover/raised,
-  `shadow-pop` menus/dialogs). In dark each carries a 1px warm hairline, because shadows do
-  not read on charcoal — that is why `Card` has no dark border class (a border colour would
+- **Shadows** (slate-tinted; utilities `shadow-soft` resting card, `shadow-lift` hover/raised,
+  `shadow-pop` menus/dialogs). In dark each carries a 1px cool hairline, because shadows do
+  not read on deep slate — that is why `Card` has no dark border class (a border colour would
   override a caller's `border-l-primary`).
 - **Radius** (`--radius: 1rem`): `sm` 6px · `md` 8px · `lg` 10px · `xl` 12px (controls: buttons,
   inputs, selects) · `2xl` 16px (cards, dialogs) · `3xl` 24px · pills `rounded-full`.
