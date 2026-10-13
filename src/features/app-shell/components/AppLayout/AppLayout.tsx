@@ -32,9 +32,9 @@ const AppLayout = () => {
         className={cn(
           'flex min-h-dvh flex-col',
           /* Room for the fixed tab bar, so the footer never sits underneath it. */
-          !examMode && 'max-sm:pb-[calc(4.25rem+env(safe-area-inset-bottom))]',
+          !examMode && 'max-sm:pb-[calc(4.5rem+max(0.5rem,env(safe-area-inset-bottom)))]',
           /* …and in an exam, room for the module toolbar docked at the bottom. */
-          examMode && 'max-sm:pb-[calc(5.5rem+env(safe-area-inset-bottom))]'
+          examMode && 'max-sm:pb-[calc(5.5rem+max(0.5rem,env(safe-area-inset-bottom)))]'
         )}
       >
         <a
