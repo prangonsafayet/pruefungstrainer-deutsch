@@ -3,11 +3,11 @@
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#fbf7f1"/>
-      <stop offset="1" stop-color="#f7e6da"/>
+      <stop offset="1" stop-color="#e9e8fb"/>
     </linearGradient>
     <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#d2643a"/>
-      <stop offset="1" stop-color="#b4441c"/>
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#4338ca"/>
     </linearGradient>
     <style>
       .t { font-family: "Nunito", "Nunito Variable", ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
@@ -15,41 +15,41 @@
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="1090" cy="70" r="230" fill="#b4441c" opacity=".07"/>
-  <circle cx="90" cy="600" r="190" fill="#17716b" opacity=".07"/>
+  <circle cx="1090" cy="70" r="230" fill="#4338ca" opacity=".07"/>
+  <circle cx="90" cy="600" r="190" fill="#a21caf" opacity=".07"/>
 
   <g transform="translate(84 92) scale(1.5)">
     <rect width="64" height="64" rx="16" fill="url(#mark)"/>
     <rect x="13" y="11" width="31" height="42" rx="5" fill="#fffdf9"/>
-    <g fill="#b4441c" opacity=".3">
+    <g fill="#4338ca" opacity=".3">
       <rect x="18.5" y="18" width="20" height="3" rx="1.5"/>
       <rect x="18.5" y="25" width="20" height="3" rx="1.5"/>
       <rect x="18.5" y="32" width="13" height="3" rx="1.5"/>
     </g>
-    <circle cx="44" cy="44" r="13" fill="#17716b" stroke="#fffdf9" stroke-width="3"/>
+    <circle cx="44" cy="44" r="13" fill="#a21caf" stroke="#fffdf9" stroke-width="3"/>
     <path d="M38.5 44.5l3.8 3.8 7.2-7.6" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
   <text class="t" x="84" y="272" font-size="76" font-weight="800" fill="#2b2420">Prüfungstrainer Deutsch</text>
-  <text class="t" x="84" y="352" font-size="56" font-weight="700" fill="#b4441c">Mock exams, plans &amp; practice</text>
+  <text class="t" x="84" y="352" font-size="56" font-weight="700" fill="#4338ca">Mock exams, plans &amp; practice</text>
   <text class="t" x="86" y="416" font-size="31" fill="#6b5e55">Full mock exams · real timing · 28-day plans · full review</text>
 
   <g class="t" font-size="28" font-weight="700">
     <g transform="translate(84 470)">
       <rect width="150" height="56" rx="28" fill="#fffdf9" stroke="#e8ddd0" stroke-width="2"/>
-      <text x="75" y="37" text-anchor="middle" fill="#8a3416">A2·B1</text>
+      <text x="75" y="37" text-anchor="middle" fill="#3730a3">A2·B1</text>
     </g>
     <g transform="translate(250 470)">
       <rect width="104" height="56" rx="28" fill="#fffdf9" stroke="#e8ddd0" stroke-width="2"/>
-      <text x="52" y="37" text-anchor="middle" fill="#8a3416">B1</text>
+      <text x="52" y="37" text-anchor="middle" fill="#3730a3">B1</text>
     </g>
     <g transform="translate(370 470)">
       <rect width="104" height="56" rx="28" fill="#fffdf9" stroke="#e8ddd0" stroke-width="2"/>
-      <text x="52" y="37" text-anchor="middle" fill="#8a3416">B2</text>
+      <text x="52" y="37" text-anchor="middle" fill="#3730a3">B2</text>
     </g>
     <g transform="translate(490 470)">
       <rect width="116" height="56" rx="28" fill="#fffdf9" stroke="#e8ddd0" stroke-width="2"/>
-      <text x="58" y="37" text-anchor="middle" fill="#17716b">DTZ</text>
+      <text x="58" y="37" text-anchor="middle" fill="#a21caf">DTZ</text>
     </g>
   </g>
 </svg>

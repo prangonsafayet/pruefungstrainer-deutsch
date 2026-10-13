@@ -15,7 +15,7 @@ DTZ — who need calm, legible, encouraging, never childish.
 ## Direction: warm & friendly, grown-up
 
 - Warm cream canvas, white-warm cards, ink that is brown-black rather than blue-black.
-- One warm brand colour (terracotta) for action and focus; teal as the quiet second voice for
+- One brand colour (indigo) for action and focus; magenta as the quiet second voice for
   charts and secondary emphasis. Green/amber/red carry status only.
 - Generous rounding (cards 16px, controls 12px, pills full), soft warm-tinted shadows, no hard
   1px grey boxes everywhere — separate with space and surface tone first, borders second.
@@ -54,11 +54,11 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 | `--card`                | `#FFFDF9` | cards, popovers                           |
 | `--muted`/`--secondary` | `#F3ECE3` | quiet surfaces, tracks                    |
 | `--muted-foreground`    | `#6B5E55` | secondary text — 5.9:1 on bg              |
-| `--primary`             | `#B4441C` | terracotta: actions, focus, links — 5.2:1 |
-| `--primary-foreground`  | `#FFFFFF` | on primary — 5.6:1                        |
-| `--accent`              | `#F7E6DA` | soft terracotta tint (hover, active nav)  |
-| `--accent-foreground`   | `#8A3416` | on accent — 6.7:1                         |
-| `--brand-2`             | `#17716B` | teal second voice (charts, highlights)    |
+| `--primary`             | `#4338CA` | indigo: actions, focus, links — 7.4:1     |
+| `--primary-foreground`  | `#FFFFFF` | on primary — 7.9:1                        |
+| `--accent`              | `#E9E8FB` | soft indigo tint (hover, active nav)      |
+| `--accent-foreground`   | `#3730A3` | on accent — 8.2:1                         |
+| `--brand-2`             | `#A21CAF` | magenta second voice (charts, highlights) |
 | `--success`             | `#2F7D52` | fill; white label 5.0:1                   |
 | `--success-foreground`  | `#1E6440` | ink on success tint                       |
 | `--warning`             | `#E3A21A` | fill/tint source                          |
@@ -67,7 +67,7 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 | `--destructive-on-tint` | `#A62E25` | ink on destructive tint                   |
 | `--border`              | `#E8DDD0` |                                           |
 | `--input`               | `#98877A` | field boundary — 3.4:1 on card (1.4.11)   |
-| `--ring`                | `#B4441C` |                                           |
+| `--ring`                | `#4338CA` |                                           |
 
 ### Dark (warm charcoal, never pure black)
 
@@ -78,9 +78,9 @@ strokes ≥ 3:1. `e2e/contrast.spec.js` re-measures them in a real browser.
 | `--card`                | `#26211D`                                            |
 | `--muted`/`--secondary` | `#332C27`                                            |
 | `--muted-foreground`    | `#B9ACA1`                                            |
-| `--primary`             | `#F0895B` (ink `#2A1206`, 7.1:1)                     |
-| `--accent`              | `#3A2A22` (ink `#F8C9AE`)                            |
-| `--brand-2`             | `#4FB8AE`                                            |
+| `--primary`             | `#A5B4FC` (ink `#1E1B4B`, 8.0:1)                     |
+| `--accent`              | `#2A2847` (ink `#C7D2FE`)                            |
+| `--brand-2`             | `#E879F9`                                            |
 | `--success`             | `#5CC08A` (ink on fill `#0D2618`; on tint `#9BE0B8`) |
 | `--warning`             | `#F0B93A` (ink on tint `#F5D58A`)                    |
 | `--destructive`         | `#F07468` (ink on fill `#2A0A07`; on tint `#FF9A8F`) |

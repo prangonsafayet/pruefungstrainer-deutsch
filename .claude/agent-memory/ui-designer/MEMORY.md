@@ -2,7 +2,7 @@
 
 One dated line per lesson. Read before designing; append after a retry.
 
-- 2026-10-12: (5A palette) White on terracotta `--primary` #b4441c measures 5.55:1; lightening it re-breaks the default button.
+- 2026-10-12: (5A palette) White on the then-terracotta `--primary` measured 5.55:1; lightening it re-broke the default button. 2026-10-13: palette moved to indigo #4338ca / magenta #a21caf (7.9:1) so it no longer resembles telc's red-orange + teal.
 - 2026-10-12: A tint and a solid fill of one colour need opposite inks — `--*-on-tint` and `--*-on-fill` tokens.
 - 2026-10-12: Computed styles return `oklch()`/`color-mix()`; contrast is measured by painting to a canvas (`e2e/contrast.spec.js`).
 - 2026-10-12: `test.use({ reducedMotion })` did not reach the media query; use `page.emulateMedia` and assert it.
