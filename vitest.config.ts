@@ -41,7 +41,7 @@ export default defineConfig({
       include: ['src/**/lib/**/*.{ts,tsx}', 'src/**/hooks/**/*.{ts,tsx}', 'src/**/use*.tsx'],
       exclude: ['src/content/**', 'src/shared/ui/**', 'src/**/types/**'],
       reporter: ['text-summary', 'html'],
-      thresholds: { lines: 82, functions: 83, branches: 65, statements: 80 }
+      thresholds: { lines: 94, functions: 93, branches: 83, statements: 92 }
     },
     projects: [
       {

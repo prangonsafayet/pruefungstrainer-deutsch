@@ -29,6 +29,9 @@ create policy "update own progress"
 
 -- Deliberately no delete policy: nothing the browser can do removes a progress row.
 -- Deleting the account cascades it away via the user_id foreign key.
+-- Under RLS a client .delete() therefore removes 0 rows and reports NO error. The app's
+-- "Delete all progress" does not rely on it: it overwrites the row with an empty document
+-- through the insert/update policies and reads it back (clearRemote in useCloudSync.tsx).
 
 -- Keep updated_at honest even if a client forgets to send it.
 create or replace function public.progress_touch_updated_at()

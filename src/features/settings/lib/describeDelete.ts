@@ -21,5 +21,5 @@ const LOCAL =
  */
 export const describeDelete = (signedIn: boolean): string =>
   signedIn
-    ? `${LOCAL} Your cloud copy is deleted with it. Another signed-in device that still holds a copy will restore it on its next sync, so delete there too — or sign out on this one first.`
+    ? `${LOCAL} Your cloud copy is cleared first; if it cannot be, nothing is deleted. Other signed-in devices keep their own copy until you clear them too (so does another open tab of the trainer) — each one will restore it on its next sync, so delete there as well, or sign out on this one first.`
     : `${LOCAL} Nothing leaves this browser, so signing in later on a device that still has your progress brings it back.`;

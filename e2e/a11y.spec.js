@@ -78,8 +78,11 @@ const setTheme = async (page, theme) => {
   await page.evaluate(value => localStorage.setItem('telcTrainerTheme', value), theme);
   await page.reload();
   await settle(page);
-  const isDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-  expect(isDark, `the ${theme} theme did not apply`).toBe(theme === 'dark');
+  /* A retrying locator assertion rather than a one-shot `evaluate`, which throws "Execution
+     context was destroyed" if the page is still navigating when it runs. */
+  const html = page.locator('html');
+  if (theme === 'dark') await expect(html, 'the dark theme did not apply').toHaveClass(/\bdark\b/);
+  else await expect(html, 'the light theme did not apply').not.toHaveClass(/\bdark\b/);
 };
 
 /** Audits the current URL in both themes; `prepare` re-creates any open state after a reload. */
@@ -142,6 +145,7 @@ for (const trainer of TRAINERS) {
         if (await phoneButton.isVisible()) await phoneButton.click();
         await container.locator('li button').first().click();
         await expect(container.locator('.prose')).toBeVisible();
+        await settle(page);
       };
       await auditBothThemes(page, `${base}/learn + cheatsheet`, openSheet);
     });

@@ -27,9 +27,9 @@ export interface ProgressDataState {
  * same place rather than a browser tab apart.
  */
 export const useProgressData = (): ProgressDataState => {
-  const { replaceLocal } = useProgress();
+  const { dbRef, replaceLocal } = useProgress();
   const { exportToFile, importFromFile } = useProgressBackup();
-  const { user, deleteRemote } = useSync();
+  const { user, clearRemote } = useSync();
   const confirm = useConfirm();
 
   const deleteAllProgress = useCallback(async () => {
@@ -42,27 +42,39 @@ export const useProgressData = (): ProgressDataState => {
     });
     if (!confirmed) return;
 
+    const empty = stamp({ ...EMPTY_DATABASE, settings: DEFAULT_SETTINGS });
+
+    /* The cloud copy first: if it cannot be cleared, nothing is deleted, so the next sync cannot
+       merge the old copy back into an emptied browser behind the learner's back. The browser
+       cannot remove the row (no delete policy), so it is overwritten with this same document. */
+    if (signedIn) {
+      const cleared = await clearRemote(empty);
+      if (!cleared.ok) {
+        /* The write may have landed even though the clear failed (a lost response, a failed
+           read-back). The cleared row would then be the newer side, and the next merge would
+           take its default settings. Re-stamping makes this browser newer: the debounced push
+           puts the whole document back, which is what the message promises. */
+        replaceLocal(stamp(dbRef.current));
+        toast.error('Nothing was deleted in this browser', { description: cleared.error.message });
+        return;
+      }
+    }
+
     /* The run in progress is stored under its own key, so emptying the document left a
        half-finished attempt — answers and typed text included — behind it. */
     clearAllRuns();
-    replaceLocal(stamp({ ...EMPTY_DATABASE, settings: DEFAULT_SETTINGS }));
+    replaceLocal(empty);
 
-    if (!signedIn) {
-      toast.success('All progress deleted.');
-      return;
-    }
-
-    /* The stored row is removed rather than overwritten with an empty document: a union-only
-       merge cannot express a deletion, so an emptied row would be refilled by the next
-       device to sign in. */
-    if (await deleteRemote()) {
-      toast.success('All progress deleted.', { description: 'The cloud copy is gone too.' });
-      return;
-    }
-    toast.warning('Deleted in this browser only', {
-      description: 'The cloud copy could not be reached, so it may sync back. Try again when you are online.'
-    });
-  }, [confirm, replaceLocal, user, deleteRemote]);
+    toast.success(
+      'All progress deleted.',
+      signedIn
+        ? {
+            description:
+              'The cloud copy is cleared too. Other signed-in devices keep their own copy until you delete there too.'
+          }
+        : {}
+    );
+  }, [confirm, dbRef, replaceLocal, user, clearRemote]);
 
   return { exportToFile, importFromFile, deleteAllProgress };
 };

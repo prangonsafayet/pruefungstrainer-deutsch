@@ -160,8 +160,14 @@ export const appDefines = (commitRef: string): Record<string, string> => ({
 });
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  /* Playwright's dev server sets E2E_DEV_SERVER (playwright.config.ts). The app then sees only
+     the environment Playwright passes — CI's fake Supabase config — never a developer's `.env`,
+     so a laptop with sync configured runs the e2e suite exactly as CI does. */
+  const e2e = process.env.E2E_DEV_SERVER === '1';
+  const envDir = e2e ? false : process.cwd();
+  const env = loadEnv(mode, envDir, '');
   return {
+    envDir,
     plugins: [
       react(),
       tailwindcss(),
@@ -236,7 +242,10 @@ export default defineConfig(({ mode }) => {
     },
     /* Deliberately no `server.open`: it launches a real browser that races the dependency
        optimizer against the one Playwright drives, which surfaces as
-       "require_react is not a function" and a blank page. Use `npm run dev -- --open`. */
-    server: {}
+       "require_react is not a function" and a blank page. Use `npm run dev -- --open`.
+       Under Playwright the tree is fixed for the run: no file watching and no HMR, so an edit
+       made while the suite runs (another session, an editor's save) cannot re-render or reload
+       a page in the middle of a test. */
+    server: e2e ? { hmr: false, watch: null } : {}
   };
 });

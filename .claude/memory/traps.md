@@ -30,6 +30,15 @@ right area; see `.claude/rules/memory.md`.
   only then replaces it; never let a load path default-and-overwrite user data.
 - 2026-10-13: after a quota failure `readLocal` returned the stale localStorage value → the
   in-memory fallback is read first; a failed write is still the latest value.
+- 2026-10-13: "Delete all progress" said the cloud copy was gone while RLS deleted 0 rows (no
+  delete policy: `.delete()` is a silent success) → the browser overwrites the row with a stamped
+  empty document and reads it back (`clearRemote`), cloud first, local only after; never claim a
+  cloud write you have not read back. Other signed-in devices still restore it (union merge).
+- 2026-10-13: the clear's `syncing` guard was a closure snapshot from before `await confirm`; a
+  sync started from the open dialog refilled the row after the read-back → guard with refs
+  (await work in flight, block new work), not render state.
+- 2026-10-13: a failed clear whose upsert had landed left a newer empty row, so the next merge
+  reset every setting (LWW) → on failure re-stamp the local document so its push wins.
 
 ## Lint and config
 
@@ -108,6 +117,16 @@ right area; see `.claude/rules/memory.md`.
   `createMediaStreamDestination().stream`; MediaRecorder and blob playback stay real.
 - 2026-10-13: a `page.route` stub does not hide a CSP violation → the renderer checks CSP before
   the request reaches the network layer, so stub backends freely in `e2e/csp.spec.js`.
+- 2026-10-13: e2e `getByRole('combobox')` "not found" right after opening a Radix select → open,
+  Radix aria-hides everything outside the listbox, the trigger too; wait on the listbox, and on
+  it being gone before the next select.
+- 2026-10-13: the e2e dev server read the developer's `.env` (real Supabase) → `E2E_DEV_SERVER=1`
+  from `playwright.config.ts` gives `envDir: false`, CI's fake config, and no watch/HMR.
+- 2026-10-13: a flake blamed on Vite dep re-optimisation → `DEBUG=vite:deps` said "the scanner
+  found every used dependency" and a cold-cache full run logged no re-optimisation; check the
+  premise before adding `optimizeDeps.include`. `touch` does not trigger HMR (same content).
+- 2026-10-13: a function type in `tests/` (interface field, callback param) trips base
+  `no-unused-vars` on its parameter names → type it by example: `typeof exampleFn`.
 
 ## Dates, timers, React
 

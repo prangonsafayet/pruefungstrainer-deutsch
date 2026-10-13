@@ -230,11 +230,30 @@ The B1/B2 slices were once lost because the second edit was missing.
 
 **Consequences of a union-only merge.**
 
-- **No deletion.** The merge cannot express a deletion. "Delete all progress" therefore
-  also calls `deleteRemote()`, which deletes the user's row. Note that `supabase-setup.sql`
-  defines select, insert and update policies but **no delete policy** ("Deliberately no
-  delete policy"). Under row-level security that delete matches no row and returns no
-  error.
+- **No deletion.** The merge cannot express a deletion, and the browser cannot remove the
+  row either: `supabase-setup.sql` defines select, insert and update policies but **no
+  delete policy**, so under row-level security a `.delete()` matches no row and returns no
+  error. "Delete all progress" therefore runs `clearRemote(empty)` (`useCloudSync`)
+  **before** it touches the browser: it upserts a fresh empty document, stamped now, over
+  the row, then reads the row back and succeeds only if the stored copy carries that stamp
+  and no attempts. Any failure (offline, RLS refusal, rate limit, a read-back that still
+  holds the old copy) deletes nothing in the browser and says "The cloud copy could NOT be
+  cleared" and why; if the write landed but the read-back failed, it says the row was
+  overwritten but not checked. On any failure the browser's document is
+  re-stamped, so it is the newer side: the write may have landed (a lost response, a failed
+  read-back), and an emptied row that stayed newer would hand its default settings to the next
+  merge. The debounced push then puts the whole document back. While it runs no sync or push may start, and any already on
+  the wire is awaited first, so none can land after the read-back. Only then are the local document and every run emptied, with the
+  same document, so nothing is left to push and the next sync has nothing old to merge in.
+- **Known limit: other devices.** An empty, newer document does not remove anything from a
+  union. Another signed-in device — or another open tab on this one, which nothing tells
+  about the change — keeps its own full copy. Its next sync merges: attempts, ticks, SRS,
+  activity and weakness come back (unions), while settings take the cleared defaults because
+  the empty document is newer. Its next push is a blind upsert and puts its whole document
+  back, settings included. Either way the cloud row, and from there this browser, refills.
+  The Settings dialog says so: other signed-in devices (and other open tabs) keep their own
+  copy until you clear them too. Fixing it needs a deletion marker in the document and a
+  merge that honours it — a schema change, not done.
 - **Older builds and the `dtz` slice.** A pre-3.0 build does not know `dtz`. It treats the
   slice as an unknown key and carries it whole from whichever side is newer. A device still
   on a cached pre-3.0 build can therefore overwrite the cloud copy of the DTZ **settings**.

@@ -116,3 +116,100 @@ describe('summarizeAttempt — the DTZ paper', () => {
     expect(summary.bars[0]?.thresholdLabel).toContain("this trainer's target");
   });
 });
+
+/*
+ * What the card leads with and how it is tinted, per paper and per outcome: a full sitting
+ * takes the verdict's colour, a practice run the neutral primary and no grade, and the
+ * headline is the first score the attempt actually has — never a stale or invented one.
+ */
+
+/** A practice run: the attempt as changed, without the verdict only a full sitting stores. */
+const practice = <T extends object>(attempt: T, changes: Partial<T>): T => {
+  const copy = { ...attempt, ...changes };
+  for (const key of ['total', 'result', 'written', 'oral']) Reflect.deleteProperty(copy, key);
+  return copy;
+};
+
+describe('summarizeAttempt — accent, headline and practice runs', () => {
+  it.each([
+    ['B1', 'var(--success)', 'success'],
+    ['A2', 'var(--warning)', 'warning'],
+    ['Nicht bestanden', 'var(--destructive)', 'destructive']
+  ] as const)('A2·B1 %s is tinted %s', (result, accent, tone) => {
+    const summary = summarizeDualLevel({ ...dualLevelAttempt, result });
+    expect(summary.accentColor).toBe(accent);
+    expect(summary.grade).toMatchObject({ label: result, tone, points: { total: 168, of: 240 } });
+    expect(summary.headlineScore).toBe('42');
+    expect(summary.headlineSuffix).toBe('/60');
+    expect(summary.totalSeconds).toBe(60);
+  });
+
+  it('an A2·B1 Sprachbausteine-only practice leads with its percentage and has no grade', () => {
+    const summary = summarizeDualLevel(
+      practice(dualLevelAttempt, { mode: 'sprachbausteine', scores: {}, times: {} })
+    );
+    expect(summary).toMatchObject({
+      accentColor: 'var(--primary)',
+      grade: null,
+      headlineScore: '68%',
+      headlineSuffix: ''
+    });
+    expect(summary.bars.map(bar => bar.label)).toEqual(['Sprachbausteine']);
+    expect(summary.totalSeconds).toBe(0);
+  });
+
+  it('an A2·B1 practice with no score at all shows a dash', () => {
+    const summary = summarizeDualLevel({ ...dualLevelAttempt, mode: 'lesen', scores: {}, sb: null });
+    expect(summary.headlineScore).toBe('–');
+    expect(summary.grade).toBeNull();
+  });
+
+  it('a failed single-level sitting is red, with both written and oral in the note', () => {
+    const summary = summarizeSingleLevel({
+      ...singleLevelAttempt,
+      result: 'Nicht bestanden',
+      written: 120,
+      oral: 30
+    });
+    expect(summary.accentColor).toBe('var(--destructive)');
+    expect(summary.grade?.tone).toBe('destructive');
+    expect(summary.grade?.notes[0]).toMatch(/^Written: 120\/225 \(pass ≥ 135\) · Oral: 30\/75 \(pass ≥ 45\)/);
+    expect(summarizeSingleLevel(singleLevelAttempt).accentColor).toBe('var(--success)');
+  });
+
+  it('a single-level practice run is neutral, ungraded and leads with its one section', () => {
+    const summary = summarizeSingleLevel(
+      practice(singleLevelAttempt, { mode: 'hoeren', scores: { hoeren: 50 } })
+    );
+    expect(summary).toMatchObject({
+      accentColor: 'var(--primary)',
+      grade: null,
+      headlineScore: '50',
+      headlineSuffix: '/75'
+    });
+    const empty = summarizeSingleLevel({ ...singleLevelAttempt, mode: 'lesen', scores: {} });
+    expect(empty.headlineScore).toBe('–');
+    expect(empty.headlineSuffix).toBe('');
+  });
+
+  it.each([
+    ['Zertifikat B1', 'var(--success)'],
+    ['Zertifikat A2', 'var(--warning)'],
+    ['unter A2', 'var(--destructive)']
+  ] as const)('DTZ %s is tinted %s', (result, accent) => {
+    expect(summarizeDtz({ ...dtzAttempt, result }).accentColor).toBe(accent);
+  });
+
+  it('a DTZ practice run has no Hören + Lesen bar unless both parts were sat, and no grade', () => {
+    const summary = summarizeDtz(practice(dtzAttempt, { mode: 'schreiben', scores: { schreiben: 9 } }));
+    expect(summary.bars.map(bar => bar.label)).toEqual(['Schreiben (self)']);
+    expect(summary).toMatchObject({
+      accentColor: 'var(--primary)',
+      grade: null,
+      headlineScore: '9',
+      headlineSuffix: '/20'
+    });
+    const blank = summarizeDtz(practice(dtzAttempt, { mode: 'lesen', scores: {} }));
+    expect(blank.headlineScore).toBe('–');
+  });
+});

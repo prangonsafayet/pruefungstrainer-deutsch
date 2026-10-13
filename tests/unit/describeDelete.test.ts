@@ -18,19 +18,21 @@ describe('describeDelete', () => {
     }
   });
 
-  it('says the cloud copy goes, and that another device can bring it back', () => {
+  it('says the cloud copy is cleared first, and that another device can bring it back', () => {
     const copy = describeDelete(true);
 
-    expect(copy).toMatch(/cloud copy is deleted/i);
+    expect(copy).toMatch(/cloud copy is cleared first/i);
+    expect(copy).toMatch(/if it cannot be, nothing is deleted/i);
+    expect(copy).toMatch(/other signed-in devices keep their own copy until you clear them too/i);
+    expect(copy).toMatch(/another open tab/i);
     expect(copy).toMatch(/restore it on its next sync/i);
-    expect(copy).toMatch(/delete there too|sign out/i);
   });
 
   it('says the opposite when signed out — nothing leaves the browser', () => {
     const copy = describeDelete(false);
 
     expect(copy).toMatch(/nothing leaves this browser/i);
-    expect(copy).not.toMatch(/cloud copy is deleted/i);
+    expect(copy).not.toMatch(/cloud copy/i);
     /* Signing in later is the way it comes back, which the old copy denied outright. */
     expect(copy).toMatch(/brings it back/i);
   });

@@ -146,7 +146,9 @@ sequenceDiagram
 - **Offline is not an error.** An offline failure shows in the header badge and raises no
   toast. Other failures raise a toast with Retry.
 - **Delete is not a merge.** The union-only merge cannot express a deletion. "Delete all
-  progress" calls `deleteRemote()` to remove the row instead of pushing an empty document.
+  progress" first calls `clearRemote(empty)`, which upserts a stamped empty document and reads
+  the row back (RLS has no delete policy, so `.delete()` would silently remove nothing); the
+  browser is emptied only after that succeeds.
   See the caveat in the [data model](data-model.md#merge-rules).
 
 ## 3. Google sign-in through a PKCE redirect

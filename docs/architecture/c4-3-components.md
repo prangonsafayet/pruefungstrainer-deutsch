@@ -159,7 +159,7 @@ C4Component
   }
 
   Container_Boundary(sync, "shared/account-sync") {
-    Component(cloud, "hooks/useCloudSync.tsx", "hook", "Session, fullSync, 1500 ms debounced push, OAuth callback, deleteRemote")
+    Component(cloud, "hooks/useCloudSync.tsx", "hook", "Session, fullSync, 1500 ms debounced push, OAuth callback, clearRemote")
     Component(merge, "lib/mergeProgress.ts", "pure", "Field-by-field merge; unknown keys from the newer side")
     Component(client, "lib/supabaseClient.ts", "supabase-js", "PKCE, storageKey telcTrainerAuth; null when not configured")
     Component(syncErr, "lib/syncError.ts", "pure", "classifySyncError to sync-offline, denied, rate-limited, failed")

@@ -33,6 +33,14 @@ functions are spelled out per trainer (the two trainer-id lint exemptions).
   an enumeration test with a positive control (the buggy `{ ...remote, ...local }`).
 - A restore decides per slice: present (even empty) replaces, absent keeps.
 - The union-only merge cannot express deletion; copy must not promise one it cannot deliver.
+- The browser cannot delete the cloud row (no delete policy; RLS turns `.delete()` into a
+  silent 0-row success). "Delete all progress" clears the cloud first — `clearRemote(empty)`
+  upserts the stamped empty document and reads it back — and empties the browser only after
+  that succeeded, with the same document. While it runs no sync or push starts and any on
+  the wire is awaited (refs, not render state: the call comes from a closure taken before
+  the confirm dialog). Never report a cloud write you have not read back. A failed clear re-stamps the local
+  document: the write may have landed, and a newer emptied row would win the settings merge. Other signed-in devices still hold a copy and restore it on their next sync; the
+  dialog says so (`describeDelete`).
 - A migration must satisfy the consumer, not just the parser: test resuming an old payload end
   to end (the legacy run shape named the trainer field `level`, not `trainer`).
 

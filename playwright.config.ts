@@ -54,6 +54,22 @@ export default defineConfig({
      * the code under test. Paying a few seconds of startup is worth not chasing that.
      */
     reuseExistingServer: false,
-    timeout: 120_000
+    timeout: 120_000,
+    /*
+     * The same environment on every machine. `E2E_DEV_SERVER` makes vite.config.ts skip `.env`
+     * files (and file watching / HMR), so a developer's real Supabase project or LanguageTool
+     * flag cannot change what the specs see, and an edit mid-run cannot reload a page; the values below are the obviously-fake ones CI's e2e job sets, which
+     * auth.spec.js and signup.spec.js need (they stub every Supabase auth request). Not a
+     * credential — never replace it with one.
+     */
+    env: {
+      E2E_DEV_SERVER: '1',
+      VITE_SUPABASE_URL: 'https://e2e-not-a-real-project.supabase.co',
+      VITE_SUPABASE_ANON_KEY: 'sb_publishable_e2e_not-a-real-key_000000000000',
+      VITE_AUTH_PROVIDERS: 'google,github',
+      VITE_SITE_URL: 'http://localhost:5173',
+      VITE_DYNAMIC_FEEDBACK: '',
+      VITE_LANGUAGETOOL_URL: ''
+    }
   }
 });

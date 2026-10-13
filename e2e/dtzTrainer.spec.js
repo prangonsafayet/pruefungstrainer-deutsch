@@ -93,10 +93,24 @@ const collectConsoleErrors = page => {
 /** Ids carry dots (`l1.0-2`), so they are matched as attributes rather than as `#id`. */
 const byId = (page, id) => page.locator(`[id="${id}"]`);
 
-/** Picks an option of a Radix select named `label`. */
+/**
+ * Picks an option of a Radix select named `label`, waiting on the select's own state rather than
+ * on time: the previous select's listbox has finished closing, this one is open and the option is
+ * in it, and afterwards the listbox is gone and the trigger is collapsed again. Under load the
+ * closing listbox of the previous pick used to be on screen when the next option was looked up.
+ */
 const choose = async (page, label, option) => {
-  await page.getByRole('combobox', { name: label, exact: true }).click();
-  await page.getByRole('option', { name: option }).click();
+  const listbox = page.getByRole('listbox');
+  await expect(listbox).toHaveCount(0);
+  const trigger = page.getByRole('combobox', { name: label, exact: true });
+  await trigger.click();
+  /* Open, Radix hides everything else — the trigger too — from the accessibility tree. */
+  await expect(listbox).toBeVisible();
+  const item = listbox.getByRole('option', { name: option });
+  await expect(item).toBeVisible();
+  await item.click();
+  await expect(listbox).toHaveCount(0);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 };
 
 const letterOption = index => (index === NO_MATCH ? 'X' : new RegExp(`^${LETTERS[index]}$`));
@@ -320,6 +334,8 @@ test.describe('a full DTZ sitting', () => {
     await page.getByRole('button', { name: /^Start Schreiben/ }).click();
     await submit(page, 'Schreiben');
     expect(await rateAllTop(page)).toBe(4);
+    /* The certificate below rests on Schreiben B1: confirm only once the rating has landed. */
+    await expect(page.getByText(/Module score:/)).toContainText('20/20');
     await page.getByRole('button', { name: /^Confirm score/ }).click();
     await page.getByRole('button', { name: /^Start Sprechen/ }).click();
     await submit(page, 'Sprechen');
@@ -328,6 +344,10 @@ test.describe('a full DTZ sitting', () => {
     await expect(page.getByText(/Module score:/)).toContainText('100/100');
     await page.getByRole('button', { name: /^Confirm score/ }).click();
 
+    /* The sitting ends on the results route, a lazily loaded screen: wait for it to be there
+       before reading the verdict on it. */
+    await expect(page).toHaveURL(/\/results\/\d+$/);
+    await expect(page.getByRole('heading', { level: 1, name: /Results/ })).toBeVisible();
     const main = page.locator('main');
     await expect(main.getByText('Zertifikat B1', { exact: true })).toBeVisible();
     await expect(main).toContainText('Hören + Lesen: 0/45 → unter A2 (B1 ab 33, A2 ab 20)');

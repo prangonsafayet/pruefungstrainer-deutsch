@@ -33,8 +33,9 @@ time.
 - **No conflict dialog, and nothing the learner did is lost.** The merge never asks the
   learner to choose a side.
 - **The merge cannot delete.** Unticking on one device is undone by another device's tick.
-  "Delete all progress" must also delete the remote row (`deleteRemote`), and copy must not
-  promise a deletion the merge cannot deliver.
+  "Delete all progress" must also clear the remote row (`clearRemote`: overwrite with a
+  stamped empty document, then read it back — the browser has no delete policy), and copy
+  must not promise a deletion the merge cannot deliver: other signed-in devices restore it.
 - **A new field takes three edits:** `normalizeDatabase` defaults it, `mergeProgress`
   merges it, and a test asserts the serialised merged payload keeps it. The B1/B2 slices
   were once wiped because the merge was missing. `persistence-guardian` reviews every such

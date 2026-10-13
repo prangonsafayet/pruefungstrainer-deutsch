@@ -44,7 +44,7 @@ export const mount = async (route: string): Promise<Mounted> => {
   return {
     container,
     text: () => container.textContent ?? '',
-    unmount: async () => {
+    unmount: async (): Promise<void> => {
       await act(async () => {
         root.unmount();
       });
@@ -191,4 +191,46 @@ export const seedProgress = (options: SeedOptions = {}): void => {
         : { settings: { examDate: isoInDays(options.daysUntilExam) } })
     })
   );
+};
+
+/* Typed by example: the tests' lint config reports parameter names inside a bare function type. */
+const asIs = (child: ReactElement): ReactElement => child;
+
+/**
+ * Mounts a hook on its own, for hooks that hold logic but are not worth a whole route. `wrap`
+ * supplies the providers it reads (a context value, a router).
+ */
+export const renderHook = async <T>(use: () => T, wrap: typeof asIs = asIs) => {
+  const box: { value?: T; set: boolean } = { set: false };
+  const Probe = (): null => {
+    box.value = use();
+    box.set = true;
+    return null;
+  };
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  await act(async () => {
+    root.render(wrap(createElement(Probe)));
+  });
+  return {
+    /** The hook's latest return value. */
+    current: (): T => {
+      if (!box.set) throw new Error('the hook has not rendered');
+      return box.value as T;
+    },
+    /** Runs `change` inside `act`, then lets effects and microtasks settle. */
+    act: async (change: () => unknown): Promise<void> => {
+      await act(async () => {
+        await change();
+      });
+      await settle(10);
+    },
+    unmount: async (): Promise<void> => {
+      await act(async () => {
+        root.unmount();
+      });
+      container.remove();
+    }
+  };
 };

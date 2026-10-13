@@ -17,6 +17,7 @@ import {
 } from '@shared/account-sync/lib/signUpOutcome.ts';
 import { isSyncConfigured, PROGRESS_TABLE, supabase } from '@shared/account-sync/lib/supabaseClient.ts';
 import { classifySyncError } from '@shared/account-sync/lib/syncError.ts';
+import { appError, err, ok, type AppErrorCode, type Result } from '@shared/lib/appError.ts';
 import { logger } from '@shared/lib/logger.ts';
 import { normalizeDatabase } from '@shared/progress-store/lib/progressDb.ts';
 import { type ProgressDatabase } from '@shared/types/progress.ts';
@@ -44,10 +45,11 @@ export interface CloudSyncState {
   readonly sendPasswordReset: (email: string) => Promise<void>;
   readonly fullSync: (options?: { readonly announce?: boolean }) => Promise<void>;
   /**
-   * Deletes this account's stored row. True when it is gone (or there was nothing to
-   * delete); false when the database could not be reached, which the caller has to say.
+   * Overwrites this account's cloud copy with `empty` and reads it back. `ok` only once the
+   * stored row is that document; otherwise the error's message says why it could not be
+   * cleared. Signed out (or sync not configured) there is no cloud copy, so it is `ok`.
    */
-  readonly deleteRemote: () => Promise<boolean>;
+  readonly clearRemote: (empty: ProgressDatabase) => Promise<Result<void>>;
   readonly signOut: () => Promise<void>;
 }
 
@@ -59,6 +61,23 @@ interface CloudSyncOptions {
 }
 
 const PUSH_DEBOUNCE_MS = 1500;
+
+const NOT_CLEARED = 'The cloud copy could NOT be cleared';
+
+/** Why a clear failed, in the words that tell the learner what to do next. */
+const CLEAR_REASON: Partial<Record<AppErrorCode, string>> = {
+  'sync-offline': "you're offline. Try again when you're back online.",
+  'sync-denied': 'the database refused this account. Sign out and in again, then try again.',
+  'sync-rate-limited': 'too many requests just now. Wait a minute, then try again.',
+  'sync-failed': 'the database could not be reached. Try again in a moment.'
+};
+
+/** The stored row is the document just written: same stamp, no attempts. */
+const isClearedCopy = (stored: unknown, empty: ProgressDatabase): boolean => {
+  if (stored == null) return false;
+  const copy = normalizeDatabase(stored);
+  return copy._updatedAt === empty._updatedAt && copy.attempts.length === 0;
+};
 
 const errorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));
 
@@ -77,6 +96,22 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
   /** A callback is consumed once. StrictMode remounts the effect; the code is not reusable. */
   const callbackHandledRef = useRef(false);
   const pushTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  /** Syncs and pushes on the wire. A clear waits for them, so none lands after its read-back. */
+  const inFlightRef = useRef(new Set<Promise<unknown>>());
+  /** True while the cloud copy is being cleared: no sync or push may start. A ref, not state,
+      because the clear is called from a closure taken before its confirm dialog opened. */
+  const clearingRef = useRef(false);
+
+  /** Records work that writes to the cloud row until it settles. */
+  const track = useCallback(<T,>(work: Promise<T>): Promise<T> => {
+    inFlightRef.current.add(work);
+    /* Both arms forget it; `finally` would re-reject a failed push as an unhandled rejection. */
+    const forget = (): void => {
+      inFlightRef.current.delete(work);
+    };
+    void work.then(forget, forget);
+    return work;
+  }, []);
 
   /** Everything that only makes sense while signed in. */
   const clearSessionState = useCallback(() => {
@@ -110,7 +145,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     Promise.resolve()
   );
 
-  const fullSync = useCallback(
+  const runFullSync = useCallback(
     async ({ announce = false }: { readonly announce?: boolean } = {}): Promise<void> => {
       if (!supabase || !user) return;
       setSyncing(true);
@@ -155,6 +190,11 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     },
     [user, dbRef, replaceLocal, push]
   );
+  const fullSync = useCallback(
+    (options?: { readonly announce?: boolean }): Promise<void> =>
+      clearingRef.current ? Promise.resolve() : track(runFullSync(options)),
+    [runFullSync, track]
+  );
   useEffect(() => {
     fullSyncRef.current = fullSync;
   }, [fullSync]);
@@ -174,23 +214,75 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
   }, [failed]);
 
   /**
-   * The one operation the union-only merge cannot express. Emptying the local document and
-   * letting the debounced push carry it up is not a delete: another signed-in device merges
-   * its full copy with the empty remote and restores everything. Removing the row is what
-   * makes "delete" mean delete on this account's side of it.
+   * The one operation the union-only merge cannot express. The browser cannot delete the row:
+   * `supabase-setup.sql` has no delete policy, so a `.delete()` removes 0 rows under RLS and
+   * reports no error — it once told the learner the cloud copy was gone while every attempt
+   * stayed in it. Instead the row is overwritten with the caller's fresh, stamped document
+   * through the insert/update policies, then read back: only the stored copy proves it.
+   *
+   * Another signed-in device still holds its own copy and puts it back on its next sync or
+   * push; the copy in Settings says so (`describeDelete`).
    */
-  const deleteRemote = useCallback(async (): Promise<boolean> => {
-    if (!supabase || !user) return true;
-    try {
-      const { error } = await supabase.from(PROGRESS_TABLE).delete().eq('user_id', user.id);
-      if (error) throw new Error(error.message);
-      return true;
-    } catch (error) {
-      logger.warn('sync', 'Could not delete the cloud copy', error);
-      setStatus(`Could not delete the cloud copy: ${errorMessage(error)}`);
-      return false;
-    }
-  }, [user]);
+  const clearRemote = useCallback(
+    async (empty: ProgressDatabase): Promise<Result<void>> => {
+      if (!supabase || !user) return ok(undefined);
+      clearingRef.current = true;
+      /* A push still waiting on its debounce would upload the old document over the cleared row. */
+      clearTimeout(pushTimerRef.current);
+      let wrote = false;
+      try {
+        /* A sync or push already on the wire lands first, so it cannot overwrite the row after
+           the read-back below has passed. No new one starts while `clearingRef` is set. */
+        await Promise.allSettled([...inFlightRef.current]);
+        const write = await supabase
+          .from(PROGRESS_TABLE)
+          .upsert({ user_id: user.id, data: empty, updated_at: new Date().toISOString() });
+        if (write.error) {
+          throw Object.assign(new Error(write.error.message), {
+            code: write.error.code,
+            status: write.status
+          });
+        }
+        wrote = true;
+        const read = await supabase.from(PROGRESS_TABLE).select('data').eq('user_id', user.id).maybeSingle();
+        if (read.error) {
+          throw Object.assign(new Error(read.error.message), { code: read.error.code, status: read.status });
+        }
+        if (!isClearedCopy(read.data?.data, empty)) {
+          const missing = read.data == null;
+          logger.warn(
+            'sync',
+            missing ? 'No cloud row after clearing' : 'Cloud copy read back unchanged after clearing'
+          );
+          return err(
+            appError('sync-failed', {
+              message: missing
+                ? `${NOT_CLEARED}: the database accepted the write but returned no copy, so it could not confirm the cloud copy was cleared.`
+                : `${NOT_CLEARED}: the database accepted the write but still returns your old progress.`
+            })
+          );
+        }
+        /* The local document is about to become this very one; there is nothing left to push. */
+        pushedAtRef.current = empty._updatedAt ?? null;
+        return ok(undefined);
+      } catch (error) {
+        const failure = classifySyncError(error, navigator.onLine);
+        logger.warn('sync', 'Could not clear the cloud copy', failure);
+        const reason = CLEAR_REASON[failure.code] ?? CLEAR_REASON['sync-failed'];
+        /* Written but not checked: the row may be empty while this browser still has everything,
+           and the next sync merges it back up. Say so rather than "nothing happened". */
+        return err({
+          ...failure,
+          message: wrote
+            ? `The cloud copy was overwritten but could NOT be checked: ${reason ?? ''} Your progress here is untouched and is being put back in the cloud.`
+            : `${NOT_CLEARED}: ${reason ?? ''}`
+        });
+      } finally {
+        clearingRef.current = false;
+      }
+    },
+    [user]
+  );
 
   /*
    * Surface a failed sign-in instead of silently landing signed out. Two shapes arrive
@@ -312,11 +404,12 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
          Pushing now would upsert this device's document over a remote nobody has merged
          with, so the retry is a full sync rather than a push. Gating the push alone on this
          meant one failed sync stalled every later change for the rest of the session. */
+      if (clearingRef.current) return;
       if (pushedAtRef.current === null) {
         void fullSync();
         return;
       }
-      push(dbRef.current).catch((error: unknown) => {
+      track(push(dbRef.current)).catch((error: unknown) => {
         logger.warn('sync', 'Debounced push failed', classifySyncError(error, navigator.onLine));
         setChip({
           text: 'offline',
@@ -328,7 +421,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     return () => {
       clearTimeout(pushTimerRef.current);
     };
-  }, [updatedAt, user, push, fullSync, dbRef]);
+  }, [updatedAt, user, push, fullSync, dbRef, track]);
 
   /**
    * Hands off to the provider's consent screen. On success the browser navigates away, so
@@ -545,7 +638,7 @@ export const useCloudSync = ({ dbRef, replaceLocal, updatedAt }: CloudSyncOption
     resendConfirmation,
     sendPasswordReset,
     fullSync,
-    deleteRemote,
+    clearRemote,
     signOut
   };
 };
