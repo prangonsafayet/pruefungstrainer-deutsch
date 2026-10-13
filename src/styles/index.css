@@ -8,30 +8,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* "Warm & friendly, grown-up" — design-system/pruefungstrainer-deutsch/MASTER.md. Every pair
+/* "Friendly, grown-up": indigo on cool neutrals — design-system/pruefungstrainer-deutsch/MASTER.md. Every pair
    below was measured; e2e/contrast.spec.js re-measures them in a real browser. */
 :root {
   --radius: 1rem;
 
-  --background: #fbf7f1; /* warm cream */
-  --foreground: #2b2420; /* brown-black ink, 14.3:1 */
-  --card: #fffdf9;
-  --card-foreground: #2b2420;
-  --popover: #fffdf9;
-  --popover-foreground: #2b2420;
+  --background: #f6f7fb; /* cool off-white */
+  --foreground: #1c2033; /* slate-navy ink, 15.1:1 */
+  --card: #ffffff;
+  --card-foreground: #1c2033;
+  --popover: #ffffff;
+  --popover-foreground: #1c2033;
 
   /* Indigo. White on it measures 7.9:1; as text on the canvas 7.4:1. Lightening it
      re-breaks the default button, the most-used control in the app. */
   --primary: #4338ca;
   --primary-foreground: #ffffff;
-  --secondary: #f3ece3;
-  --secondary-foreground: #2b2420;
-  --muted: #f3ece3;
-  --muted-foreground: #6b5e55; /* 5.9:1 on the canvas */
-  --accent: #e9e8fb; /* soft indigo tint: hover, active nav */
+  --secondary: #eceef5;
+  --secondary-foreground: #1c2033;
+  --muted: #eceef5;
+  --muted-foreground: #555d73; /* 6.1:1 on the canvas */
+  --accent: #e8e9fb; /* soft indigo tint: hover, active nav */
   --accent-foreground: #3730a3; /* 8.2:1 on the accent */
-  /* Magenta second voice: charts and secondary emphasis, never status. */
-  --brand-2: #a21caf;
+  /* Teal second voice: charts and secondary emphasis, never status. White on it 5.5:1. */
+  --brand-2: #0f766e;
 
   /* A tint and a solid fill of one colour need opposite inks, so each domain colour carries
      both. `--*-foreground` / `--*-on-fill` sit on the solid fill; `--*-on-tint` and the
@@ -40,8 +40,8 @@
   --destructive-foreground: #ffffff; /* 5.5:1 on the fill */
   --destructive-on-tint: #a62e25;
 
-  --border: #e8ddd0;
-  --input: #98877a; /* field boundary: 3.40:1 on --card (WCAG 1.4.11) */
+  --border: #e1e4ee;
+  --input: #80869c; /* field boundary: 3.6:1 on --card (WCAG 1.4.11) */
   --ring: #4338ca;
 
   /* Domain colours: pass grades, correctness, urgency. */
@@ -51,53 +51,53 @@
   --warning: #e3a21a; /* fill and tint source only — 2:1 as ink */
   --warning-foreground: #7a4e00; /* ink on the tint; ring/meter stroke */
 
-  /* Scrim behind dialogs and sheets: the ink, not black, so it stays warm. */
-  --scrim: rgb(43 36 32 / 0.45);
+  /* Scrim behind dialogs and sheets: the ink, not black, so it stays in the slate family. */
+  --scrim: rgb(28 32 51 / 0.45);
 
-  /* Warm-tinted, soft. Resting card → raised/hover → menus and dialogs. */
-  --shadow-soft: 0 1px 2px rgb(74 46 26 / 0.05), 0 4px 14px -4px rgb(74 46 26 / 0.08);
-  --shadow-lift: 0 2px 4px rgb(74 46 26 / 0.06), 0 14px 28px -8px rgb(74 46 26 / 0.16);
-  --shadow-pop: 0 6px 16px rgb(74 46 26 / 0.1), 0 24px 48px -12px rgb(74 46 26 / 0.24);
+  /* Slate-tinted, soft. Resting card → raised/hover → menus and dialogs. */
+  --shadow-soft: 0 1px 2px rgb(30 35 70 / 0.05), 0 4px 14px -4px rgb(30 35 70 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(30 35 70 / 0.06), 0 14px 28px -8px rgb(30 35 70 / 0.16);
+  --shadow-pop: 0 6px 16px rgb(30 35 70 / 0.1), 0 24px 48px -12px rgb(30 35 70 / 0.24);
 
   /* The brand mark (AppLogo, public/logo.svg). Not overridden in .dark: a logo does not invert. */
   --logo-tile: #4338ca;
   --logo-tile-light: #6366f1;
-  --logo-paper: #fffdf9;
-  --logo-mark: #a21caf;
+  --logo-paper: #ffffff;
+  --logo-mark: #0f766e;
 
   --chart-1: #4338ca;
-  --chart-2: #a21caf;
+  --chart-2: #0f766e;
   --chart-3: #2f7d52;
   --chart-4: #9a6400;
-  --chart-5: #5a6b7d;
+  --chart-5: #64748b;
 }
 
-/* Warm charcoal, never pure black. */
+/* Deep slate, never pure black. */
 .dark {
-  --background: #1b1714;
-  --foreground: #f4ede5;
-  --card: #26211d;
-  --card-foreground: #f4ede5;
-  --popover: #26211d;
-  --popover-foreground: #f4ede5;
+  --background: #12141c;
+  --foreground: #e7e9f2;
+  --card: #1b1e2a;
+  --card-foreground: #e7e9f2;
+  --popover: #1b1e2a;
+  --popover-foreground: #e7e9f2;
 
   --primary: #a5b4fc;
   --primary-foreground: #1e1b4b; /* 8.0:1 — the light fill takes a dark label */
-  --secondary: #332c27;
-  --secondary-foreground: #f4ede5;
-  --muted: #332c27;
-  --muted-foreground: #b9aca1;
-  --accent: #2a2847;
+  --secondary: #262a38;
+  --secondary-foreground: #e7e9f2;
+  --muted: #262a38;
+  --muted-foreground: #a3abc2;
+  --accent: #25274a;
   --accent-foreground: #c7d2fe;
-  --brand-2: #e879f9;
+  --brand-2: #2dd4bf;
 
   /* `--destructive` stays light: it is also the `text-destructive` ink on the canvas. */
   --destructive: #f07468;
   --destructive-foreground: #2a0a07;
   --destructive-on-tint: #ff9a8f;
 
-  --border: rgb(255 240 225 / 0.12);
-  --input: #7a6c62; /* field boundary: 3.15:1 on --card (WCAG 1.4.11) */
+  --border: rgb(200 210 255 / 0.12);
+  --input: #6c7389; /* field boundary: 3.5:1 on --card (WCAG 1.4.11) */
   --ring: #a5b4fc;
 
   --success: #5cc08a;
@@ -106,18 +106,18 @@
   --warning: #f0b93a;
   --warning-foreground: #f5d58a;
 
-  --scrim: rgb(8 6 5 / 0.62);
+  --scrim: rgb(4 6 12 / 0.62);
 
-  /* Shadows barely read on charcoal, so each one carries a warm 1px hairline too. */
-  --shadow-soft: 0 0 0 1px rgb(255 240 225 / 0.07), 0 4px 14px -4px rgb(0 0 0 / 0.4);
-  --shadow-lift: 0 0 0 1px rgb(255 240 225 / 0.1), 0 14px 28px -8px rgb(0 0 0 / 0.55);
-  --shadow-pop: 0 0 0 1px rgb(255 240 225 / 0.1), 0 24px 48px -12px rgb(0 0 0 / 0.65);
+  /* Shadows barely read on charcoal, so each one carries a cool 1px hairline too. */
+  --shadow-soft: 0 0 0 1px rgb(200 210 255 / 0.07), 0 4px 14px -4px rgb(0 0 0 / 0.4);
+  --shadow-lift: 0 0 0 1px rgb(200 210 255 / 0.1), 0 14px 28px -8px rgb(0 0 0 / 0.55);
+  --shadow-pop: 0 0 0 1px rgb(200 210 255 / 0.1), 0 24px 48px -12px rgb(0 0 0 / 0.65);
 
   --chart-1: #a5b4fc;
-  --chart-2: #e879f9;
+  --chart-2: #2dd4bf;
   --chart-3: #5cc08a;
   --chart-4: #f0b93a;
-  --chart-5: #a7b4c4;
+  --chart-5: #94a3b8;
 }
 
 @theme inline {
@@ -275,7 +275,7 @@
     /* viewport-fit=cover lets the page run under a landscape notch; keep content clear of it. */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    /* A barely-there warm wash so large pages do not read as a flat slab. */
+    /* A barely-there indigo-and-teal wash so large pages do not read as a flat slab. */
     background-image:
       radial-gradient(
         60rem 30rem at 15% -10%,
