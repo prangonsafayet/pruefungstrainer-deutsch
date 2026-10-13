@@ -21,6 +21,8 @@ const PILL = 'flex h-7 w-12 items-center justify-center rounded-full transition-
 /**
  * The phone navigation (< 640px): up to five icon-and-label tabs fixed to the bottom, within
  * thumb reach, clear of the home indicator. Tabs beyond the fifth slot live behind "More".
+ * The bottom inset needs `viewport-fit=cover` in index.html (without it iOS reports 0), and
+ * `max()` keeps a floor so the tabs never sit flush on the screen edge where it reports 0.
  */
 const BottomTabBar = () => {
   const { trainer } = useActiveTrainer();
@@ -30,7 +32,7 @@ const BottomTabBar = () => {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-pop backdrop-blur-md sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 shadow-pop backdrop-blur-md sm:hidden"
     >
       <ul className="mx-auto flex max-w-md">
         {tabs.map(({ to, label, icon: Icon, exact }) => (
