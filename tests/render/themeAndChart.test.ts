@@ -10,7 +10,7 @@ describe('theme-color', () => {
 
   beforeEach(() => {
     style = document.createElement('style');
-    style.textContent = ':root { --background: #fbf7f1; } .dark { --background: #1b1714; }';
+    style.textContent = ':root { --background: #f6f7fb; } .dark { --background: #12141c; }';
     document.head.appendChild(style);
     for (const media of ['(prefers-color-scheme: light)', '(prefers-color-scheme: dark)']) {
       const meta = document.createElement('meta');
@@ -31,21 +31,21 @@ describe('theme-color', () => {
   it('follows the in-app theme, not the OS one, on both metas', () => {
     document.documentElement.classList.add('dark');
     syncThemeColor();
-    expect(metas.map(meta => meta.content)).toEqual(['#1b1714', '#1b1714']);
+    expect(metas.map(meta => meta.content)).toEqual(['#12141c', '#12141c']);
 
     document.documentElement.classList.remove('dark');
     syncThemeColor();
-    expect(metas.map(meta => meta.content)).toEqual(['#fbf7f1', '#fbf7f1']);
+    expect(metas.map(meta => meta.content)).toEqual(['#f6f7fb', '#f6f7fb']);
   });
 
   it('follows the theme toggle in the header', async () => {
     localStorage.clear();
     localStorage.setItem('telcTrainerTheme', 'light');
     const page = await mount('/settings');
-    expect(metas[1]?.content).toBe('#fbf7f1');
+    expect(metas[1]?.content).toBe('#f6f7fb');
     await click(bySelector('button[aria-label="Switch to dark mode"]')[0]);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
-    expect(metas.map(meta => meta.content)).toEqual(['#1b1714', '#1b1714']);
+    expect(metas.map(meta => meta.content)).toEqual(['#12141c', '#12141c']);
     await page.unmount();
   });
 });
