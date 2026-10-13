@@ -31,8 +31,10 @@
     "vite.config.ts",
     "vitest.config.ts",
     "playwright.config.ts",
+    "playwright.csp.config.ts",
     "eslint.config.js",
     "scripts/siteMeta.mjs",
+    "scripts/supabaseKey.mjs",
     "scripts/trainerRegistry.mjs"
   ]
 }

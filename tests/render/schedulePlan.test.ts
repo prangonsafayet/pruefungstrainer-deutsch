@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/trainers/index.ts';
+import { TRAINER_CONTENT } from '@content/trainerContent.ts';
 
 import { MAX_PREP_DAYS } from '@shared/config/schedule.ts';
 
@@ -114,6 +114,22 @@ describe('as lessons get finished', () => {
     /* A finished day is no longer part of any dated slot. */
     const schedule = page.text().split('Done')[0] ?? '';
     expect(schedule).not.toMatch(/Day 1:/);
+    await page.unmount();
+  });
+});
+
+describe('with no day left for lessons', () => {
+  /* Exam today or tomorrow: the plan has slots but none of them holds a lesson, so the page
+     fell back to the flat curriculum AND listed the same days again as extra material —
+     every day card twice, with duplicate checkbox and heading ids. */
+  it.each([0, 1])('shows each pending day once (exam in %i days)', async daysUntilExam => {
+    seedProgress({ daysUntilExam });
+    const page = await mount('/learn');
+
+    const ids = [...page.container.querySelectorAll('[id]')].map(element => element.id);
+    expect(ids.length).toBeGreaterThan(0);
+    expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
+    expect(page.text()).not.toMatch(/Extra material/);
     await page.unmount();
   });
 });

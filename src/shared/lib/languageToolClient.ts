@@ -6,7 +6,9 @@ import {
   getLanguageToolBase,
   isDynamicFeedbackEnabled
 } from '@shared/config/languageTool.ts';
-import { type LtMatch, type LtResult } from '@shared/types';
+import { type LtMatch, type LtResult } from '@shared/types/languageTool.ts';
+
+import { logger } from './logger.ts';
 
 export const isLanguageToolConfigured = (): boolean => isDynamicFeedbackEnabled();
 
@@ -25,12 +27,34 @@ const remember = (key: string, result: LtResult): LtResult => {
   return result;
 };
 
-const parseMatches = (payload: unknown): readonly LtMatch[] => {
-  if (typeof payload !== 'object' || payload === null) return [];
-  const { matches } = payload as { matches?: unknown };
-  return Array.isArray(matches) ? (matches as readonly LtMatch[]) : [];
+const isRecord = (value: unknown): value is Partial<Record<string, unknown>> =>
+  typeof value === 'object' && value !== null;
+
+/** Enough of a match to report — the fields the error report reads. The response is untrusted. */
+const isLtMatch = (value: unknown): value is LtMatch => {
+  if (!isRecord(value)) return false;
+  const rule = value['rule'];
+  return (
+    typeof value['message'] === 'string' &&
+    typeof value['offset'] === 'number' &&
+    typeof value['length'] === 'number' &&
+    Array.isArray(value['replacements']) &&
+    isRecord(rule) &&
+    typeof rule['id'] === 'string' &&
+    typeof rule['issueType'] === 'string' &&
+    isRecord(rule['category']) &&
+    typeof rule['category']['id'] === 'string'
+  );
 };
 
+const parseMatches = (payload: unknown): readonly LtMatch[] => {
+  const matches = isRecord(payload) ? payload['matches'] : undefined;
+  return Array.isArray(matches) ? (matches as readonly unknown[]).filter(isLtMatch) : [];
+};
+
+/**
+ * @public Issue #18 (writing feedback): no screen calls it yet; its unit tests do.
+ */
 export const checkText = async (
   text: string,
   options: { readonly level?: 'default' | 'picky' } = {}
@@ -54,10 +78,14 @@ export const checkText = async (
     });
     if (response.status === 429) return { kind: 'unavailable', reason: 'rate-limited' };
     if (response.status === 413) return { kind: 'unavailable', reason: 'too-long' };
-    if (!response.ok) return { kind: 'unavailable', reason: 'error' };
+    if (!response.ok) {
+      logger.warn('languagetool', `Check failed with HTTP ${String(response.status)}`);
+      return { kind: 'unavailable', reason: 'error' };
+    }
     return remember(key, { kind: 'ok', matches: parseMatches(await response.json()) });
-  } catch {
+  } catch (error) {
     /* A timeout and a dead server are the same thing to a learner: no feedback this time. */
+    logger.info('languagetool', 'Check unavailable', error);
     return { kind: 'unavailable', reason: 'offline' };
   }
 };

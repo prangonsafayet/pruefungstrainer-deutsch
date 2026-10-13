@@ -1,6 +1,11 @@
 import { type AttemptMode, type ExamGrade, type ExamModule, type SkillKey } from './exam.ts';
 import { type WeaknessProfile } from './feedback.ts';
-import { type LevelTrainerDoc, type TrainerExamSettings, type TrainerId } from './trainer.ts';
+import {
+  type DtzTrainerDoc,
+  type LevelTrainerDoc,
+  type TrainerExamSettings,
+  type TrainerId
+} from './trainer.ts';
 import { type SrsMap } from './vocab.ts';
 
 /**
@@ -95,6 +100,11 @@ export interface ProgressDatabase {
    */
   readonly b1?: LevelTrainerDoc;
   readonly b2?: LevelTrainerDoc;
+  /**
+   * The DTZ trainer's document. Optional for the same reason as `b1`/`b2`;
+   * `normalizeDatabase` fills it in and `mergeProgress` merges it.
+   */
+  readonly dtz?: DtzTrainerDoc;
   /**
    * Mistakes seen per trainer, counted from written answers. Optional so a document written
    * by a build that predates it stays readable; `normalizeDatabase` fills it in, and

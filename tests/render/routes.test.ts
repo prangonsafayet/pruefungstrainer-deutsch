@@ -9,7 +9,7 @@ import { captureErrors, mount } from './harness.ts';
  *
  * The list is generated from `TRAINER_ORDER`, the way the router itself is, so a fourth
  * trainer gets the same coverage without editing this file — which is what the extensibility
- * claim in architecture.md says, and used not to be true here. */
+ * claim in .claude/rules/architecture.md says, and used not to be true here. */
 
 /** One entry per screen, appended to each trainer's route namespace. */
 const SCREENS = [
@@ -20,10 +20,11 @@ const SCREENS = [
   /* The practice hub serves every trainer, and every trainer has an authored bank, so it
      must render its reference tables rather than a missing route. */
   { path: '/practice', expect: /Reference tables/ },
-  /* The exam screens are shared by both papers, so a regression in the runner has to fail
-     on one of these whichever trainer it belongs to. */
-  { path: '/exam/1/lesen', expect: /Leseverstehen/ },
-  { path: '/exam/1/full', expect: /Leseverstehen/ }
+  /* The exam screens are shared by every paper, so a regression in the runner has to fail
+     on one of these whichever trainer it belongs to. Matched on the briefing's own chrome,
+     since the papers name their modules differently and the DTZ opens with Hören. */
+  { path: '/exam/1/lesen', expect: /Start Lesen/ },
+  { path: '/exam/1/full', expect: /Module 1 of \d/ }
 ] as const;
 
 const ROUTES = [

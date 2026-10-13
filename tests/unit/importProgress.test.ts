@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
 import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
-import { type DualLevelAttempt, type LevelTrainerDoc, type ProgressDatabase } from '@shared/types';
-import { describeImport, planImport } from '@features/progress/lib/importProgress.ts';
-import { normalizeDatabase } from '@features/progress/lib/progressDb.ts';
+import { type DualLevelAttempt, type ProgressDatabase } from '@shared/types/progress.ts';
+import { type LevelTrainerDoc } from '@shared/types/trainer.ts';
+import { getLogEntries, logger } from '@shared/lib/logger.ts';
+import { describeImport, planImport, readBackup } from '@shared/progress-store/lib/importProgress.ts';
+import { normalizeDatabase } from '@shared/progress-store/lib/progressDb.ts';
 
 /*
  * Importing a backup exported by the pre-B1/B2 app used to empty both trainer documents —
@@ -120,6 +122,53 @@ describe('planImport', () => {
     expect(plan?.database.settings).toEqual(before.settings);
   });
 
+  it('keeps the DTZ document when restoring a backup written before the DTZ trainer existed', () => {
+    const before = stored();
+    const dtzKey =
+      TRAINERS[TRAINER_ORDER.find(trainer => TRAINERS[trainer].format === 'dtz-paper') ?? 'a2b1'].docKey;
+    if (dtzKey === null) throw new Error('the DTZ trainer keeps its own document');
+    expect(before[dtzKey]?.learnDone).toEqual({ d2t1: true });
+
+    /* Every other trainer's slice is in the file — only the DTZ one is not. */
+    const file: Partial<Record<string, unknown>> = { ...(preBranchFile() as object) };
+    for (const key of docKeys) if (key !== dtzKey) file[key] = levelDoc({ learnDone: { d7t0: true } });
+    const plan = planImport(before, file);
+
+    expect(plan?.keeps).toEqual([TRAINER_ORDER.find(trainer => TRAINERS[trainer].docKey === dtzKey)]);
+    expect(plan?.database[dtzKey]?.learnDone).toEqual({ d2t1: true });
+    expect(plan?.database[dtzKey]?.attempts).toHaveLength(1);
+  });
+
+  it("keeps a kept trainer's weakness profile, and takes a replaced one's from the file", () => {
+    /* `weakness` sits at the root, keyed by trainer, so a file that did not carry it — or
+       carried only some trainers' — used to drop every kept trainer's profile. */
+    const [key] = docKeys;
+    const kept = TRAINER_ORDER.find(trainer => TRAINERS[trainer].docKey === key);
+    if (key === undefined || kept === undefined)
+      throw new Error('this suite needs a trainer with its own document');
+    const profile = { case: { count: 3, lastSeen: '2026-05-01' } };
+    const before = normalizeDatabase({
+      ...stored(),
+      weakness: { [kept]: profile, [rootTrainer]: { style: { count: 1, lastSeen: '2026-05-01' } } }
+    });
+    const fromFile = { spelling: { count: 7, lastSeen: '2026-06-01' } };
+
+    const plan = planImport(before, {
+      ...(preBranchFile() as object),
+      weakness: { [rootTrainer]: fromFile }
+    });
+
+    const written = JSON.parse(JSON.stringify(plan?.database)) as ProgressDatabase;
+    expect(written.weakness?.[kept]).toEqual(profile);
+    expect(written.weakness?.[rootTrainer]).toEqual(fromFile);
+
+    /* And a file with no weakness at all still keeps the kept trainer's. */
+    const bare = planImport(before, preBranchFile());
+    expect(bare?.database.weakness?.[kept]).toEqual(profile);
+    /* The file speaks for the root trainer and has no profile for it: its stored one goes. */
+    expect(bare?.database.weakness?.[rootTrainer]).toBeUndefined();
+  });
+
   it('refuses a file that speaks for no trainer at all', () => {
     for (const parsed of [{}, [], null, 7, 'progress', { unrelated: true }]) {
       expect(planImport(stored(), parsed)).toBeNull();
@@ -148,5 +197,78 @@ describe('describeImport', () => {
 
     expect(plan.keeps).toEqual([]);
     expect(describeImport(plan)).not.toMatch(/not in the file/);
+  });
+});
+
+describe('readBackup', () => {
+  const firstDocKey = docKeys[0];
+  if (firstDocKey === undefined) throw new Error('a trainer keeps its own document');
+
+  const failure = (text: string): { code: string; message: string } | null => {
+    const result = readBackup(text, stored());
+    return result.ok ? null : { code: result.error.code, message: result.error.message };
+  };
+
+  it('plans a real export', () => {
+    const whole = stored();
+    const result = readBackup(JSON.stringify(whole), whole);
+    expect(result.ok ? result.value.replaces : null).toEqual(TRAINER_ORDER);
+  });
+
+  it('says the file is not JSON', () => {
+    expect(failure('{"attempts": [')?.code).toBe('import-not-json');
+    expect(failure('')?.code).toBe('import-not-json');
+  });
+
+  it('says the JSON is not a trainer backup', () => {
+    for (const text of ['[]', '7', 'null', '"progress"', '{}', '{"unrelated":true}']) {
+      expect(failure(text)?.code).toBe('import-not-export');
+    }
+  });
+
+  it('names the damaged root field and what it is', () => {
+    const bad = failure(JSON.stringify({ ...(preBranchFile() as object), attempts: 'none' }));
+    expect(bad?.code).toBe('import-bad-field');
+    expect(bad?.message).toContain('"attempts" should be a list, but it is text');
+    expect(bad?.message).toContain('Nothing was changed');
+  });
+
+  it('names a damaged field inside a trainer slice', () => {
+    const bad = failure(JSON.stringify({ [firstDocKey]: { ...levelDoc(), learnDone: 'done' } }));
+    expect(bad?.message).toContain(`"${firstDocKey}.learnDone" should be a group of entries, but it is text`);
+  });
+
+  it('names a trainer slice that is not an object at all', () => {
+    const bad = failure(JSON.stringify({ [firstDocKey]: [1, 2] }));
+    expect(bad?.message).toContain(`"${firstDocKey}" should be a group of entries, but it is a list`);
+  });
+
+  it('leaves a slice the file does not mention alone, even if malformed elsewhere', () => {
+    /* `weakness` is not a slice field; normalizeDatabase repairs it. */
+    expect(readBackup(JSON.stringify({ ...(preBranchFile() as object), weakness: 3 }), stored()).ok).toBe(
+      true
+    );
+  });
+
+  it('accepts null for a map field — an old hand-edited export — and reads it as empty', () => {
+    const result = readBackup(
+      JSON.stringify({ [firstDocKey]: { ...levelDoc(), learnDone: null, srs: null } }),
+      stored()
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.database[firstDocKey]?.learnDone).toEqual({});
+    expect(readBackup(JSON.stringify({ ...(preBranchFile() as object), learnDone: null }), stored()).ok).toBe(
+      true
+    );
+  });
+
+  it('keeps the file text out of the failure (the log must never quote a backup)', () => {
+    const result = readBackup('{"answers": {"w.text": "Liebe Anna, ich', stored());
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect('cause' in result.error).toBe(false);
+      logger.warn('import', 'Backup refused', result.error);
+    }
+    expect(getLogEntries().at(-1)?.message).toBe('Backup refused — [import-not-json]');
   });
 });

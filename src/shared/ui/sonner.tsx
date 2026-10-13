@@ -8,7 +8,7 @@ export const Toaster = (props: ToasterProps) => (
     toastOptions={{
       classNames: {
         toast:
-          'group toast group-[.toaster]:bg-popover group-[.toaster]:text-popover-foreground group-[.toaster]:border group-[.toaster]:shadow-lg',
+          'group toast group-[.toaster]:rounded-xl group-[.toaster]:border group-[.toaster]:bg-popover group-[.toaster]:font-sans group-[.toaster]:text-popover-foreground group-[.toaster]:shadow-pop',
         description: 'group-[.toast]:text-muted-foreground'
       }
     }}

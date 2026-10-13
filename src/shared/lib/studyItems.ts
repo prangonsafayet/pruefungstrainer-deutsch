@@ -10,7 +10,7 @@ import {
   type StudyCard,
   type StudyCategory,
   type VocabBank
-} from '@shared/types';
+} from '@shared/types/vocab.ts';
 
 /** All cards of one category, in authored order. */
 export const cardsFor = (bank: VocabBank, category: StudyCategory): readonly StudyCard[] => {

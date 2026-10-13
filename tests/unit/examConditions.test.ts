@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  DEFAULT_PLAYS_ALLOWED,
   PASS_PERCENT,
   PASS_RULES,
+  passLineLabel,
+  PLAYS_ALLOWED_CHOICES,
+  PLAYS_ALLOWED_HINTS,
   WRITING_MINUTE_CHOICES,
   writingTimeHint
 } from '@shared/config/examConditions.ts';
@@ -48,5 +52,37 @@ describe('the writing-time hint', () => {
     const labels = WRITING_MINUTE_CHOICES['dual-level'].map(choice => choice.label.toLowerCase());
     expect(labels.some(label => label.includes('official'))).toBe(false);
     expect(WRITING_MINUTE_CHOICES['single-level'][0]?.label).toContain('official');
+  });
+});
+
+/* The DTZ source (docs/dtz-format.local.md) states the written exam's 30 minutes of Schreiben
+   but NOT how often a Hören text plays. So the writing time may be called official and no
+   play count may be — the default of two is this trainer's choice and must say so. */
+describe('the DTZ exam conditions', () => {
+  it('calls its 30-minute Schreiben official, because the Übungssatz states it', () => {
+    expect(writingTimeHint('dtz-paper', 30)).toBe('Official: 30 minutes.');
+    expect(WRITING_MINUTE_CHOICES['dtz-paper'][0]).toEqual({ value: 30, label: '30 minutes (official)' });
+  });
+
+  it('never calls a play count official', () => {
+    for (const choice of PLAYS_ALLOWED_CHOICES['dtz-paper']) {
+      expect(choice.label.toLowerCase()).not.toContain('official');
+    }
+    expect(PLAYS_ALLOWED_HINTS['dtz-paper'].toLowerCase()).not.toContain('official');
+    expect(PLAYS_ALLOWED_HINTS['dtz-paper']).toContain("this trainer's choice");
+    expect(PLAYS_ALLOWED_HINTS['dtz-paper']).not.toMatch(/once|twice/);
+  });
+
+  it("labels the default it plays at as the trainer's own", () => {
+    const fallback = PLAYS_ALLOWED_CHOICES['dtz-paper'].find(
+      choice => choice.value === DEFAULT_PLAYS_ALLOWED['dtz-paper']
+    );
+    expect(fallback?.label).toContain("this trainer's default");
+  });
+
+  it('states the certificate rule with the spec lines', () => {
+    const rule = PASS_RULES['dtz-paper'];
+    for (const figure of ['75/100', '33/45', '15/20', '≥ 35', '≥ 20', '≥ 7']) expect(rule).toContain(figure);
+    expect(passLineLabel('dtz-paper')).toBe('B1 line (75%)');
   });
 });

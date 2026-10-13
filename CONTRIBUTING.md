@@ -11,7 +11,7 @@ recorded — a commit explains what changed, an issue explains why it was worth
 changing.
 
 Pick the template that fits: **Bug report**, **Feature request**, or **Exam content
-correction** for a wrong or ambiguous item in one of the 35 Modelltests.
+correction** for a wrong or ambiguous item in one of the Modelltests.
 
 Label it so the release notes group correctly (see `.github/release.yml`):
 
@@ -38,19 +38,26 @@ that always passes.
 ## 3. Build it
 
 Read [`CLAUDE.md`](CLAUDE.md) first if you have not — it is short and points at the detail
-under [`.claude/docs/`](.claude/docs/). The rules that matter most:
+under [`.claude/rules/`](.claude/rules/), one file per area. The rules that matter most:
 
-- Components are visual; logic goes in a `use-*.ts` hook or a pure `lib/` util.
-- Use a shadcn primitive from `@shared/ui` — no raw `<button>`,
+- Components are visual; logic goes in a `use*.tsx` hook or a pure `.ts` util. Lint refuses
+  effects, storage, timers, the clock and state libraries in component files.
+- Every component lives in its own folder — `components/Foo/Foo.tsx`, screens in
+  `pages/FooPage/FooPage.tsx` — together with the hooks, utils and types only it uses.
+- There are no barrels (`index.ts`): import the file, with its extension.
+- Use a shadcn primitive from `src/shared/ui` (`@shared/ui/button.tsx`) — no raw `<button>`,
   `<input>`, `<select>`, `<textarea>`, `<table>` or `<label>` in feature code.
-- Features do not import each other's internals or the app shell. If two features
-  need the same thing, it belongs in `src/shared`.
-- Primitives come from `@shared/ui`, never from a file inside it.
+- Features never import each other or the app shell. If two features need the same thing,
+  it belongs in `src/shared`.
+- Colours come from the design tokens in `src/styles/index.css` — no palette classes, hex or
+  colour functions in components or stylesheets.
 - No `any`, no non-null assertions.
 
 The traps this codebase invites are catalogued in
-[`.claude/docs/pitfalls.md`](.claude/docs/pitfalls.md) — worth a minute before touching
-dates, timers, answers, auth or content.
+[`.claude/memory/traps.md`](.claude/memory/traps.md), one line each, and in the area rules —
+[`persistence`](.claude/rules/persistence.md), [`dates-timers`](.claude/rules/dates-timers.md),
+[`content`](.claude/rules/content.md) — worth a minute before touching dates, timers, answers,
+auth or content.
 
 Run the app while you work:
 
@@ -90,7 +97,8 @@ Husky gates this:
 
 - **pre-commit** — lints and formats staged files; a commit either lands clean or
   does not land.
-- **pre-push** — typecheck, exam-data validation, both Vitest projects.
+- **pre-push** — typecheck, exam-data validation, both Vitest projects, then
+  `npm run guards:offline` (architecture, CSS tokens, storage keys, Claude Code hook tests).
 
 Message style: an imperative subject under ~72 characters, a blank line, then a body
 that explains _why_ and calls out anything surprising. Reference the issue.
@@ -118,9 +126,12 @@ The template asks what you verified. Fill it in honestly; "ran `npm test`" and
 "clicked through it" are different claims. Include before/after screenshots for
 visual changes.
 
-CI runs typecheck, lint, format, data validation, the Vitest suites, Playwright on
-Chromium, and a production build **with no secrets present** — which is what a fork
-gets, and catches anything that silently depends on your local `.env`.
+CI runs typecheck, zero-warning lint, format, `npm run guards` (architecture, CSS tokens,
+storage keys, hook tests, production dependency audit), data validation, the Vitest suites,
+Playwright on Chromium, and a production build **with no secrets present** — which is what a
+fork gets, and catches anything that silently depends on your local `.env`. Two report-only
+jobs, a dev-dependency audit and `knip` dead-code detection, stay non-blocking until their
+findings clear.
 
 ## 7. Review and merge
 
@@ -132,7 +143,8 @@ most easily:
 - Answer-map access without the `shared/lib/answers.ts` accessors.
 - Anything touching passwords client-side.
 - Authored HTML rendered as text, or content text injected as HTML.
-- Primitives imported from `@shared/ui/<file>` instead of `@shared/ui`.
+- A barrel or folder import (`@shared/ui`, `@features/<f>`) instead of the file, or a
+  feature importing another feature.
 
 Every pull request also gets a **Netlify deploy preview**, so a visual change can be
 clicked rather than imagined.
@@ -196,17 +208,18 @@ the tag, the release notes, the version in the footer and the deployed build in 
 Enforced by `check-file` rules in `eslint.config.js`, so a wrong name fails lint
 rather than surviving review:
 
-| Thing                        | Convention             | Example                               |
-| ---------------------------- | ---------------------- | ------------------------------------- |
-| Component / route module     | `PascalCase.tsx`       | `ExamCard.tsx`, `DashboardPage.tsx`   |
-| Hook                         | `useThing.ts`          | `useExamRun.ts`, `useCountUp.ts`      |
-| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`    |
-| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`           |
-| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH` |
-| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`            |
-| Everything else              | `camelCase`            |                                       |
+| Thing                        | Convention             | Example                                   |
+| ---------------------------- | ---------------------- | ----------------------------------------- |
+| Component / page module      | `Name/Name.tsx`        | `DashboardExamCard/DashboardExamCard.tsx` |
+| Hook                         | `useThing.tsx`         | `useExamRun.tsx`, `useCountUp.tsx`        |
+| Util, config, types, context | `camelCase.ts`         | `dashboardModel.ts`, `runStore.ts`        |
+| Folder                       | `kebab-case`           | `exam-ui/`, `data-display/`               |
+| A component's own folder     | `PascalCase`           | `ScoreMeter/`, `DashboardPage/`           |
+| Module constant              | `SCREAMING_SNAKE_CASE` | `EXAM_MODULES`, `MIN_PASSWORD_LENGTH`     |
+| Type / interface             | `PascalCase`           | `ExamRun`, `SignUpOutcome`                |
+| Everything else              | `camelCase`            |                                           |
 
-One exemption: `src/shared/components/ui/` stays kebab-case because the shadcn CLI
+One exemption: `src/shared/ui/` stays kebab-case because the shadcn CLI
 writes files there, and renaming them would break `npx shadcn add`.
 
 Identifier casing is enforced separately by

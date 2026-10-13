@@ -1,112 +1,148 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+/* Self-hosted (no third-party font request: privacy, offline PWA, CSP). The weight-axis
+   files only; unicode-range keeps the browser to the Latin subset in practice. */
+@import '@fontsource-variable/nunito/wght.css';
+@import '@fontsource-variable/nunito-sans/wght.css';
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
-/* Warm "paper" palette carried over from the original trainer design,
-   expressed as shadcn tokens so every shadcn component inherits it. */
+/* "Warm & friendly, grown-up" — design-system/telc-deutsch-trainer/MASTER.md. Every pair
+   below was measured; e2e/contrast.spec.js re-measures them in a real browser. */
 :root {
-  --radius: 0.625rem;
+  --radius: 1rem;
 
-  --background: oklch(0.977 0.003 106.4); /* #f9f9f7 */
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(0.988 0.002 106.4);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(0.988 0.002 106.4);
-  --popover-foreground: oklch(0.145 0 0);
+  --background: #fbf7f1; /* warm cream */
+  --foreground: #2b2420; /* brown-black ink, 14.3:1 */
+  --card: #fffdf9;
+  --card-foreground: #2b2420;
+  --popover: #fffdf9;
+  --popover-foreground: #2b2420;
 
-  /* Held at the lightness where white label text clears WCAG AA on the fill:
-     4.72:1 at L=0.55, against 4.29:1 at the 0.573 it used to sit at. Hue and chroma
-     are unchanged, so the brand reads the same; lightening it again re-breaks the
-     default button, which is the most-used control in the app. */
-  --primary: oklch(0.55 0.152 259.6); /* #376fc9 */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.945 0.004 106.4);
-  --secondary-foreground: oklch(0.216 0 0);
-  --muted: oklch(0.945 0.004 106.4);
-  --muted-foreground: oklch(0.53 0.006 106.4);
-  --accent: oklch(0.93 0.03 253);
-  --accent-foreground: oklch(0.4 0.13 259);
+  /* Terracotta. White on it measures 5.6:1; as text on the canvas 5.2:1. Lightening it
+     re-breaks the default button, the most-used control in the app. */
+  --primary: #b4441c;
+  --primary-foreground: #ffffff;
+  --secondary: #f3ece3;
+  --secondary-foreground: #2b2420;
+  --muted: #f3ece3;
+  --muted-foreground: #6b5e55; /* 5.9:1 on the canvas */
+  --accent: #f7e6da; /* soft terracotta tint: hover, active nav */
+  --accent-foreground: #8a3416; /* 6.7:1 on the accent */
+  /* Teal second voice: charts and secondary emphasis, never status. */
+  --brand-2: #17716b;
 
-  --destructive: oklch(0.564 0.176 24.6); /* #d03b3b */
-  --destructive-foreground: oklch(0.985 0 0);
-  /* A tint and a solid fill of the same colour need opposite inks, so each domain colour
-     carries both. `--destructive-foreground` is shadcn's on-FILL ink (near-white here) and
-     cannot double as text on a tint: `text-destructive` on the badge's 14% tint measures
-     3.94:1 in Chromium, under the 4.5:1 that 12px text needs. `--success-foreground` and
-     `--warning-foreground` happen to be their hue's on-tint ink already, so only these two
-     roles were missing a token — named after the surface they sit on, not after a theme. */
-  --destructive-on-tint: oklch(0.52 0.176 24.6);
+  /* A tint and a solid fill of one colour need opposite inks, so each domain colour carries
+     both. `--*-foreground` / `--*-on-fill` sit on the solid fill; `--*-on-tint` and the
+     success/warning `--*-foreground` sit on a 10–22% tint of it. */
+  --destructive: #c0362c;
+  --destructive-foreground: #ffffff; /* 5.5:1 on the fill */
+  --destructive-on-tint: #a62e25;
 
-  --border: oklch(0.906 0.006 106.4); /* #e1e0d9 */
-  --input: oklch(0.88 0.008 106.4);
-  --ring: oklch(0.573 0.152 259.6);
+  --border: #e8ddd0;
+  --input: #98877a; /* field boundary: 3.40:1 on --card (WCAG 1.4.11) */
+  --ring: #b4441c;
 
-  /* Domain colours: exam levels, pass grades, correctness. */
-  --success: oklch(0.585 0.176 143.5); /* #0ca30c */
-  --success-foreground: oklch(0.42 0.14 148);
-  /* Dark ink on the success fill, the way `--primary-foreground` goes dark on `--primary`
-     in the dark theme: white on this green measures 3.89:1 light and 2.70:1 dark. */
-  --success-on-fill: oklch(0.17 0.02 148);
-  --warning: oklch(0.822 0.155 84.6); /* #fab219 */
-  --warning-foreground: oklch(0.45 0.1 74);
+  /* Domain colours: pass grades, correctness, urgency. */
+  --success: #2f7d52;
+  --success-foreground: #1e6440; /* ink on the success tint */
+  --success-on-fill: #ffffff; /* 5.0:1 on the fill */
+  --warning: #e3a21a; /* fill and tint source only — 2:1 as ink */
+  --warning-foreground: #7a4e00; /* ink on the tint; ring/meter stroke */
 
-  --chart-1: oklch(0.573 0.152 259.6);
-  --chart-2: oklch(0.585 0.176 143.5);
-  --chart-3: oklch(0.822 0.155 84.6);
-  --chart-4: oklch(0.564 0.176 24.6);
-  --chart-5: oklch(0.72 0.12 45);
+  /* Scrim behind dialogs and sheets: the ink, not black, so it stays warm. */
+  --scrim: rgb(43 36 32 / 0.45);
+
+  /* Warm-tinted, soft. Resting card → raised/hover → menus and dialogs. */
+  --shadow-soft: 0 1px 2px rgb(74 46 26 / 0.05), 0 4px 14px -4px rgb(74 46 26 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(74 46 26 / 0.06), 0 14px 28px -8px rgb(74 46 26 / 0.16);
+  --shadow-pop: 0 6px 16px rgb(74 46 26 / 0.1), 0 24px 48px -12px rgb(74 46 26 / 0.24);
+
+  /* The brand mark (AppLogo, public/logo.svg). Not overridden in .dark: a logo does not invert. */
+  --logo-tile: #b4441c;
+  --logo-tile-light: #d2643a;
+  --logo-paper: #fffdf9;
+  --logo-mark: #17716b;
+
+  --chart-1: #b4441c;
+  --chart-2: #17716b;
+  --chart-3: #2f7d52;
+  --chart-4: #9a6400;
+  --chart-5: #6b5a99;
 }
 
+/* Warm charcoal, never pure black. */
 .dark {
-  --background: oklch(0.165 0.003 106.4);
-  --foreground: oklch(0.96 0.002 106.4);
-  --card: oklch(0.215 0.004 106.4);
-  --card-foreground: oklch(0.96 0.002 106.4);
-  --popover: oklch(0.215 0.004 106.4);
-  --popover-foreground: oklch(0.96 0.002 106.4);
+  --background: #1b1714;
+  --foreground: #f4ede5;
+  --card: #26211d;
+  --card-foreground: #f4ede5;
+  --popover: #26211d;
+  --popover-foreground: #f4ede5;
 
-  --primary: oklch(0.67 0.14 259.6);
-  --primary-foreground: oklch(0.17 0.02 259);
-  --secondary: oklch(0.27 0.005 106.4);
-  --secondary-foreground: oklch(0.96 0.002 106.4);
-  --muted: oklch(0.27 0.005 106.4);
-  --muted-foreground: oklch(0.72 0.006 106.4);
-  --accent: oklch(0.3 0.04 253);
-  --accent-foreground: oklch(0.85 0.08 253);
+  --primary: #f0895b;
+  --primary-foreground: #2a1206; /* 7.1:1 — the light fill takes a dark label */
+  --secondary: #332c27;
+  --secondary-foreground: #f4ede5;
+  --muted: #332c27;
+  --muted-foreground: #b9aca1;
+  --accent: #3a2a22;
+  --accent-foreground: #f8c9ae;
+  --brand-2: #4fb8ae;
 
-  --destructive: oklch(0.65 0.18 24.6);
-  --destructive-on-tint: oklch(0.68 0.18 24.6);
-  /* Dark ink on the lighter fill, exactly as `--primary-foreground` above: white on this
-     red measures 3.32:1, this measures 5.45:1. `--destructive` itself must stay light —
-     it is also the `text-destructive` ink on a dark background. */
-  --destructive-foreground: oklch(0.17 0.02 25);
+  /* `--destructive` stays light: it is also the `text-destructive` ink on the canvas. */
+  --destructive: #f07468;
+  --destructive-foreground: #2a0a07;
+  --destructive-on-tint: #ff9a8f;
 
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 18%);
-  --ring: oklch(0.67 0.14 259.6);
+  --border: rgb(255 240 225 / 0.12);
+  --input: #7a6c62; /* field boundary: 3.15:1 on --card (WCAG 1.4.11) */
+  --ring: #f0895b;
 
-  --success: oklch(0.68 0.17 143.5);
-  --success-foreground: oklch(0.82 0.15 148);
-  --success-on-fill: oklch(0.17 0.02 148);
-  --warning: oklch(0.84 0.15 84.6);
-  --warning-foreground: oklch(0.88 0.13 84);
+  --success: #5cc08a;
+  --success-foreground: #9be0b8;
+  --success-on-fill: #0d2618;
+  --warning: #f0b93a;
+  --warning-foreground: #f5d58a;
+
+  --scrim: rgb(8 6 5 / 0.62);
+
+  /* Shadows barely read on charcoal, so each one carries a warm 1px hairline too. */
+  --shadow-soft: 0 0 0 1px rgb(255 240 225 / 0.07), 0 4px 14px -4px rgb(0 0 0 / 0.4);
+  --shadow-lift: 0 0 0 1px rgb(255 240 225 / 0.1), 0 14px 28px -8px rgb(0 0 0 / 0.55);
+  --shadow-pop: 0 0 0 1px rgb(255 240 225 / 0.1), 0 24px 48px -12px rgb(0 0 0 / 0.65);
+
+  --chart-1: #f0895b;
+  --chart-2: #4fb8ae;
+  --chart-3: #5cc08a;
+  --chart-4: #f0b93a;
+  --chart-5: #b6a6e0;
 }
 
 @theme inline {
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-fade-up: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-fade-in: fade-in 0.35s ease-out both;
-  --animate-pop-in: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  --animate-grow-up: grow-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-slide-in: slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --font-sans: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.15s ease-in;
+  --animate-fade-up: fade-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.22s ease-out both;
+  --animate-pop-in: pop-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-grow-up: grow-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in: slide-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  /* sm 6 · md 8 · lg 10 · xl 12 (controls) · 2xl 16 (cards, = --radius) · 3xl 24 (sheets). */
+  --radius-sm: calc(var(--radius) - 0.625rem);
+  --radius-md: calc(var(--radius) - 0.5rem);
+  --radius-lg: calc(var(--radius) - 0.375rem);
+  --radius-xl: calc(var(--radius) - 0.25rem);
+  --radius-2xl: var(--radius);
+  --radius-3xl: calc(var(--radius) + 0.5rem);
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
+  --shadow-pop: var(--shadow-pop);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -122,12 +158,14 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-brand-2: var(--brand-2);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-on-tint: var(--destructive-on-tint);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-scrim: var(--scrim);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-on-fill: var(--success-on-fill);
@@ -232,70 +270,115 @@
     }
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground antialiased;
+    line-height: 1.6;
     /* A barely-there warm wash so large pages do not read as a flat slab. */
     background-image:
       radial-gradient(
         60rem 30rem at 15% -10%,
-        color-mix(in oklab, var(--primary) 7%, transparent),
+        color-mix(in oklab, var(--primary) 6%, transparent),
         transparent 60%
       ),
       radial-gradient(
         50rem 28rem at 110% 0%,
-        color-mix(in oklab, var(--success) 6%, transparent),
+        color-mix(in oklab, var(--brand-2) 5%, transparent),
         transparent 55%
       );
     background-attachment: fixed;
   }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading;
+    line-height: 1.2;
+  }
+  h1,
+  h2 {
+    letter-spacing: -0.01em;
+  }
+  /* A heading takes focus only so a screen reader announces the new page after navigation;
+     it is not a control, so it draws no ring. */
+  h1[tabindex='-1']:focus {
+    outline: none;
+  }
+  /* German compounds must wrap rather than push a narrow card sideways. */
+  [lang='de'] {
+    hyphens: auto;
+  }
 }
 
-/* The Exam Guide and the cheatsheets ship as HTML strings in content.js and render
-   inside .prose, so only the handful of custom classes they use need rules here. */
-@layer components {
-  .guide-toc {
-    @apply flex flex-wrap gap-2 rounded-lg border bg-card p-3 my-4;
-  }
-  .guide-toc a {
-    @apply rounded-md bg-secondary px-2.5 py-1 text-sm font-medium no-underline text-secondary-foreground hover:bg-accent hover:text-accent-foreground;
-  }
-  .prose .card {
-    @apply rounded-xl border bg-card p-4 my-4 text-card-foreground shadow-sm;
-  }
-  .prose .card > :first-child {
-    @apply mt-0;
-  }
-  .prose .card > :last-child {
-    @apply mb-0;
-  }
-  .prose .callout {
-    @apply rounded-lg border-l-4 border-primary bg-accent/40 p-3 my-4 text-sm;
-  }
-  .prose .callout > :first-child {
-    @apply mt-0;
-  }
-  .prose .callout > :last-child {
-    @apply mb-0;
-  }
-  .prose .callout.green {
-    border-left-color: var(--success);
-    background: color-mix(in oklab, var(--success) 12%, transparent);
-  }
-  .prose .callout.red {
-    border-left-color: var(--destructive);
-    background: color-mix(in oklab, var(--destructive) 10%, transparent);
-  }
-  .prose .lead {
-    @apply text-base text-muted-foreground;
-  }
-  .prose .small {
-    @apply text-sm;
-  }
-  .prose .muted {
-    @apply text-muted-foreground;
-  }
-  .prose .chip {
-    @apply inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground no-underline;
-  }
+/* The Exam Guide and the cheatsheets ship as HTML strings in content and render inside
+   .prose, so only the handful of custom classes they use need rules here. Unlayered, like the
+   palette block below: the typography plugin's link underline and element margins would
+   otherwise outrank anything in the components layer. */
+.guide-toc {
+  @apply my-5 flex flex-wrap gap-2 rounded-2xl bg-card p-3 shadow-soft;
+}
+.guide-toc a {
+  @apply rounded-full bg-secondary px-3 py-1.5 font-heading text-sm font-semibold text-secondary-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring;
+}
+.prose .card {
+  @apply my-5 rounded-2xl bg-card p-5 text-card-foreground shadow-soft;
+}
+.prose .card > :first-child {
+  @apply mt-0;
+}
+.prose .card > :last-child {
+  @apply mb-0;
+}
+.prose .callout {
+  @apply my-5 rounded-xl border-l-4 border-primary p-4 text-sm;
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+.prose .callout > :first-child {
+  @apply mt-0;
+}
+.prose .callout > :last-child {
+  @apply mb-0;
+}
+.prose .callout.green {
+  border-left-color: var(--success);
+  background: color-mix(in oklab, var(--success) 12%, transparent);
+}
+.prose .callout.red {
+  border-left-color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 10%, transparent);
+}
+.prose .lead {
+  @apply text-base text-muted-foreground;
+}
+.prose .small {
+  @apply text-sm;
+}
+.prose .muted {
+  @apply text-muted-foreground;
+}
+.prose .chip {
+  @apply inline-block rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground no-underline;
+}
+
+/* The typography plugin ships its own grey palette on `.prose` (and swaps it under
+   `prose-invert`). Point every slot at the tokens instead, so guide and cheatsheet prose
+   follows both themes. Unlayered on purpose: it must beat the plugin's layered rules. */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--muted-foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-kbd: var(--foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
 }
 
 @layer components {
@@ -333,10 +416,10 @@
 
   /* Cards that respond to the pointer. */
   .card-hover {
-    @apply transition-[transform,box-shadow,border-color] duration-300;
+    @apply transition-[transform,box-shadow,border-color] duration-200 ease-out;
   }
   .card-hover:hover {
-    @apply -translate-y-0.5 shadow-lg;
+    @apply -translate-y-0.5 shadow-lift;
     border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
   }
 

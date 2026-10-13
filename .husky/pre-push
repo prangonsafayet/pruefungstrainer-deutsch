@@ -1,5 +1,11 @@
-# The staged-file checks cannot catch a type error in a file you did not touch, or a
-# broken route. Run the real pipeline before anything leaves the machine.
+# The staged-file checks cannot catch a type error or a lint error in a file you did not
+# touch, or a broken route. Run the real pipeline over the whole codebase before anything
+# leaves the machine — the same static gates CI's "Static analysis" job enforces.
 npm run typecheck
+npm run lint -- --max-warnings=0
+npm run format:check
 npm run validate
 npm run test:unit
+# Architecture, CSS-token, storage-key and hook guards — fast and offline. The network
+# audit is CI's job (`npm run guards`), so a push never depends on the registry being up.
+npm run guards:offline

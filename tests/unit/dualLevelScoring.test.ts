@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { A2B1_EXAMS } from '@content/trainers/a2b1/exams/index.ts';
+import { A2B1_EXAMS } from '@content/a2b1/exams/allExams.ts';
 import { A2_TOTAL, B1_TOTAL } from '@shared/config/exam.ts';
-import { type AnswerMap, type SkillScores } from '@shared/types';
+import { type AnswerMap, type SkillScores } from '@shared/types/progress.ts';
 
 import {
   gradeFullExam,
   scoreHoeren,
   scoreLesen,
   scoreSprachbausteine
-} from '@features/exam/lib/formats/dual-level/scoring.ts';
+} from '@features/mock-exam/lib/formats/dual-level/scoring.ts';
 
 /*
  * `scoring.ts` marks all fifteen authored A2·B1 papers. The sibling single-level suite

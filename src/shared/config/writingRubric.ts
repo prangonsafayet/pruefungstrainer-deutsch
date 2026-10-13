@@ -5,7 +5,7 @@
  * Aufgabenbewältigung, Kommunikative Gestaltung, Formale Richtigkeit — is graded A/B/C/D =
  * 5/3/1/0, the three grades are summed and tripled, so a criterion is worth 15, 9, 3 or 0
  * and the maximum is 45. There is no smooth 0–15 scale. The app states this to learners
- * itself, in the B1 `schreiben` cheatsheet (`src/content/trainers/b1/curriculum.ts`).
+ * itself, in the B1 `schreiben` cheatsheet (`src/content/b1/curriculum.ts`).
  *
  * Everything else here is the app's own heuristic and must never be presented as telc's:
  * telc publishes no error-per-100-words table, and a proofreader cannot know whether a

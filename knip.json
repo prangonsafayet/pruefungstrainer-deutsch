@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["scripts/*.{mjs,cjs}"],
+  "project": [
+    "src/**/*.css",
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.{mjs,cjs}",
+    "tests/**/*.{ts,tsx,js}",
+    "e2e/**/*.{js,ts}",
+    "*.{ts,cjs,js}"
+  ],
+  "ignore": ["src/shared/ui/**"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": ["npm-check-updates", "lint-staged"]
+}

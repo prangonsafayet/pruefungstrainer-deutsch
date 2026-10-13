@@ -3,9 +3,10 @@ import { act, createElement, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { useExamBinding } from '@features/exam/hooks/useExamBinding.ts';
-import { type ExamBinding } from '@features/exam/types/examBinding.ts';
-import { ProgressProvider, useTrainerSlice, type TrainerSlice } from '@features/progress';
+import { useExamBinding } from '@features/mock-exam/hooks/useExamBinding.tsx';
+import { type ExamBinding } from '@features/mock-exam/types/examBinding.ts';
+import { ProgressProvider } from '@shared/progress-store/providers/ProgressProvider.tsx';
+import { useTrainerSlice, type TrainerSlice } from '@shared/progress-store/hooks/useTrainerSlice.tsx';
 
 import { waitFor } from './harness.ts';
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterBank } from '@features/practice/lib/referenceSearch.ts';
+import { filterBank } from '@features/vocab-practice/components/reference/ReferenceTables/referenceSearch.ts';
 import { CASE_BADGE, CASE_LABELS } from '@shared/config/studyCategories.ts';
-import { type GermanCase, type VocabBank } from '@shared/types';
+import { type GermanCase, type VocabBank } from '@shared/types/vocab.ts';
 
 /*
  * These five filters were inline `.filter()` chains inside `ReferenceTables`, where nothing

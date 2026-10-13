@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildErrorReport } from '@features/feedback/lib/errorReport.ts';
-import { type LtMatch } from '@shared/types';
+import { buildErrorReport } from '@shared/writing-feedback/lib/errorReport.ts';
+import { type LtMatch } from '@shared/types/languageTool.ts';
 
 /*
  * The default rule id is deliberately not one of LT_RULE_TO_WEAKNESS's prefixes (unlike

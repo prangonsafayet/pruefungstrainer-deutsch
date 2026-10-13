@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { TRAINER_CONTENT } from '@content/trainers/index.ts';
+import { TRAINER_CONTENT } from '@content/trainerContent.ts';
 
-import { buildScheduleFrom, splitWorkDays } from '@features/plan/lib/buildSchedule.ts';
-import { trainerScheduleSource } from '@features/plan/lib/trainerSource.ts';
+import { buildScheduleFrom, splitWorkDays } from '@shared/study-schedule/lib/buildSchedule.ts';
+import { trainerScheduleSource } from '@shared/study-schedule/lib/trainerSource.ts';
 import {
   MAX_EXAMS_PER_DAY,
   MAX_PREP_DAYS,
@@ -12,7 +12,8 @@ import {
   TOTAL_LEARN_DAYS
 } from '@shared/config/schedule.ts';
 import { addDays } from '@shared/lib/format.ts';
-import { type LearnDoneMap, type Schedule } from '@shared/types';
+import { type LearnDoneMap } from '@shared/types/progress.ts';
+import { type Schedule } from '@shared/types/schedule.ts';
 
 /* The engine is the one piece of logic the whole plan hangs off, and a wrong plan still
    renders perfectly — a schedule that quietly drops half the curriculum looks fine in a

@@ -1,4 +1,4 @@
-import { type WeaknessCategory, type WeaknessTopic } from '@shared/types';
+import { type WeaknessCategory, type WeaknessTopic } from '@shared/types/feedback.ts';
 
 /**
  * What a learner can act on. Deliberately coarse: these map onto cheatsheets and drills,
@@ -75,7 +75,7 @@ export const WEAKNESS_WEIGHTS: Readonly<Record<WeaknessCategory, number>> = {
  * Which curriculum area each weakness belongs to.
  *
  * Deliberately not a category → cheatsheet-key map: the three trainers each own their own
- * cheatsheets under `src/content/trainers/<id>/curriculum.ts`, and the keys are unrelated —
+ * cheatsheets under `src/content/<id>/curriculum.ts`, and the keys are unrelated —
  * A2·B1 has twelve (`cases`, `verbpraep`, `nebensaetze`, …), B1 has six
  * (`cases`, `verbs`, `konnektoren`, `schreiben`, `sprechen`, `hoeren`), B2 has six
  * (`genitiv`, `passiv`, `kii`, `nominal`, `brief`, `muendlich`). A single flat map keyed by

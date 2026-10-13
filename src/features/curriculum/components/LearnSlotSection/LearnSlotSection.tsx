@@ -1,0 +1,60 @@
+import { CalendarCheck } from 'lucide-react';
+
+import { cn } from '@shared/lib/cn.ts';
+import { Badge } from '@shared/ui/badge.tsx';
+
+import LearnDayCard from '@features/curriculum/components/LearnDayCard/LearnDayCard.tsx';
+import { type LearnPlanState } from '@features/curriculum/hooks/useLearnPlan.tsx';
+import { type LearnSlotGroup } from '@features/curriculum/hooks/useScheduledLearn.tsx';
+
+interface LearnSlotSectionProps {
+  readonly group: LearnSlotGroup;
+  readonly plan: LearnPlanState;
+  readonly onOpenCheatsheet: (id: string, fromDay: number) => void;
+}
+
+/** One day of the plan: its date, what it is for, and the lessons it holds. */
+const LearnSlotSection = ({ group, plan, onOpenCheatsheet }: LearnSlotSectionProps) => (
+  <section className="space-y-3">
+    <div className="flex flex-wrap items-center gap-2">
+      <h3
+        className={cn(
+          'flex items-center gap-1.5 text-sm font-semibold',
+          group.isToday ? 'text-foreground' : 'text-muted-foreground'
+        )}
+      >
+        {group.isToday ? <CalendarCheck className="size-4 text-primary" aria-hidden /> : null}
+        {group.heading}
+      </h3>
+      <Badge variant={group.isToday ? 'default' : 'outline'}>{group.kindLabel}</Badge>
+      {group.days.length > 1 ? (
+        <Badge variant="warning">{group.days.length} lessons — a long day</Badge>
+      ) : null}
+    </div>
+
+    <div className="space-y-4">
+      {group.days.map(day => (
+        <LearnDayCard
+          key={day.day}
+          day={day}
+          complete={plan.isDayComplete(day.day)}
+          cheatsheets={plan.cheatsheets}
+          basePath={plan.basePath}
+          aiPromptLang={plan.aiPromptLang}
+          isTaskDone={index => plan.isTaskDone(day.day, index)}
+          onToggleTask={(index, done) => {
+            plan.toggleTask(day.day, index, done);
+          }}
+          onOpenCheatsheet={id => {
+            onOpenCheatsheet(id, day.day);
+          }}
+          onStartModule={(exam, module) => {
+            plan.startModule(exam, module, { resumeIfSame: true });
+          }}
+        />
+      ))}
+    </div>
+  </section>
+);
+
+export default LearnSlotSection;

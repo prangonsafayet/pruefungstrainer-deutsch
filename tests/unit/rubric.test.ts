@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/trainers/index.ts';
-import { scoreWriting } from '@features/feedback/lib/rubric.ts';
+import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS } from '@content/trainerContent.ts';
+import { scoreWriting } from '@shared/writing-feedback/lib/rubric.ts';
 import { TRAINERS } from '@shared/config/trainers.ts';
 import { CONNECTOR_CHECK_MIN_WORDS } from '@shared/config/writingRubric.ts';
-import { type ErrorReportEntry, type WeaknessCategory, type WritingTarget } from '@shared/types';
+import { type ErrorReportEntry, type WeaknessCategory } from '@shared/types/feedback.ts';
+import { type WritingTarget } from '@shared/types/trainer.ts';
 
 const err = (category: WeaknessCategory, offset = 0): ErrorReportEntry => ({
   offset,
@@ -208,6 +209,9 @@ describe('the authored Musterlösungen', () => {
   const samples: Sample[] = [];
   for (const info of Object.values(TRAINERS)) {
     const target = info.paper.writingTarget;
+    /* The DTZ states no word count, so the rubric's length criterion has nothing to judge its
+       Musterlösungen against; its writing is self-rated on the DTZ criteria instead. */
+    if (info.format === 'dtz-paper') continue;
     if (info.format === 'dual-level') {
       for (const exam of DUAL_LEVEL_EXAMS) {
         const writing = exam.schreiben;

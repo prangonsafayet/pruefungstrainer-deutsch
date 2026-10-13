@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_SETTINGS } from '@shared/config/exam.ts';
-import { type ProgressDatabase } from '@shared/types';
+import { type ProgressDatabase } from '@shared/types/progress.ts';
 
 import { settle } from './harness.ts';
 
@@ -30,7 +30,7 @@ vi.mock('sonner', () => ({
 let exchangeError: { readonly message: string } | null = null;
 let exchanges = 0;
 
-vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
+vi.mock('@shared/account-sync/lib/supabaseClient.ts', () => ({
   isSyncConfigured: true,
   PROGRESS_TABLE: 'progress',
   syncDiagnostics: {},
@@ -50,7 +50,7 @@ vi.mock('@features/auth/lib/supabaseClient.ts', () => ({
   }
 }));
 
-const { useCloudSync } = await import('@features/auth/hooks/useCloudSync.ts');
+const { useCloudSync } = await import('@shared/account-sync/hooks/useCloudSync.tsx');
 
 const DB: ProgressDatabase = {
   attempts: [],
@@ -111,7 +111,9 @@ describe('an OAuth callback whose code exchange fails', () => {
     await arriveAt('?code=abc123');
 
     expect(errorToasts).toHaveLength(1);
-    expect(errorToasts[0]?.description).toContain('code verifier');
+    /* Named in our words; Supabase's raw text goes to the log, not the screen. */
+    expect(errorToasts[0]?.description).toMatch(/did not accept the request/);
+    expect(errorToasts[0]?.description).not.toContain('code verifier');
   });
 
   it('strips the spent code so a refresh does not retry it forever', async () => {
@@ -132,8 +134,24 @@ describe('an OAuth callback whose code exchange fails', () => {
   it('still reports a provider error carried as a parameter', async () => {
     await arriveAt('?error=access_denied&error_description=The+user+denied+the+request');
 
-    expect(errorToasts[0]?.description).toBe('The user denied the request');
+    expect(errorToasts[0]?.description).toMatch(/cancelled or refused at the provider/);
     /* That shape never reaches an exchange: there is no code to exchange. */
     expect(exchanges).toBe(0);
+  });
+
+  it('never shows the text a link carries — anyone can write it', async () => {
+    await arriveAt('?error_description=Your+account+is+locked.+Call+0800+123+to+unlock');
+
+    expect(errorToasts).toHaveLength(1);
+    expect(errorToasts[0]?.description).not.toMatch(/0800|locked/);
+  });
+
+  it('survives a value that is not valid percent-encoding, and strips it', async () => {
+    /* URLSearchParams decodes `%25` to a bare `%`; decoding that again threw a URIError in the
+       effect, before the params were stripped — so the app crashed on every reload. */
+    await arriveAt('?error=100%25');
+
+    expect(errorToasts).toHaveLength(1);
+    expect(new URLSearchParams(window.location.search).get('error')).toBeNull();
   });
 });

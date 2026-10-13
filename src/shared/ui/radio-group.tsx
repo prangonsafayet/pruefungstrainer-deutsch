@@ -28,7 +28,7 @@ export const RadioGroupItem = forwardRef<
       ref={ref}
       data-slot="radio-group-item"
       className={cn(
-        'aspect-square size-4 shrink-0 rounded-full border border-input text-primary shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary',
+        'aspect-square size-5 shrink-0 rounded-full border-[1.5px] border-muted-foreground bg-card text-primary outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary',
         className
       )}
       {...props}
@@ -37,7 +37,7 @@ export const RadioGroupItem = forwardRef<
         data-slot="radio-group-indicator"
         className="relative flex items-center justify-center"
       >
-        <CircleIcon className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary text-primary" />
+        <CircleIcon className="absolute left-1/2 top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 fill-primary text-primary" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

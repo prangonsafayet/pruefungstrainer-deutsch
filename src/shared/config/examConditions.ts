@@ -4,9 +4,10 @@
  * so a trainer offers whichever set the paper it sets does.
  */
 
-import { type ExamFormatId } from '@shared/types';
+import { type ExamFormatId } from '@shared/types/trainer.ts';
 
-import { FULL_EXAM_MAX } from './exam.ts';
+import { DTZ_PART_LINES } from './dtzExam.ts';
+import { DEFAULT_SETTINGS, FULL_EXAM_MAX } from './exam.ts';
 import { SINGLE_LEVEL_TOTAL_MAX } from './singleLevelExam.ts';
 
 export interface SettingChoice {
@@ -22,6 +23,11 @@ export const WRITING_MINUTE_CHOICES: Readonly<Record<ExamFormatId, readonly Sett
   'single-level': [
     { value: 30, label: '30 minutes (official)' },
     { value: 40, label: '40 minutes (relaxed)' }
+  ],
+  /* The DTZ Übungssatz states 30 minutes for Schreiben (p. 6). */
+  'dtz-paper': [
+    { value: 30, label: '30 minutes (official)' },
+    { value: 40, label: '40 minutes (relaxed)' }
   ]
 };
 
@@ -35,38 +41,115 @@ export const WRITING_MINUTE_CHOICES: Readonly<Record<ExamFormatId, readonly Sett
  */
 export const PASS_PERCENT: Readonly<Record<ExamFormatId, number>> = {
   'dual-level': 70,
-  'single-level': 60
+  'single-level': 60,
+  /* Schreiben 15/20 and Sprechen 75/100 are both 75% (DTZ spec p. 47). Hören + Lesen's 33/45
+     is drawn per bar instead — see the DTZ summary. */
+  'dtz-paper': 75
 };
 
 /** How the pass line reads on screen. */
-export const passLineLabel = (format: ExamFormatId): string =>
-  format === 'dual-level'
-    ? `B1 threshold (${String(PASS_PERCENT[format])}%)`
-    : `Pass line (${String(PASS_PERCENT[format])}%)`;
+export const passLineLabel = (format: ExamFormatId): string => {
+  switch (format) {
+    case 'dual-level':
+      return `B1 threshold (${String(PASS_PERCENT[format])}%)`;
+    case 'single-level':
+      return `Pass line (${String(PASS_PERCENT[format])}%)`;
+    case 'dtz-paper':
+      return `B1 line (${String(PASS_PERCENT[format])}%)`;
+    default:
+      return unreachableFormat(format);
+  }
+};
+
+/** The compile-time end of an exhaustive switch over the papers. */
+export const unreachableFormat = (format: never): never => {
+  throw new Error(`Unknown exam format: ${String(format)}`);
+};
 
 /** Points a perfect sitting of each paper scores. */
 export const PAPER_TOTAL_MAX: Readonly<Record<ExamFormatId, number>> = {
   'dual-level': FULL_EXAM_MAX,
-  'single-level': SINGLE_LEVEL_TOTAL_MAX
+  'single-level': SINGLE_LEVEL_TOTAL_MAX,
+  /* The DTZ has no single total: its one summed Teilergebnis is Hören + Lesen, out of 45. */
+  'dtz-paper': DTZ_PART_LINES.hoerenLesen.max
 };
 
 /** How each paper is passed, in one sentence — the lead under a dashboard title. */
 export const PASS_RULES: Readonly<Record<ExamFormatId, string>> = {
   'dual-level': 'Aim: ≥ 168/240 overall, with ≥ 42/60 in three skills and ≥ 24/60 in the fourth = B1.',
   'single-level':
-    'Aim: ≥ 135/225 written and ≥ 45/75 oral — this trainer marks each part at 60%, judged separately.'
+    'Aim: ≥ 135/225 written and ≥ 45/75 oral — this trainer marks each part at 60%, judged separately.',
+  'dtz-paper':
+    'Zertifikat B1: Sprechen ≥ 75/100 and either Hören + Lesen ≥ 33/45 or Schreiben ≥ 15/20. Zertifikat A2: Sprechen ≥ 35 and either Hören + Lesen ≥ 20 or Schreiben ≥ 7.'
+};
+
+export interface PassRuleRow {
+  readonly part: string;
+  readonly line: string;
+}
+
+export interface PassRuleSummary {
+  readonly title: string;
+  readonly rows: readonly PassRuleRow[];
+  readonly note: string;
+}
+
+const { hoerenLesen: DTZ_HL, schreiben: DTZ_SCHREIBEN, sprechen: DTZ_SPRECHEN } = DTZ_PART_LINES;
+
+const dtzLine = (line: { readonly max: number; readonly b1From: number; readonly a2From: number }): string =>
+  `B1 ≥ ${String(line.b1From)}/${String(line.max)} · A2 ≥ ${String(line.a2From)}/${String(line.max)}`;
+
+/**
+ * `PASS_RULES`, laid out for scanning: one row per condition. Same figures as the sentence
+ * (`tests/unit/examConditions.test.ts` holds the two together); the DTZ rows read the spec
+ * lines themselves.
+ */
+export const PASS_RULE_SUMMARY: Readonly<Record<ExamFormatId, PassRuleSummary>> = {
+  'dual-level': {
+    title: 'B1 needs all three',
+    rows: [
+      { part: 'Overall', line: '≥ 168/240' },
+      { part: 'Three of the four skills', line: '≥ 42/60 each' },
+      { part: 'The fourth skill', line: '≥ 24/60' }
+    ],
+    note: 'Below that, the same paper can still award A2.'
+  },
+  'single-level': {
+    title: 'The line this trainer marks at',
+    rows: [
+      { part: 'Written', line: '≥ 135/225' },
+      { part: 'Oral', line: '≥ 45/75' }
+    ],
+    note: 'This trainer marks each part at 60%, judged separately.'
+  },
+  'dtz-paper': {
+    title: 'Certificate lines',
+    rows: [
+      { part: 'Sprechen', line: dtzLine(DTZ_SPRECHEN) },
+      { part: 'Hören + Lesen', line: dtzLine(DTZ_HL) },
+      { part: 'Schreiben', line: dtzLine(DTZ_SCHREIBEN) }
+    ],
+    note: 'A certificate needs Sprechen at its level, plus Hören + Lesen or Schreiben at the same level.'
+  }
 };
 
 /**
  * How long the paper gives for writing, said next to the choice. The number comes from the
- * trainer's own paper rather than from a second list, so the two cannot disagree. Only the
- * single-level paper's 30 minutes is a published telc figure; the A2·B1 Schreiben slot is
- * this app's, so it is not claimed as official (see `a2b1/paper.ts`).
+ * trainer's own paper rather than from a second list, so the two cannot disagree. The
+ * single-level paper's 30 minutes is a published telc figure and the DTZ's 30 a g.a.s.t. one;
+ * the A2·B1 Schreiben slot is this app's, so it is not claimed as official (see `a2b1/paper.ts`).
  */
-export const writingTimeHint = (format: ExamFormatId, minutes: number): string =>
-  format === 'single-level'
-    ? `Official: ${String(minutes)} minutes.`
-    : `This trainer's pace: ${String(minutes)} minutes.`;
+export const writingTimeHint = (format: ExamFormatId, minutes: number): string => {
+  switch (format) {
+    case 'dual-level':
+      return `This trainer's pace: ${String(minutes)} minutes.`;
+    case 'single-level':
+    case 'dtz-paper':
+      return `Official: ${String(minutes)} minutes.`;
+    default:
+      return unreachableFormat(format);
+  }
+};
 
 export const PLAYS_ALLOWED_CHOICES: Readonly<Record<ExamFormatId, readonly SettingChoice[]>> = {
   'dual-level': [
@@ -78,11 +161,27 @@ export const PLAYS_ALLOWED_CHOICES: Readonly<Record<ExamFormatId, readonly Setti
     { value: 1, label: '1 (official — you hear it once)' },
     { value: 2, label: '2 (training)' },
     { value: 3, label: '3 (training)' }
+  ],
+  /* The DTZ material states no play count, so no choice is called official. */
+  'dtz-paper': [
+    { value: 1, label: '1 (hard mode)' },
+    { value: 2, label: "2 (this trainer's default)" },
+    { value: 3, label: '3 (training)' }
   ]
+};
+
+/** How often each listening item plays in a fresh trainer document, per paper. */
+export const DEFAULT_PLAYS_ALLOWED: Readonly<Record<ExamFormatId, number>> = {
+  'dual-level': DEFAULT_SETTINGS.playsAllowed,
+  'single-level': 1,
+  /* This trainer's choice: the DTZ material does not say how often a text plays. */
+  'dtz-paper': 2
 };
 
 /** What the real sitting does with its audio, said next to the plays-per-item choice. */
 export const PLAYS_ALLOWED_HINTS: Readonly<Record<ExamFormatId, string>> = {
   'dual-level': 'The real exam plays most items twice.',
-  'single-level': 'The real exam plays each item once.'
+  'single-level': 'The real exam plays each item once.',
+  'dtz-paper':
+    "The DTZ material this trainer follows does not say how often each text plays — the default is this trainer's choice."
 };

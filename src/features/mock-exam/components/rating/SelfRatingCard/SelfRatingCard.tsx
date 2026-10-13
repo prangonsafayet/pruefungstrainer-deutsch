@@ -1,0 +1,142 @@
+import { Lightbulb } from 'lucide-react';
+
+import CriteriaRatingPanel from '@shared/components/exam-ui/CriteriaRatingPanel/CriteriaRatingPanel.tsx';
+import MultilineText from '@shared/components/MultilineText/MultilineText.tsx';
+import { SPEAKING_PARTS } from '@shared/exam-run/config/run.ts';
+import { type ExamFormat, type RunSettings, type StoredAttempt } from '@shared/exam-run/types/examFormat.ts';
+import { type RatedModule } from '@shared/exam-run/types/run.ts';
+import { textAnswer, WRITING_ANSWER_KEY } from '@shared/lib/answers.ts';
+import { type ExamPaper } from '@shared/types/exam.ts';
+import { type RecordingMap } from '@shared/types/examRun.ts';
+import { type AnswerMap } from '@shared/types/progress.ts';
+import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card.tsx';
+
+import { useSelfRating } from './useSelfRating.tsx';
+
+interface SelfRatingCardProps<
+  TExam extends ExamPaper,
+  TSettings extends RunSettings,
+  TAttempt extends StoredAttempt
+> {
+  readonly format: ExamFormat<TExam, TSettings, TAttempt>;
+  readonly module: RatedModule;
+  readonly exam: TExam;
+  readonly answers: AnswerMap;
+  readonly recordings: RecordingMap;
+  readonly onConfirm: (score: number) => void;
+}
+
+/** Schreiben and Sprechen are self-scored against the sample answer / Redemittel. */
+const SelfRatingCard = <
+  TExam extends ExamPaper,
+  TSettings extends RunSettings,
+  TAttempt extends StoredAttempt
+>({
+  format,
+  module,
+  exam,
+  answers,
+  recordings,
+  onConfirm
+}: SelfRatingCardProps<TExam, TSettings, TAttempt>) => {
+  const { criteria, values, total, max, setValue } = useSelfRating(format.rating[module]);
+  const sample = format.scoring.writingSample(exam, answers);
+  const writtenText = textAnswer(answers, WRITING_ANSWER_KEY);
+  const isWriting = module === 'schreiben';
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-extrabold sm:text-4xl">
+          {format.moduleShort(module)} — self-scoring (max {max})
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          Compare honestly with the sample, then move the sliders. 0 = not at all · 5 = fully.{' '}
+          {format.rating[module].stepPoints
+            ? 'Each criterion weighs its own points.'
+            : `Score = sum × ${String(format.rating[module].scale)}.`}
+        </p>
+      </div>
+
+      {/* Writing first: a Schreiben paper without a sample still shows the text, never the
+          speaking recordings. */}
+      {isWriting ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Your text</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div lang="de" className="rounded-xl bg-muted p-4 leading-relaxed">
+              <MultilineText text={writtenText || '(empty)'} />
+            </div>
+            {sample ? (
+              <>
+                <div>
+                  <h3 className="mb-2 font-bold">Sample answer (Musterlösung)</h3>
+                  <div
+                    lang="de"
+                    className="rounded-xl border-l-4 border-success bg-[color-mix(in_oklab,var(--success)_8%,var(--card))] p-4 leading-relaxed"
+                  >
+                    <MultilineText text={sample.musterloesung} />
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
+                  {sample.tipps}
+                  <ul className="mt-1 list-disc pl-5">
+                    {sample.points.map((point, index) => (
+                      <li key={index}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Your recordings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {SPEAKING_PARTS.map((part, index) => {
+              const url = recordings[part];
+              return url ? (
+                <div key={part} className="flex flex-wrap items-center gap-3 text-sm">
+                  <span>Teil {index + 1}:</span>
+                  {/* eslint-disable-next-line jsx-a11y/media-has-caption -- the learner's
+                      own recording; there is no transcript to caption it with. */}
+                  <audio
+                    controls
+                    src={url}
+                    className="h-10 max-w-full"
+                    aria-label={`Your recording, Teil ${String(index + 1)}`}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground" key={part}>
+                  Teil {index + 1}: no recording
+                </p>
+              );
+            })}
+            <p className="pt-2 text-sm text-muted-foreground">
+              <Lightbulb aria-hidden className="mr-1 inline size-4 text-primary" />
+              {format.speakingHint}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      <CriteriaRatingPanel
+        criteria={criteria}
+        values={values}
+        total={total}
+        max={max}
+        setValue={setValue}
+        onConfirm={onConfirm}
+      />
+    </div>
+  );
+};
+
+export default SelfRatingCard;

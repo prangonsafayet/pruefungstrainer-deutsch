@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig } from 'vitest/config';
 
 import { appDefines, LAYER_ALIASES } from './vite.config.ts';
@@ -11,14 +13,40 @@ import { appDefines, LAYER_ALIASES } from './vite.config.ts';
  *           supplies the document; anything that needs a genuine browser (layout, audio,
  *           pointer behaviour) belongs in the Playwright suite instead.
  */
+/* No `.env` loading in tests. A developer's `.env` (Supabase configured) used to switch sync
+   on under Vitest, so the auth paths ran and were covered locally but not in CI, which has
+   no `.env` — the same commit measured 81.7% lines on a laptop and 80.6% in CI. Every
+   environment now runs the suites exactly as CI does. */
+const NO_DOTENV = { envDir: false } as const;
+
+/* `virtual:pwa-register` exists only inside a build running vite-plugin-pwa; the suites get a
+   stub that lets them drive the service worker's lifecycle by hand. */
+const ALIASES = {
+  ...LAYER_ALIASES,
+  'virtual:pwa-register': fileURLToPath(new URL('./tests/support/pwaRegister.ts', import.meta.url))
+};
+
 export default defineConfig({
-  resolve: { alias: LAYER_ALIASES },
+  ...NO_DOTENV,
+  resolve: { alias: ALIASES },
   define: appDefines(''),
   test: {
     restoreMocks: true,
+    /* `npm run test:coverage`: the logic layer only — libs and hooks, where behaviour lives.
+       Components are visual (lint-enforced) and proven by the render and e2e suites. The
+       thresholds sit just under the measured numbers, so coverage can only ratchet up: raise
+       them when it does. */
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/lib/**/*.{ts,tsx}', 'src/**/hooks/**/*.{ts,tsx}', 'src/**/use*.tsx'],
+      exclude: ['src/content/**', 'src/shared/ui/**', 'src/**/types/**'],
+      reporter: ['text-summary', 'html'],
+      thresholds: { lines: 94, functions: 93, branches: 83, statements: 92 }
+    },
     projects: [
       {
-        resolve: { alias: LAYER_ALIASES },
+        ...NO_DOTENV,
+        resolve: { alias: ALIASES },
         test: {
           name: 'logic',
           /* `.js` as well as `.ts`: a suite that has to import a file outside
@@ -32,7 +60,8 @@ export default defineConfig({
         }
       },
       {
-        resolve: { alias: LAYER_ALIASES },
+        ...NO_DOTENV,
+        resolve: { alias: ALIASES },
         define: appDefines(''),
         test: {
           name: 'render',

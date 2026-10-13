@@ -1,0 +1,158 @@
+import { Headphones } from 'lucide-react';
+
+import AudioPlayButton from '@shared/components/exam-ui/AudioPlayButton/AudioPlayButton.tsx';
+import MultipleChoice from '@shared/components/exam-ui/inputs/MultipleChoice/MultipleChoice.tsx';
+import RichtigFalsch from '@shared/components/exam-ui/inputs/RichtigFalsch/RichtigFalsch.tsx';
+import ExamCallout from '@shared/components/exam-ui/layout/ExamCallout/ExamCallout.tsx';
+import QuestionItem from '@shared/components/exam-ui/layout/QuestionItem/QuestionItem.tsx';
+import QuestionText from '@shared/components/exam-ui/layout/QuestionText/QuestionText.tsx';
+import ReadingText from '@shared/components/exam-ui/layout/ReadingText/ReadingText.tsx';
+import TeilSection from '@shared/components/exam-ui/layout/TeilSection/TeilSection.tsx';
+import { booleanAnswer, itemKey, numberAnswer, textAnswer } from '@shared/lib/answers.ts';
+import { audioForKey, rateForExam } from '@shared/lib/speech.ts';
+import { Input } from '@shared/ui/input.tsx';
+
+import { type A2b1ModuleProps } from '@features/mock-exam/types/moduleProps.ts';
+
+const DualLevelHoerenModule = ({
+  exam,
+  paper,
+  answers,
+  setAnswer,
+  settings,
+  plays,
+  onConsumePlay
+}: A2b1ModuleProps) => {
+  const { hoeren } = exam;
+
+  const playButton = (key: string) => (
+    <AudioPlayButton
+      script={audioForKey(exam, key)}
+      rate={rateForExam(paper, exam, settings)}
+      voiceName={settings.voiceName}
+      itemKey={key}
+      playsLeft={plays[key] ?? settings.playsAllowed}
+      onConsumePlay={onConsumePlay}
+    />
+  );
+
+  return (
+    <>
+      <ExamCallout className="flex items-start gap-2">
+        <Headphones aria-hidden className="mt-0.5 size-4 shrink-0" />
+        <span>
+          Each recording can be played <b>{settings.playsAllowed}×</b>. Read the items first, then press Play.
+          Transcripts appear in the review after you submit.
+        </span>
+      </ExamCallout>
+
+      <TeilSection title="Teil 1 — Ansagen" chip="richtig/falsch" anweisung={hoeren.teil1.anweisung}>
+        {hoeren.teil1.items.map((item, index) => (
+          <QuestionItem key={index}>
+            {playButton(itemKey('h1.', index))}
+            <QuestionText>
+              {index + 1}. {item.statement}
+            </QuestionText>
+            <RichtigFalsch
+              name={itemKey('h1.', index)}
+              label={item.statement}
+              value={booleanAnswer(answers, itemKey('h1.', index))}
+              onChange={value => {
+                setAnswer(itemKey('h1.', index), value);
+              }}
+            />
+          </QuestionItem>
+        ))}
+      </TeilSection>
+
+      <TeilSection title="Teil 2 — Informationen" chip="a/b/c" anweisung={hoeren.teil2.anweisung}>
+        {hoeren.teil2.items.map((item, index) => (
+          <QuestionItem key={index}>
+            {playButton(itemKey('h2.', index))}
+            <QuestionText>
+              {index + 1}. {item.frage}
+            </QuestionText>
+            <MultipleChoice
+              name={itemKey('h2.', index)}
+              label={item.frage}
+              options={item.options}
+              value={numberAnswer(answers, itemKey('h2.', index))}
+              onChange={value => {
+                setAnswer(itemKey('h2.', index), value);
+              }}
+            />
+          </QuestionItem>
+        ))}
+      </TeilSection>
+
+      <TeilSection title="Teil 3 — Gespräche" chip="richtig/falsch" anweisung={hoeren.teil3.anweisung}>
+        {hoeren.teil3.items.map((item, index) => (
+          <QuestionItem key={index}>
+            {playButton(itemKey('h3.', index))}
+            <QuestionText>
+              {index + 1}. {item.statement}
+            </QuestionText>
+            <RichtigFalsch
+              name={itemKey('h3.', index)}
+              label={item.statement}
+              value={booleanAnswer(answers, itemKey('h3.', index))}
+              onChange={value => {
+                setAnswer(itemKey('h3.', index), value);
+              }}
+            />
+          </QuestionItem>
+        ))}
+      </TeilSection>
+
+      <TeilSection title="Teil 4 — Interview" chip="a/b/c" anweisung={hoeren.teil4.anweisung}>
+        <div className="pb-2">{playButton('h4')}</div>
+        {hoeren.teil4.questions.map((question, index) => (
+          <QuestionItem key={index}>
+            <QuestionText>
+              {index + 1}. {question.frage}
+            </QuestionText>
+            <MultipleChoice
+              name={itemKey('h4.', index)}
+              label={question.frage}
+              options={question.options}
+              value={numberAnswer(answers, itemKey('h4.', index))}
+              onChange={value => {
+                setAnswer(itemKey('h4.', index), value);
+              }}
+            />
+          </QuestionItem>
+        ))}
+      </TeilSection>
+
+      <TeilSection
+        title="Teil 5 — Hören & Schreiben"
+        chip="Notiz ergänzen"
+        anweisung={hoeren.teil5.anweisung}
+      >
+        {playButton('h5')}
+        <ReadingText title={hoeren.teil5.noteTitle}>
+          {hoeren.teil5.gaps.map((gap, index) => {
+            const [before, after] = gap.label.split('____');
+            return (
+              <div key={index} className="my-2 flex flex-wrap items-center gap-2">
+                <span>{before}</span>
+                <Input
+                  className="w-48 bg-card"
+                  autoComplete="off"
+                  aria-label={gap.label.replace('____', '…')}
+                  value={textAnswer(answers, itemKey('h5.', index))}
+                  onChange={event => {
+                    setAnswer(itemKey('h5.', index), event.target.value);
+                  }}
+                />
+                <span>{after ?? ''}</span>
+              </div>
+            );
+          })}
+        </ReadingText>
+      </TeilSection>
+    </>
+  );
+};
+
+export default DualLevelHoerenModule;

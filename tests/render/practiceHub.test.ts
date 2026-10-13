@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { SINGLE_LEVEL_TRAINERS, TRAINERS } from '@shared/config/trainers.ts';
-import { type SrsMap } from '@shared/types';
-import { usePracticeStore } from '@features/practice/lib/practiceStore.ts';
-import { PROGRESS_STORAGE_KEY } from '@features/progress';
+import { type SrsMap } from '@shared/types/vocab.ts';
+import { usePracticeStore } from '@features/vocab-practice/lib/practiceStore.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { bySelector, captureErrors, click, findByText, mount, selectTab } from './harness.ts';
 
@@ -83,11 +83,12 @@ describe.each(SINGLE_LEVEL_TRAINERS)('the practice hub — %s', trainer => {
     const view = await mount(`${info.basePath}/practice`);
     await click(findByText(/Flashcards/));
 
-    const front = bySelector('button[aria-label="Show the English side"]');
+    /* The card is a toggle button named by the side that faces the reader. */
+    const front = bySelector('button[aria-pressed="false"][aria-describedby="flashcard-hint"]');
     expect(front).toHaveLength(1);
     await click(front[0]);
 
-    expect(bySelector('button[aria-label="Show the German side"]')).toHaveLength(1);
+    expect(bySelector('button[aria-pressed="true"][aria-describedby="flashcard-hint"]')).toHaveLength(1);
     const flipped = usePracticeStore.getState().session;
     expect(flipped?.kind === 'flashcards' && flipped.flipped).toBe(true);
 

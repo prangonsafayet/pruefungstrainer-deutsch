@@ -1,4 +1,15 @@
 {
   "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  /* Read by tools that only look at the root config — the shadcn CLI resolves its
+     components.json aliases through these, and without them `npx shadcn add` writes into a
+     literal `@shared/ui/` folder. tsconfig.app.json holds the same map for the compiler. */
+  "compilerOptions": {
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@features/*": ["./src/features/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@content/*": ["./src/content/*"]
+    }
+  }
 }

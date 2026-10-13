@@ -1,16 +1,18 @@
 /**
- * The score-history chart as a resolved model. Both papers score out of different totals
+ * The score-history chart as a resolved model. The papers score out of different totals
  * against different gridlines, so the numbers are worked out per format and the component
  * only draws — which is why there is one chart rather than one per trainer.
  */
 
+import { type DtzAttempt } from './dtzExam.ts';
 import { type DualLevelAttempt } from './progress.ts';
 import { type SingleLevelAttempt } from './singleLevelExam.ts';
 
 /** Stored attempts together with the paper they were marked against. */
 export type ScoredAttempts =
   | { readonly format: 'dual-level'; readonly attempts: readonly DualLevelAttempt[] }
-  | { readonly format: 'single-level'; readonly attempts: readonly SingleLevelAttempt[] };
+  | { readonly format: 'single-level'; readonly attempts: readonly SingleLevelAttempt[] }
+  | { readonly format: 'dtz-paper'; readonly attempts: readonly DtzAttempt[] };
 
 export interface ScoreChartGridline {
   readonly value: number;

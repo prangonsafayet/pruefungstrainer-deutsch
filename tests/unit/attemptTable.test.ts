@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildAttemptTable } from '@features/history/lib/attemptRows.ts';
-import { type DualLevelAttempt, type ScoredAttempts, type SingleLevelAttempt } from '@shared/types';
+import { buildAttemptTable } from '@features/attempt-history/pages/AttemptHistoryPage/attemptRows.ts';
+import { type DtzAttempt } from '@shared/types/dtzExam.ts';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
+import { type ScoredAttempts } from '@shared/types/scoreChart.ts';
+import { type SingleLevelAttempt } from '@shared/types/singleLevelExam.ts';
 
 /*
  * The attempts table lays out whatever the model hands it, so a mismatch between the header
@@ -40,7 +43,31 @@ const singleLevel: SingleLevelAttempt = {
   result: 'Bestanden'
 };
 
+const dtz: DtzAttempt = {
+  id: 5,
+  examId: 2,
+  mode: 'full',
+  date: '2026-08-20T10:00:00.000Z',
+  times: { hoeren: 1200 },
+  scores: { hoeren: 15, lesen: 20, schreiben: 15, sprechen: 75 },
+  answers: {},
+  ratings: {},
+  result: 'Zertifikat B1'
+};
+
+const dtzPractice: DtzAttempt = {
+  id: 6,
+  examId: 2,
+  mode: 'hoeren',
+  date: '2026-08-21T10:00:00.000Z',
+  times: { hoeren: 900 },
+  scores: { hoeren: 12 },
+  answers: {},
+  ratings: {}
+};
+
 const SOURCES: readonly ScoredAttempts[] = [
+  { format: 'dtz-paper', attempts: [dtz, dtzPractice] },
   { format: 'dual-level', attempts: [dualLevel] },
   { format: 'single-level', attempts: [singleLevel] }
 ];
@@ -59,5 +86,36 @@ describe.each(SOURCES)('the attempts table on the $format paper', source => {
   it('leaves the review link out of the column list — the table appends it', () => {
     expect(model.columns).not.toContain('Review');
     for (const row of model.rows) expect(row.reviewTo).toMatch(/\/review\/\d+$/);
+  });
+});
+
+describe('the attempts table on the DTZ paper', () => {
+  const model = buildAttemptTable({ format: 'dtz-paper', attempts: [dtz, dtzPractice] }, '/dtz');
+
+  it('reports the three Teilergebnisse and the certificate, not a total', () => {
+    expect(model.columns).toEqual([
+      'Date',
+      'Test',
+      'Mode',
+      'Hören + Lesen',
+      'Schreiben',
+      'Sprechen',
+      'Result',
+      'Time'
+    ]);
+    const full = model.rows.find(row => row.id === 5);
+    expect(full?.cells.slice(3, 7).map(cell => cell.text)).toEqual([
+      '35/45',
+      '15/20',
+      '75/100',
+      'Zertifikat B1'
+    ]);
+    expect(full?.cells[6]?.badge).toBe('success');
+  });
+
+  it('names the one module a practice run sat, out of its own maximum', () => {
+    const practice = model.rows.find(row => row.id === 6);
+    expect(practice?.cells[3]?.text).toBe('12/20 (Hören)');
+    expect(practice?.cells[6]?.text).toBe('practice');
   });
 });

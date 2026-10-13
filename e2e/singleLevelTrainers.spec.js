@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { trainerDescriptors } from '../scripts/trainerRegistry.mjs';
 
 /*
- * B1 and B2 set the newer single-level telc paper, and had no Playwright coverage at all —
+ * B1 and B2 set the newer single-level telc paper and DTZ sets its own; they had no Playwright coverage at all —
  * everything in exam.spec.js and smoke.spec.js only ever visits the root (A2·B1) trainer.
  *
  * e2e specs are plain JS with no bundler alias resolution, so they cannot import
@@ -18,7 +18,9 @@ const TRAINERS = trainerDescriptors().map(trainer => ({
   format: trainer.format
 }));
 
-const SINGLE_LEVEL_TRAINERS = TRAINERS.filter(trainer => trainer.format === 'single-level');
+/* Every trainer that is not the root A2·B1 one — the single-level B1/B2 trainers and the DTZ.
+   Filtered by what they are not, so a paper added later is covered here by default. */
+const LEVEL_TRAINERS = TRAINERS.filter(trainer => trainer.format !== 'dual-level');
 
 /** Every trainer the switcher offers, root first. */
 const ALL_TRAINERS = TRAINERS;
@@ -39,7 +41,7 @@ const collectConsoleErrors = page => {
   return errors;
 };
 
-for (const { path, name } of SINGLE_LEVEL_TRAINERS) {
+for (const { path, name } of LEVEL_TRAINERS) {
   test.describe(`${name}`, () => {
     test(`${path} loads with no console errors`, async ({ page }) => {
       const errors = collectConsoleErrors(page);
@@ -53,6 +55,18 @@ for (const { path, name } of SINGLE_LEVEL_TRAINERS) {
       expect(errors, `console/page errors on ${path}`).toEqual([]);
     });
 
+    /* The Learn page's day-focus badge did not wrap and pushed the page up to 156px wider than
+       a 360px phone on every trainer but the root one. */
+    test(`${path}/learn fits a 360px phone`, async ({ page }) => {
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(`${path}/learn`);
+      await expect(page.getByText(/^Day 1:/).first()).toBeVisible();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+      );
+      expect(overflow, `${path}/learn overflows at 360px`).toBeLessThanOrEqual(1);
+    });
+
     test('a full Lesen module run completes and reaches the results screen', async ({ page }) => {
       const errors = collectConsoleErrors(page);
 
@@ -63,8 +77,11 @@ for (const { path, name } of SINGLE_LEVEL_TRAINERS) {
         .click();
       await page.getByRole('option', { name: 'Lesen' }).click();
 
-      await expect(page.getByText('Leseverstehen')).toBeVisible();
-      await page.getByRole('button', { name: /^Start Lesen/ }).click();
+      /* The papers name the module differently (Leseverstehen, Lesen); the briefing's start
+         button reads the same on every one. */
+      const start = page.getByRole('button', { name: /^Start Lesen/ });
+      await expect(start).toBeVisible();
+      await start.click();
 
       /* By role, not by class — see the header countdown's own note in exam.spec.js. */
       const timer = page.getByRole('timer');
@@ -89,12 +106,12 @@ for (const { path, name } of SINGLE_LEVEL_TRAINERS) {
 }
 
 test.describe('the trainer switcher', () => {
-  test('moves between all three trainers', async ({ page }) => {
+  test('moves between every trainer', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.goto('/');
 
     for (const { path, name } of ALL_TRAINERS) {
-      await page.getByRole('button', { name: 'Switch trainer' }).click();
+      await page.getByRole('button', { name: /switch trainer/i }).click();
       await page.getByRole('menuitem', { name: startsWith(name) }).click();
       await expect(page).toHaveURL(`http://localhost:5173${path}`);
       await expect(page.getByRole('heading', { name: /^Dashboard/, level: 1 })).toBeVisible();

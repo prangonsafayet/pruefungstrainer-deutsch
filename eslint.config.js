@@ -17,46 +17,60 @@ import { trainerIds } from './scripts/trainerRegistry.mjs';
 
 /* Architecture rules, enforced rather than documented.
  *
- *   src/app       the shell: providers, router, layout. May import anything.
- *   src/features  vertical slices. May import shared + content, never another
- *                 feature's internals — cross-feature use goes through its index.ts.
- *   src/shared    reusable building blocks. May not import features or app.
- *   src/content   plain data. May not import anything from the app at all.
+ *   src/app       the composition root: entry point, providers, router. May import anything.
+ *   src/features  vertical slices, each with pages/. A feature imports only ITSELF, src/shared
+ *                 and src/content — never another feature. Anything two features need lives
+ *                 in src/shared. The header, nav and layout are a feature too (app-shell).
+ *   src/shared    reusable building blocks and the cross-feature domains (progress-store,
+ *                 study-schedule, account-sync, exam-run, …). May not import features or app.
+ *   src/content   plain data. Imports nothing but @shared/types.
+ *
+ * There are no barrels: every import names a file, with its extension.
  *
  * `no-restricted-imports` is configured, not accumulated: when two flat-config entries
  * both set it for the same file, the later entry replaces the earlier one's options
  * outright instead of merging the pattern lists. So every entry below restates each
- * pattern that applies to its files. Leaving that out is silent: the repo-wide barrel
+ * pattern that applies to its files. Leaving that out is silent: the old repo-wide barrel
  * rule matched `src/**` and switched the layer rules off for every file it also matched.
  */
-const UI_BY_FILE = {
-  group: ['@shared/ui/*', '**/shared/ui/*'],
-  message:
-    "Import primitives from '@shared/ui', not from the file directly. Those files are written by the shadcn CLI and treated as vendored; the barrel is the stable surface."
-};
 
-const CROSS_FEATURE_INTERNALS = {
-  group: ['@features/*/*/**'],
-  message:
-    "Import another feature only through its public surface: '@features/<name>'. Reaching into its folders couples you to its internals."
-};
+/* No barrels, no folder imports. An alias import whose every segment lacks a dot names a
+   folder (`@shared/ui`, `@shared/components/data-display`, `@features/dashboard`), and an
+   `index` file is a barrel by another name. A regex rather than a group pattern: gitignore
+   semantics cannot ban `@shared/ui` without also banning `@shared/ui/button.tsx`. */
+const NO_BARRELS = [
+  {
+    regex: '^@(app|features|shared|content)(/[^/.]+)*/?$',
+    message:
+      "Import the file, not the folder: '@shared/ui/button.tsx', '@shared/types/exam.ts'. There are no barrels in src/."
+  },
+  {
+    regex: '(^|/)index(\\.[cm]?[jt]sx?)?$|^\\.{1,2}/?$',
+    message: 'There are no index barrels in src/: import the file that defines the thing, by its own name.'
+  }
+];
 
 const APP_SHELL = {
   group: ['@app/**'],
-  message: 'Features must not import the app shell — that inverts the dependency direction.'
+  message:
+    'Features must not import @app — src/app is the composition root above every feature; importing it inverts the dependency direction.'
 };
+
+/* Features never use each other's code. Anything two features need moves to src/shared. */
+const OTHER_FEATURES = name => ({
+  regex: `^@features/(?!${name}/)`,
+  message: `A feature imports only itself, @shared and @content. If ${name} needs another feature's code, that code belongs in src/shared — move it there.`
+});
 
 const FEATURES_AND_APP = {
   group: ['@features/**', '@app/**'],
   message: 'src/shared must stay feature-agnostic. If it needs feature knowledge it belongs in that feature.'
 };
 
-/* `@shared/components` is listed as well as `@shared/components/**`: the `/**` form does
-   not match the bare barrel, so `import { Teil } from '@shared/components'` slipped through
-   this rule while every path under it was refused. Proven with a planted import. */
-const APPLICATION_CODE = {
-  group: ['@features/**', '@app/**', '@shared/components', '@shared/components/**'],
-  message: 'src/content is inert data. It must not depend on application code.'
+/* Content is inert data: the only thing it may import is the types that describe it. */
+const CONTENT_TYPES_ONLY = {
+  regex: '^@(?!shared/types/)',
+  message: 'src/content is inert data. It may import @shared/types/* and nothing else from the app.'
 };
 
 /* Relative imports may step up one level at most. Anything deeper is unreadable and
@@ -69,87 +83,49 @@ const DEEP_RELATIVE = {
     'Relative imports may climb at most one level; use a path alias (@features/<name>/…, @shared/…) instead.'
 };
 
-const restrict = (...patterns) => ({ 'no-restricted-imports': ['error', { patterns }] });
+const restrict = (...patterns) => ({ 'no-restricted-imports': ['error', { patterns: patterns.flat() }] });
 
-/* The design system is consumed through its barrel, never file by file. This is the
-   repo-wide baseline; the layer entries below re-include UI_BY_FILE. */
-const UI_THROUGH_BARREL = {
-  name: 'ui-through-barrel',
+/* The repo-wide baseline (src/app is covered only by this); the layer entries below restate it. */
+const NO_BARREL_IMPORTS = {
+  name: 'no-barrel-imports',
   files: ['src/**/*.{ts,tsx}'],
-  ignores: ['src/shared/ui/**'],
-  rules: restrict(UI_BY_FILE, DEEP_RELATIVE)
+  rules: restrict(NO_BARRELS, DEEP_RELATIVE)
 };
 
-const NO_CROSS_FEATURE_INTERNALS = {
-  name: 'no-cross-feature-internals',
-  files: ['src/features/*/**/*.{ts,tsx}'],
-  rules: restrict(CROSS_FEATURE_INTERNALS, APP_SHELL, UI_BY_FILE, DEEP_RELATIVE)
-};
-
-/* A feature may deep-import ITSELF through its own alias — that is how its files avoid
-   `../../` paths — while every other feature's internals stay off limits. One entry per
-   feature directory; each must follow (and therefore restate) the generic entry above,
-   because the later entry's options replace the earlier one's for the files it matches. */
-const FEATURE_SELF_ALIAS = fs.readdirSync('src/features').map(name => ({
-  name: `feature-self-alias-${name}`,
+/* One entry per feature directory: the feature may deep-import ITSELF through its own alias
+   and nothing under any other `@features/<name>`. */
+const FEATURE_ISOLATION = fs.readdirSync('src/features').map(name => ({
+  name: `feature-isolation-${name}`,
   files: [`src/features/${name}/**/*.{ts,tsx}`],
-  rules: restrict(
-    {
-      group: ['@features/*/*/**', `!@features/${name}/**`],
-      message:
-        "Import another feature only through its public surface: '@features/<name>'. Reaching into its folders couples you to its internals."
-    },
-    APP_SHELL,
-    UI_BY_FILE,
-    DEEP_RELATIVE
-  )
+  rules: restrict(OTHER_FEATURES(name), APP_SHELL, NO_BARRELS, DEEP_RELATIVE)
 }));
 
-/* The ten module renderers come in twin pairs with identical basenames
-   (`modules/dual-level/LesenModule.tsx` and `modules/single-level/LesenModule.tsx`), told
-   apart only by their format folder. Only a format's own descriptor may import them —
-   everything else (a screen, another format, another feature) goes through the format
-   object instead, which is exactly what stops the twins being mixed up. */
+/* The module renderers come in twin pairs, one per paper
+   (`modules/dual-level/DualLevelLesenModule/DualLevelLesenModule.tsx` and
+   `modules/single-level/SingleLevelLesenModule/…`). Only a format's own descriptor may
+   import them — everything else (a screen, another format) goes through the format object
+   instead, which is exactly what stops the twins being mixed up. */
 const MODULE_RENDERERS = {
-  group: ['@features/exam/components/modules/**', '**/exam/components/modules/**'],
+  group: ['@features/mock-exam/components/modules/**', '**/mock-exam/components/modules/**'],
   message:
-    "Import a module renderer only from its own format's lib/formats/<format>/index.ts. Reaching into components/modules/ anywhere else bypasses the format descriptor and risks mixing up the dual-level and single-level twins."
+    "Import a module renderer only from its own format's lib/formats/<format>/format.ts. Reaching into components/modules/ anywhere else bypasses the format descriptor and risks mixing up the dual-level and single-level twins."
 };
 
-/* Restated because this entry's files overlap feature-self-alias-exam above; the later
-   entry replaces rather than merges, so every pattern that still applies here — the
-   cross-feature guard, the app-shell guard, the UI barrel and the one-level relative cap —
-   is repeated alongside the new module-renderer restriction. */
+/* Restated because this entry's files overlap feature-isolation-mock-exam above; the later
+   entry replaces rather than merges, so every pattern that still applies here is repeated
+   alongside the module-renderer restriction. A renderer may import its own colocated files
+   relatively (`./audio.ts`), which the alias patterns do not match. */
 const EXAM_MODULES_THROUGH_FORMAT = {
   name: 'exam-modules-through-format',
-  files: ['src/features/exam/**/*.{ts,tsx}'],
-  ignores: ['src/features/exam/lib/formats/*/index.ts'],
-  rules: restrict(
-    {
-      group: ['@features/*/*/**', '!@features/exam/**'],
-      message:
-        "Import another feature only through its public surface: '@features/<name>'. Reaching into its folders couples you to its internals."
-    },
-    APP_SHELL,
-    UI_BY_FILE,
-    DEEP_RELATIVE,
-    MODULE_RENDERERS
-  )
+  files: ['src/features/mock-exam/**/*.{ts,tsx}'],
+  ignores: ['src/features/mock-exam/lib/formats/*/format.ts'],
+  rules: restrict(OTHER_FEATURES('mock-exam'), APP_SHELL, NO_BARRELS, DEEP_RELATIVE, MODULE_RENDERERS)
 };
 
 const SHARED_STAYS_GENERIC = {
   name: 'shared-stays-generic',
   files: ['src/shared/**/*.{ts,tsx}'],
-  ignores: ['src/shared/ui/**'],
-  rules: restrict(FEATURES_AND_APP, UI_BY_FILE, DEEP_RELATIVE)
-};
-
-/* The vendored shadcn files are exempt from the barrel rule — they import their siblings
-   directly — but they are still part of src/shared and must stay feature-agnostic. */
-const SHARED_UI_STAYS_GENERIC = {
-  name: 'shared-ui-stays-generic',
-  files: ['src/shared/ui/**/*.{ts,tsx}'],
-  rules: restrict(FEATURES_AND_APP, DEEP_RELATIVE)
+  rules: restrict(FEATURES_AND_APP, NO_BARRELS, DEEP_RELATIVE)
 };
 
 /* A trainer's facts live in its registry descriptor, never in a comparison against its id.
@@ -163,8 +139,8 @@ const SHARED_UI_STAYS_GENERIC = {
 
    Four exempt places. The registry itself and the content folders are keyed by trainer by
    definition. The other two are the persisted document's own plumbing —
-   `progress/lib/progressDb.ts` and `auth/lib/mergeProgress.ts` — which architecture.md
-   measured as irreducible: `exactOptionalPropertyTypes` means a trainer nobody has opened
+   `progress-store/lib/progressDb.ts` and `account-sync/lib/mergeProgress.ts` — which the new-trainer skill
+   (.claude/skills/new-trainer) measured as irreducible: `exactOptionalPropertyTypes` means a trainer nobody has opened
    must be an ABSENT key rather than an explicit undefined, so the merge is spelled out per
    trainer instead of looped. Widening this rule is what surfaced them; they are exempted by
    name rather than silenced line by line, so the count stays visible here.
@@ -191,19 +167,19 @@ const TRAINER_ID_SYNTAX = TRAINER_IDS.flatMap(id =>
 );
 
 /* Primitives come from `@shared/ui`, and until now that was prose only: CLAUDE.md and
-   conventions.md both list it as a non-negotiable, but no rule matched a JSX element name,
+   .claude/rules/conventions.md both list it as a non-negotiable, but no rule matched a JSX element name,
    so a raw `<button>` shipped in the flip card and nothing said a word. The import rules
-   next door were made real for the same reason — architecture.md: "The dependency rules
-   are ESLint rules, not conventions."
+   next door were made real for the same reason — .claude/rules/architecture.md: "Dependency
+   rules are ESLint rules."
 
    `JSXOpeningElement > JSXIdentifier` matches only the element's own name: attribute names
    hang off `JSXAttribute`, not off the opening element, so `<Input type="text" />` is fine.
-   A lowercase name is always an intrinsic element, so `<Table>` from the barrel does not
-   match while `<table>` does. */
+   A lowercase name is always an intrinsic element, so `<Table>` from `@shared/ui/table.tsx`
+   does not match while `<table>` does. */
 const RAW_HTML_CONTROLS = ['button', 'input', 'select', 'textarea', 'form', 'table', 'label'].map(
   element => ({
     selector: `JSXOpeningElement > JSXIdentifier[name='${element}']`,
-    message: `<${element}> is a design-system primitive: import it from '@shared/ui'. If the one you need is missing, add it to src/shared/ui in the same style and export it from the barrel — do not reach for raw HTML.`
+    message: `<${element}> is a design-system primitive: import it from its file in src/shared/ui ('@shared/ui/button.tsx'). If the one you need is missing, add it to src/shared/ui in the same style (\`npx shadcn add\`) — do not reach for raw HTML.`
   })
 );
 
@@ -215,8 +191,8 @@ const NO_TRAINER_ID_LITERALS = {
   ignores: [
     'src/shared/config/trainers.ts',
     'src/content/**',
-    'src/features/progress/lib/progressDb.ts',
-    'src/features/auth/lib/mergeProgress.ts'
+    'src/shared/progress-store/lib/progressDb.ts',
+    'src/shared/account-sync/lib/mergeProgress.ts'
   ],
   rules: syntax(TRAINER_ID_SYNTAX)
 };
@@ -237,11 +213,212 @@ const NO_RAW_HTML_CONTROLS = {
 const CONTENT_IS_DATA_ONLY = {
   name: 'content-is-data-only',
   files: ['src/content/**/*.ts'],
-  rules: restrict(APPLICATION_CODE, UI_BY_FILE, DEEP_RELATIVE)
+  rules: restrict(CONTENT_TYPES_ONLY, NO_BARRELS, DEEP_RELATIVE)
+};
+
+/* --- Architecture guardrails added for the redesign ---
+ *
+ * Each ban below carries an `enforced` flag. A ban whose flag is false is fully defined but
+ * switched off because the tree still violates it: those flags live together in the
+ * TODO(redesign) block, each with its violation count, so flipping one is a one-word diff.
+ * `LINT_REDESIGN_TODO=1 npx eslint .` (or `npm run lint:todo`) turns every one of them on, so
+ * the remaining work can be listed without editing this file. */
+const REDESIGN_TODO = process.env.LINT_REDESIGN_TODO === '1';
+
+/* check-file naming globs shared by the filename and folder rules. */
+const PASCAL = '+([A-Z])*([a-zA-Z0-9])';
+const HOOK = 'use+([A-Z])*([a-zA-Z0-9])';
+const PASCAL_OR_HOOK = `@(${PASCAL}|${HOOK})`;
+const KEBAB_OR_PASCAL = `@(+([a-z])*([a-z0-9])*(-+([a-z0-9]))|${PASCAL})`;
+const live = ban => ban.enforced || REDESIGN_TODO;
+
+/* TODO(redesign) block. A ban stays false while the tree still violates it, with its count;
+   flip it to true once `npm run lint:todo` reports none for that ban. All clear since the
+   redesign's pass 5A (GoogleIcon keeps its brand colours under a reasoned disable). */
+const ENFORCED = {
+  componentHooks: true,
+  componentIo: true,
+  componentClock: true,
+  componentStateLibs: true,
+  rawColours: true
+};
+
+/* Components are visual only — enforced, not documented. A component or page file renders;
+   effects, reducers, external stores, storage, the network, timers and the clock belong in a
+   `use*.tsx` hook or a pure `.ts` util. Trivial `useState` / `useRef` / `useId` stay legal.
+   The file set is every PascalCase `.tsx` under a components/ or pages/ folder — at any depth,
+   so a component in its own folder (`components/Foo/Foo.tsx`) is covered while the hook
+   beside it (`components/Foo/useFoo.tsx`) is not — minus the vendored design system.
+
+   The import and global bans use rule keys nothing else in this file sets —
+   `@typescript-eslint/no-restricted-imports`, `no-restricted-globals` and
+   `no-restricted-properties` — so they neither replace nor are replaced by the layer entries
+   above. Only `new Date()` needs `no-restricted-syntax`, and that entry restates the
+   trainer-id and raw-control selectors exactly as NO_RAW_HTML_CONTROLS does, because its files
+   are a subset of that entry's. */
+const COMPONENT_FILES = ['src/**/components/**/[A-Z]*.tsx', 'src/**/pages/**/[A-Z]*.tsx'];
+const VENDORED_UI = ['src/shared/ui/**'];
+
+const LOGIC_HOOKS = ['useEffect', 'useLayoutEffect', 'useReducer', 'useSyncExternalStore'];
+const IO_GLOBALS = [
+  'localStorage',
+  'sessionStorage',
+  'indexedDB',
+  'fetch',
+  'XMLHttpRequest',
+  'setInterval',
+  'setTimeout'
+];
+const VISUAL_ONLY =
+  'Components are visual only: move this into a use*.tsx hook or a pure .ts util beside the component and call that from it.';
+
+const COMPONENT_BANS = {
+  componentHooks: {
+    imports: [{ name: 'react', importNames: LOGIC_HOOKS, message: VISUAL_ONLY }],
+    properties: LOGIC_HOOKS.map(property => ({ object: 'React', property, message: VISUAL_ONLY }))
+  },
+  componentIo: {
+    globals: IO_GLOBALS.map(name => ({ name, message: VISUAL_ONLY })),
+    properties: ['window', 'globalThis', 'self'].flatMap(object =>
+      IO_GLOBALS.map(property => ({ object, property, message: VISUAL_ONLY }))
+    )
+  },
+  componentClock: {
+    properties: [{ object: 'Date', property: 'now', message: VISUAL_ONLY }],
+    syntax: [
+      {
+        selector: "NewExpression[callee.name='Date']",
+        message: `${VISUAL_ONLY} Dates go through @shared/lib/format.ts (parseIsoDate, toIsoDate, daysUntil) — new Date('YYYY-MM-DD') is UTC midnight, a day early west of Greenwich.`
+      }
+    ]
+  },
+  componentStateLibs: {
+    imports: [
+      { name: 'zustand', message: VISUAL_ONLY },
+      { name: 'immer', message: VISUAL_ONLY }
+    ],
+    patterns: [{ group: ['@supabase/*', 'zustand/*'], message: VISUAL_ONLY }]
+  }
+};
+
+const liveBans = Object.entries(COMPONENT_BANS)
+  .filter(([key]) => live({ enforced: ENFORCED[key] }))
+  .map(([, ban]) => ban);
+const collect = field => liveBans.flatMap(ban => ban[field] ?? []);
+
+const COMPONENTS_VISUAL_ONLY = {
+  name: 'components-visual-only',
+  files: COMPONENT_FILES,
+  ignores: VENDORED_UI,
+  rules: {
+    '@typescript-eslint/no-restricted-imports': [
+      'error',
+      { paths: collect('imports'), patterns: collect('patterns') }
+    ],
+    'no-restricted-globals': ['error', ...collect('globals')],
+    'no-restricted-properties': ['error', ...collect('properties')],
+    /* Restated: see the block comment above. */
+    ...syntax(TRAINER_ID_SYNTAX, RAW_HTML_CONTROLS, collect('syntax'))
+  }
+};
+
+/* Colour comes from the design tokens in src/styles/index.css, never from a literal. This is a
+   local rule rather than another `no-restricted-syntax` entry so it cannot fall into the
+   replace-not-merge trap with the selectors above: it matches string literals and template
+   chunks holding a Tailwind palette class (`bg-red-500`, `text-white`), an arbitrary colour
+   (`bg-[#fff]`), a colour function (`rgb(`, `hsl(`, `oklch(`) or a bare hex value (`'#fff'`,
+   as in an inline style). `color-mix(…, var(--token) …)` is token-based and allowed. */
+const PALETTE =
+  'slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose';
+const COLOUR_UTILITY =
+  'bg|text|border|ring|fill|stroke|from|via|to|outline|decoration|divide|placeholder|caret|accent|shadow';
+const RAW_COLOUR_PATTERNS = [
+  [new RegExp(`\\b(?:${COLOUR_UTILITY})-(?:${PALETTE})-\\d{2,3}\\b`), 'a Tailwind palette colour class'],
+  [new RegExp(`\\b(?:${COLOUR_UTILITY})-(?:black|white)\\b`), 'a Tailwind black/white colour class'],
+  [/-\[#/, 'a Tailwind arbitrary colour value'],
+  [/\b(?:rgba?|hsla?|oklch|oklab|hwb)\(/, 'a raw colour function'],
+  [/(?:^|[\s:(,])#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b(?![-\w])/, 'a raw hex colour']
+];
+
+const noRawColours = {
+  meta: {
+    type: 'problem',
+    messages: {
+      raw: 'This string holds {{what}}. Use a design token instead (a semantic utility such as bg-primary / text-muted-foreground, or var(--token)); tokens live in src/styles/index.css.'
+    }
+  },
+  create: context => {
+    const check = (node, text) => {
+      if (typeof text !== 'string') return;
+      const hit = RAW_COLOUR_PATTERNS.find(([pattern]) => pattern.test(text));
+      if (hit) context.report({ node, messageId: 'raw', data: { what: hit[1] } });
+    };
+    return {
+      Literal: node => check(node, node.value),
+      TemplateElement: node => check(node, node.value.cooked)
+    };
+  }
+};
+
+const NO_RAW_COLOURS = {
+  name: 'no-raw-colours',
+  files: ['src/**/*.{ts,tsx}'],
+  rules: { 'local/no-raw-colours': live({ enforced: ENFORCED.rawColours }) ? 'error' : 'off' }
+};
+
+/* A catch block must do something with what it caught: rethrow, return a value (a fallback
+   or a typed failure), or record it through `logger` / `toAppError`. A local rule rather than a
+   `no-restricted-syntax` selector, which could not look into the block and would fall into the
+   replace-not-merge trap. Calls and returns inside a nested function do not count. */
+const FUNCTION_NODES = new Set(['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']);
+const HANDLING_CALLS = new Set(['toAppError']);
+const noSwallowedCatch = {
+  meta: {
+    type: 'problem',
+    messages: {
+      swallowed:
+        'This catch swallows the error. Rethrow it, return a fallback or a typed failure, or record it with logger.* / toAppError() (see src/shared/lib/appError.ts).'
+    }
+  },
+  create: context => {
+    const handled = new WeakSet();
+    /* The catch clause whose block holds `node`, unless a function boundary comes first. */
+    const enclosingCatch = node => {
+      for (let current = node.parent; current; current = current.parent) {
+        if (FUNCTION_NODES.has(current.type)) return null;
+        if (current.type === 'CatchClause') return current;
+      }
+      return null;
+    };
+    const mark = node => {
+      const clause = enclosingCatch(node);
+      if (clause) handled.add(clause);
+    };
+    const isHandlingCall = ({ callee }) =>
+      (callee.type === 'Identifier' && HANDLING_CALLS.has(callee.name)) ||
+      (callee.type === 'MemberExpression' &&
+        callee.object.type === 'Identifier' &&
+        callee.object.name === 'logger');
+    return {
+      ThrowStatement: mark,
+      /* A bare `return;` is a swallow with extra steps: only returning a value counts. */
+      ReturnStatement: node => {
+        if (node.argument) mark(node);
+      },
+      CallExpression: node => {
+        if (isHandlingCall(node)) mark(node);
+      },
+      'CatchClause:exit': node => {
+        if (!handled.has(node)) context.report({ node, messageId: 'swallowed' });
+      }
+    };
+  }
 };
 
 /* Component files default-export their component, so imports and lazy() routes are
-   uniform. Defined inline: the rule is three lines and not worth a package. */
+   uniform. Defined inline: the rule is three lines and not worth a package. The raw-colour
+   rule rides in the same local plugin, registered by reference in both entries that use it
+   (flat config refuses two different objects under one plugin name). */
 const componentDefaultExport = {
   rules: {
     'component-default-export': {
@@ -254,6 +431,18 @@ const componentDefaultExport = {
           const hasDefault = node.body.some(s => s.type === 'ExportDefaultDeclaration');
           if (!hasDefault) context.report({ node, messageId: 'missing' });
         }
+      })
+    },
+    'no-raw-colours': noRawColours,
+    'no-swallowed-catch': noSwallowedCatch,
+    'no-classes': {
+      meta: {
+        type: 'problem',
+        messages: { cls: 'No classes: write arrow functions and hooks. Only the error boundary is a class.' }
+      },
+      create: context => ({
+        ClassDeclaration: node => context.report({ node, messageId: 'cls' }),
+        ClassExpression: node => context.report({ node, messageId: 'cls' })
       })
     }
   }
@@ -277,8 +466,11 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2023,
       globals: { ...globals.browser },
+      /* The project service, not `project: [...]`: it builds the program the way tsserver
+         does, so an editor's ESLint server follows mass file moves instead of reporting
+         against a cached program (stale `no-unsafe-*` "error typed value" after a refactor). */
       parserOptions: {
-        project: ['./tsconfig.app.json'],
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
         ecmaFeatures: { jsx: true }
       }
@@ -301,7 +493,9 @@ export default tseslint.config(
       ...react.configs.flat.recommended.rules,
       ...react.configs.flat['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
-      ...jsxA11y.flatConfigs.recommended.rules,
+      /* strict, not recommended: it adds six stricter interaction/role rules and the tree was
+         already clean against them when it was switched on. */
+      ...jsxA11y.flatConfigs.strict.rules,
 
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
@@ -309,10 +503,14 @@ export default tseslint.config(
        *
        * The filename says what a module is, so the convention is enforced rather than
        * hoped for:
-       *   components and route screens   PascalCase.tsx   (they export components)
-       *   hooks                          useThing.ts      (camelCase, `use` prefix)
+       *   components and pages           PascalCase.tsx   (each in its own PascalCase folder)
+       *   hooks                          useThing.tsx     (`use` prefix, always .tsx)
        *   utils, config, types, providers camelCase.ts
-       *   folders                        kebab-case
+       *   folders                        kebab-case, except a component's own folder
+       *
+       * A component's folder holds its own hooks (`useThing.tsx`) and its own camelCase
+       * utils, types and constants, so those globs admit both. A `use*.ts` file anywhere is
+       * refused by filename-blocklist below: hooks are `.tsx`.
        *
        * `src/shared/ui` is exempt — the shadcn CLI writes kebab-case there and fighting it
        * would break `npx shadcn add`. It is exempt by matching none of the patterns below
@@ -321,25 +519,34 @@ export default tseslint.config(
       'check-file/filename-naming-convention': [
         'error',
         {
-          'src/**/components/**/*.tsx': 'PASCAL_CASE',
-          'src/**/components/*.tsx': 'PASCAL_CASE',
-          'src/**/routes/**/*.tsx': 'PASCAL_CASE',
-          'src/**/hooks/**/*.ts': 'use+([A-Z])*([a-zA-Z0-9])',
-          'src/**/layout/use*.ts': 'use+([A-Z])*([a-zA-Z0-9])',
+          'src/**/components/**/*.tsx': PASCAL_OR_HOOK,
+          'src/**/pages/**/*.tsx': PASCAL_OR_HOOK,
+          'src/**/components/**/*.ts': 'CAMEL_CASE',
+          'src/**/pages/**/*.ts': 'CAMEL_CASE',
+          'src/**/hooks/**/*.{ts,tsx}': HOOK,
           'src/**/lib/**/*.ts': 'CAMEL_CASE',
           'src/**/config/**/*.ts': 'CAMEL_CASE',
           'src/**/types/**/*.ts': 'CAMEL_CASE',
           'src/**/providers/*.ts': 'CAMEL_CASE',
-          'src/**/providers/*.tsx': 'PASCAL_CASE',
+          'src/**/providers/*.tsx': PASCAL_OR_HOOK,
           'src/content/**/*.ts': 'CAMEL_CASE'
         },
         { ignoreMiddleExtensions: true }
       ],
+      'check-file/filename-blocklist': [
+        'error',
+        { 'src/**/use[A-Z]*.ts': '*.tsx' },
+        { errorMessage: 'Hooks use the .tsx extension, like components: rename {{ target }} to .tsx.' }
+      ],
+      'check-file/no-index': ['error', { ignoreMiddleExtensions: true }],
+      /* Every pattern applies, so the repo-wide one admits a component's PascalCase folder;
+         `npm run check:architecture` refuses a PascalCase folder anywhere but directly holding
+         its own component under components/ or pages/. */
       'check-file/folder-naming-convention': [
         'error',
         {
           'src/features/*/': 'KEBAB_CASE',
-          'src/**/!(__)*/': 'KEBAB_CASE'
+          'src/**/!(__)*/': KEBAB_OR_PASCAL
         }
       ],
 
@@ -419,15 +626,16 @@ export default tseslint.config(
 
   /* Order matters: the repo-wide barrel rule first, then the layer entries that
      restate it, so the more specific configuration is the one that survives. */
-  UI_THROUGH_BARREL,
-  NO_CROSS_FEATURE_INTERNALS,
-  ...FEATURE_SELF_ALIAS,
+  NO_BARREL_IMPORTS,
+  ...FEATURE_ISOLATION,
   EXAM_MODULES_THROUGH_FORMAT,
   SHARED_STAYS_GENERIC,
-  SHARED_UI_STAYS_GENERIC,
   CONTENT_IS_DATA_ONLY,
   NO_TRAINER_ID_LITERALS,
   NO_RAW_HTML_CONTROLS,
+  /* After the two entries above: it restates their selectors, so it must come later. */
+  COMPONENTS_VISUAL_ONLY,
+  { ...NO_RAW_COLOURS, plugins: { local: componentDefaultExport } },
 
   {
     /* One component per file. The vendored shadcn files ship several per file and are
@@ -440,13 +648,8 @@ export default tseslint.config(
   },
   {
     name: 'component-files-default-export',
-    files: [
-      'src/app/layout/*.tsx',
-      'src/app/routes/*.tsx',
-      'src/**/components/**/*.tsx',
-      'src/**/routes/*.tsx'
-    ],
-    ignores: ['src/shared/ui/**', '**/moduleProps.ts'],
+    files: COMPONENT_FILES,
+    ignores: VENDORED_UI,
     plugins: { local: componentDefaultExport },
     rules: { 'local/component-default-export': 'error' }
   },
@@ -460,11 +663,11 @@ export default tseslint.config(
   },
   {
     /* Exam data files are enormous literals; naming rules there are pure noise. The path is
-       `src/content/trainers/<id>/exams/` — the pre-registry `src/content/exams/` this used to
+       `src/content/<id>/exams/` — the pre-registry `src/content/exams/` this used to
        name has not existed since the content moved, so the exemption was dead and passed only
        because `objectLiteralProperty` is `format: null` globally. */
     name: 'content-data',
-    files: ['src/content/trainers/*/exams/**/*.ts'],
+    files: ['src/content/*/exams/**/*.ts'],
     rules: { '@typescript-eslint/naming-convention': 'off' }
   },
   {
@@ -476,17 +679,32 @@ export default tseslint.config(
     rules: { 'react/display-name': 'off' }
   },
   {
-    /* Barrels and provider modules intentionally export types, hooks and constants
-       alongside components; the fast-refresh heuristic cannot know that. */
+    /* Provider modules and the vendored primitives intentionally export types, hooks and
+       constants alongside components, and a hook file (`use*.tsx`) exports no component at
+       all; the fast-refresh heuristic cannot know that. */
     name: 'module-surfaces',
-    files: [
-      'src/**/index.ts',
-      'src/**/providers/*.tsx',
-      'src/shared/ui/*.tsx',
-      'src/shared/ui/index.ts',
-      'src/shared/components/exam-ui/*.tsx'
-    ],
+    files: ['src/**/providers/*.tsx', 'src/shared/ui/*.tsx', 'src/**/use*.tsx'],
     rules: { 'react-refresh/only-export-components': 'off' }
+  },
+  {
+    /* Every function is an arrow (below), and classes are how a method sneaks back in. Error
+       boundaries come from react-error-boundary, so no exemption is left. */
+    name: 'no-classes',
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { local: componentDefaultExport },
+    rules: { 'local/no-classes': 'error' }
+  },
+  {
+    /* Errors are handled, never dropped: no empty catch, and no catch that neither rethrows,
+       returns nor records what it caught. Floating and misused promises are refused by
+       `strictTypeChecked` (`no-floating-promises`, `no-misused-promises`) in app-source. */
+    name: 'no-swallowed-errors',
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { local: componentDefaultExport },
+    rules: {
+      'no-empty': ['error', { allowEmptyCatch: false }],
+      'local/no-swallowed-catch': 'error'
+    }
   },
 
   /* Tooling, tests and E2E specs run in Node and are not part of the app tsconfig.
@@ -509,7 +727,7 @@ export default tseslint.config(
     },
     rules: {
       'no-console': 'off',
-      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-empty': ['error', { allowEmptyCatch: false }],
       'no-undef': 'off'
     }
   },
@@ -527,10 +745,11 @@ export default tseslint.config(
     name: 'arrow-functions-only',
     files: [
       'src/**/*.{ts,tsx}',
-      'tests/**/*.{ts,tsx}',
+      /* tests/unit holds plain .js suites too; `.ts` alone left them unchecked. */
+      'tests/**/*.{js,mjs,cjs,ts,tsx}',
       /* The e2e specs are plain JS — `.ts` alone matched nothing, so the rule was inert. */
-      'e2e/**/*.{js,ts}',
-      'scripts/**/*.{js,mjs,ts}',
+      'e2e/**/*.{js,mjs,cjs,ts}',
+      'scripts/**/*.{js,mjs,cjs,ts}',
       '*.{js,mjs,cjs,ts}'
     ],
     ignores: ['**/*.d.ts'],

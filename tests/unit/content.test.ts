@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS, TRAINER_CONTENT } from '@content/trainers/index.ts';
-import { type SingleLevelTrainerId, type TrainerId } from '@shared/types';
+import { DUAL_LEVEL_EXAMS, SINGLE_LEVEL_EXAMS, TRAINER_CONTENT } from '@content/trainerContent.ts';
+import { learnTaskTarget, learnTaskText } from '@shared/lib/learnProgress.ts';
+import { type SingleLevelTrainerId } from '@shared/types/singleLevelExam.ts';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
 /* The schedule engine trusts every curriculum's numbering and tiers, and every exam list's
    id order. Content drift here silently reshapes a plan — and because a curriculum
@@ -11,11 +13,23 @@ import { type SingleLevelTrainerId, type TrainerId } from '@shared/types';
 
 const TRAINERS = Object.values(TRAINER_CONTENT);
 
+/* Tasks per day, frozen. A task's index IS its stored checkbox key (`d<day>t<index>`): a task
+   may be reworded or annotated with a target in place, but a changed count here means a key
+   now points at different work. Change it only with a learnDone migration. */
+const threeEach = (overrides: Readonly<Record<number, number>>): readonly number[] =>
+  Array.from({ length: 28 }, (_, index) => overrides[index + 1] ?? 3);
+const TASKS_PER_DAY: Readonly<Record<TrainerId, readonly number[]>> = {
+  a2b1: threeEach({}),
+  b1: threeEach({ 14: 4 }),
+  b2: [4, 4, 3, 4, 4, 4, 3, 3, 4, 4, 4, 4, 3, 4, 4, 4, 3, 3, 4, 3, 4, 3, 3, 4, 3, 3, 3, 3],
+  dtz: threeEach({ 14: 4 })
+};
+
 /** How many Modelltests each trainer ships. A drop here is missing content, not a refactor. */
-const EXPECTED_EXAMS: Readonly<Record<TrainerId, number>> = { a2b1: 15, b1: 10, b2: 10 };
+const EXPECTED_EXAMS: Readonly<Record<TrainerId, number>> = { a2b1: 15, b1: 10, b2: 10, dtz: 10 };
 
 it('covers every registered trainer', () => {
-  expect(TRAINERS.map(content => content.trainer)).toEqual(['a2b1', 'b1', 'b2']);
+  expect(TRAINERS.map(content => content.trainer)).toEqual(['a2b1', 'b1', 'b2', 'dtz']);
 });
 
 for (const content of TRAINERS) {
@@ -37,7 +51,7 @@ for (const content of TRAINERS) {
     it('gives every day at least three tasks and one usable AI prompt', () => {
       for (const day of plan.days) {
         expect(day.tasks.length).toBeGreaterThanOrEqual(3);
-        for (const task of day.tasks) expect(task.trim().length).toBeGreaterThan(0);
+        for (const task of day.tasks) expect(learnTaskText(task).trim().length).toBeGreaterThan(0);
         expect(day.ai.length).toBeGreaterThanOrEqual(1);
         for (const prompt of day.ai) {
           expect(prompt.t.length).toBeGreaterThan(0);
@@ -45,6 +59,44 @@ for (const content of TRAINERS) {
           expect(prompt.p.length).toBeGreaterThan(40);
         }
       }
+    });
+
+    it('keeps every task at its index, so no stored learnDone key is re-pointed', () => {
+      expect(plan.days.map(day => day.tasks.length)).toEqual(TASKS_PER_DAY[trainer]);
+    });
+
+    it('points every task target at something this trainer has', () => {
+      const exams = new Map(content.exams.map(exam => [exam.id, exam]));
+      const broken = plan.days.flatMap(day =>
+        day.tasks.flatMap((task, index) => {
+          const target = learnTaskTarget(task);
+          const where = `day ${String(day.day)} task ${String(index)}`;
+          if (target === null) return [];
+          switch (target.kind) {
+            case 'module': {
+              const exam = exams.get(target.exam);
+              return exam && target.module in exam
+                ? []
+                : [`${where}: no ${target.module} in exam ${String(target.exam)}`];
+            }
+            case 'guide':
+              return content.guide?.includes(`id="${target.anchor}"`)
+                ? []
+                : [`${where}: no guide anchor ${target.anchor}`];
+            case 'cheatsheet':
+              return target.id in plan.cheatsheets ? [] : [`${where}: no cheatsheet ${target.id}`];
+            case 'quiz':
+              return content.vocab[target.category].length > 0
+                ? []
+                : [`${where}: empty quiz ${target.category}`];
+            case 'practice':
+              return [];
+            default:
+              return [`${where}: unknown target`];
+          }
+        })
+      );
+      expect(broken).toEqual([]);
     });
 
     it('references only cheatsheets that exist', () => {

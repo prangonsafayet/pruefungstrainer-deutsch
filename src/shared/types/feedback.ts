@@ -42,6 +42,10 @@ export interface RubricScore {
   readonly max: 45;
 }
 
+/**
+ * @public The result the issue #18 writing-feedback hook returns; knip skips `@public`
+ * exports until that work lands.
+ */
 export interface WritingFeedback {
   readonly report: readonly ErrorReportEntry[];
   readonly score: RubricScore;

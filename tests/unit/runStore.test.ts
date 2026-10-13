@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createRunStore, parseRun } from '@features/exam/lib/runStore.ts';
-import { type ExamRun } from '@features/exam/types/run.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { createRunStore, parseRun } from '@shared/exam-run/lib/runStore.ts';
+import { type ExamRun } from '@shared/exam-run/types/run.ts';
+import { TRAINERS, TRAINER_ORDER } from '@shared/config/trainers.ts';
 import { readLocal, removeLocal, writeLocal } from '@shared/lib/storage.ts';
-import { type ExamModule } from '@shared/types';
+import { type ExamModule } from '@shared/types/exam.ts';
 
 import { installMemoryStorage } from '../support/memoryStorage.ts';
 
@@ -170,6 +172,23 @@ describe('the module queue', () => {
     }
   });
 
+  it('refuses a position past the queue, or a screen the runner does not have', () => {
+    for (const bad of [
+      { index: 1 },
+      { index: -1 },
+      { index: 0.5 },
+      { index: '0' },
+      { phase: 'results' },
+      { phase: undefined }
+    ]) {
+      writeLocal(KEY, JSON.stringify({ ...run(), queue: ['lesen'], ...bad }));
+      expect(store.load('b1')).toBeNull();
+    }
+    /* The positive control: the same run with a valid position and screen loads. */
+    writeLocal(KEY, JSON.stringify({ ...run(), queue: ['lesen'], index: 0, phase: 'rating' }));
+    expect(store.load('b1')?.phase).toBe('rating');
+  });
+
   it('refuses an empty queue, which has no module to open', () => {
     writeLocal(KEY, JSON.stringify({ ...run(), queue: [] }));
     expect(store.load('b1')).toBeNull();
@@ -258,5 +277,45 @@ describe('one key, one entry per trainer', () => {
     /* Otherwise a hand-edited file offers one trainer's run to another, which marks the
        sitting against the wrong paper — the failure the `trainer` field exists to stop. */
     expect(store.load('b2')).toBeNull();
+  });
+});
+
+/* The DTZ paper keeps its runs under a key of its own. Sharing the single-level key would let
+   an older build — whose `parseRuns` reads only the trainers it knows — drop a DTZ run the
+   next time it rewrote that key. */
+describe('the DTZ run key', () => {
+  const DTZ_KEY = 'telcTrainerDtzRunV1';
+  const dtzRunFormat = (): ReturnType<typeof runFormatFor> => {
+    const dtz = TRAINER_ORDER.find(trainer => TRAINERS[trainer].format === 'dtz-paper');
+    if (dtz === undefined) throw new Error('the registry has no DTZ trainer');
+    return runFormatFor(dtz);
+  };
+  const dtzRun = (): ExamRun =>
+    run({ trainer: 'dtz', queue: ['hoeren'], mode: 'hoeren', answers: { 'l2.0': -1 } });
+
+  beforeEach(() => {
+    removeLocal(DTZ_KEY);
+  });
+
+  it('saves a DTZ run under telcTrainerDtzRunV1 and no other run key', () => {
+    writeLocal(KEY, JSON.stringify({ b1: run() }));
+    dtzRunFormat().runStore.save(dtzRun());
+
+    expect(JSON.parse(readLocal(DTZ_KEY) ?? 'null')).toEqual({ dtz: dtzRun() });
+    expect(JSON.parse(readLocal(KEY) ?? 'null')).toEqual({ b1: run() });
+    expect(dtzRunFormat().runStore.load('dtz')).toEqual(dtzRun());
+  });
+
+  it('clears the DTZ run and leaves every other run key untouched', () => {
+    writeLocal(KEY, JSON.stringify({ b1: run() }));
+    writeLocal('telcTrainerRunV1', JSON.stringify(run({ trainer: 'a2b1' })));
+    dtzRunFormat().runStore.save(dtzRun());
+
+    dtzRunFormat().runStore.clear('dtz');
+
+    expect(readLocal(DTZ_KEY)).toBeNull();
+    expect(JSON.parse(readLocal(KEY) ?? 'null')).toEqual({ b1: run() });
+    expect(readLocal('telcTrainerRunV1')).not.toBeNull();
+    removeLocal('telcTrainerRunV1');
   });
 });

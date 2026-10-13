@@ -3,8 +3,6 @@
 /** The three cases the trainers drill. Nominativ needs no drilling at this level. */
 export type GermanCase = 'akkusativ' | 'dativ' | 'genitiv';
 
-export type WordClass = 'verb' | 'noun' | 'adjective';
-
 /** Every learnable item carries an example sentence in both languages. */
 export interface VocabExample {
   readonly de: string;

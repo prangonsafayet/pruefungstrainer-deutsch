@@ -57,6 +57,20 @@ describe('checkText', () => {
     expect(result.kind === 'ok' && result.matches[0]?.rule.category.id).toBe('GRAMMAR');
   });
 
+  it('drops a match the response does not fully describe, rather than trusting its shape', async () => {
+    enableDynamicFeedback();
+    const valid = {
+      message: 'Möglicher Grammatikfehler',
+      offset: 0,
+      length: 3,
+      replacements: [],
+      rule: { id: 'DE_CASE', issueType: 'grammar', category: { id: 'CASING', name: 'Groß/Klein' } }
+    };
+    respond({ matches: [valid, { ...valid, rule: { id: 'X' } }, { message: 'no offset' }, null, 'text'] });
+    const result = await checkText('Ein anderer Satz.');
+    expect(result.kind === 'ok' && result.matches).toEqual([valid]);
+  });
+
   it('maps 429 to rate-limited and 413 to too-long rather than throwing', async () => {
     enableDynamicFeedback();
     respond({}, 429);

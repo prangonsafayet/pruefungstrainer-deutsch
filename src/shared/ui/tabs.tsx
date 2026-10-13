@@ -26,7 +26,10 @@ export const TabsList = forwardRef<
     <TabsPrimitive.List
       ref={ref}
       data-slot="tabs-list"
-      className={cn('inline-flex w-fit items-center justify-center rounded-lg bg-muted p-[3px]', className)}
+      className={cn(
+        'inline-flex w-fit max-w-full items-center justify-center gap-1 overflow-x-auto rounded-xl bg-muted p-1',
+        className
+      )}
       {...props}
     />
   );
@@ -41,7 +44,7 @@ export const TabsTrigger = forwardRef<
       ref={ref}
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-3 py-1.5 text-sm font-medium transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-transparent px-3 py-1.5 font-heading text-sm font-semibold text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-soft [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -57,7 +60,7 @@ export const TabsContent = forwardRef<
     <TabsPrimitive.Content
       ref={ref}
       data-slot="tabs-content"
-      className={cn('outline-none', className)}
+      className={cn('rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring', className)}
       {...props}
     />
   );

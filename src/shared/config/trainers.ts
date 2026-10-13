@@ -2,14 +2,14 @@
  * The trainer registry: one descriptor per trainer, and the only place a per-trainer fact
  * is allowed to live.
  *
- * The three trainers are peers, and a fourth that sets one of the two existing papers — telc
- * Deutsch B2 Beruf, say — costs a content folder under `src/content/trainers/`, one entry
+ * The trainers are peers, and another one that sets one of the existing papers — telc
+ * Deutsch B2 Beruf, say — costs a content folder under `src/content/`, one entry
  * here, and a row in the type-level plumbing that keeps this registry exhaustive and the
  * persisted document typed: `TrainerId`, `SingleLevelTrainerId` if it sets that paper, and a
  * field on `ProgressDatabase` with matching cases in `EMPTY_DATABASE`, `normalizeDatabase`
  * and `mergeProgress`. Plus two more places, both measured rather than assumed by planting a
- * fourth trainer: `src/content/trainers/index.ts` and one `vi.mock` in
- * `tests/unit/contentChunks.test.ts`. `.claude/docs/architecture.md` states the whole list
+ * fourth trainer: `src/content/trainerContent.ts` and one `vi.mock` in
+ * `tests/unit/contentChunks.test.ts`. `.claude/skills/new-trainer/SKILL.md` states the whole list
  * and why each entry is irreducible.
  *
  * No screen, route, hook or nav item needs to learn about it, because everything else in
@@ -18,24 +18,26 @@
  * out of this file.
  *
  * A trainer that sets a *new* paper costs much more: another `ExamFormatId`, a whole
- * `features/exam/lib/formats/<new>/`, five module renderers, a `TrainerSlice` variant, an
- * attempt type and seven format-keyed records in `@shared/config/examConditions.ts`.
+ * `features/mock-exam/lib/formats/<new>/`, its module renderers, a `TrainerSlice` variant, an
+ * attempt type and eight format-keyed records in `@shared/config/examConditions.ts`.
  */
 
-import { A2B1_PAPER } from '@content/trainers/a2b1/paper.ts';
-import { B1_PAPER } from '@content/trainers/b1/paper.ts';
-import { B2_PAPER } from '@content/trainers/b2/paper.ts';
+import { A2B1_PAPER } from '@content/a2b1/paper.ts';
+import { B1_PAPER } from '@content/b1/paper.ts';
+import { B2_PAPER } from '@content/b2/paper.ts';
+import { DTZ_PAPER } from '@content/dtz/paper.ts';
 
+import { type WeaknessTopic } from '@shared/types/feedback.ts';
+import { type SingleLevelTrainerId } from '@shared/types/singleLevelExam.ts';
 import {
-  type SingleLevelTrainerId,
+  type DtzDocKey,
   type TrainerContent,
   type TrainerContentLoader,
   type TrainerDocKey,
   type TrainerId,
-  type TrainerPaper,
-  type VocabBank,
-  type WeaknessTopic
-} from '@shared/types';
+  type TrainerPaper
+} from '@shared/types/trainer.ts';
+import { type VocabBank } from '@shared/types/vocab.ts';
 
 import { SPRINT_LEARN_DAYS } from './schedule.ts';
 
@@ -44,14 +46,15 @@ import { SPRINT_LEARN_DAYS } from './schedule.ts';
  * that every screen needs synchronously (the settings page, the runner, the header). The
  * exams, curriculum, guide and vocabulary bank are the heavy part of a trainer (hundreds of
  * kilobytes each) and load through `loadContent` below instead, one dynamic `import()` per
- * trainer so the bundler keys a chunk on each. Do not import `@content/trainers/index.ts`
- * from this file: that barrel pulls in every trainer's full content and would put the whole
+ * trainer so the bundler keys a chunk on each. Do not import `@content/trainerContent.ts`
+ * from this file: that module pulls in every trainer's full content and would put the whole
  * eager graph right back behind the registry.
  */
 const CONTENT_LOADERS: Readonly<Record<TrainerId, TrainerContentLoader>> = {
-  a2b1: () => import('@content/trainers/a2b1/index.ts').then(m => m.A2B1_CONTENT),
-  b1: () => import('@content/trainers/b1/index.ts').then(m => m.B1_CONTENT),
-  b2: () => import('@content/trainers/b2/index.ts').then(m => m.B2_CONTENT)
+  a2b1: () => import('@content/a2b1/content.ts').then(m => m.A2B1_CONTENT),
+  b1: () => import('@content/b1/content.ts').then(m => m.B1_CONTENT),
+  b2: () => import('@content/b2/content.ts').then(m => m.B2_CONTENT),
+  dtz: () => import('@content/dtz/content.ts').then(m => m.DTZ_CONTENT)
 };
 
 /** User-facing app name. UI-level only — repo, package and storage keys keep theirs. */
@@ -125,10 +128,15 @@ export type TrainerInfo = TrainerInfoBase &
         /** Its own slice of the document, keyed by its id. */
         readonly docKey: TrainerDocKey;
       }
+    | {
+        readonly format: 'dtz-paper';
+        /** Its own slice of the document, holding DTZ attempts only. */
+        readonly docKey: DtzDocKey;
+      }
   );
 
 /** The trainers, in the order they are offered. */
-export const TRAINER_ORDER: readonly TrainerId[] = ['a2b1', 'b1', 'b2'];
+export const TRAINER_ORDER: readonly TrainerId[] = ['a2b1', 'b1', 'b2', 'dtz'];
 
 export const TRAINERS: Readonly<Record<TrainerId, TrainerInfo>> = {
   a2b1: {
@@ -208,6 +216,29 @@ export const TRAINERS: Readonly<Record<TrainerId, TrainerInfo>> = {
       vocabulary: [],
       writing: ['brief']
     }
+  },
+  dtz: {
+    id: 'dtz',
+    name: 'Deutsch-Test für Zuwanderer',
+    short: 'DTZ',
+    basePath: '/dtz',
+    accent: 'var(--success)',
+    format: 'dtz-paper',
+    tagline: 'A2–B1 · Zertifikat A2 oder B1',
+    docKey: 'dtz',
+    paper: DTZ_PAPER,
+    hasGuide: true,
+    loadContent: CONTENT_LOADERS.dtz,
+    sprintLearnDays: SPRINT_LEARN_DAYS,
+    weaknessCheatsheets: {
+      /* 'kasus' is titled 'Kasus & Präpositionen', so it serves both topics. */
+      cases: ['kasus'],
+      verbForms: ['verben'],
+      connectors: ['konnektoren'],
+      prepositions: ['kasus'],
+      vocabulary: ['alltag'],
+      writing: ['schreiben']
+    }
   }
 };
 
@@ -238,6 +269,14 @@ export const trainerHome = (trainer: TrainerId): string => TRAINERS[trainer].bas
  * rather than reaching into the registry itself.
  */
 export const examCount = (content: TrainerContent): number => content.exams.length;
+
+/**
+ * Whether a trainer's Modelltests get harder in order. Read from the papers' own `difficulty`
+ * field (only the dual-level papers carry one, graded easy → B1); a set at one level does not
+ * ramp, so its dashboard may not say "easiest first".
+ */
+export const examsRampInDifficulty = (content: TrainerContent): boolean =>
+  new Set(content.exams.flatMap(exam => ('difficulty' in exam ? [exam.difficulty] : []))).size > 1;
 
 /** Whether a vocabulary bank has anything in it to drill. */
 export const hasVocabBank = (vocab: VocabBank): boolean =>

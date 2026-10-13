@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { type DualLevelAttempt } from '@shared/types';
-import { runFormatFor } from '@features/exam';
-import { PROGRESS_STORAGE_KEY } from '@features/progress';
+import { type DualLevelAttempt } from '@shared/types/progress.ts';
+import { runFormatFor } from '@shared/exam-run/lib/runFormats.ts';
+import { PROGRESS_STORAGE_KEY } from '@shared/progress-store/lib/progressDb.ts';
 
 import { captureErrors, click, findByText, mount, seedProgress, waitFor } from './harness.ts';
 
@@ -41,6 +41,10 @@ describe('a single-module practice run', () => {
     await click(start);
     expect(view.text()).toMatch(/Teil 1 — Anzeigen zuordnen/);
     expect(view.text()).toMatch(/4[45]:\d\d/);
+    /* The timer is named by its own text: an aria-label replaced it with "Time remaining". */
+    const timer = document.querySelector('[role="timer"]');
+    expect(timer?.hasAttribute('aria-label')).toBe(false);
+    expect(timer?.textContent).toMatch(/^4[45]:\d\d left$/);
     const started = runStore.load('a2b1');
     expect(started?.phase).toBe('module');
     /* An absolute deadline, not a countdown: a countdown cannot survive a reload. */

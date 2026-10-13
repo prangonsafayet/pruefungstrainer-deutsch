@@ -13,7 +13,7 @@
 
 /** Everything that goes, whether or not an account is involved. */
 const LOCAL =
-  'Everything stored in this browser goes: every attempt and score, every learn-plan tick of every trainer, and any exam in progress. Exam conditions return to their defaults.';
+  'Everything stored in this browser goes: every attempt and score, every learn-plan tick of every trainer, any exam in progress, and any damaged copy set aside for download. Exam conditions return to their defaults.';
 
 /**
  * The dialog's description. `signedIn` decides the second half, because that is where the
@@ -21,5 +21,5 @@ const LOCAL =
  */
 export const describeDelete = (signedIn: boolean): string =>
   signedIn
-    ? `${LOCAL} Your cloud copy is deleted with it. Another signed-in device that still holds a copy will restore it on its next sync, so delete there too — or sign out on this one first.`
+    ? `${LOCAL} Your cloud copy is cleared first; if it cannot be, nothing is deleted. Other signed-in devices keep their own copy until you clear them too (so does another open tab of the trainer) — each one will restore it on its next sync, so delete there as well, or sign out on this one first.`
     : `${LOCAL} Nothing leaves this browser, so signing in later on a device that still has your progress brings it back.`;

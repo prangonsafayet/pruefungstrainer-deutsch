@@ -1,5 +1,7 @@
 /** Display formatting helpers. All dates are handled in the viewer's local time. */
 
+import { addDays as addCalendarDays, differenceInCalendarDays, isValid, lightFormat } from 'date-fns';
+
 export const LETTERS = 'abcdefghijkl';
 
 /** Seconds → `m:ss`, clamped at zero. */
@@ -33,27 +35,28 @@ export const wordCount = (text: string | undefined): number => {
 /**
  * `new Date('2026-09-12')` is parsed as UTC midnight, which is the previous day
  * anywhere west of Greenwich. These two build and format the date from its parts so a
- * calendar day always means that calendar day.
+ * calendar day always means that calendar day. `new Date(2026, 1, 31)` silently rolls over
+ * to 3 March, so a day only counts if it formats back to the very string it came from.
+ * (Not date-fns `parse`: it would add ~7 kB gzip to an eagerly loaded chunk for this.)
  */
 export const parseIsoDate = (iso: string | undefined): Date | null => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? '');
   if (!match) return null;
   const [, year, month, day] = match;
   const date = new Date(Number(year), Number(month) - 1, Number(day));
-  return Number.isNaN(date.getTime()) ? null : date;
+  return isValid(date) && toIsoDate(date) === iso ? date : null;
 };
 
-export const toIsoDate = (date: Date): string => {
-  const pad = (n: number): string => String(n).padStart(2, '0');
-  return `${String(date.getFullYear())}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-};
+export const toIsoDate = (date: Date): string => lightFormat(date, 'yyyy-MM-dd');
 
-/** `iso` shifted by whole days, or null when `iso` is not a date. */
+/** `1 day`, `3 days` — English nouns that take an `s` are all this copy needs. */
+export const plural = (count: number, noun: string): string =>
+  `${String(count)} ${noun}${count === 1 ? '' : 's'}`;
+
+/** `iso` shifted by whole calendar days (DST-safe), or null when `iso` is not a date. */
 export const addDays = (iso: string | undefined, days: number): string | null => {
   const start = parseIsoDate(iso);
-  if (!start) return null;
-  const shifted = new Date(start.getFullYear(), start.getMonth(), start.getDate() + days);
-  return toIsoDate(shifted);
+  return start ? toIsoDate(addCalendarDays(start, days)) : null;
 };
 
 /**
@@ -63,15 +66,11 @@ export const addDays = (iso: string | undefined, days: number): string | null =>
 export const daysBetween = (fromIso: string | undefined, toIso: string | undefined): number | null => {
   const from = parseIsoDate(fromIso);
   const to = parseIsoDate(toIso);
-  if (!from || !to) return null;
-  return Math.round((to.getTime() - from.getTime()) / 86_400_000);
+  return from && to ? differenceInCalendarDays(to, from) : null;
 };
 
 /** Whole days from today to `iso`; negative once the date has passed. */
 export const daysUntil = (iso: string | undefined): number | null => {
   const target = parseIsoDate(iso);
-  if (!target) return null;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+  return target ? differenceInCalendarDays(target, new Date()) : null;
 };

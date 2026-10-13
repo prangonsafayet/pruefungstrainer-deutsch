@@ -7,7 +7,8 @@ description: Pre-deployment checklist for this app — verification, build artef
 
 ## 1. Verify
 
-Run the `verify` skill. Do not deploy on a red pipeline.
+Run the `verify` skill (it includes `npm run guards`, whose `audit:prod` must be clean). Do not
+deploy on a red pipeline.
 
 ## 2. Check what the build actually contains
 
@@ -37,9 +38,13 @@ cat dist/robots.txt dist/sitemap.xml
 
 `netlify.toml` already sets the build command (`npm run build`), publish
 directory (`dist`) and the catch-all rewrite to `index.html`. That rewrite is not
-optional — without it, reloading `/history` or `/review/1723` returns 404.
-`public/_redirects` and `public/_headers` carry the same rules for a
-drag-and-dropped `dist`.
+optional — without it, reloading a deep route (a trainer's history or an attempt review)
+returns 404.
+`public/_redirects` carries the same rewrite for a drag-and-dropped `dist`.
+`public/_headers` is the only source of response headers (CSP, HSTS, caching) for both
+routes. Before deploying: `npm run check:bundle`, `npm run check:csp` and `npm run test:csp`
+after the build; after deploying, `curl -sI` the preview for `content-security-policy` and
+check the browser console for CSP errors (see the tooling-ci rule).
 
 Environment variables must be set under **Site configuration → Environment
 variables**, then a **new deploy triggered**:

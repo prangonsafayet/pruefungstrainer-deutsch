@@ -27,8 +27,46 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
-      - run: npm run lint
+      # Zero warnings: a warning is how a silently-skipped file announces itself ("File
+      # ignored because no matching configuration was supplied"), so it fails here.
+      - run: npm run lint -- --max-warnings=0
       - run: npm run format:check
+      # The guardrails ESLint cannot express, in one aggregate: the architecture and CSS-token
+      # checks, the persisted storage-key invariant, the Claude Code hook tests, and the
+      # production dependency audit (moderate and above fails). See package.json `guards`.
+      - run: npm run guards
+
+  audit:
+    name: Dependency audit (dev, non-blocking)
+    runs-on: ubuntu-latest
+    # Report-only. The production tree is gated in `static` via `npm run audit:prod`; this job
+    # keeps the dev-only advisories visible. The remaining ones have no usable fix: `braces` via
+    # micromatch via eslint-plugin-check-file has none upstream, and `postcss-selector-parser`
+    # via @tailwindcss/typography only "fixes" by downgrading typography to 0.5.4. Failing on
+    # them would block every PR on something no PR can change. Make it blocking once they clear.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
+  deadcode:
+    name: Dead code (knip)
+    runs-on: ubuntu-latest
+    # Blocking: knip is clean. An export kept for planned work carries a `@public` JSDoc tag
+    # with its reason instead of an ignore list.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run knip:ci
 
   unit:
     name: Unit tests
@@ -41,13 +79,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run validate
-      - run: npm run test:unit
+      # Every vitest suite, with the coverage gate on libs and hooks (thresholds in
+      # vitest.config.ts — they only ratchet up).
+      - run: npm run test:coverage
 
   e2e:
     name: End-to-end tests
     runs-on: ubuntu-latest
     # Obviously-fake Supabase configuration. Without it CI has no .env, so
-    # `isSyncConfigured` in src/features/auth/lib/supabaseClient.ts is false and SyncPanel
+    # `isSyncConfigured` in src/shared/account-sync/lib/supabaseClient.ts is false and SyncPanel
     # renders the "Cloud sync — not active" diagnostics card instead of the sign-in card
     # that e2e/auth.spec.js and e2e/signup.spec.js assert on. These values exist only to
     # satisfy that client-side validation: the specs stub every `**/auth/v1/*` request, so
@@ -64,7 +104,7 @@ jobs:
     # them on a bare runner means `playwright install --with-deps` shelling out to apt for
     # ~20 MB of fonts and libs, which is slow and has hung the job outright.
     container:
-      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
       options: --user 1001
     steps:
       - uses: actions/checkout@v7
@@ -79,14 +119,21 @@ jobs:
       - name: Check the image matches the Playwright version
         run: |
           WANT=$(node -p "require('@playwright/test/package.json').version")
-          if [ "$WANT" != "1.62.1" ]; then
-            echo "::error::Playwright is $WANT but the container image is pinned to 1.62.1."
+          if [ "$WANT" != "1.64.0" ]; then
+            echo "::error::Playwright is $WANT but the container image is pinned to 1.64.0."
             echo "Update the image tag in .github/workflows/ci.yml and release.yml."
             exit 1
           fi
           echo "Playwright $WANT matches the image."
 
       - run: npm run test:e2e -- --project=chromium
+
+      # The production build served with its real _headers: any CSP violation fails here.
+      - run: npm run build
+      - run: npm run test:csp
+      # The same build as a PWA: one visit, then offline — every trainer, a DTZ module sat
+      # and submitted, and the update prompt for a new deploy. Desktop and phone.
+      - run: npm run test:offline
 
       - uses: actions/upload-artifact@v7
         if: failure()
@@ -108,3 +155,7 @@ jobs:
       # Deliberately no secrets: this is what a fork or a first-time contributor gets,
       # and it catches anything that silently depends on a local .env.
       - run: npm run build
+      # Entry chunk ≤ baseline + 10%, every content chunk ≤ 160 kB gzip.
+      - run: npm run check:bundle
+      # The CSP's script-src hashes match the inline scripts the build emitted.
+      - run: npm run check:csp

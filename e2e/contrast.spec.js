@@ -109,7 +109,72 @@ const PAIRS = [
   {
     id: 'meter — passing bar on its track',
     surface: 'bg-card',
+    html: '<span class="block h-2 w-40 bg-secondary"><span data-probe class="block h-2 w-20 bg-success"></span></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'meter — dashboard bar (no status) on its track',
+    surface: 'bg-card',
     html: '<span class="block h-2 w-40 bg-secondary"><span data-probe class="block h-2 w-20 bg-primary"></span></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  /* Roles added by the redesign's shell and primitives (pass 5A). */
+  {
+    id: 'active nav pill — label on --accent',
+    surface: 'bg-background',
+    html: '<span class="bg-accent px-3 font-heading text-sm font-bold text-accent-foreground">Dashboard</span>',
+    prop: 'color',
+    need: 4.5
+  },
+  {
+    id: 'muted label on a --muted surface (tabs list, tracks)',
+    surface: 'bg-muted',
+    html: '<span class="text-sm text-muted-foreground">Reference tables</span>',
+    prop: 'color',
+    need: 4.5
+  },
+  {
+    id: 'focus ring on the page background',
+    surface: 'bg-background',
+    html: '<span class="block h-2 w-20 bg-ring"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'focus ring on a card',
+    surface: 'bg-card',
+    html: '<span class="block h-2 w-20 bg-ring"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'checkbox and radio edge on a card',
+    surface: 'bg-card',
+    html: '<span class="block h-2 w-20 bg-muted-foreground"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  /* Pass 5B: a text field's edge is the only thing that says "type here" (1.4.11). */
+  {
+    id: 'input boundary (--input) on a card',
+    surface: 'bg-card',
+    html: '<span class="block h-2 w-20 bg-input"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'input boundary (--input) on the page background',
+    surface: 'bg-background',
+    html: '<span class="block h-2 w-20 bg-input"></span>',
+    prop: 'backgroundColor',
+    need: 3
+  },
+  {
+    id: 'teal second voice (charts) on a card',
+    surface: 'bg-card',
+    html: '<span class="block h-2 w-20 bg-brand-2"></span>',
     prop: 'backgroundColor',
     need: 3
   }

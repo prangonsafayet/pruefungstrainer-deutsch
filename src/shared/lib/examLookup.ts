@@ -1,6 +1,6 @@
 /** Looking up one exam of a paper — generic over the paper, so it carries no trainer's data. */
 
-import { type ExamPaper } from '@shared/types';
+import { type ExamPaper } from '@shared/types/exam.ts';
 
 /** Looks up a paper by id; accepts the string form that arrives from route params. */
 export const findPaper = <TExam extends ExamPaper>(

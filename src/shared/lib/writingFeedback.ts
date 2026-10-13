@@ -1,4 +1,5 @@
-import { type WordCountFeedback, type WritingTarget } from '@shared/types';
+import { type WordCountFeedback } from '@shared/types/examRun.ts';
+import { type WritingTarget } from '@shared/types/trainer.ts';
 
 import { wordCount } from './format.ts';
 

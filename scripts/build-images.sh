@@ -21,7 +21,17 @@ render() { # svg  max-dimension  out.png  [crop-w crop-h]
   echo "  wrote $3 ($(sips -g pixelWidth -g pixelHeight "$3" | awk '/pixel/{printf "%s ", $2}'))"
 }
 
-render assets/og-image.svg 1200 public/og-image.png 1200 630
+# qlmanage zooms a non-square SVG instead of letterboxing it (the old card was cropped to its
+# top-left), so the social card is rendered by the Playwright Chromium the e2e suite installs.
+npx --no-install playwright screenshot --viewport-size=1200,630 \
+  "file://$PWD/assets/og-image.svg" public/og-image.png >/dev/null
+echo "  wrote public/og-image.png ($(sips -g pixelWidth -g pixelHeight public/og-image.png | awk '/pixel/{printf "%s ", $2}'))"
+# The maskable install icon bleeds to every edge, so it has its own source with the artwork
+# inside the 80% safe zone; Chromium renders it at exactly 512 px.
+npx --no-install playwright screenshot --viewport-size=512,512 \
+  "file://$PWD/assets/icon-maskable.svg" public/icon-maskable-512.png >/dev/null
+echo "  wrote public/icon-maskable-512.png ($(sips -g pixelWidth -g pixelHeight public/icon-maskable-512.png | awk '/pixel/{printf "%s ", $2}'))"
 render public/logo.svg      512 public/icon-512.png
+render public/logo.svg      192 public/icon-192.png
 render public/logo.svg      180 public/apple-touch-icon.png
 echo "Done. Commit the PNGs — the build copies public/ verbatim."

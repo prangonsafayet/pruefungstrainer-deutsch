@@ -1,5 +1,6 @@
 import { addDays, toIsoDate } from '@shared/lib/format.ts';
-import { type ExamModule, type Settings, type SkillKey } from '@shared/types';
+import { type ExamModule, type SkillKey } from '@shared/types/exam.ts';
+import { type Settings } from '@shared/types/progress.ts';
 
 /** Module order of a full exam, matching the real sitting. */
 export const EXAM_MODULES: readonly ExamModule[] = [

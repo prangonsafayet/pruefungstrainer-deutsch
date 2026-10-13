@@ -12,8 +12,10 @@ import { createElement, act, type ReactElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { CountdownRing, Meter } from '@shared/components';
-import { Badge, Button } from '@shared/ui';
+import CountdownRing from '@shared/components/exam-ui/CountdownRing/CountdownRing.tsx';
+import ScoreMeter from '@shared/components/data-display/ScoreMeter/ScoreMeter.tsx';
+import { Badge } from '@shared/ui/badge.tsx';
+import { Button } from '@shared/ui/button.tsx';
 
 const render = async (element: ReactElement): Promise<HTMLElement> => {
   const container = document.createElement('div');
@@ -41,7 +43,7 @@ describe('readable ink on the domain colours', () => {
 
   it('a mid-range Meter bar uses the readable amber, not the surface amber', async () => {
     const container = await render(
-      createElement(Meter, {
+      createElement(ScoreMeter, {
         label: 'Lesen',
         value: 38,
         of: 75,

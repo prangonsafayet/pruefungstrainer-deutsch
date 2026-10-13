@@ -2,11 +2,10 @@ import { type ReactNode } from 'react';
 
 import { BrowserRouter } from 'react-router-dom';
 
-import { ErrorBoundary } from '@shared/components';
+import ErrorBoundary from '@shared/components/ErrorBoundary/ErrorBoundary.tsx';
+import { ProgressProvider } from '@shared/progress-store/providers/ProgressProvider.tsx';
 import { ConfirmProvider } from '@shared/providers/ConfirmProvider.tsx';
-import { Toaster } from '@shared/ui';
-
-import { ProgressProvider } from '@features/progress';
+import { Toaster } from '@shared/ui/sonner.tsx';
 
 /**
  * Composition root. Order matters: the error boundary is outermost so a crash anywhere

@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+# ACCIDENT PREVENTION, NOT A SECURITY CONTROL. This hook reads shell text, so a determined
+# caller can always route around it (a script file, python -c, curl to the REST API). The real
+# boundary for main is GitHub branch protection (required checks + enforce_admins), enforced
+# server-side. Keep this hook simple and fail-open; do not grow its parser to chase bypasses.
+#
+# PreToolUse(Bash) guard for this repo's git and filesystem rules. Exit 2 blocks the command
+# and shows stderr to Claude; exit 0 lets it run. Every rule here is a non-negotiable from
+# CLAUDE.md or a lesson that cost real time (docs/lessons.local.md):
+#   - no commit or push while on main, no push that targets main, no force push to main
+#   - no --no-verify (the husky hooks are the local gate)
+#   - no AI attribution in a commit message (Co-Authored-By, "Generated with")
+#   - no `git add -A` / `.` / `--all`, no `git commit -a`: stage explicit paths, because a
+#     whole-tree stage in a shared checkout commits another session's work
+#   - no `rm -rf` of src, docs or .git
+#   - merges only as the literal `gh pr merge <n> --squash [--delete-branch]`, after every
+#     required check is green (allowlist — see the comment above the merge check)
+#   - no `git push --all` / `--mirror`
+set -u
+
+input=$(cat)
+
+# `read -d ''` rather than `$(cat <<'JS' …)`: bash 3.2 (macOS) mis-parses quotes inside a
+# heredoc nested in a command substitution.
+IFS= read -r -d '' script <<'JS' || true
+const { execFileSync } = require('node:child_process');
+const { readFileSync } = require('node:fs');
+const path = require('node:path');
+
+const payload = JSON.parse(require('node:fs').readFileSync(0, 'utf8') || '{}');
+const command = payload.tool_input?.command ?? '';
+const cwd = payload.cwd || process.cwd();
+const project = process.env.CLAUDE_PROJECT_DIR || cwd;
+
+const block = reason => {
+  process.stderr.write(`Blocked by .claude/hooks/guard-git.sh: ${reason}\n`);
+  process.exit(2);
+};
+
+/* A small shell-word splitter: quotes, backslashes, and the operators that start a new
+   simple command. Enough to read argv; it never executes anything. */
+const simpleCommands = text => {
+  const commands = [[]];
+  let word = null;
+  let quote = null;
+  const push = () => {
+    if (word !== null) commands[commands.length - 1].push(word);
+    word = null;
+  };
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === quote) quote = null;
+      else if (ch === '\\' && quote === '"' && i + 1 < text.length) word += text[++i];
+      else word += ch;
+    } else if (ch === "'" || ch === '"') {
+      quote = ch;
+      word ??= '';
+    } else if (ch === '\\' && i + 1 < text.length) {
+      word = (word ?? '') + text[++i];
+    } else if (/\s/.test(ch) && ch !== '\n') {
+      push();
+    } else if (ch === '\n' || ch === ';' || ch === '&' || ch === '|' || ch === '(' || ch === ')') {
+      push();
+      commands.push([]);
+    } else {
+      word = (word ?? '') + ch;
+    }
+  }
+  push();
+  return commands.filter(argv => argv.length > 0);
+};
+
+/* `git [-C dir] [-c k=v] <sub> args…` → { sub, args, dir }, or null for anything else. */
+const gitCall = argv => {
+  let i = 0;
+  while (i < argv.length && /^[A-Za-z_][A-Za-z0-9_]*=/.test(argv[i])) i++;
+  if (argv[i] === 'command' || argv[i] === 'exec') i++;
+  if (path.basename(argv[i] ?? '') !== 'git') return null;
+  let dir = cwd;
+  i++;
+  while (i < argv.length && argv[i].startsWith('-')) {
+    if (argv[i] === '-C') dir = path.resolve(dir, argv[++i] ?? '');
+    else if (argv[i] === '-c') i++;
+    i++;
+  }
+  return { sub: argv[i], args: argv.slice(i + 1), dir };
+};
+
+const branchIn = dir => {
+  try {
+    return execFileSync('git', ['-C', dir, 'symbolic-ref', '--short', '-q', 'HEAD'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore']
+    }).trim();
+  } catch {
+    return '';
+  }
+};
+
+/* Short flags may be bundled: `-am` holds `-a`. */
+const hasShort = (args, letter) => args.some(a => /^-[A-Za-z]+$/.test(a) && a.includes(letter));
+const ATTRIBUTION = /co-authored-by|generated with/i;
+
+/* `env FOO=1 gh …`, `command gh …`, `exec gh …` all run gh. */
+const stripPrefix = argv => {
+  let i = 0;
+  for (;;) {
+    if (argv[i] === 'env' || argv[i] === 'command' || argv[i] === 'exec' || argv[i] === 'nohup') i++;
+    else if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(argv[i] ?? '')) i++;
+    else break;
+  }
+  return argv.slice(i);
+};
+
+/* Merging is an ALLOWLIST, not a parser: parsing arbitrary shell for every way to reach a
+   merge (aliases, GH_REPO, variables, $(…), nested shells, the REST API) always leaves a gap.
+   The only merge this hook lets through is the canonical, fully literal form
+     gh pr merge <number> --squash [--delete-branch]
+   run as its own command, in this repo, after every required check is green. Anything else
+   that mentions a merge is refused. Branch protection with enforce_admins remains the real
+   gate; this is the second layer. */
+const CANONICAL_MERGE = /^\s*gh pr merge (\d+) --squash( --delete-branch)?\s*$/;
+/* Trigger 1: any parsed simple command that runs gh (after env/command/exec prefixes) and has a
+   merge-ish word anywhere in its argv — covers `gh pr merge`, `gh api …/merge`, aliases. */
+const ghMergeCall = simpleCommands(command).some(argv => {
+  const a = stripPrefix(argv);
+  return path.basename(a[0] ?? '') === 'gh' && a.some(w => /merge/i.test(w));
+});
+/* Trigger 2: gh + merge inside something this parser cannot see into — a nested shell, eval,
+   xargs, command substitution or backticks. Refused unless it is the canonical form (it never
+   is). Editing files that merely mention these words should use the Edit tool, not Bash. */
+const OPAQUE = /\b(?:bash|sh|zsh|dash)\s+-c\b|\beval\b|\bxargs\b|\$\(|`/;
+const opaqueGhMerge = OPAQUE.test(command) && /\bgh\b/.test(command) && /merge/i.test(command);
+if (ghMergeCall || opaqueGhMerge) {
+  const m = CANONICAL_MERGE.exec(command);
+  if (!m) block('merges must be the literal, standalone `gh pr merge <number> --squash [--delete-branch]` — no flags, prefixes, variables, aliases, -R/GH_REPO, nested shells or the REST API.');
+  let buckets;
+  try {
+    const env = { ...process.env };
+    delete env.GH_REPO;
+    buckets = JSON.parse(
+      execFileSync('gh', ['pr', 'checks', m[1], '--required', '--json', 'name,bucket'], {
+        cwd: project,
+        env,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      })
+    );
+  } catch {
+    block('could not read the PR\'s required checks (`gh pr checks <n> --required`). Merge only after confirming they all pass.');
+  }
+  if (!Array.isArray(buckets) || buckets.length === 0) block('the PR reports no required checks yet. Wait for CI to start and pass.');
+  const failing = buckets.filter(c => c.bucket !== 'pass');
+  if (failing.length) block(`required checks not green: ${failing.map(c => `${c.name} (${c.bucket})`).join(', ')}. Fix them before merging.`);
+  process.exit(0);
+}
+
+for (const argv of simpleCommands(command)) {
+  const git = gitCall(argv);
+  if (git) {
+    const { sub, args, dir } = git;
+    const onMain = () => ['main', 'master'].includes(branchIn(dir));
+
+    if ((sub === 'commit' || sub === 'push') && args.includes('--no-verify'))
+      block(`--no-verify skips the husky gate. Fix what the hook reports instead.`);
+
+    if (sub === 'commit') {
+      if (onMain()) block('you are on main. Never commit to main: issue → branch → PR → green CI → squash-merge.');
+      if (hasShort(args, 'n')) block('`git commit -n` is --no-verify. Fix what the hook reports instead.');
+      if (args.includes('--all') || hasShort(args, 'a'))
+        block('`git commit -a` stages the whole tree. Stage explicit paths (`git add <path> …`) and commit those.');
+      const fileIndex = args.findIndex(a => a === '-F' || a === '--file');
+      let message = command;
+      if (fileIndex !== -1) {
+        try {
+          message += readFileSync(path.resolve(dir, args[fileIndex + 1] ?? ''), 'utf8');
+        } catch {}
+      }
+      if (ATTRIBUTION.test(message))
+        block('the commit message carries AI attribution (Co-Authored-By / "Generated with"). This repo forbids it — non-negotiable 6. Remove the trailer.');
+    }
+
+    if (sub === 'push') {
+      const force = args.some(a => a === '--force' || a.startsWith('--force-with-lease') || a === '--force-if-includes') || hasShort(args, 'f');
+      const refspecs = args.filter(a => !a.startsWith('-')).slice(1);
+      const targetsMain = refspecs.some(r => /(^|:)(refs\/heads\/)?(main|master)$/.test(r.replace(/^\+/, '')));
+      if (onMain()) block('you are on main. Never push from main: push a feature branch and open a PR.');
+      if (args.includes('--all') || args.includes('--mirror')) block('`git push --all/--mirror` pushes main too. Push the feature branch by name.');
+      if (targetsMain) block(`${force ? 'force-' : ''}pushing to main. main only changes through a squash-merged PR.`);
+    }
+
+    if (sub === 'add') {
+      const all = args.some(a => a === '-A' || a === '--all' || a === '.' || a === './' || a === ':/' || a === '*');
+      if (all) block('stage explicit paths (`git add <path> <path>`), never -A / . / --all — in a shared checkout that commits another session\'s work.');
+    }
+    continue;
+  }
+
+  if (path.basename(argv[0]) === 'rm') {
+    const flags = argv.slice(1).filter(a => a.startsWith('-'));
+    const recursive = flags.some(f => f === '--recursive' || /^-[A-Za-z]*[rR]/.test(f));
+    if (!recursive) continue;
+    const protectedDirs = ['src', 'docs', '.git'].map(d => path.join(project, d));
+    for (const target of argv.slice(1).filter(a => !a.startsWith('-'))) {
+      const resolved = path.resolve(cwd, target.replace(/\/\*?$/, '') || '/');
+      if (protectedDirs.includes(resolved) || resolved === project)
+        block(`refusing to delete ${path.relative(project, resolved) || 'the project root'} recursively. Remove the specific files you mean instead.`);
+    }
+  }
+}
+JS
+
+# Fail open: only a deliberate block (exit 2) stops the command; a crash in this hook must not.
+printf '%s' "$input" | node -e "$script"
+[ $? -eq 2 ] && exit 2
+exit 0

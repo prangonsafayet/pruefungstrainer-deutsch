@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { type TrainerId } from '@shared/types';
+import { type TrainerId } from '@shared/types/trainer.ts';
 
 /*
  * Whether a trainer's content loads lazily is a fact about the *module graph*, not about a
@@ -16,16 +16,17 @@ import { type TrainerId } from '@shared/types';
  */
 const { loaded, trackLoad } = vi.hoisted(() => {
   const loaded: string[] = [];
-  const trackLoad = (id: 'a2b1' | 'b1' | 'b2') => () => {
+  const trackLoad = (id: 'a2b1' | 'b1' | 'b2' | 'dtz') => () => {
     loaded.push(id);
-    return vi.importActual(`@content/trainers/${id}/index.ts`);
+    return vi.importActual(`@content/${id}/content.ts`);
   };
   return { loaded, trackLoad };
 });
 
-vi.mock('@content/trainers/a2b1/index.ts', trackLoad('a2b1'));
-vi.mock('@content/trainers/b1/index.ts', trackLoad('b1'));
-vi.mock('@content/trainers/b2/index.ts', trackLoad('b2'));
+vi.mock('@content/a2b1/content.ts', trackLoad('a2b1'));
+vi.mock('@content/b1/content.ts', trackLoad('b1'));
+vi.mock('@content/b2/content.ts', trackLoad('b2'));
+vi.mock('@content/dtz/content.ts', trackLoad('dtz'));
 
 /* A real ES module (mocked or not) evaluates its top-level body once per file run, so the
    registry is imported exactly once here — every test below shares that one import and
@@ -71,10 +72,19 @@ describe('the registry loads trainer content lazily, one chunk per trainer', () 
     expect(content.trainer).toBe('b1');
   });
 
+  it('resolves dtz through its own loader, still without touching a2b1', async () => {
+    const content = await TRAINERS.dtz.loadContent();
+
+    expect(loaded).toEqual(['b2', 'b1', 'dtz']);
+    expect(content.trainer).toBe('dtz');
+    /* Only the DTZ paper has a Lesen Teil 5 — its own content, not a shared shape. */
+    expect(content.exams.every(exam => 'lesen' in exam && 'teil5' in (exam.lesen as object))).toBe(true);
+  });
+
   it('leaves a2b1 untouched until its own loader is finally called', async () => {
     const content = await TRAINERS.a2b1.loadContent();
 
-    expect(loaded).toEqual(['b2', 'b1', 'a2b1']);
+    expect(loaded).toEqual(['b2', 'b1', 'dtz', 'a2b1']);
     expect(content.trainer).toBe('a2b1');
     /* The dual-level exam list, unlike the other two trainers', carries `difficulty` — a
        cheap way to confirm this really is a2b1's own content, not a shared shape. */

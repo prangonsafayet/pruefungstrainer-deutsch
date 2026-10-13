@@ -1,4 +1,4 @@
-/** The shape of one Modelltest, as authored in `src/content/trainers/<id>/exams`. */
+/** The shape of one Modelltest, as authored in `src/content/<id>/exams`. */
 
 /**
  * What every Modelltest of every paper has. Enough for the generic layers — the registry,

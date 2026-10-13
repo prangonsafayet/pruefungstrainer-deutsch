@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@shared/lib/cn.ts';
 
 const badgeVariants = cva(
-  'inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors [&>svg]:size-3',
+  'inline-flex w-fit max-w-full shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors [&>svg]:size-3',
   {
     variants: {
       variant: {
@@ -14,11 +14,11 @@ const badgeVariants = cva(
         secondary: 'border-transparent bg-secondary text-secondary-foreground',
         destructive:
           'border-transparent bg-[color-mix(in_oklab,var(--destructive)_14%,transparent)] text-destructive-on-tint',
-        outline: 'text-foreground',
+        outline: 'border-border text-foreground',
         success:
-          'border-transparent bg-[color-mix(in_oklab,var(--success)_16%,transparent)] text-[color:var(--success-foreground)]',
+          'border-transparent bg-[color-mix(in_oklab,var(--success)_16%,transparent)] text-success-foreground',
         warning:
-          'border-transparent bg-[color-mix(in_oklab,var(--warning)_22%,transparent)] text-[color:var(--warning-foreground)]',
+          'border-transparent bg-[color-mix(in_oklab,var(--warning)_22%,transparent)] text-warning-foreground',
         info: 'border-transparent bg-accent text-accent-foreground'
       }
     },
