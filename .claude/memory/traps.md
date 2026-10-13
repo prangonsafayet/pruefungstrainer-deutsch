@@ -141,6 +141,13 @@ right area; see `.claude/rules/memory.md`.
   premise before adding `optimizeDeps.include`. `touch` does not trigger HMR (same content).
 - 2026-10-13: a function type in `tests/` (interface field, callback param) trips base
   `no-unused-vars` on its parameter names → type it by example: `typeof exampleFn`.
+- 2026-10-13: offline e2e passed on the PR, failed on main (`page.reload: net::ERR_INTERNET_DISCONNECTED`)
+  → `page.waitForFunction(async () => …)` never awaits the Promise; a Promise is truthy, so it resolves on
+  the first poll (32 ms, no active worker). Poll async page state with `expect.poll(() => page.evaluate(…))`.
+  `e2e/offline.spec.js` slows the content chunks during install so an early return fails every time.
+- 2026-10-13: a keyboard-only Radix select picked the option after the target (Lesen → Schreiben/Sprechen)
+  → Radix moves focus on a `setTimeout` after ArrowDown; reading `data-highlighted` straight after the press
+  sees the stale item. After each arrow, wait for the highlight to change before reading or pressing again.
 
 ## Dates, timers, React
 
@@ -241,6 +248,10 @@ right area; see `.claude/rules/memory.md`.
   (a mixed state) → measure a baseline in `git worktree add --detach <scratch> <sha>` with a
   symlinked `node_modules` (render tests pass there; the second-React trap is only under
   `.claude/worktrees/`). `git mv` stages — `git restore --staged` when told not to stage.
+- 2026-10-13: `test:hooks` failed on CI for main only ("push a feature branch", exit 2) → hook cases ran
+  with the checkout as `cwd`, whose branch is `main` there and a detached merge ref on PRs. Run every
+  branch-sensitive case against a throwaway `git init -b <branch>` repo passed as `cwd` and
+  `CLAUDE_PROJECT_DIR`.
 
 ## Agents and process
 

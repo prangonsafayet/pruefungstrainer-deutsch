@@ -35,10 +35,14 @@ const pickWithKeys = async (page, name) => {
   await page.keyboard.press('Space');
   const listbox = page.getByRole('listbox');
   await expect(listbox).toBeVisible();
+  const highlighted = listbox.locator('[role="option"][data-highlighted]');
   for (let presses = 0; presses < 20; presses += 1) {
-    const highlighted = listbox.locator('[role="option"][data-highlighted]');
-    if ((await highlighted.count()) > 0 && name.test((await highlighted.textContent()) ?? '')) break;
+    const text = (await highlighted.textContent()) ?? '';
+    if (name.test(text)) break;
     await page.keyboard.press('ArrowDown');
+    /* Radix moves the highlight on a timer after the keydown. Read it again only once it has
+       moved: a stale read sends one arrow too many and picks the option after (issue #35). */
+    await expect(highlighted).not.toHaveText(text);
   }
   await page.keyboard.press('Enter');
   await expect(listbox).toBeHidden();

@@ -11,14 +11,22 @@ trap 'rm -rf "$tmp"' EXIT
 pass=0
 fail=0
 
-# A throwaway repo on main, for the "you are on main" cases.
-git init -q -b main "$tmp/onmain"
+# Throwaway repos, so no case depends on the branch this checkout is on (CI on main checks out
+# `main`, a PR run a detached merge ref). Every case runs in "$feature" unless it names "$onmain".
+repo() {
+  git init -q -b "$2" "$1"
+  git -C "$1" -c user.name=t -c user.email=t@example.invalid commit -q --allow-empty -m init
+}
+feature="$tmp/feature"
+onmain="$tmp/onmain"
+repo "$feature" feature/x
+repo "$onmain" main
 
 json() { node -e 'process.stdout.write(JSON.stringify(JSON.parse(process.argv[1])))' "$1"; }
 
 # expect <exit> <hook> <payload-json> <label> [stdout-substring] [project-dir]
 expect() {
-  local want=$1 hook=$2 payload=$3 label=$4 needle=${5:-} project=${6:-$root}
+  local want=$1 hook=$2 payload=$3 label=$4 needle=${5:-} project=${6:-$feature}
   local out code
   out=$(printf '%s' "$payload" | CLAUDE_PROJECT_DIR="$project" "$hooks/$hook" 2>/dev/null)
   code=$?
@@ -33,7 +41,7 @@ expect() {
   fi
 }
 
-bash_cmd() { json "{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":$(node -e 'process.stdout.write(JSON.stringify(process.argv[1]))' "$1")},\"cwd\":\"${2:-$root}\"}"; }
+bash_cmd() { json "{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":$(node -e 'process.stdout.write(JSON.stringify(process.argv[1]))' "$1")},\"cwd\":\"${2:-$feature}\"}"; }
 file_edit() { json "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$1\"},\"cwd\":\"$root\"}"; }
 prompt() { json "{\"prompt\":$(node -e 'process.stdout.write(JSON.stringify(process.argv[1]))' "$1")}"; }
 
@@ -73,16 +81,18 @@ EOF
 expect 2 guard-git.sh "$(bash_cmd 'git push -f origin main')" 'force push to main'
 expect 2 guard-git.sh "$(bash_cmd 'git push --force origin HEAD:main')" 'force push HEAD:main'
 expect 2 guard-git.sh "$(bash_cmd 'git push origin feat/x:refs/heads/main')" 'push to refs/heads/main'
-expect 2 guard-git.sh "$(bash_cmd 'git commit -m "Fix timer"' "$tmp/onmain")" 'commit while on main'
-expect 2 guard-git.sh "$(bash_cmd 'git push -u origin HEAD' "$tmp/onmain")" 'push while on main'
-expect 2 guard-git.sh "$(bash_cmd "git -C $tmp/onmain commit -m x")" 'git -C <main repo> commit'
+expect 2 guard-git.sh "$(bash_cmd 'git commit -m "Fix timer"' "$onmain")" 'commit while on main'
+expect 2 guard-git.sh "$(bash_cmd 'git push -u origin HEAD' "$onmain")" 'push while on main'
+expect 2 guard-git.sh "$(bash_cmd "git -C $onmain commit -m x")" 'git -C <main repo> commit'
 expect 2 guard-git.sh "$(bash_cmd 'rm -rf src')" 'rm -rf src'
 expect 2 guard-git.sh "$(bash_cmd 'rm -fr ./docs/')" 'rm -fr ./docs/'
-expect 2 guard-git.sh "$(bash_cmd "rm -r -f $root/.git")" 'rm -r -f <abs>/.git'
+expect 2 guard-git.sh "$(bash_cmd "rm -r -f $feature/.git")" 'rm -r -f <abs>/.git'
 # --- guard-git.sh: allowed ---
 expect 0 guard-git.sh "$(bash_cmd 'git add src/a.ts e2e/b.spec.js')" 'git add explicit paths'
 expect 0 guard-git.sh "$(bash_cmd 'git commit -m "Fix the exam timer stalling"' "$tmp/notmain")" 'commit outside a repo'
 expect 0 guard-git.sh "$(bash_cmd 'git push -u origin HEAD')" 'push a feature branch'
+expect 0 guard-git.sh "$(bash_cmd 'git commit -m "Fix the exam timer stalling"')" 'commit on a feature branch'
+expect 0 guard-git.sh "$(bash_cmd "git -C $feature push -u origin HEAD" "$onmain")" 'git -C <feature repo> push from a main cwd'
 expect 0 guard-git.sh "$(bash_cmd 'git status --porcelain && git diff')" 'read-only git'
 expect 0 guard-git.sh "$(bash_cmd 'echo "git add -A"')" 'git add -A inside an echo string'
 expect 0 guard-git.sh "$(bash_cmd 'rm -rf node_modules dist')" 'rm -rf node_modules'
