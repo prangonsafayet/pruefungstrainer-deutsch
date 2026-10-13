@@ -32,7 +32,7 @@ A hardcoded default date rots: `defaultExamDate()` is a runway from first open. 
 
 `daysUntil` reads the clock; `daysBetween` does not. Schedule maths uses `daysBetween` and takes
 `today` as an argument — a pure engine is why the invariants can be swept across every runway
-(5–90 days) in `tests/unit/schedule`. The tier rule is load-bearing: core days 1–14 are always
+(5–90 days) in `tests/unit/schedule.test.ts`. The tier rule is load-bearing: core days 1–14 are always
 scheduled (compressed several to a day on a short runway); extension days 15–28 appear only
 once every core day has its own day. Lesson-selection changes must preserve it — the sweep
 will say so. `useToday` re-reads the date at local midnight and on `visibilitychange`.

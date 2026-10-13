@@ -193,8 +193,8 @@ inside `$(…)`. Never wire a hook before `bash -n` and `npm run test:hooks` pas
 
 ## Merge gate
 
-- `main` requires the four CI checks (Static analysis = typecheck + zero-warning lint + format +
-  guards; Unit tests; End-to-end tests; Production build) and **enforce_admins is on** (since
+- `main` requires five CI checks (Static analysis = typecheck + zero-warning lint + format +
+  guards; Unit tests; End-to-end tests; Production build; Dead code (knip) — added 2026-10-13) and **enforce_admins is on** (since
   2026-10-12) — nobody, admins included, merges past a red check.
 - **The merge boundary is GitHub branch protection, server-side.** `.claude/hooks/guard-git.sh`
   is accident prevention for Claude sessions, **not a security control**: a client-side hook

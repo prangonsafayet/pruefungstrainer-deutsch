@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 A React study app for four German exams — telc **A2·B1, B1 and B2**, and the **DTZ**
-(Deutsch-Test für Zuwanderer A2–B1, being added) — run as peer trainers behind one registry,
+(Deutsch-Test für Zuwanderer A2–B1) — run as peer trainers behind one registry,
 each with its own mock exams, 28-day curriculum, guide and vocabulary bank (flashcards, quizzes,
 spaced repetition). Modules are timed and scored by each paper's rules; progress is stored
 locally with optional Supabase sync. It is a portfolio project: code quality and presentation
@@ -42,18 +42,19 @@ All seven are lint rules, `check:architecture` or hooks where they can be. Prefe
 
 ## Task → what loads, what to use
 
-| Task                                   | Rule (auto-loads on matching files)                                   | Agent / skill                                     |
-| -------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------- |
-| Any app code in `src/`                 | `architecture`, `conventions`                                         | `frontend-reviewer` before committing             |
-| UI, styling, tokens, primitives        | `ui-design-system`                                                    | `ui-designer`                                     |
-| Progress document, storage, auth, sync | `persistence`                                                         | `persistence-guardian` (required review)          |
-| Exam runner, scoring, formats          | `exam-formats`, `dates-timers`                                        | —                                                 |
-| Exam content, guide, curriculum        | `content`                                                             | `exam-author`, `content-fact-checker`, `new-exam` |
-| Adding a trainer or paper              | `architecture`, `persistence`                                         | `new-trainer`                                     |
-| Tests                                  | `testing`                                                             | `verify`                                          |
-| CI, lint config, scripts, hooks        | `tooling-ci`                                                          | `audit`, `ship`                                   |
-| Choosing a model or plugin             | [`model-routing`](.claude/rules/model-routing.md), `plugins` (always) | —                                                 |
-| Branching, reviewing, releasing        | —                                                                     | [`CONTRIBUTING.md`](CONTRIBUTING.md)              |
+| Task                                           | Rule (auto-loads on matching files)                                                 | Agent / skill                                     |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Any app code in `src/`                         | `architecture`, `conventions`                                                       | `frontend-reviewer` before committing             |
+| UI, styling, tokens, primitives                | `ui-design-system`                                                                  | `ui-designer`                                     |
+| Progress document, storage, auth, sync         | `persistence`                                                                       | `persistence-guardian` (required review)          |
+| Exam runner, scoring, formats                  | `exam-formats`, `dates-timers`                                                      | —                                                 |
+| Exam content, guide, curriculum                | `content`                                                                           | `exam-author`, `content-fact-checker`, `new-exam` |
+| Adding a trainer or paper                      | `architecture`, `persistence`                                                       | `new-trainer`                                     |
+| Tests                                          | `testing`                                                                           | `verify`                                          |
+| CI, lint config, scripts, hooks                | `tooling-ci`                                                                        | `audit`, `ship`                                   |
+| Choosing a model or plugin                     | [`model-routing`](.claude/rules/model-routing.md), `plugins` (always)               | —                                                 |
+| Branching, reviewing, releasing                | —                                                                                   | [`CONTRIBUTING.md`](CONTRIBUTING.md)              |
+| Understanding the system, recording a decision | [`docs/architecture/`](docs/architecture/README.md) — C4 diagrams, data model, ADRs | —                                                 |
 
 ## Reporting
 

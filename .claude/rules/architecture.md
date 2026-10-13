@@ -171,3 +171,17 @@ secondary), `AppFooter`, and `pages/NotFoundPage/NotFoundPage.tsx`. `hooks/useAc
 layout. It reads `@shared/account-sync/…` and `@shared/progress-store/…` and must not import
 `@app/**`. The router deep-imports its `AppLayout` and `NotFoundPage` exactly as it does every
 other page. Tests: `tests/unit/appShell.test.ts`, `tests/render/appShell.test.ts`.
+
+## Offline, notices and the schedule source
+
+- `src/shared/lib/serviceWorker.ts` registers the PWA service worker (production builds only)
+  and holds its status; `src/shared/hooks/useServiceWorkerUpdate.tsx` and the app-shell
+  `AppLayout/useUpdatePrompt.tsx` turn a waiting update into a Reload prompt that never
+  interrupts an exam sitting. Workbox config lives in `vite.config.ts`.
+- `src/shared/progress-store/hooks/useProgressNotices.tsx` shows the storage-full,
+  damaged-progress and recovery notices that `progressDb` reports.
+- `src/shared/study-schedule/lib/trainerSource.ts` adapts a trainer's slice and content into the
+  schedule engine's inputs.
+
+Diagrams, the data model and the decision records behind these rules:
+[`docs/architecture/`](../../docs/architecture/README.md).

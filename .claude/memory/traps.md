@@ -22,9 +22,10 @@ right area; see `.claude/rules/memory.md`.
 - 2026-10-12: schema libraries (zod) rejected for `normalizeDatabase` → it must pass unknown keys
   through and preserve object identity.
 - 2026-10-12: the DTZ run key is the new `telcTrainerDtzRunV1` → never reuse
-  `telcTrainerLevelRunV1` for another paper. Protected keys (never rename or remove):
-  `telcTrainerV1`, `telcTrainerRunV1`, `telcTrainerLevelRunV1`, `telcTrainerDtzRunV1`,
-  `telcTrainerAuth`, `telcTrainerTheme`.
+  `telcTrainerLevelRunV1` for another paper. Protected keys (never rename or remove) — the
+  authoritative list is `.claude/hooks/storage-keys.baseline` (nine as of 2026-10-13: six
+  localStorage incl. `telcTrainerRecoveryV1`, plus sessionStorage `telcTrainerSessionLogV1`,
+  `telcTrainerChunkReloadAt`; `telcTrainerDtzRunV1` is one of the six).
 - 2026-10-13: corrupt `telcTrainerV1` loaded as an empty document and the first write saved it
   over the original → `loadDatabase` copies it to `telcTrainerRecoveryV1` (protected) first and
   only then replaces it; never let a load path default-and-overwrite user data.

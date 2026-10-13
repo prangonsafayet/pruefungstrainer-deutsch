@@ -7,9 +7,9 @@
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
   </p>
   <p>
-    <img alt="React" src="https://img.shields.io/badge/React-18-087ea4?logo=react&logoColor=white">
+    <img alt="React" src="https://img.shields.io/badge/React-19-087ea4?logo=react&logoColor=white">
     <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white">
-    <img alt="Vite" src="https://img.shields.io/badge/Vite-5-646cff?logo=vite&logoColor=white">
+    <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white">
     <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss&logoColor=white">
     <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Auth%20%2B%20Postgres-3ecf8e?logo=supabase&logoColor=white">
     <img alt="Playwright" src="https://img.shields.io/badge/Playwright-e2e-2ead33?logo=playwright&logoColor=white">
@@ -202,6 +202,12 @@ Skills cover verification, auditing, adding an exam or a trainer, and shipping. 
 commits to `main`, AI attribution, whole-tree staging and lockfile edits, and re-check the
 storage keys and lint after every edit. A model-routing rule sends lookups and mechanical work
 to cheaper models and keeps the strongest one for architecture and persisted-data decisions.
+
+## Architecture docs
+
+[`docs/architecture/`](docs/architecture/README.md) — C4 diagrams (context, containers,
+components, dynamic flows), the persisted data model, the quality-gate pipeline and the
+decision records behind the rules.
 
 ## Running it
 
