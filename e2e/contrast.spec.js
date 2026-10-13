@@ -172,7 +172,7 @@ const PAIRS = [
     need: 3
   },
   {
-    id: 'magenta second voice (charts) on a card',
+    id: 'teal second voice (charts) on a card',
     surface: 'bg-card',
     html: '<span class="block h-2 w-20 bg-brand-2"></span>',
     prop: 'backgroundColor',
